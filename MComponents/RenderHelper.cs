@@ -55,7 +55,7 @@ namespace MComponents
 
             T value = (T)(pPropertyInfo.GetValue(pModel) ?? default(T));
             Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-                   
+
             if (mNumberTypes.Contains(tType))
             {
                 pBuilder.OpenComponent<InputNumber<T>>(0);
@@ -193,9 +193,13 @@ namespace MComponents
                 //just create a member expression with random values
                 MemberExpression expression = Expression.Property(Expression.Constant(fake), nameof(fake.CanRead));
 
-                Expression constantExpression = Expression.Constant(null, typeof(T));
-                var constantExpressionValueField = constantExpression.GetType().BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(object));
-                constantExpressionValueField.SetValue(constantExpression, pModel);
+                Expression constantExpression = Expression.Constant(default(T), typeof(T));
+
+                var constantExpressionValueBaseFields = constantExpression.GetType().BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+                var constantExpressionValueFields = constantExpression.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+
+                var field = constantExpressionValueBaseFields.Concat(constantExpressionValueFields).First(f => f.FieldType == typeof(object));
+                field.SetValue(constantExpression, pModel);
 
                 //set generated constant expression
                 var expressionField = expression.GetType().BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(Expression));
