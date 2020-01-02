@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MComponents.Shared</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <owners>manureini</owners>
+    <licenseUrl>https://github.com/manureini/MComponents/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/manureini/MComponents/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>Blazor Compnents</tags>    
+    <dependencies>
+      <dependency id="NETStandard.Library" version="2.0.3" />
+    </dependencies>    
+  </metadata>
+</package>

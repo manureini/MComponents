@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MComponents</id>
+    <version>$version$</version>
+    <title>$title$</title> 
+    <owners>manureini</owners>
+    <licenseUrl>https://github.com/manureini/MComponents/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/manureini/MComponents/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>Blazor Compnents</tags>
+    <dependencies>
+      <dependency id="MComponents.Shared" version="1.0.0" />
+      <dependency id="Blazor.Extensions.Canvas" version="1.0.0" />
+      <dependency id="DocumentFormat.OpenXml" version="2.9.1" />
+      <dependency id="Microsoft.AspNetCore.Components" version="3.1.0" />
+      <dependency id="Microsoft.AspNetCore.Components.Web" version="3.1.0" />
+      <dependency id="Microsoft.CSharp" version="4.7.0" />
+      <dependency id="System.Reflection.Emit" version="4.7.0" />
+    </dependencies>
+  </metadata>
+</package>
