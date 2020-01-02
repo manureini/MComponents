@@ -1,0 +1,286 @@
+﻿@using Blazor.Extensions
+@using Blazor.Extensions.Canvas
+@using Blazor.Extensions.Canvas.Canvas2D
+@using MComponents.JsInterop
+
+@inject IJSRuntime JSRuntime
+
+<div class="mpaint-container">
+    <div @onmousedown="OnMouseDown"
+         @onmousemove="OnMouseMove"
+         @onmouseup="OnMouseUp"
+         @onmouseout="OnMouseOut"
+         @onmouseover="OnMouseOver"
+         @ontouchstart="OnTouchStart"
+         @ontouchend="OnTouchEnd"
+         style="border: solid; border-color: black; border-width: 1px; width: @(Width)px; height: @(Height)px; border-radius: 5px;">
+        <BECanvas Width="@Width" Height="@Height" @ref="mCanvasRef"></BECanvas>
+    </div>
+    <br />
+    <button @onclick="OnResetClick" class="btn btn-primary" style="width: @(Width)px">Reset</button>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Width { get; set; } = 500;
+
+    [Parameter]
+    public int Height { get; set; } = 200;
+
+
+    protected BECanvasComponent mCanvasRef;
+
+    protected Canvas2DContext mContext;
+
+    protected bool mPaint;
+
+    protected List<double> mX = new List<double>();
+    protected List<double> mY = new List<double>();
+    protected List<bool> mDragging = new List<bool>();
+
+    protected DateTime mLastDraw = DateTime.UtcNow;
+
+    protected int mLastIndex = 0;
+
+    protected bool mFirstRender = true;
+
+
+    [JSInvokable]
+    public void OnJsTouchMove(double pClientX, double pClientY)
+    {
+        OnTouchMove(pClientX, pClientY);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (mFirstRender)
+            {
+                mContext = await mCanvasRef.CreateCanvas2DAsync();
+                await mContext.SetFillStyleAsync("black");
+
+                await JSRuntime.InvokeVoidAsync("mcomponents.registerMPaintOnTouchMove", DotNetObjectReference.Create(this), mContext.Canvas);
+                mFirstRender = false;
+
+                Redraw(false);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    protected async void OnMouseDown(MouseEventArgs pArgs)
+    {
+        if (mContext == null)
+            return;
+
+        PositionInfo result = await JSRuntime.InvokeAsync<PositionInfo>("mcomponents.getPosition", mContext.Canvas);
+
+        double mouseX = pArgs.ClientX - result.left;
+        double mouseY = pArgs.ClientY - result.top;
+
+        mPaint = true;
+
+        AddClick(mouseX, mouseY, false);
+        Redraw(false);
+    }
+
+    protected async void OnMouseMove(MouseEventArgs pArgs)
+    {
+        if (mContext == null)
+            return;
+
+        try
+        {
+            PositionInfo result = await JSRuntime.InvokeAsync<PositionInfo>("mcomponents.getPosition", mContext.Canvas);
+
+            double mouseX = pArgs.ClientX - result.left;
+            double mouseY = pArgs.ClientY - result.top;
+
+            if (mPaint)
+            {
+                AddClick(mouseX, mouseY, true);
+                Redraw(false);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    protected void OnMouseUp(MouseEventArgs pArgs)
+    {
+        mPaint = false;
+        Redraw(true);
+    }
+
+    protected async void OnMouseOver(MouseEventArgs pArgs)
+    {
+        if (pArgs.Buttons == 1)
+        {
+            PositionInfo result = await JSRuntime.InvokeAsync<PositionInfo>("mcomponents.getPosition", mContext.Canvas);
+
+            double mouseX = pArgs.ClientX - result.left;
+            double mouseY = pArgs.ClientY - result.top;
+
+            AddClick(mouseX, mouseY, false);
+            mPaint = true;
+            Redraw(false);
+        }
+    }
+
+    protected void OnMouseOut(MouseEventArgs pArgs)
+    {
+        mPaint = false;
+        Redraw(true);
+    }
+
+    protected async void OnTouchStart(TouchEventArgs pArgs)
+    {
+        GetTouchPosition(pArgs, out var clientx, out var clientY);
+
+        if (clientx == -1)
+            return;
+
+        PositionInfo result = await JSRuntime.InvokeAsync<PositionInfo>("mcomponents.getPosition", mContext.Canvas);
+
+        double mouseX = clientx - result.left;
+        double mouseY = clientY - result.top;
+
+        mPaint = true;
+
+        AddClick(mouseX, mouseY, false);
+        Redraw(false);
+    }
+
+    protected void OnTouchEnd(TouchEventArgs pArgs)
+    {
+        mPaint = false;
+        Redraw(true);
+    }
+
+    /*
+    protected async void OnTouchMove(TouchEventArgs pArgs)
+    {
+
+        GetTouchPosition(pArgs, out var clientx, out var clienty);
+
+        if (clientx == -1)
+            return;
+
+        PositionInfo result = await JSRuntime.InvokeAsync<PositionInfo>("mcomponents.getPosition", mContext.Canvas);
+
+        double mouseX = clientx - result.left;
+        double mouseY = clienty - result.top;
+
+        OnTouchMove(mouseX, mouseY);
+    }        */
+
+
+    protected void OnTouchMove(double mouseX, double mouseY)
+    {
+        AddClick(mouseX, mouseY, true);
+        Redraw(false);
+    }
+
+    protected void GetTouchPosition(TouchEventArgs pArgs, out double pClientX, out double pClientY)
+    {
+        if (pArgs.Touches != null && pArgs.Touches.Length >= 1)
+        {
+            var touch = pArgs.Touches.First();
+
+            pClientX = touch.ClientX;
+            pClientY = touch.ClientY;
+            return;
+        }
+
+        pClientX = -1;
+        pClientY = -1;
+    }
+
+    protected void AddClick(double pX, double pY, bool pDragging)
+    {
+        mX.Add(pX);
+        mY.Add(pY);
+        mDragging.Add(pDragging);
+    }
+
+    protected async void Redraw(bool pForce)
+    {
+        if (!pForce && DateTime.UtcNow.Subtract(mLastDraw).TotalMilliseconds < 20)
+            return;
+
+        if (mContext == null)
+            return;
+
+        await mContext.BeginBatchAsync();
+
+        int startIndex = Math.Max(0, mLastIndex - 20);
+
+        for (int i = startIndex; i < mX.Count; i++)
+        {
+            await mContext.BeginPathAsync();
+
+            if (mDragging[i] && i > 0)
+            {
+                await mContext.MoveToAsync(mX[i - 1], mY[i - 1]);
+            }
+            else
+            {
+                await mContext.MoveToAsync(mX[i] - 1, mY[i]);
+            }
+
+            await mContext.LineToAsync(mX[i], mY[i]);
+            await mContext.ClosePathAsync();
+            await mContext.StrokeAsync();
+        }
+
+        await mContext.EndBatchAsync();
+
+        mLastIndex = Math.Max(0, mX.Count - 1);
+
+        mLastDraw = DateTime.UtcNow;
+    }
+
+    public async void OnResetClick()
+    {
+        mX.Clear();
+        mY.Clear();
+        mDragging.Clear();
+
+        await mContext.ClearRectAsync(0, 0, mCanvasRef.Width, mCanvasRef.Height);
+
+        Redraw(true);
+    }
+
+    public bool ImageIsEmpty => mX.Count < 10;
+
+    public async Task<byte[]> GetImage()
+    {
+        if (mContext == null)
+            return null;
+
+        if (mContext.Canvas.Id == null)
+            return null;
+
+        try
+        {
+            string data = await JSRuntime.InvokeAsync<string>("mcomponents.toDataUrl", mContext.Canvas);
+
+            data = data.Substring(data.IndexOf("base64,") + "base64,".Length);
+
+            return System.Convert.FromBase64String(data);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+            return null;
+        }
+    }
+
+}

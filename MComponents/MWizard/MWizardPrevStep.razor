@@ -1,0 +1,17 @@
+﻿@if (Wizard != null && !Wizard.FreezeCurrentStep)
+{
+    <button class="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" @attributes="AdditionalAttributes" data-ktwizard-type="action-prev" @onclick="Wizard.OnPrevClicked">
+        Zurück
+    </button>
+}
+
+@code  {
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+
+    [CascadingParameter]
+    public MWizard Wizard { get; set; }
+
+}

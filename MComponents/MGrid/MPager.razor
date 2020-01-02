@@ -1,0 +1,192 @@
+﻿
+@{ const string DISABLED_CLASS = "kt-datatable__pager-link--disabled"; }
+
+<div class="kt-pagination kt-pagination--brand">
+    <ul class="kt-pagination__links">
+
+        <li class="kt-datatable__pager-link kt-pagination__link--next @(CurrentPage <= 1 ? DISABLED_CLASS : string.Empty)">
+            <a @onclick=OnPrev><i class="fa fa-angle-left kt-font-brand"></i></a>
+        </li>
+
+        @if (mCollapse)
+        {
+            @if (mLeftDots)
+            {
+                <li class="@GetCssClass(1)">
+                    <a @onclick="() => JumpTo(1)">1</a>
+                </li>
+
+                <li class="@GetCssClass(-1)">
+                    <a>...</a>
+                </li>
+            }
+
+
+            for (int i = LeftValue; i < RightValue; i++)
+            {
+                int index = i;
+                <li class="@GetCssClass(i)">
+                    <a @onclick="@(() => JumpTo(index))">@i</a>
+                </li>
+            }
+
+
+            @if (mRightDots)
+            {
+                <li class="@GetCssClass(-1)">
+                    <a>...</a>
+                </li>
+
+                <li class="@GetCssClass(PageCount)">
+                    <a @onclick="() => JumpTo(PageCount)">@PageCount</a>
+                </li>
+            }
+
+        }
+        else
+        {
+            for (int i = 1; i < PageCount + 1; i++)
+            {
+                int index = i;
+                <li class="@GetCssClass(i)">
+                    <a @onclick="() => JumpTo(index)">@i</a>
+                </li>
+            }
+        }
+
+        <li class="kt-datatable__pager-link kt-pagination__link--prev @(CurrentPage == PageCount || PageCount == 0 ? DISABLED_CLASS : string.Empty)">
+            <a @onclick=OnNext><i class="fa fa-angle-right kt-font-brand"></i></a>
+        </li>
+
+    </ul>
+
+    @ChildContent
+
+</div>
+
+
+
+
+@code {
+
+    [Parameter]
+    public int PageCount { get; set; }
+
+    [Parameter]
+    public int DisplayCount { get; set; } = 10;
+
+    [Parameter]
+    public int CurrentPage { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnPageChanged { get; set; }
+
+
+    int LeftValue = 0;
+    int RightValue = 0;
+
+    bool mCollapse = false;
+
+    bool mLeftDots = false;
+    bool mRightDots = false;
+
+    override protected void OnInitialized()
+    {
+        Update();
+    }
+
+    override protected void OnParametersSet()
+    {
+        Update();
+    }
+
+    protected void Update()
+    {
+        if (PageCount > DisplayCount)
+        {
+            mCollapse = true;
+        }
+
+        if (CurrentPage <= 0)
+            CurrentPage = 1;
+        if (CurrentPage > PageCount)
+            CurrentPage = Math.Max(1, PageCount);
+
+        LeftValue = CurrentPage - (DisplayCount / 2);
+        RightValue = CurrentPage + (DisplayCount / 2);
+
+        if (DisplayCount % 2 != 0) //(DisplayCount / 2) -> .5 will be cut
+        {
+            RightValue++;
+        }
+
+        if (LeftValue < 1)
+        {
+            int diff = 1 - LeftValue;
+            LeftValue += diff;
+            RightValue += diff;
+        }
+
+        if (RightValue > PageCount)
+        {
+            int diff = RightValue - PageCount - 1;
+            LeftValue -= diff;
+            RightValue -= diff;
+            LeftValue = Math.Max(1, LeftValue);
+        }
+
+        if (LeftValue > 1)
+        {
+            LeftValue += 2;
+            mLeftDots = true;
+        }
+        else
+        {
+            mLeftDots = false;
+        }
+
+        if (RightValue <= PageCount)
+        {
+            RightValue -= 2;
+            mRightDots = true;
+        }
+        else
+        {
+            mRightDots = false;
+        }
+
+        StateHasChanged();
+    }
+
+    public void OnPrev()
+    {
+        CurrentPage--;
+        Update();
+        OnPageChanged.InvokeAsync(CurrentPage);
+    }
+
+    public void OnNext()
+    {
+        CurrentPage++;
+        Update();
+        OnPageChanged.InvokeAsync(CurrentPage);
+    }
+
+    public void JumpTo(int pIndex)
+    {
+        CurrentPage = pIndex;
+        Update();
+        OnPageChanged.InvokeAsync(CurrentPage);
+    }
+
+    public string GetCssClass(int pIndex)
+    {
+        if (pIndex == CurrentPage)
+            return "kt-pagination__link kt-pagination__link--active";
+        return "kt-pagination__link";
+    }
+
+}
