@@ -4,7 +4,7 @@
 This is another Blazor component libary which supports
 
 * Grids
-* Wizard
+* Wizards
 * Forms
 * Accordions
 
