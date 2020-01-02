@@ -3,6 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
+    <Product>MComponents</Product>
+    <Authors>manureini</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Another blazor component library</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/manureini/MComponents/</PackageProjectUrl>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageTags>Blazor Components</PackageTags>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Company>MComponents</Company>
   </PropertyGroup>
 
   <ItemGroup>

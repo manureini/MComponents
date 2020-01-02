@@ -36,13 +36,13 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'pack'
-    packagesToPack: '**/MComponents.Shared/*.nuspec'
+    packagesToPack: '**/MComponents.Shared/*.csproj'
     packDestination: '$(Build.ArtifactStagingDirectory)'
 
 - task: NuGetCommand@2
   inputs:
     command: 'pack'
-    packagesToPack: '**/MComponents/*.nuspec'
+    packagesToPack: '**/MComponents/*.csproj'
     packDestination: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
