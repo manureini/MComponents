@@ -2,8 +2,8 @@
 <package >
   <metadata>
     <id>MComponents.Shared</id>
-    <version>$version$</version>
-    <title>$title$</title>
+    <title>MComponents.Shared</title>
+    <version>1.0.0</version>
     <owners>manureini</owners>
     <authors>manureini</authors>
     <licenseUrl>https://github.com/manureini/MComponents/blob/master/LICENSE</licenseUrl>
