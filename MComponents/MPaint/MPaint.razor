@@ -145,6 +145,9 @@
 
     protected async void OnTouchStart(TouchEventArgs pArgs)
     {
+        if (mContext == null)
+            return;
+
         GetTouchPosition(pArgs, out var clientx, out var clientY);
 
         if (clientx == -1)
@@ -208,6 +211,9 @@
 
     protected void AddClick(double pX, double pY, bool pDragging)
     {
+        if (mContext == null)
+            return;
+
         mX.Add(pX);
         mY.Add(pY);
         mDragging.Add(pDragging);
