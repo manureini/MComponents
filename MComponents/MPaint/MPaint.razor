@@ -121,6 +121,9 @@
 
     protected async void OnMouseOver(MouseEventArgs pArgs)
     {
+        if (mContext == null)
+            return;
+
         if (pArgs.Buttons == 1)
         {
             PositionInfo result = await JSRuntime.InvokeAsync<PositionInfo>("mcomponents.getPosition", mContext.Canvas);
