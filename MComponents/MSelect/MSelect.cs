@@ -33,6 +33,9 @@ namespace MComponents.MSelect
         public bool EnableSearch { get; set; }
 
         [Parameter]
+        public bool IsDisabled { get; set; }
+
+        [Parameter]
         public EventCallback<SelectionChangedArgs<T>> OnSelectionChanged { get; set; }
 
         protected string mNullValueOverride;
@@ -143,7 +146,7 @@ namespace MComponents.MSelect
             }
 
             pBuilder.OpenElement(0, "span");
-            pBuilder.AddAttribute(1, "class", "select2 select2-container select2-container--default form-control " + CssClass);
+            pBuilder.AddAttribute(1, "class", "select2 select2-container select2-container--default form-control " + CssClass + (IsDisabled ? " select2-container--disabled" : string.Empty));
             pBuilder.AddAttribute(2, "dir", "ltr");
             pBuilder.AddAttribute(3, "style", "height: unset; padding: 0;");
 
@@ -361,6 +364,9 @@ namespace MComponents.MSelect
 
         protected void ToggleOptions()
         {
+            if (IsDisabled)
+                return;
+
             if (!mOptionsVisible)
             {
                 if (Options != null)
