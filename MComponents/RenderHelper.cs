@@ -56,6 +56,9 @@ namespace MComponents
             T value = (T)(pPropertyInfo.GetValue(pModel) ?? default(T));
             Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
+
+            bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute(typeof(ReadOnlyAttribute)) != null;
+
             if (mNumberTypes.Contains(tType))
             {
                 pBuilder.OpenComponent<InputNumber<T>>(0);
@@ -132,9 +135,16 @@ namespace MComponents
 
             string cssClass = "form-control";
 
-            if (pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute(typeof(ReadOnlyAttribute)) != null)
+            if (isReadOnly)
             {
-                pBuilder.AddAttribute(33, "disabled", string.Empty);
+                if (typeof(T) == typeof(bool?) || tType.IsEnum)
+                {
+                    pBuilder.AddAttribute(33, "IsDisabled", true);
+                }
+                else
+                {
+                    pBuilder.AddAttribute(33, "disabled", string.Empty);
+                }
             }
 
             pBuilder.AddAttribute(10, "class", cssClass);
