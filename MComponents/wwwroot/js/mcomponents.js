@@ -1,78 +1,98 @@
 ﻿
 
-window.mcomponents = {
+var mcomponents = (function () {
 
-    getPosition: function (element) {
-        var pos = element.getBoundingClientRect();
+    var elementReference = null;
 
-        // because blazor will serialize it with the implemented .ToJson() method and the new attributes will be lost!
-        pos = JSON.parse(JSON.stringify(pos));
+    return {
+        registerKeyListener: function (element) {
+            elementReference = element;
+            document.addEventListener('keydown', mcomponents.onKeyDownEvent);
+        },
 
-        pos.absbottom = pos.bottom + window.scrollY;
-        pos.abstop = pos.top + window.scrollY;
-        pos.absleft = pos.left + window.scrollX;
-        pos.absright = pos.right + window.scrollX;
+        unRegisterKeyListener: function () {
+            document.removeEventListener('keydown', mcomponents.onKeyDownEvent);
+            elementReference = null;
+        },
 
-        return pos;
-    },
+        onKeyDownEvent: function (args) {
+            if (elementReference != null) {
+                elementReference.invokeMethodAsync('JsInvokeKeyDown', args.key);
+            }
+        },
 
-    focusElement: function (element) {
-        if (element != null) {
-            element.focus();
-        }
-    },
+        getPosition: function (element) {
+            var pos = element.getBoundingClientRect();
 
-    toDataUrl: function (element) {
-        return element.toDataURL();
-    },
+            // because blazor will serialize it with the implemented .ToJson() method and the new attributes will be lost!
+            pos = JSON.parse(JSON.stringify(pos));
 
-    stopEvent: function (element, event) {
-        element.addEventListener(event, function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }, false);
-    },
- 
-    registerMPaintOnTouchMove: function (reference, element) {          
-        element.addEventListener("touchmove", function (event) {
-            if (event.touches) {
-                if (event.touches.length == 1) {
+            pos.absbottom = pos.bottom + window.scrollY;
+            pos.abstop = pos.top + window.scrollY;
+            pos.absleft = pos.left + window.scrollX;
+            pos.absright = pos.right + window.scrollX;
 
-                    var pos = element.getBoundingClientRect();
+            return pos;
+        },
 
-                    var touch = event.touches[0];
-                    touchX = touch.clientX - pos.left;
-                    touchY = touch.clientY - pos.top;
+        focusElement: function (element) {
+            if (element != null) {
+                element.focus();
+            }
+        },
 
-                    reference.invokeMethodAsync('OnJsTouchMove', touchX, touchY);
+        toDataUrl: function (element) {
+            return element.toDataURL();
+        },
+
+        stopEvent: function (element, event) {
+            element.addEventListener(event, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }, false);
+        },
+
+        registerMPaintOnTouchMove: function (reference, element) {
+            element.addEventListener("touchmove", function (event) {
+                if (event.touches) {
+                    if (event.touches.length == 1) {
+
+                        var pos = element.getBoundingClientRect();
+
+                        var touch = event.touches[0];
+                        touchX = touch.clientX - pos.left;
+                        touchY = touch.clientY - pos.top;
+
+                        reference.invokeMethodAsync('OnJsTouchMove', touchX, touchY);
+                    }
                 }
+
+                event.preventDefault();
+                event.stopPropagation();
+            }, false);
+        },
+
+        saveAsFile: function (filename, bytesBase64) {
+            var link = document.createElement('a');
+            link.download = filename;
+            link.href = "data:application/octet-stream;base64," + bytesBase64;
+            document.body.appendChild(link); // Needed for Firefox
+            link.click();
+            document.body.removeChild(link);
+        },
+
+        getColumnsWith: function (element) {
+            var children = element.children[0].children[0].children;
+
+            var ret = [];
+
+            for (var i = 0; i < children.length; i++) {
+                var tableChild = children[i];
+                ret.push(tableChild.offsetWidth);
             }
 
-            event.preventDefault();
-            event.stopPropagation();
-        }, false);
-    },
-
-    saveAsFile: function (filename, bytesBase64) {
-        var link = document.createElement('a');
-        link.download = filename;
-        link.href = "data:application/octet-stream;base64," + bytesBase64;
-        document.body.appendChild(link); // Needed for Firefox
-        link.click();
-        document.body.removeChild(link);
-    },
-
-    getColumnsWith: function(element) {
-        var children = element.children[0].children[0].children;
-
-        var ret = [];
-
-        for (var i = 0; i < children.length; i++) {
-             var tableChild = children[i];
-             ret.push(tableChild.offsetWidth);
+            return ret;
         }
+    };
+})();
 
-        return ret;
-    }
-
-}

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace MComponents.MGrid
 {
-    public class MGridComplexPropertyColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridPropertyColumn, IMGridComplexEditableColumn<TProperty>, IMGridColumnGenerator<T>
+    public class MGridComplexColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridColumnGenerator<T>, IMGridComplexExport<T>
     {
         [Parameter]
         public RenderFragment<MComplexPropertyFieldContext<TProperty>> FormTemplate { get; set; }
@@ -22,40 +22,20 @@ namespace MComponents.MGrid
 
         [Parameter]
         public Func<T, string> ExportText { get; set; }
-
-        public Type PropertyType
-        {
-            get
-            {
-                return typeof(TProperty);
-            }
-            set
-            {
-            }
-        }
-
-        [Parameter]
-        public string Property { get; set; }
-
-        [Parameter]
-        public Attribute[] Attributes { get; set; }
-
-        [Parameter]
-        public string StringFormat { get; set; }
-
+            
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
-        private string mHeaderText;
+        protected string mHeaderText;
 
         [Parameter]
         public string HeaderText
         {
-            get { return mHeaderText ?? Property; }
+            get { return mHeaderText; }
             set { mHeaderText = value; }
         }
 
-        private IMRegister mGrid;
+        protected IMRegister mGrid;
 
         [CascadingParameter]
         public IMRegister Grid
@@ -81,6 +61,14 @@ namespace MComponents.MGrid
         public RenderFragment GenerateContent(T pModel)
         {
             return CellTemplate(pModel);
+        }
+
+        public Cell GenerateExportCell(T pModel)
+        {
+            if (ExportText != null)
+                return ExcelExportHelper.CreateTextCell(ExportText(pModel));
+            else
+                return ExcelExportHelper.CreateTextCell(string.Empty);
         }
     }
 }

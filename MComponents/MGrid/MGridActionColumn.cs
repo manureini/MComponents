@@ -41,6 +41,8 @@ namespace MComponents.MGrid
 
         public bool ShouldRenderColumn => mGrid.EnableEditing || mGrid.EnableDeleting || mGrid.IsFilterRowVisible || mGrid.IsEditingRow;
 
+        public bool VisibleInExport => false;
+
         protected bool DeletingLocked = true;
 
         protected Timer mDeleteResetTimer;

@@ -14,6 +14,8 @@ namespace MComponents
     {
         public static byte[] GetExcelSpreadsheet<T>(IEnumerable<IMGridColumn> pColumns, IDictionary<IMGridPropertyColumn, IMPropertyInfo> pPropertyInfos, IEnumerable<T> pData, IMGridObjectFormatter<T> pFormatter)
         {
+            var columns = pColumns.Where(c => c.VisibleInExport);
+
             using (MemoryStream ms = new MemoryStream())
             {
                 using (var document = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
@@ -58,9 +60,7 @@ namespace MComponents
                     var row = new Row { RowIndex = ++rowIdex };
                     sheetData.AppendChild(row);
 
-                    pColumns = pColumns.Where(c => c is IMGridPropertyColumn);
-
-                    foreach (var headerrow in pColumns.Select(c => c.HeaderText))
+                    foreach (var headerrow in columns.Select(c => c.HeaderText))
                     {
                         row.AppendChild(CreateTextCell(headerrow ?? string.Empty));
                     }
@@ -70,48 +70,22 @@ namespace MComponents
                         row = new Row { RowIndex = ++rowIdex };
                         sheetData.AppendChild(row);
 
-                        foreach (IMGridPropertyColumn column in pColumns)
+                        foreach (var column in columns)
                         {
-                            var iprop = pPropertyInfos[column];
-
-                            Cell cell;
-
-                            if (iprop.PropertyType == typeof(DateTime) || iprop.PropertyType == typeof(DateTime?))
+                            if (column is IMGridComplexExport<T> exporter)
                             {
-                                var datetime = iprop.GetValue(rowData) as DateTime?;
-                                cell = CreateDateCell(datetime);
+                                row.AppendChild(exporter.GenerateExportCell(rowData));
                             }
-                            else if (iprop.PropertyType == typeof(int) || iprop.PropertyType == typeof(int?))
+                            else if (column is IMGridPropertyColumn propColumn)
                             {
-                                var value = iprop.GetValue(rowData) as int?;
-                                string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
-                                cell = CreateNumberCell(strvalue);
-                            }
-                            else if (iprop.PropertyType == typeof(long) || iprop.PropertyType == typeof(long?))
-                            {
-                                var value = iprop.GetValue(rowData) as long?;
-                                string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
-                                cell = CreateNumberCell(strvalue);
-                            }
-                            else if (iprop.PropertyType == typeof(float) || iprop.PropertyType == typeof(float?))
-                            {
-                                var value = iprop.GetValue(rowData) as float?;
-                                string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
-                                cell = CreateNumberCell(strvalue);
-                            }
-                            else if (iprop.PropertyType == typeof(double) || iprop.PropertyType == typeof(double?))
-                            {
-                                var value = iprop.GetValue(rowData) as double?;
-                                string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
-                                cell = CreateNumberCell(strvalue);
+                                var iprop = pPropertyInfos[propColumn];
+                                Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop);
+                                row.AppendChild(cell);
                             }
                             else
                             {
-                                string cellValue = pFormatter.FormatPropertyColumnValue(column, iprop, rowData);
-                                cell = CreateTextCell(cellValue ?? string.Empty);
+                                row.AppendChild(CreateTextCell(string.Empty));
                             }
-
-                            row.AppendChild(cell);
                         }
                     }
 
@@ -125,7 +99,48 @@ namespace MComponents
             }
         }
 
-        private static Cell CreateTextCell(string text)
+        private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop)
+        {
+            Cell cell;
+            if (iprop.PropertyType == typeof(DateTime) || iprop.PropertyType == typeof(DateTime?))
+            {
+                var datetime = iprop.GetValue(rowData) as DateTime?;
+                cell = CreateDateCell(datetime);
+            }
+            else if (iprop.PropertyType == typeof(int) || iprop.PropertyType == typeof(int?))
+            {
+                var value = iprop.GetValue(rowData) as int?;
+                string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
+                cell = CreateNumberCell(strvalue);
+            }
+            else if (iprop.PropertyType == typeof(long) || iprop.PropertyType == typeof(long?))
+            {
+                var value = iprop.GetValue(rowData) as long?;
+                string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
+                cell = CreateNumberCell(strvalue);
+            }
+            else if (iprop.PropertyType == typeof(float) || iprop.PropertyType == typeof(float?))
+            {
+                var value = iprop.GetValue(rowData) as float?;
+                string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
+                cell = CreateNumberCell(strvalue);
+            }
+            else if (iprop.PropertyType == typeof(double) || iprop.PropertyType == typeof(double?))
+            {
+                var value = iprop.GetValue(rowData) as double?;
+                string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
+                cell = CreateNumberCell(strvalue);
+            }
+            else
+            {
+                string cellValue = pFormatter.FormatPropertyColumnValue(popcolumn, iprop, rowData);
+                cell = CreateTextCell(cellValue ?? string.Empty);
+            }
+
+            return cell;
+        }
+
+        public static Cell CreateTextCell(string text)
         {
             var cell = new Cell
             {
@@ -139,7 +154,7 @@ namespace MComponents
             return cell;
         }
 
-        private static Cell CreateDateCell(DateTime? pDate)
+        public static Cell CreateDateCell(DateTime? pDate)
         {
             var cell = new Cell
             {
@@ -151,7 +166,7 @@ namespace MComponents
             return cell;
         }
 
-        private static Cell CreateNumberCell(string pValue)
+        public static Cell CreateNumberCell(string pValue)
         {
             var cell = new Cell
             {

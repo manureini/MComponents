@@ -658,7 +658,7 @@ namespace MComponents.MGrid
                 }
             }
 
-            if (column is IMComplexColumn<TProperty> complex)
+            if (column is IMGridComplexEditableColumn<TProperty> complex)
             {
                 builder3.OpenComponent<MComplexPropertyField<TProperty>>(5);
 

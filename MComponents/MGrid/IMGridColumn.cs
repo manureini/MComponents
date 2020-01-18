@@ -13,5 +13,7 @@ namespace MComponents.MGrid
         bool EnableFilter { get; }
 
         bool ShouldRenderColumn { get; }
+
+        bool VisibleInExport { get; }
     }
 }

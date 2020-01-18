@@ -63,6 +63,8 @@ namespace MComponents.MGrid
 
         public virtual string Identifier => Property;
 
+        public bool VisibleInExport => true;
+
         public bool ShouldRenderColumn => true;
     }
 }
