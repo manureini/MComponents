@@ -82,13 +82,16 @@ var mcomponents = (function () {
         },
 
         getColumnsWith: function (element) {
-            var children = element.children[0].children[0].children;
 
             var ret = [];
 
-            for (var i = 0; i < children.length; i++) {
-                var tableChild = children[i];
-                ret.push(tableChild.offsetWidth);
+            if (element != null && element.children != null) {
+                var children = element.children[0].children[0].children;
+
+                for (var i = 0; i < children.length; i++) {
+                    var tableChild = children[i];
+                    ret.push(tableChild.offsetWidth);
+                }
             }
 
             return ret;

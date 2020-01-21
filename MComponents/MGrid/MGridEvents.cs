@@ -28,6 +28,10 @@ namespace MComponents.MGrid
         public EventCallback<MFormValueChangedArgs> OnFormValueChanged { get; set; }
 
 
+        [Parameter]
+        public EventCallback<BeginRowSelectArgs<T>> OnBeginRowSelect { get; set; }
+
+
         private IMGrid<T> mGrid;
 
         [CascadingParameter]
