@@ -717,15 +717,18 @@ namespace MComponents.MGrid
             if (id == EditRow)
                 return;
 
-            var args = new BeginRowSelectArgs<T>()
+            if (Events?.OnBeginRowSelect != null)
             {
-                Row = GetDataFromId(id)
-            };
+                var args = new BeginRowSelectArgs<T>()
+                {
+                    Row = GetDataFromId(id)
+                };
 
-            await Events.OnBeginRowSelect.InvokeAsync(args);
+                await Events.OnBeginRowSelect.InvokeAsync(args);
 
-            if (args.Cancelled)
-                return;
+                if (args.Cancelled)
+                    return;
+            }
 
             if (id == Selected)
             {
@@ -745,7 +748,7 @@ namespace MComponents.MGrid
             {
                 await StopEditing(true, true);
             }
-                      
+
             Selected = id;
             StateHasChanged();
         }
