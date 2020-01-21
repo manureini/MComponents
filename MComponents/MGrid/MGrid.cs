@@ -342,11 +342,11 @@ namespace MComponents.MGrid
 
                        foreach (var entry in DataCache)
                        {
-                           AddContentRow(builder2, entry);
+                           AddContentRow(builder2, entry, MGridAction.Edit);
                        }
 
                        if (NewValue != null)
-                           AddContentRow(builder2, NewValue);
+                           AddContentRow(builder2, NewValue, MGridAction.Add);
 
                        builder2.AddMarkupContent(24, "\r\n");
                        builder2.CloseElement(); //tbody
@@ -461,14 +461,19 @@ namespace MComponents.MGrid
             pBuilder.AddAttribute(20, "class", "mgrid-row mgrid-edit-row");
 
             pBuilder.OpenComponent<MForm<T>>(53);
-            pBuilder.AddAttribute(54, "Model", mFilterModel);
-            pBuilder.AddAttribute(55, "IsInTableRow", true);
-            pBuilder.AddAttribute(55, "EnableValidation", false);
+            pBuilder.AddAttribute(54, nameof(MForm<T>.Model), mFilterModel);
+            pBuilder.AddAttribute(55, nameof(MForm<T>.IsInTableRow), true);
+            pBuilder.AddAttribute(55, nameof(MForm<T>.EnableValidation), false);
             pBuilder.AddAttribute(55, "data-is-filterrow", true);
 
-            pBuilder.AddAttribute(23, "OnValueChanged", EventCallback.Factory.Create<MFormValueChangedArgs>(this, OnFilterValueChanged));
+            pBuilder.AddAttribute(58, nameof(MForm<T>.MFormGridContext), new MFormGridContext()
+            {
+                Action = MGridAction.FilterRow
+            });
 
-            pBuilder.AddAttribute(56, "Fields", (RenderFragment)((builder3) =>
+            pBuilder.AddAttribute(23, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs>(this, OnFilterValueChanged));
+
+            pBuilder.AddAttribute(56, nameof(MForm<T>.Fields), (RenderFragment)((builder3) =>
             {
                 bool columnFixedSize = !(mHasActionColumn && !EnableEditing && !EnableDeleting);
 
@@ -483,11 +488,10 @@ namespace MComponents.MGrid
             pBuilder.CloseComponent();
 
             pBuilder.CloseElement(); //tr;
-
         }
 
 
-        private void AddContentRow(RenderTreeBuilder builder2, T entry)
+        private void AddContentRow(RenderTreeBuilder builder2, T entry, MGridAction pAction)
         {
             Guid entryId = GetId(entry);
 
@@ -544,14 +548,14 @@ namespace MComponents.MGrid
                 {
 
                     builder2.OpenComponent<MForm<T>>(53);
-                    builder2.AddAttribute(54, "Model", EditValue);
-                    builder2.AddAttribute(55, "IsInTableRow", true);
-                    builder2.AddAttribute(23, "OnValidSubmit", EventCallback.Factory.Create<MFormSubmitArgs>(this, async (a) =>
+                    builder2.AddAttribute(54, nameof(MForm<T>.Model), EditValue);
+                    builder2.AddAttribute(55, nameof(MForm<T>.IsInTableRow), true);
+                    builder2.AddAttribute(23, nameof(MForm<T>.OnValidSubmit), EventCallback.Factory.Create<MFormSubmitArgs>(this, async (a) =>
                     {
                         await OnFormSubmit(a);
                     }));
-                    builder2.AddAttribute(23, "OnValueChanged", EventCallback.Factory.Create<MFormValueChangedArgs>(this, OnEditValueChanged));
-                    builder2.AddAttribute(56, "Fields", (RenderFragment)((builder3) =>
+                    builder2.AddAttribute(23, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs>(this, OnEditValueChanged));
+                    builder2.AddAttribute(56, nameof(MForm<T>.Fields), (RenderFragment)((builder3) =>
                     {
                         for (int i = 0; i < ColumnsList.Count; i++)
                         {
@@ -561,6 +565,11 @@ namespace MComponents.MGrid
                             AddMFormField(builder3, column, false, GetColumnWidth(i));
                         }
                     }));
+
+                    builder2.AddAttribute(58, nameof(MForm<T>.MFormGridContext), new MFormGridContext()
+                    {
+                        Action = pAction
+                    });
 
                     builder2.AddComponentReferenceCapture(12, (__value) =>
                     {

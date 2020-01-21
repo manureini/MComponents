@@ -13,5 +13,7 @@ namespace MComponents.MForm
         public Expression<Func<T>> ValueExpression { get; set; }
 
         public Guid InputId { get; set; }
+
+        public MFormGridContext MFormGridContext { get; set; }
     }
 }

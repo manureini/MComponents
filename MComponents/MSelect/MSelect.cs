@@ -76,6 +76,7 @@ namespace MComponents.MSelect
 
         protected List<MSelectOption> mAdditionalOptions = new List<MSelectOption>();
 
+        protected Type mtType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
         protected bool MultipleSelectMode => ValuesExpression != null;
 
@@ -103,12 +104,10 @@ namespace MComponents.MSelect
         {
             if (Values != null && Value != null)
                 throw new ArgumentException($"Specify {nameof(Values)} or {nameof(Value)} through bind-value");
-
-            Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-            if (Options == null && tType.IsEnum)
+            
+            if (Options == null && mtType.IsEnum)
             {
-                Options = Enum.GetValues(tType).Cast<T>();
+                Options = Enum.GetValues(mtType).Cast<T>();
             }
 
             if (Property != null)
@@ -465,7 +464,7 @@ namespace MComponents.MSelect
                 return mPropertyInfo.GetValue(value)?.ToString();
             }
 
-            if (typeof(T).IsEnum)
+            if (mtType.IsEnum)
             {
                 var evalue = value as Enum;
                 return evalue.ToName();

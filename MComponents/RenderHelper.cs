@@ -56,7 +56,6 @@ namespace MComponents
             T value = (T)(pPropertyInfo.GetValue(pModel) ?? default(T));
             Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
-
             bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute(typeof(ReadOnlyAttribute)) != null;
 
             if (mNumberTypes.Contains(tType))
@@ -165,7 +164,8 @@ namespace MComponents
             }
         }
 
-        public static void AppendComplexType<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, MComplexPropertyField<T> pComplexField)
+        public static void AppendComplexType<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, MComplexPropertyField<T> pComplexField, 
+            MFormGridContext pGridContext)
         {
             if (pComplexField.Template == null)
             {
@@ -180,6 +180,7 @@ namespace MComponents
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             context.InputId = pId;
             context.Value = value;
+            context.MFormGridContext = pGridContext;
 
             context.ValueChanged = RuntimeHelpers.CreateInferredEventCallback<T>(pParent, __value =>
             {

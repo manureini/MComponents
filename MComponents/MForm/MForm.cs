@@ -28,11 +28,14 @@ namespace MComponents
         public bool IsInTableRow { get; set; }
 
         [Parameter]
+        public MFormGridContext MFormGridContext { get; set; }
+
+
+        [Parameter]
         public bool EnableValidation { get; set; } = true;
 
         [Parameter]
         public RenderFragment Fields { get; set; }
-
 
         [Parameter]
         public EventCallback<MFormSubmitArgs> OnValidSubmit { get; set; }
@@ -319,9 +322,7 @@ namespace MComponents
                 if (field is IMComplexField)
                 {
                     var appendMethod = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendComplexType)).MakeGenericMethod(pf.PropertyType);
-                    appendMethod.Invoke(null, new[] { builder2, propertyInfo, Model, inpId, this, field });
-
-                    //    public static void AppendComplexType<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, MComplexField<T> pComplexField, IMForm pParent)
+                    appendMethod.Invoke(null, new[] { builder2, propertyInfo, Model, inpId, this, field, MFormGridContext });
                     return;
                 }
 
@@ -329,8 +330,6 @@ namespace MComponents
 
                 var method = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
                 method.Invoke(null, new[] { builder2, propertyInfo, Model, inpId, this, isInFilterRow });
-
-                //   RenderHelper.AppendInput<string>(builder2, property, Model, inpId, this);
             }
         }
 

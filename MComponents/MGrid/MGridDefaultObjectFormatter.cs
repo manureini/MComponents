@@ -43,12 +43,14 @@ namespace MComponents.MGrid
                 return String.Format(FormatProvider, pColumn.StringFormat, value);
             }
 
-            if (pPropertyInfo.PropertyType == typeof(bool))
+            Type pType = Nullable.GetUnderlyingType(pPropertyInfo.PropertyType) ?? pPropertyInfo.PropertyType;
+
+            if (pType == typeof(bool))
             {
                 return (bool)value == true ? "ja" : "nein";
             }
 
-            if (pPropertyInfo.PropertyType.IsEnum)
+            if (pType.IsEnum)
             {
                 return ((Enum)value).ToName();
             }

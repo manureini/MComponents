@@ -8,8 +8,8 @@ namespace MComponents.MGrid
 
         Type PropertyType { get; set; }
 
-        Attribute[] Attributes { get; }
+        Attribute[] Attributes { get; set; }
 
-        string StringFormat { get; }
+        string StringFormat { get; set; }
     }
 }
