@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace MComponents.MGrid
 {
-    public class MGridComplexPropertyColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridPropertyColumn, IMGridComplexEditableColumn<TProperty>, IMGridColumnGenerator<T>
+    public class MGridComplexPropertyColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridPropertyColumn, IMGridSortableColumn, IMGridCustomComparer<TProperty>, IMGridComplexEditableColumn<TProperty>, IMGridColumnGenerator<T>
     {
         [Parameter]
         public RenderFragment<MComplexPropertyFieldContext<TProperty>> FormTemplate { get; set; }
@@ -77,6 +77,17 @@ namespace MComponents.MGrid
         public bool ShouldRenderColumn => true;
 
         public bool VisibleInExport { get; set; } = true;
+
+        [Parameter]
+        public MSortDirection SortDirection { get; set; } = MSortDirection.None;
+
+        [Parameter]
+        public int SortIndex { get; set; }
+            
+        public bool EnableSort => Comparer != null;
+
+        [Parameter]
+        public IComparer<TProperty> Comparer { get; set; }
 
         public RenderFragment GenerateContent(T pModel)
         {

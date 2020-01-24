@@ -134,12 +134,20 @@ namespace MComponents.MGrid
 
                 mPropertyInfoCache.Add(propc, iprop);
 
+                object comparer = null;
+
+                if (pColumn is IMGridCustomComparer)
+                {
+                    comparer = ((dynamic)pColumn).Comparer;
+                }
+
                 if (pColumn is IMGridSortableColumn sc && sc.SortDirection != MSortDirection.None)
                     SortInstructions.Add(new SortInstruction()
                     {
                         Direction = sc.SortDirection,
                         PropertyInfo = iprop,
-                        Index = sc.SortIndex
+                        Index = sc.SortIndex,
+                        Comparer = comparer
                     });
             }
 
@@ -1024,11 +1032,19 @@ namespace MComponents.MGrid
 
                 var propInfo = mPropertyInfoCache[propInfoColumn];
 
+                object comparer = null;
+
+                if (pColumn is IMGridCustomComparer)
+                {
+                    comparer = ((dynamic)pColumn).Comparer;
+                }
+
                 SortInstructions.Add(new SortInstruction()
                 {
                     Direction = MSortDirection.Ascending,
                     PropertyInfo = propInfo,
-                    Index = SortInstructions.Count
+                    Index = SortInstructions.Count,
+                    Comparer = comparer
                 });
             }
             else if (instr.Direction == MSortDirection.Ascending)
