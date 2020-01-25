@@ -479,7 +479,7 @@ namespace MComponents.MGrid
                 Action = MGridAction.FilterRow
             });
 
-            pBuilder.AddAttribute(23, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs>(this, OnFilterValueChanged));
+            pBuilder.AddAttribute(23, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<T>>(this, OnFilterValueChanged));
 
             pBuilder.AddAttribute(56, nameof(MForm<T>.Fields), (RenderFragment)((builder3) =>
             {
@@ -562,7 +562,7 @@ namespace MComponents.MGrid
                     {
                         await OnFormSubmit(a);
                     }));
-                    builder2.AddAttribute(23, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs>(this, OnEditValueChanged));
+                    builder2.AddAttribute(23, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<T>>(this, OnEditValueChanged));
                     builder2.AddAttribute(56, nameof(MForm<T>.Fields), (RenderFragment)((builder3) =>
                     {
                         for (int i = 0; i < ColumnsList.Count; i++)
@@ -675,9 +675,9 @@ namespace MComponents.MGrid
                 }
             }
 
-            if (column is IMGridComplexEditableColumn<TProperty> complex)
+            if (column is IMGridComplexEditableColumn<T, TProperty> complex)
             {
-                builder3.OpenComponent<MComplexPropertyField<TProperty>>(5);
+                builder3.OpenComponent<MComplexPropertyField<T, TProperty>>(5);
 
                 builder3.AddAttribute(6, "Property", pc.Property);
                 builder3.AddAttribute(7, "PropertyType", typeof(TProperty));
@@ -1060,7 +1060,7 @@ namespace MComponents.MGrid
             StateHasChanged();
         }
 
-        protected async void OnEditValueChanged(MFormValueChangedArgs pArgs)
+        protected async void OnEditValueChanged(MFormValueChangedArgs<T> pArgs)
         {
             if (Events?.OnFormValueChanged != null)
             {
@@ -1068,7 +1068,7 @@ namespace MComponents.MGrid
             }
         }
 
-        protected void OnFilterValueChanged(MFormValueChangedArgs pArgs)
+        protected void OnFilterValueChanged(MFormValueChangedArgs<T> pArgs)
         {
             var iprop = mPropertyInfoCache.First(v => v.Key.Property == pArgs.Property).Value;
 

@@ -164,7 +164,7 @@ namespace MComponents
             }
         }
 
-        public static void AppendComplexType<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, MComplexPropertyField<T> pComplexField, 
+        public static void AppendComplexType<T, TProperty>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, T pModel, Guid pId, IMForm pParent, MComplexPropertyField<T, TProperty> pComplexField,
             MFormGridContext pGridContext)
         {
             if (pComplexField.Template == null)
@@ -173,22 +173,23 @@ namespace MComponents
                 return;
             }
 
-            MComplexPropertyFieldContext<T> context = new MComplexPropertyFieldContext<T>();
+            MComplexPropertyFieldContext<T, TProperty> context = new MComplexPropertyFieldContext<T, TProperty>();
 
-            T value = (T)pPropertyInfo.GetValue(pModel);
+            TProperty value = (TProperty)pPropertyInfo.GetValue(pModel);
 
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+            context.Row = pModel;
             context.InputId = pId;
             context.Value = value;
             context.MFormGridContext = pGridContext;
 
-            context.ValueChanged = RuntimeHelpers.CreateInferredEventCallback<T>(pParent, __value =>
+            context.ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(pParent, __value =>
             {
                 pPropertyInfo.SetValue(pModel, __value);
                 pParent.OnInputValueChanged(pPropertyInfo.Name, __value);
             }, value);
 
-            context.ValueExpression = GetValueExpression<T>(pPropertyInfo, pModel);
+            context.ValueExpression = GetValueExpression<TProperty>(pPropertyInfo, pModel);
 
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 

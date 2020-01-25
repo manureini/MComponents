@@ -25,7 +25,7 @@ namespace MComponents.MGrid
 
 
         [Parameter]
-        public EventCallback<MFormValueChangedArgs> OnFormValueChanged { get; set; }
+        public EventCallback<MFormValueChangedArgs<T>> OnFormValueChanged { get; set; }
 
 
         [Parameter]

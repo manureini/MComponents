@@ -22,7 +22,7 @@ namespace MComponents
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         [Parameter]
-        public object Model { get; set; }
+        public T Model { get; set; }
 
         [Parameter]
         public bool IsInTableRow { get; set; }
@@ -41,7 +41,7 @@ namespace MComponents
         public EventCallback<MFormSubmitArgs> OnValidSubmit { get; set; }
 
         [Parameter]
-        public EventCallback<MFormValueChangedArgs> OnValueChanged { get; set; }
+        public EventCallback<MFormValueChangedArgs<T>> OnValueChanged { get; set; }
 
 
         protected HashSet<FieldIdentifier> ChangedValues { get; set; } = new HashSet<FieldIdentifier>();
@@ -321,15 +321,15 @@ namespace MComponents
             {
                 if (field is IMComplexField)
                 {
-                    var appendMethod = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendComplexType)).MakeGenericMethod(pf.PropertyType);
-                    appendMethod.Invoke(null, new[] { builder2, propertyInfo, Model, inpId, this, field, MFormGridContext });
+                    var appendMethod = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendComplexType)).MakeGenericMethod(typeof(T), pf.PropertyType);
+                    appendMethod.Invoke(null, new object[] { builder2, propertyInfo, Model, inpId, this, field, MFormGridContext });
                     return;
                 }
 
                 bool isInFilterRow = AdditionalAttributes != null && AdditionalAttributes.ContainsKey("data-is-filterrow");
 
                 var method = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
-                method.Invoke(null, new[] { builder2, propertyInfo, Model, inpId, this, isInFilterRow });
+                method.Invoke(null, new object[] { builder2, propertyInfo, Model, inpId, this, isInFilterRow });
             }
         }
 
@@ -410,7 +410,7 @@ namespace MComponents
         {
             if (OnValueChanged.HasDelegate)
             {
-                var task = OnValueChanged.InvokeAsync(new MFormValueChangedArgs(pProperty, pNewValue, Model));
+                var task = OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pProperty, pNewValue, Model));
                 task.Wait();
             }
         }

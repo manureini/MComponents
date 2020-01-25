@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace MComponents.MGrid
 {
-    public class MGridComplexPropertyColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridPropertyColumn, IMGridSortableColumn, IMGridCustomComparer<TProperty>, IMGridComplexEditableColumn<TProperty>, IMGridColumnGenerator<T>
+    public class MGridComplexPropertyColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridPropertyColumn, IMGridSortableColumn, IMGridCustomComparer<TProperty>, IMGridComplexEditableColumn<T, TProperty>, IMGridColumnGenerator<T>
     {
         [Parameter]
-        public RenderFragment<MComplexPropertyFieldContext<TProperty>> FormTemplate { get; set; }
+        public RenderFragment<MComplexPropertyFieldContext<T, TProperty>> FormTemplate { get; set; }
 
         [Parameter]
         public RenderFragment<T> CellTemplate { get; set; }

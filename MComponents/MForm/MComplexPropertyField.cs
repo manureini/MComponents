@@ -3,20 +3,20 @@ using System;
 
 namespace MComponents.MForm
 {
-    public class MComplexPropertyField<T> : MField, IMComplexField
+    public class MComplexPropertyField<T, TProperty> : MField, IMComplexField
     {
         [Parameter]
-        public RenderFragment<MComplexPropertyFieldContext<T>> Template { get; set; }
+        public RenderFragment<MComplexPropertyFieldContext<T, TProperty>> Template { get; set; }
 
         public override Type PropertyType
         {
             get
             {
-                return typeof(T);
+                return typeof(TProperty);
             }
             set
             {
-               // throw new InvalidOperationException("Can't set type for Complex Field");
+                // throw new InvalidOperationException("Can't set type for Complex Field");
             }
         }
     }

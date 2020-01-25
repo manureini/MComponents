@@ -9,7 +9,7 @@ namespace MComponents.MGrid
     public class MGridComplexColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridColumnGenerator<T>, IMGridComplexExport<T>
     {
         [Parameter]
-        public RenderFragment<MComplexPropertyFieldContext<TProperty>> FormTemplate { get; set; }
+        public RenderFragment<MComplexPropertyFieldContext<T, TProperty>> FormTemplate { get; set; }
 
         [Parameter]
         public RenderFragment<T> CellTemplate { get; set; }

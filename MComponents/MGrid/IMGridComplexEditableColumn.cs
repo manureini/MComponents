@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace MComponents.MGrid
 {
-    public interface IMGridComplexEditableColumn<TProperty>
+    public interface IMGridComplexEditableColumn<T, TProperty>
     {
-        RenderFragment<MComplexPropertyFieldContext<TProperty>> FormTemplate { get; }
+        RenderFragment<MComplexPropertyFieldContext<T, TProperty>> FormTemplate { get; }
     }
 }
