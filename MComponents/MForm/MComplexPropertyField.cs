@@ -6,7 +6,7 @@ namespace MComponents.MForm
     public class MComplexPropertyField<T, TProperty> : MField, IMComplexField
     {
         [Parameter]
-        public RenderFragment<MComplexPropertyFieldContext<T, TProperty>> Template { get; set; }
+        public RenderFragment<MComplexPropertyFieldContext<TProperty>> Template { get; set; }
 
         public override Type PropertyType
         {

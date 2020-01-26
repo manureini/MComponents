@@ -173,7 +173,7 @@ namespace MComponents
                 return;
             }
 
-            MComplexPropertyFieldContext<T, TProperty> context = new MComplexPropertyFieldContext<T, TProperty>();
+            MComplexPropertyFieldContext<TProperty> context = new MComplexPropertyFieldContext<TProperty>();
 
             TProperty value = (TProperty)pPropertyInfo.GetValue(pModel);
 

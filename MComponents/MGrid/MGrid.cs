@@ -468,20 +468,20 @@ namespace MComponents.MGrid
             pBuilder.OpenElement(19, "tr");
             pBuilder.AddAttribute(20, "class", "mgrid-row mgrid-edit-row");
 
-            pBuilder.OpenComponent<MForm<T>>(53);
-            pBuilder.AddAttribute(54, nameof(MForm<T>.Model), mFilterModel);
-            pBuilder.AddAttribute(55, nameof(MForm<T>.IsInTableRow), true);
-            pBuilder.AddAttribute(55, nameof(MForm<T>.EnableValidation), false);
+            pBuilder.OpenComponent<MForm<ExpandoObject>>(53);
+            pBuilder.AddAttribute(54, nameof(MForm<ExpandoObject>.Model), mFilterModel);
+            pBuilder.AddAttribute(55, nameof(MForm<ExpandoObject>.IsInTableRow), true);
+            pBuilder.AddAttribute(55, nameof(MForm<ExpandoObject>.EnableValidation), false);
             pBuilder.AddAttribute(55, "data-is-filterrow", true);
 
-            pBuilder.AddAttribute(58, nameof(MForm<T>.MFormGridContext), new MFormGridContext()
+            pBuilder.AddAttribute(58, nameof(MForm<ExpandoObject>.MFormGridContext), new MFormGridContext()
             {
                 Action = MGridAction.FilterRow
             });
 
-            pBuilder.AddAttribute(23, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<T>>(this, OnFilterValueChanged));
+            pBuilder.AddAttribute(23, nameof(MForm<ExpandoObject>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<ExpandoObject>>(this, OnFilterValueChanged));
 
-            pBuilder.AddAttribute(56, nameof(MForm<T>.Fields), (RenderFragment)((builder3) =>
+            pBuilder.AddAttribute(56, nameof(MForm<ExpandoObject>.Fields), (RenderFragment)((builder3) =>
             {
                 bool columnFixedSize = !(mHasActionColumn && !EnableEditing && !EnableDeleting);
 
@@ -675,15 +675,22 @@ namespace MComponents.MGrid
                 }
             }
 
-            if (column is IMGridComplexEditableColumn<T, TProperty> complex)
+            if (column is IMGridComplexEditableColumn<TProperty> complex)
             {
-                builder3.OpenComponent<MComplexPropertyField<T, TProperty>>(5);
+                if (pIsInFilterRow)
+                {
+                    builder3.OpenComponent<MComplexPropertyField<ExpandoObject, TProperty>>(5);
+                }
+                else
+                {
+                    builder3.OpenComponent<MComplexPropertyField<T, TProperty>>(5);
+                }
 
                 builder3.AddAttribute(6, "Property", pc.Property);
                 builder3.AddAttribute(7, "PropertyType", typeof(TProperty));
                 builder3.AddAttribute(8, "Attributes", attributes.ToArray());
-
-                if (!pIsInFilterRow || (pIsInFilterRow && column.EnableFilter))
+ 
+                if (complex.FormTemplate != null && !pIsInFilterRow || (pIsInFilterRow && column.EnableFilter))
                     builder3.AddAttribute(23, "Template", complex.FormTemplate);
 
                 if (pSize != null)
@@ -1068,7 +1075,7 @@ namespace MComponents.MGrid
             }
         }
 
-        protected void OnFilterValueChanged(MFormValueChangedArgs<T> pArgs)
+        protected void OnFilterValueChanged(MFormValueChangedArgs<ExpandoObject> pArgs)
         {
             var iprop = mPropertyInfoCache.First(v => v.Key.Property == pArgs.Property).Value;
 

@@ -4,9 +4,9 @@ using System.Linq.Expressions;
 
 namespace MComponents.MForm
 {
-    public class MComplexPropertyFieldContext<T, TProperty>
+    public class MComplexPropertyFieldContext<TProperty>
     {
-        public T Row { get; set; }
+        public dynamic Row { get; set; }
 
         public TProperty Value { get; set; }
 
