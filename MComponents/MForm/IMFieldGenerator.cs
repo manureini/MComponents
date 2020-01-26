@@ -2,8 +2,8 @@
 
 namespace MComponents.MForm
 {
-    public interface IMFieldGenerator<T> : IMField
+    public interface IMFieldGenerator : IMField
     {
-        RenderFragment<MFieldGeneratorContext<T>> Template { get; }
+        RenderFragment<MFieldGeneratorContext> Template { get; }
     }
 }

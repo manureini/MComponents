@@ -296,14 +296,15 @@ namespace MComponents
                         builder2.CloseElement(); // </div>
                     }
                 }
-                else if (field is IMFieldGenerator<T> fieldGenerator)
+                else if (field is IMFieldGenerator fieldGenerator)
                 {
-                    MFieldGeneratorContext<T> context = new MFieldGeneratorContext<T>()
+                    MFieldGeneratorContext context = new MFieldGeneratorContext()
                     {
                         Form = this
                     };
 
                     builder2.OpenElement(16, "td");
+
                     builder2.AddContent(42, fieldGenerator.Template?.Invoke(context));
                     builder2.CloseElement();
                 }

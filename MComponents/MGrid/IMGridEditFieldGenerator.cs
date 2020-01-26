@@ -5,6 +5,6 @@ namespace MComponents.MGrid
 {
     public interface IMGridEditFieldGenerator<T>
     {
-        RenderFragment<MFieldGeneratorContext<T>> Template(int? pSize);
+        RenderFragment<MFieldGeneratorContext> Template(int? pSize);
     }
 }

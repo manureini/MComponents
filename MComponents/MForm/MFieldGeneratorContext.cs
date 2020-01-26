@@ -1,7 +1,7 @@
 ﻿namespace MComponents.MForm
 {
-    public class MFieldGeneratorContext<T>
+    public class MFieldGeneratorContext
     {
-        public MForm<T> Form { get; internal set; }
+        public IMForm Form { get; internal set; }
     }
 }

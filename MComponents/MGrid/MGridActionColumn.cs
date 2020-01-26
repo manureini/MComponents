@@ -66,7 +66,7 @@ namespace MComponents.MGrid
             Grid.InvokeStateHasChanged();
         }
 
-        public RenderFragment<MFieldGeneratorContext<T>> Template(int? pSize)
+        public RenderFragment<MFieldGeneratorContext> Template(int? pSize)
         {
             return (templContext) => (builder) =>
             {

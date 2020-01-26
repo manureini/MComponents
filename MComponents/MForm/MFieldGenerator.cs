@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Components;
 
 namespace MComponents.MForm
 {
-    public class MFieldGenerator<T> : ComponentBase, IMFieldGenerator<T>
+    public class MFieldGenerator<T> : ComponentBase, IMFieldGenerator
     {
         [Parameter]
         public Attribute[] Attributes { get; set; }
 
         [Parameter]
-        public RenderFragment<MFieldGeneratorContext<T>> Template { get; set; }
+        public RenderFragment<MFieldGeneratorContext> Template { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
