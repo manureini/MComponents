@@ -56,6 +56,9 @@ namespace MComponents.MGrid
         [Parameter]
         public MGridInitialState InitialState { get; set; }
 
+        [Parameter]
+        public string HtmlTableClass { get; set; }
+
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
@@ -254,7 +257,15 @@ namespace MComponents.MGrid
 
                        builder2.OpenElement(9, "table");
 
-                       builder2.AddAttribute(10, "class", "table table-striped table-bordered table-hover table-checkable dataTable no-footer dtr-inline" + (EnableEditing ? " clickable" : string.Empty));
+                       
+                       if (HtmlTableClass != null)
+                       {
+                           builder2.AddAttribute(10, "class", HtmlTableClass + (EnableEditing ? " clickable" : string.Empty));
+                       }
+                       else
+                       {
+                           builder2.AddAttribute(10, "class", "table table-striped table-bordered table-hover table-checkable dataTable no-footer dtr-inline" + (EnableEditing ? " clickable" : string.Empty));
+                       }
 
                        string cssClass = "margin: 15px 0px !important;";
 
@@ -689,7 +700,7 @@ namespace MComponents.MGrid
                 builder3.AddAttribute(6, "Property", pc.Property);
                 builder3.AddAttribute(7, "PropertyType", typeof(TProperty));
                 builder3.AddAttribute(8, "Attributes", attributes.ToArray());
- 
+
                 if (complex.FormTemplate != null && !pIsInFilterRow || (pIsInFilterRow && column.EnableFilter))
                     builder3.AddAttribute(23, "Template", complex.FormTemplate);
 
