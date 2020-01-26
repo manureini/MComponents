@@ -15,12 +15,13 @@ namespace MComponents
             .First();
 
         private static readonly MethodInfo StringContains = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+        private static readonly MethodInfo StringToLower = typeof(string).GetMethod("ToLowerInvariant");
 
         private static IQueryable<TSource> PerformOperation(IQueryable<TSource> source, FilterInstruction pInstruction, MethodInfo pMethodInfo)
-        {        
+        {
             var param = Expression.Parameter(typeof(TSource), "p");
 
-            MemberExpression propertyExpr = pInstruction.PropertyInfo.GetMemberExpression(param);
+            Expression propertyExpr = pInstruction.PropertyInfo.GetMemberExpression(param);
 
             Expression exprEqual = GetCompareExpression(pInstruction, propertyExpr);
 
@@ -30,12 +31,16 @@ namespace MComponents
             var ret = method.Invoke(null, new object[] { source, lambda });
             return (IQueryable<TSource>)ret;
         }
-                
-        private static Expression GetCompareExpression(FilterInstruction pInstruction, MemberExpression property)
+
+        private static Expression GetCompareExpression(FilterInstruction pInstruction, Expression property)
         {
             if (pInstruction.PropertyInfo.PropertyType == typeof(string))
             {
-                var value = Expression.Constant(pInstruction.Value);
+                var value = Expression.Constant(((string)pInstruction.Value).ToLowerInvariant());
+
+                property = Expression.Call(property, StringToLower);
+                Expression.Call(property, StringContains, value);
+
                 return Expression.Call(property, StringContains, value);
             }
 
