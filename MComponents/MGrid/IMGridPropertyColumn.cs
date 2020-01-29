@@ -2,7 +2,7 @@
 
 namespace MComponents.MGrid
 {
-    public interface IMGridPropertyColumn
+    public interface IMGridPropertyColumn : IMGridColumn
     {
         string Property { get; set; }
 
