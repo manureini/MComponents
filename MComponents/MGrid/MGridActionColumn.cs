@@ -134,7 +134,7 @@ namespace MComponents.MGrid
                     builder.AddAttribute(2, "class", "btn btn-secondary btn-icon btn-sm");
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
-                        Grid.StartEditRow(pModel);
+                        Grid.StartEditRow(pModel, a);
                     }));
                     builder.AddEventStopPropagationAttribute(4, "onclick", true);
 
@@ -166,7 +166,7 @@ namespace MComponents.MGrid
                         mDeleteResetTimer.Stop();
                         mDeleteResetTimer.Start();
 
-                        Grid.StartDeleteRow(pModel);
+                        Grid.StartDeleteRow(pModel, a);
                     }));
                     builder.AddEventStopPropagationAttribute(4, "onclick", true);
 

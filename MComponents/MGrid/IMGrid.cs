@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components.Web;
+using System;
 using System.Threading.Tasks;
 
 namespace MComponents.MGrid
@@ -7,9 +8,9 @@ namespace MComponents.MGrid
     {
         void RegisterEvents(MGridEvents<T> pEvents);
 
-        Task StartEditRow(T pModel);
+        Task StartEditRow(T pValue, MouseEventArgs pMouseEventArgs);
 
-        Task StartDeleteRow(T value);
+        Task StartDeleteRow(T value, MouseEventArgs pMouseEventArgs);
 
         Task SavePendingChanges(bool pUserInteracted);
 
@@ -18,7 +19,7 @@ namespace MComponents.MGrid
         Guid GetId(T pModel);
         void Refresh();
         void InvokeStateHasChanged();
-
+ 
         bool EnableAdding { get; }
 
         bool EnableEditing { get; }

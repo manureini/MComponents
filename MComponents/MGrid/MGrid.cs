@@ -537,7 +537,7 @@ namespace MComponents.MGrid
 
             builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
             {
-                OnRowClick(entry);
+                OnRowClick(entry, a);
             }));
 
             builder2.AddEventStopPropagationAttribute(4, "onclick", true);
@@ -545,7 +545,7 @@ namespace MComponents.MGrid
 
             builder2.AddAttribute(21, "ondblclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (a) =>
             {
-                await StartEditRow(entry);
+                await StartEditRow(entry, a);
             }));
 
 
@@ -736,7 +736,7 @@ namespace MComponents.MGrid
         }
 
 
-        protected async void OnRowClick(T pValue)
+        protected async void OnRowClick(T pValue, MouseEventArgs pMouseArgs)
         {
             Guid id = GetId(pValue);
 
@@ -747,7 +747,8 @@ namespace MComponents.MGrid
             {
                 var args = new BeginRowSelectArgs<T>()
                 {
-                    Row = GetDataFromId(id)
+                    Row = GetDataFromId(id),
+                    MouseEventArgs = pMouseArgs
                 };
 
                 await Events.OnBeginRowSelect.InvokeAsync(args);
@@ -761,11 +762,11 @@ namespace MComponents.MGrid
                 if (EditRow != null && EditRow != Selected)
                 {
                     await StopEditing(true, true);
-                    await StartEdit(id, true);
+                    await StartEdit(id, true, pMouseArgs);
                 }
                 else if (EditRow == null)
                 {
-                    await StartEdit(id, true);
+                    await StartEdit(id, true, pMouseArgs);
                 }
                 return;
             }
@@ -797,17 +798,17 @@ namespace MComponents.MGrid
             StateHasChanged();
         }
 
-        public async Task StartEditRow(T pValue)
+        public async Task StartEditRow(T pValue, MouseEventArgs pMouseEventArgs)
         {
             Guid id = GetId(pValue);
 
             if (id == EditRow)
                 return;
 
-            await StartEdit(id, true);
+            await StartEdit(id, true, pMouseEventArgs);
         }
 
-        private async Task StartEdit(Guid? id, bool pUserInteracted)
+        private async Task StartEdit(Guid? id, bool pUserInteracted, MouseEventArgs pMouseEventArgs)
         {
             await StopEditing(true, pUserInteracted);
 
@@ -823,7 +824,8 @@ namespace MComponents.MGrid
             {
                 var args = new BeginEditArgs<T>()
                 {
-                    Row = GetDataFromId(toSelect)
+                    Row = GetDataFromId(toSelect),
+                    MouseEventArgs = pMouseEventArgs
                 };
 
                 await Events.OnBeginEdit.InvokeAsync(args);
@@ -878,7 +880,7 @@ namespace MComponents.MGrid
             await StartAdd(true);
         }
 
-        protected async void OnToolbarEdit()
+        protected async void OnToolbarEdit(MouseEventArgs pMouseEventArgs)
         {
             if (EditRow != null)
             {
@@ -887,10 +889,10 @@ namespace MComponents.MGrid
                 return;
             }
 
-            await StartEdit(null, true);
+            await StartEdit(null, true, pMouseEventArgs);
         }
 
-        protected async void OnToolbarRemove()
+        protected async void OnToolbarRemove(MouseEventArgs pMouseEventArgs)
         {
             await StopEditing(true, true);
 
@@ -899,7 +901,7 @@ namespace MComponents.MGrid
 
             T value = GetDataFromId(Selected);
 
-            await StartDeleteRow(value);
+            await StartDeleteRow(value, pMouseEventArgs);
         }
 
         protected async void OnToggleFilter()
@@ -918,7 +920,7 @@ namespace MComponents.MGrid
             StateHasChanged();
         }
 
-        public async Task StartDeleteRow(T value)
+        public async Task StartDeleteRow(T value, MouseEventArgs pMouseEventArgs)
         {
             if (!EnableDeleting)
                 return;
@@ -927,7 +929,8 @@ namespace MComponents.MGrid
             {
                 var args = new BeginDeleteArgs<T>()
                 {
-                    Row = value
+                    Row = value,
+                    MouseEventArgs = pMouseEventArgs
                 };
 
                 await Events.OnBeginDelete.InvokeAsync(args);
@@ -943,7 +946,8 @@ namespace MComponents.MGrid
             {
                 await Events.OnAfterDelete.InvokeAsync(new AfterDeleteArgs<T>()
                 {
-                    Row = value
+                    Row = value,
+                    MouseEventArgs = pMouseEventArgs
                 });
             }
 
