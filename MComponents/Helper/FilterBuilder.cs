@@ -36,7 +36,7 @@ namespace MComponents
         {
             if (pInstruction.PropertyInfo.PropertyType == typeof(string))
             {
-                var value = Expression.Constant(((string)pInstruction.Value).ToLowerInvariant());
+                var value = Expression.Constant(((string)pInstruction.Value).Trim().ToLowerInvariant());
 
                 property = Expression.Call(property, StringToLower);
                 Expression.Call(property, StringContains, value);
