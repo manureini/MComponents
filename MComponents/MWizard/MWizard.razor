@@ -44,10 +44,10 @@
             }
         </div>
 
-        <div class="m-wizard-steps">
+        <div class="m-wizard-step-container">
             @if (CurrentStep >= 0 && mSteps.Count > CurrentStep)
             {
-                <div class="m-wizard-step-content">
+                <div class="m-wizard-step">
                     @mSteps[CurrentStep].Content
                 </div>
             }
