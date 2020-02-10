@@ -96,7 +96,7 @@ namespace MComponents
                 builder.AddAttribute(2, "onsubmit", EventCallback.Factory.Create(this, NotifyContainer));
 
                 if (EnableValidation)
-                    builder.AddAttribute(11, "class", "validation-form");
+                    builder.AddAttribute(11, "class", "m-form-validation");
             }
 
 
@@ -215,7 +215,7 @@ namespace MComponents
             if (groupResult.Key != 0 && !IsInTableRow)
             {
                 builder2.OpenElement(10, "div");
-                builder2.AddAttribute(11, "class", "row");
+                builder2.AddAttribute(11, "class", "m-form-row");
             }
 
             foreach (var field in groupResult)
@@ -254,17 +254,17 @@ namespace MComponents
                     if (groupResult.Key == 0)
                     {
                         builder2.OpenElement(10, "div");
-                        builder2.AddAttribute(11, "class", "row");
+                        builder2.AddAttribute(11, "class", "m-form-row");
                     }
 
                     //  <div class="form-group">
                     builder2.OpenElement(10, "div");
 
-                    string cssClass = "form-group row col-";
+                    string cssClass = "m-form-row form-group col-"; //TODO we use bootstrap here - good idea or bad?
 
                     if (groupResult.Key == 0)
                     {
-                        cssClass += 12;
+                        cssClass += "12";
                     }
                     else
                     {
@@ -276,13 +276,13 @@ namespace MComponents
                     //  <label for="@inpId">@property.Name</label>
                     builder2.OpenElement(13, "label");
                     builder2.AddAttribute(14, "for", inpId);
-                    builder2.AddAttribute(14, "class", "col-sm-2 col-form-label");
+                    builder2.AddAttribute(14, "class", "col-sm-2 col-form-label"); //TODO we use bootstrap here - good idea or bad?
 
                     builder2.AddContent(15, propertyInfo.Name);
                     builder2.CloseElement();
 
                     builder2.OpenElement(16, "div");
-                    builder2.AddAttribute(17, "class", "col-sm-10");
+                    builder2.AddAttribute(17, "class", "col-sm-10");  //TODO we use bootstrap here - good idea or bad?
 
                     AddInput(builder2, field, propertyInfo, inpId);
 

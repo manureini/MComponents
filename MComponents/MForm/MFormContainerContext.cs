@@ -54,7 +54,7 @@ namespace MComponents
                     }
                 }
 
-                Notificator.InvokeNotification(true, "Saved");
+                Notificator.InvokeNotification(true, "Gespeichert");
             }
 
             return submitSuccessful;

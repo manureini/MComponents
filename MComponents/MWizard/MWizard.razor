@@ -8,74 +8,59 @@
 
     @Steps
 
-    <div class="kt-grid kt-wizard-v3 kt-wizard-v3--white" id="kt_wizard_v3" data-ktwizard-state="@GetCurrentState()">
-        <div class="kt-grid__item">
-            <!--begin: Form Wizard Nav -->
-            <div class="kt-wizard-v3__nav">
-                <div class="kt-wizard-v3__nav-items">
+    <div class="m-wizard m-wizard--@GetCurrentState()">
 
-                    @{
-                        int i = 0;
-                        int visible = 1;
-                        int visibleCount = mSteps.Count(s => s.IsVisible);
-                    }
-                    @foreach (var entry in mSteps)
-                    {
+        <div class="m-wizard-navigation">
 
-                        if (entry.IsVisible)
-                        {
-                            string state = "pending";
+            @{
+                int i = 0;
+                int visible = 1;
+                int visibleCount = mSteps.Count(s => s.IsVisible);
+            }
 
-                            if (i == CurrentStep)
-                                state = "current";
+            @foreach (var entry in mSteps)
+            {
+                if (entry.IsVisible)
+                {
+                    string state = "pending";
 
-                            int index = i; //deep copy for onclick lambda
+                    if (i == CurrentStep)
+                        state = "current";
 
-                            bool canJump = CanJumpTo(i);
+                    int index = i; //deep copy for onclick lambda
 
-                            <div class="kt-wizard-v3__nav-item" data-ktwizard-type="step" data-ktwizard-state="@state" style="flex: 0 0 calc(100%/@visibleCount); @(!FreezeCurrentStep && canJump ? "cursor: pointer;": "cursor: default;")" @onclick="() => OnJumpToClicked(index)">
-                                <div class="kt-wizard-v3__nav-body">
-                                    <div class="kt-wizard-v3__nav-label">
-                                        <span>@visible</span> @entry.Title
-                                    </div>
-                                    <div class="kt-wizard-v3__nav-bar"></div>
-                                </div>
-                            </div>
-                            visible++;
-                        }
+                    bool canJump = CanJumpTo(i);
 
-                        i++;
-                    }
+                    <div class="m-wizard-navigation-item m-wizard-navigation-item--@state" style="flex: 0 0 calc(100%/@visibleCount); @(!FreezeCurrentStep && canJump ? "cursor: pointer;": "cursor: default;")" @onclick="() => OnJumpToClicked(index)">
+                        <div class="m-wizard-navigation-item-title-contaier">
+                            <span>@visible</span> @entry.Title
+                        </div>
+                        <div class="m-wizard-navigation-item-bar"></div>
+                    </div>
+                    visible++;
+                }
 
-
-                </div>
-            </div>
-            <!--end: Form Wizard Nav -->
+                i++;
+            }
         </div>
 
-        <div class="kt-grid__item kt-grid__item--fluid kt-wizard-v3__wrapper">
+        <div class="m-wizard-steps">
+            @if (CurrentStep >= 0 && mSteps.Count > CurrentStep)
+            {
+                <div class="m-wizard-step-content">
+                    @mSteps[CurrentStep].Content
+                </div>
+            }
 
-            <div class="kt-form">
-
-                @if (CurrentStep >= 0 && mSteps.Count > CurrentStep)
-                {
-                    <div class="kt-wizard-v3__content" data-ktwizard-type="step-content" data-ktwizard-state="current">
-                        @mSteps[CurrentStep].Content
-                    </div>
-                }
-
-                @if (!FreezeCurrentStep)
-                {
-                    <div class="kt-form__actions">
-                        <MWizardPrevStep />
-                        <MWizardFinishStep />
-                        <MWizardNextStep />
-                    </div>
-                }
-
-            </div>
+            @if (!FreezeCurrentStep)
+            {
+                <div class="m-wizard-action-group">
+                    <MWizardPrevStep />
+                    <MWizardFinishStep />
+                    <MWizardNextStep />
+                </div>
+            }
         </div>
     </div>
 
 </CascadingValue>
- 

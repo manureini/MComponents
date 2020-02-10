@@ -82,7 +82,7 @@ namespace MComponents.MGrid
                 if (templContext.Form.AdditionalAttributes != null && templContext.Form.AdditionalAttributes.ContainsKey("data-is-filterrow"))
                 {
                     builder.OpenElement(1, "button");
-                    builder.AddAttribute(2, "class", "btn btn-secondary btn-icon btn-sm");
+                    builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
                     builder.AddAttribute(3, "style", "margin-top: 2px;");
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
@@ -99,7 +99,7 @@ namespace MComponents.MGrid
                 else
                 {
                     builder.OpenElement(1, "button");
-                    builder.AddAttribute(2, "class", "btn btn-secondary btn-icon btn-sm");
+                    builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
                     builder.AddAttribute(3, "style", "margin-top: 2px;");
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
@@ -108,7 +108,7 @@ namespace MComponents.MGrid
                     builder.AddEventStopPropagationAttribute(4, "onclick", true);
 
                     builder.OpenElement(1, "i");
-                    builder.AddAttribute(3, "class", "fas fa-save mgrid-action-icon");
+                    builder.AddAttribute(3, "class", "fas fa-save m-grid-action-icon");
                     builder.CloseElement(); //i
 
                     builder.CloseElement(); //button
@@ -131,7 +131,7 @@ namespace MComponents.MGrid
                 if (mGrid.EnableEditing)
                 {
                     builder.OpenElement(1, "button");
-                    builder.AddAttribute(2, "class", "btn btn-secondary btn-icon btn-sm");
+                    builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
                         Grid.StartEditRow(pModel, a);
@@ -149,7 +149,7 @@ namespace MComponents.MGrid
                 if (mGrid.EnableDeleting)
                 {
                     builder.OpenElement(1, "button");
-                    builder.AddAttribute(2, "class", "btn btn-secondary btn-icon btn-sm");
+                    builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
                     builder.AddAttribute(2, "style", "margin-left: 4px;");
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {

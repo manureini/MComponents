@@ -132,18 +132,20 @@ namespace MComponents
 
             pBuilder.AddAttribute(4, "ValueExpression", valueExpression);
 
-            string cssClass = "form-control";
+            string cssClass = "m-form-control";
 
             if (isReadOnly)
             {
-                if (typeof(T) == typeof(bool?) || tType.IsEnum)
+              /*  if (typeof(T) == typeof(bool?) || tType.IsEnum)
                 {
                     pBuilder.AddAttribute(33, "IsDisabled", true);
                 }
                 else
                 {
                     pBuilder.AddAttribute(33, "disabled", string.Empty);
-                }
+                }*/
+                pBuilder.AddAttribute(33, "disabled", string.Empty);
+                pBuilder.AddAttribute(33, "IsDisabled", true);
             }
 
             pBuilder.AddAttribute(10, "class", cssClass);
@@ -241,7 +243,7 @@ namespace MComponents
             pBuilder.AddAttribute(1, "id", pId);
             pBuilder.AddAttribute(2, "Value", value);
             pBuilder.AddAttribute(33, "disabled", string.Empty);
-            pBuilder.AddAttribute(33, "class", "form-control");
+            pBuilder.AddAttribute(33, "class", "m-form-control");
             pBuilder.CloseElement();
         }
     }

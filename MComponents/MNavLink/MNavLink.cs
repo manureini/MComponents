@@ -7,6 +7,7 @@ namespace MComponents.MNavLink
     {
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
+            /*
             builder.OpenElement(28, "li");
             builder.AddAttribute(29, "class", "kt-menu__item " + CssClass?.Replace("active", "kt-menu__item--active"));
             builder.AddAttribute(30, "aria-haspopup", "true");
@@ -19,6 +20,7 @@ namespace MComponents.MNavLink
             builder.CloseElement();
 
             builder.CloseElement();
+            */
         }
     }
 }

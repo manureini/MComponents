@@ -41,7 +41,7 @@ namespace MComponents.MAccordion
             }
 
             builder.OpenElement(0, "div");
-            builder.AddAttribute(1, "class", "accordion");
+            builder.AddAttribute(1, "class", "m-accordion");
 
 
             for (int i = 0; i < CardsList.Count; i++)
@@ -52,13 +52,13 @@ namespace MComponents.MAccordion
                 bool isVisible = mOpenIndexes.Contains(i);
 
                 builder.OpenElement(4, "div");
-                builder.AddAttribute(5, "class", "card");
+                builder.AddAttribute(5, "class", "m-accordion-card");
 
                 builder.OpenElement(7, "div");
-                builder.AddAttribute(8, "class", "card-header");
+                builder.AddAttribute(8, "class", "m-accordion-card-header");
 
                 builder.OpenElement(10, "div");
-                builder.AddAttribute(11, "class", "card-title collapsed");
+                builder.AddAttribute(11, "class", "m-accordion-card-title m-collapsed");
                 builder.AddAttribute(11, "style", "display: block;");
 
                 builder.AddAttribute(12, "data-toggle", "collapse");
@@ -85,15 +85,15 @@ namespace MComponents.MAccordion
                 builder.OpenElement(18, "div");
 
 
-                string cssClass = "collapse";
+                string cssClass = "m-collapse";
 
                 if (isVisible)
-                    cssClass += " show";
+                    cssClass += " m-show";
 
                 builder.AddAttribute(19, "class", cssClass);
 
                 builder.OpenElement(23, "div");
-                builder.AddAttribute(24, "class", "card-body");
+                builder.AddAttribute(24, "class", "m-accordion-card-body");
 
                 builder.OpenComponent<CascadingValue<object>>(4);
                 builder.AddAttribute(5, "Value", string.Empty);

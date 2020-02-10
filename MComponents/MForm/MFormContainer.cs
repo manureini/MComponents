@@ -39,9 +39,9 @@ namespace MComponents
 
             builder.OpenElement(19, "button");
             builder.AddAttribute(20, "type", "button");
-            builder.AddAttribute(20, "class", "btn btn-primary");
+            builder.AddAttribute(20, "class", "m-btn m-btn-primary");
             builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, Click));
-            builder.AddContent(22, "Save");
+            builder.AddContent(22, "Speichern");
             builder.CloseElement();
 
             builder.CloseRegion();
