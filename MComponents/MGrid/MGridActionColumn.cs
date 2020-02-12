@@ -174,7 +174,7 @@ namespace MComponents.MGrid
 
                     if (DeletingLocked)
                     {
-                        builder.AddAttribute(3, "class", "fas fa-trash-alt text-secondary mgrid-action-icon");
+                        builder.AddAttribute(3, "class", "fas fa-trash-alt mgrid-action-icon");
                     }
                     else
                     {

@@ -387,7 +387,7 @@ namespace MComponents.MGrid
                            {
                                builder3.AddMarkupContent(16, "\r\n\r\n    ");
                                builder3.OpenElement(17, "div");
-                               builder3.AddAttribute(18, "class", "m-pagination-content");
+                               builder3.AddAttribute(18, "class", "m-pagination-tools");
                                builder3.AddMarkupContent(19, "\r\n        ");
 
                                if (Pager.SelectablePageSizes != null)
