@@ -6,10 +6,6 @@ $gray: #ebedf2;
 $secondary: #595d6e;
 
 
-.m-grid-container {
-    width: 80vw;
-}
-
 html, body {
     font-size: 13px;
     font-weight: 300;
@@ -227,9 +223,9 @@ html button {
 
 /* Font Awesome ----------------------------------------------------------------------------- */
 
-/* Table ----------------------------------------------------------------------------- */
 
 
+/* START Table ----------------------------------------------------------------------------- */
 
 .m-table {
     width: 100%;
@@ -278,7 +274,6 @@ html button {
     }
 }
 
-
 .m-table-bordered {
     border-width: 1px;
     border-style: solid;
@@ -298,7 +293,7 @@ html button {
     &:not(.m-grid-filter-row) > td {
         border: 0;
     }
- 
+
     td {
         padding: 0;
     }
@@ -314,7 +309,6 @@ html button {
         padding: 0.75rem;
     }
 }
-
 
 .m-action-column-cell {
     display: flex;
@@ -332,20 +326,12 @@ html button {
     }
 }
 
-   
-
-/* Table ----------------------------------------------------------------------------- */
-
-
-
 //download button
 .m-btn.m-btn-icon i {
     padding: 0;
     margin: 0;
     line-height: 0;
 }
-
-
 
 .m-pagination-container {
     display: flex;
@@ -468,19 +454,14 @@ html button {
     }
 }
 
-
-
+/* END Table ----------------------------------------------------------------------------- */
 
 
 .m-form-control {
     display: block;
-    width: 99.9999%;
-    height: 99.9999%;
-    //   padding: 0.75rem;
-    //    font-weight: 400;
-    //    line-height: 1.5;
-    //    color: rgb(73, 80, 87);
-    background-color: rgb(255, 255, 255);
+    width: 100%;
+    height: 100%;
+    background-color: white;
     background-clip: padding-box;
     border-width: 1px;
     border-style: solid;
@@ -490,23 +471,12 @@ html button {
     transition-timing-function: ease-in-out, ease-in-out, ease-in-out;
     transition-delay: 0s, 0s, 0s;
     transition-property: border-color, box-shadow, -webkit-box-shadow;
-}
 
-
-.m-form-control:focus {
-    color: rgb(73, 80, 87);
-    background-color: rgb(255, 255, 255);
-    border-color: #9aabff;
-    outline-width: 0;
-    box-shadow: rgba(88, 103, 221, 0.25) 0 0 0 0.2rem;
-}
-
-.m-form-control::-webkit-input-placeholder {
-    color: rgb(116, 120, 141);
-    opacity: 1;
-}
-
-.m-form-control::placeholder {
-    color: rgb(116, 120, 141);
-    opacity: 1;
+    &:focus {
+        color: rgb(73, 80, 87);
+        background-color: white;
+        border-color: #9aabff;
+        outline-width: 0;
+        box-shadow: rgba(88, 103, 221, 0.25) 0 0 0 0.2rem;
+    }
 }
