@@ -269,11 +269,11 @@ namespace MComponents.MGrid
 
                        if (HtmlTableClass != null)
                        {
-                           builder2.AddAttribute(10, "class", HtmlTableClass + (EnableEditing ? " clickable" : string.Empty));
+                           builder2.AddAttribute(10, "class", HtmlTableClass + (EnableEditing ? " m-clickable" : string.Empty));
                        }
                        else
                        {
-                           builder2.AddAttribute(10, "class", "m-grid m-table m-table-striped m-table-bordered m-table-hover" + (EnableEditing ? " m-clickable" : string.Empty));
+                           builder2.AddAttribute(10, "class", "m-table m-table-striped m-table-bordered m-table-hover" + (EnableEditing ? " m-clickable" : string.Empty));
                        }
 
                        string cssClass = "margin: 15px 0px !important; table-layout: fixed;";

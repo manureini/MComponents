@@ -19,8 +19,6 @@ html, body {
     cursor: pointer;
 }
 
-
-
 /* Buttons ----------------------------------------------------------------------------- */
 
 .m-btn {
@@ -235,6 +233,16 @@ html button {
 
     &.m-table-striped tbody tr:nth-of-type(2n+1) {
         background-color: #f7f8fa;
+    }
+
+    &.m-table-sticky {
+        position: relative !important;
+
+        thead th {
+            background-color: white;
+            position: sticky;
+            top: 30px;
+        }
     }
 
     .m-grid-highlight {

@@ -19,7 +19,9 @@ else
            EnableEditing="true"
            EnableExport="true"
            EnableFilterRow="true"
-           EnableUserSorting="true">
+           EnableUserSorting="true"
+           HtmlTableClass="m-table m-table-striped m-table-bordered m-table-hover m-table-sticky"
+           >
         <MGridColumns>
             <MGridColumn Property="@nameof(WeatherForecast.Date)" StringFormat="{0:dd.MM.yyyy}" />
             <MGridColumn Property="@nameof(WeatherForecast.TemperatureC)" />
