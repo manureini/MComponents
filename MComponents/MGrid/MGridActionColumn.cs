@@ -91,7 +91,7 @@ namespace MComponents.MGrid
                     builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(1, "i");
-                    builder.AddAttribute(3, "class", "fas fa-eraser mgrid-action-icon");
+                    builder.AddAttribute(3, "class", "fas fa-eraser m-grid-action-icon");
                     builder.CloseElement(); //i
 
                     builder.CloseElement(); //button
@@ -139,7 +139,7 @@ namespace MComponents.MGrid
                     builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(1, "i");
-                    builder.AddAttribute(3, "class", "fas fa-edit mgrid-action-icon");
+                    builder.AddAttribute(3, "class", "fas fa-edit m-grid-action-icon");
 
                     builder.CloseElement(); //i
 
@@ -174,11 +174,11 @@ namespace MComponents.MGrid
 
                     if (DeletingLocked)
                     {
-                        builder.AddAttribute(3, "class", "fas fa-trash-alt mgrid-action-icon mgrid-action-icon--disabled");
+                        builder.AddAttribute(3, "class", "fas fa-trash-alt m-grid-action-icon m-grid-action-icon--disabled");
                     }
                     else
                     {
-                        builder.AddAttribute(3, "class", "fas fa-trash-alt text-danger mgrid-action-icon");
+                        builder.AddAttribute(3, "class", "fas fa-trash-alt text-danger m-grid-action-icon");
                     }
 
                     builder.CloseElement(); //i

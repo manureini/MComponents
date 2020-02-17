@@ -307,8 +307,6 @@ namespace MComponents.MGrid
                                var width = GetColumnWidth(i);
                                if (width != null)
                                    builder2.AddStyleWithAttribute(8, width);
-
-
                            }
 
 
@@ -488,7 +486,7 @@ namespace MComponents.MGrid
             }
 
             pBuilder.OpenElement(19, "tr");
-            pBuilder.AddAttribute(20, "class", "m-grid-row m-grid-filter-row");
+            pBuilder.AddAttribute(20, "class", "m-grid-row m-grid-edit-row m-grid-filter-row");
 
             pBuilder.OpenComponent<MForm<ExpandoObject>>(53);
             pBuilder.AddAttribute(54, nameof(MForm<ExpandoObject>.Model), mFilterModel);

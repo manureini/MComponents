@@ -18,6 +18,13 @@ html, body {
     -webkit-font-smoothing: antialiased;
 }
 
+
+.m-clickable {
+    cursor: pointer;
+}
+
+
+
 /* Buttons ----------------------------------------------------------------------------- */
 
 .m-btn {
@@ -222,176 +229,116 @@ html button {
 
 /* Table ----------------------------------------------------------------------------- */
 
-table {
-    border-collapse: collapse;
-}
+
 
 .m-table {
     width: 100%;
     margin-bottom: 1rem;
     color: $text_color;
     background-color: transparent;
+
+    &.m-table-striped tbody tr:nth-of-type(2n+1) {
+        background-color: #f7f8fa;
+    }
+
+    .m-grid-highlight {
+        background-color: #dddfe2;
+    }
+
+    &.m-table-hover {
+        tbody tr:not(.m-grid-highlight):hover {
+            color: $text_color;
+            background-color: #eaebeb;
+        }
+    }
+
+    td, th {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top-width: 1px;
+        border-top-style: solid;
+        border-top-color: $gray;
+    }
+
+    thead td,
+    thead th {
+        font-weight: 500;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    &:not(.m-table-bordered) thead td,
+    &:not(.m-table-bordered) thead th {
+        border-top-width: 0;
+    }
+
+    .m-table-header-icon {
+        float: right;
+        line-height: inherit;
+    }
 }
+
 
 .m-table-bordered {
     border-width: 1px;
     border-style: solid;
     border-color: $gray;
+
+    td, th {
+        border-width: 1px;
+        border-left-width: 0;
+        border-right-width: 1px; //keep in sync with c#
+        border-style: solid;
+        border-color: $gray;
+        border-bottom-width: 0;
+    }
 }
 
-table {
-    clear: both;
-    -webkit-border-horizontal-spacing: 0;
-    -webkit-border-vertical-spacing: 0;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    max-width: none;
-    border-collapse: separate;
-}
+.m-grid-edit-row {
+    &:not(.m-grid-filter-row) > td {
+        border: 0;
+    }
+ 
+    td {
+        padding: 0;
+    }
 
-.m-clickable {
-    cursor: pointer;
-}
+    .m-action-column-cell {
+        margin: 0;
+    }
 
-th {
-    text-align: inherit;
-}
-
-.m-table td,
-.m-table th {
-    padding: 0.75rem;
-    vertical-align: top;
-    border-top-width: 1px;
-    border-top-style: solid;
-    border-top-color: $gray;
-}
-
-.m-table thead th {
-    vertical-align: bottom;
-    border-bottom-width: 2px;
-    border-bottom-style: solid;
-    border-bottom-color: $gray;
-}
-
-.m-table-bordered td,
-.m-table-bordered th {
-    border-width: 1px;
-    border-style: solid;
-    border-color: $gray;
-}
-
-.m-table-bordered thead td,
-.m-table-bordered thead th {
-    border-bottom-width: 2px;
-}
-
-.m-table thead td,
-.m-table thead th {
-    font-weight: 500;
-    border-bottom-width: 1px;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-
-.m-table:not(.m-table-bordered) thead td,
-.m-table:not(.m-table-bordered) thead th {
-    border-top-width: 0;
-}
-
-table td,
-table th {
-    box-sizing: content-box;
-}
-
-table.m-table-bordered td,
-table.m-table-bordered th {
-    border-left-width: 0;
-    border-right-width: 1px; //keep in sync with c#
+    .m-form-control, .m-action-column-cell {
+        background: #d4def5;
+        border-radius: initial;
+        border: 0;
+        padding: 0.75rem;
+    }
 }
 
 
-.m-table-header-icon {
-    float: right;
-    line-height: inherit;
-}
-
-.m-table-content-fit {
-    width: 1%;
-    white-space: nowrap;
-}
-
-.m-table-striped tbody tr:nth-of-type(2n+1) {
-    background-color: #f7f8fa;
-}
-
-.m-table-hover tbody tr:hover {
-    color: $text_color;
-    background-color: #fafbfc;
-}
-
-.m-table-hover tbody tr.m-grid-highlight, .m-table-hover tbody tr.m-grid-highlight:hover {
-    background-color: #dddfe2;
-}
-
-table.m-table-bordered tbody td,
-table.m-table-bordered tbody th {
-    border-bottom-width: 0;
-}
-
-.m-grid-edit-row td, .m-grid-filter-row td {
-    padding: 0;
-}
-
-.m-grid-row .m-action-column-cell {
-    margin: -0.5rem;
-}
-
-.m-grid-edit-row .m-action-column-cell {
-    // padding: 0.75rem;
-    margin: 0;
-}
-
-.m-grid-edit-row .m-form-control, .m-grid-edit-row .m-action-column-cell {
-    background: #d4def5;
-    border-radius: initial;
-}
-
-.m-grid-filter-row .m-form-control {
-    border-radius: initial;
-}
-
-.m-grid-edit-row table {
-    margin: 0;
-}
-
-.m-grid-edit-row > td, .m-grid-edit-row .m-form-control {
-    border: 0;
-}
-
-.m-grid-edit-row table td .m-form-control, .m-grid-filter-row .m-form-control {
-    padding: 0.75rem;
-}
-
-.mgrid-action-icon {
-    font-size: 19px;
-}
-
-.mgrid-action-icon--disabled {
-    color: lighten($secondary,30%);
-}
-
-.m-table .m-btn {
-    height: calc(1.5em + 1.3rem + 2px);
-}
-
-.m-action-column-btn-group {
+.m-action-column-cell {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
+    margin: -0.5rem;
+
+    .m-grid-action-icon {
+        font-size: 19px;
+    }
+
+    .m-grid-action-icon--disabled {
+        color: lighten($secondary,30%);
+    }
 }
 
+   
+
 /* Table ----------------------------------------------------------------------------- */
+
+
+
+//download button
 .m-btn.m-btn-icon i {
     padding: 0;
     margin: 0;
@@ -410,160 +357,120 @@ table.m-table-bordered tbody th {
     margin: 0;
     padding: 0;
     user-select: none;
-}
 
-dl,
-ol,
-ul {
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
+    .m-pagination-list {
+        display: flex;
+        -webkit-box-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        align-items: center;
+        padding: 0;
 
-.m-pagination-container .m-pagination-entry li a,
-.m-pagination-container .m-pagination-list {
-    display: flex;
-    -webkit-box-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    align-items: center;
-}
+        .m-pagination-entry {
+            display: flex;
+            -webkit-box-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            align-items: center;
+            margin-right: 0.5rem;
+            border-radius: 4px;
 
-.m-pagination-container .m-pagination-entry {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
+            &:not(.m-pagination-entry--disabled):not(.m-pagination-entry--more) {
+                > a {
+                    cursor: pointer;
+                }
 
-.m-pagination-entry {
-    cursor: pointer;
-}
+                &:not(.m-pagination-entry--prev):not(.m-pagination-entry--next) {
+                    &:hover {
+                        background-color: $primary;
+                    }
 
-.m-pagination-list {
-    padding-inline-start: 0;
-}
+                    > a:hover {
+                        color: white;
+                    }
+                }
+            }
 
-.m-pagination-container .m-pagination-list li,
-.m-pagination-entry {
-    display: flex;
-    -webkit-box-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    align-items: center;
-    margin-right: 0.5rem;
-    border-radius: 4px;
-}
+            &.m-pagination-entry--next,
+            &.m-pagination-entry--prev {
+                background-color: lighten($primary, 30%);
 
-.m-pagination-container.m-pagination--brand .m-pagination-entry .m-pagination-entry--first,
-.m-pagination-container.m-pagination--brand .m-pagination-entry .m-pagination-entry--last,
-.m-pagination-container.m-pagination--brand .m-pagination-entry .m-pagination-entry--next,
-.m-pagination-container.m-pagination--brand .m-pagination-entry .m-pagination-entry--prev {
-    background-color: rgba(93, 120, 255, 0.1);
-}
+                i {
+                    color: $primary;
+                }
+            }
 
-.m-pagination-container.m-pagination--brand .m-pagination-entry li:hover {
-    background-color: rgb(93, 120, 255);
-    transition-duration: 0.3s;
-    transition-timing-function: ease;
-    transition-delay: 0s;
-    transition-property: color;
-}
+            &.m-pagination-entry--disabled {
+                cursor: default;
+                background-color: lighten($primary, 33%);
 
-.m-pagination-entry.m-pagination-entry--disabled,
-.m-pagination-entry.m-pagination-entry--disabled:hover {
-    color: rgb(147, 162, 221);
-    background-color: rgb(240, 243, 255);
-    opacity: 0.4;
-}
+                i {
+                    color: lighten($primary, 20%);
+                }
+            }
 
-.m-pagination-entry .m-pagination-entry--disabled {
-    cursor: default;
-}
+            &.m-pagination-entry--active {
+                background-color: $primary;
 
-a {
-    color: rgb(88, 103, 221);
-    text-decoration-line: none;
-}
+                a {
+                    color: white;
+                }
+            }
 
-a:hover {
-    color: rgb(39, 57, 193);
-    text-decoration-line: underline;
-}
+            a {
+                color: #74788d;
+                font-weight: 500;
+                font-size: 1rem;
+                padding: 0 0.2rem;
+                display: flex;
+                flex-wrap: wrap;
+                -webkit-box-pack: center;
+                justify-content: center;
+                -webkit-box-align: center;
+                align-items: center;
+                min-width: 30px;
+                min-height: 30px;
+                margin: 0;
+            }
+        }
+    }
 
-a:not([href]):not([tabindex]) {
-    color: inherit;
-    text-decoration-line: none;
-}
+    .m-pagination-tools {
+        margin: 0;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        padding: 0;
 
-a:not([href]):not([tabindex]):focus {
-    outline-width: 0;
-}
+        .m-form-control {
+            padding: 0;
+            margin-right: 10px;
+            height: 30px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1;
+            outline-style: none;
+            border-style: none;
+            background-color: lighten($primary, 30%);
+            color: $primary;
+        }
 
-body a,
-body button,
-html a,
-html button {
-    outline-style: none;
-}
+        .m-pagination-descr {
+            -webkit-box-flex: 1;
+            flex-grow: 1;
+            font-weight: 500;
+            color: #74788d;
+        }
 
-.m-pagination-container .m-pagination-list .m-pagination-entry a {
-    font-weight: 500;
-    font-size: 1rem;
-    padding: 0 0.2rem;
-    display: flex;
-    flex-wrap: wrap;
-    -webkit-box-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    align-items: center;
-    min-width: 30px;
-    min-height: 30px;
-    margin: 0;
-}
-
-.m-pagination-container.m-pagination--brand .m-pagination-entry li:hover a {
-    color: rgb(255, 255, 255);
+        select {
+            cursor: pointer;
+        }
+    }
 }
 
 
-.m-font-brand {
-    color: rgb(93, 120, 255);
-}
-
-.m-pagination-container.m-pagination--brand .m-pagination-entry li:hover a i {
-    color: rgb(255, 255, 255);
-}
-
-.m-pagination-container.m-pagination--brand .m-pagination-entry li:hover.m-pagination-entry--disabled a i {
-    color: rgb(93, 120, 255);
-}
-
-.m-pagination-container.m-pagination--brand .m-pagination-entry,
-.m-pagination-entry--active {
-    background-color: rgb(93, 120, 255);
-}
-
-.m-pagination-container .m-pagination-entry,
-.m-pagination-entry--active a {
-    color: rgb(255, 255, 255);
-}
 
 
-.m-pagination-container .m-pagination-tools {
-    margin: 0;
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    padding: 0;
-}
-
-button,
-select {
-    text-transform: none;
-}
-
-select {
-    overflow-wrap: normal;
-}
 
 .m-form-control {
     display: block;
@@ -602,31 +509,4 @@ select {
 .m-form-control::placeholder {
     color: rgb(116, 120, 141);
     opacity: 1;
-}
-
-.m-pagination-container .m-pagination-tools .m-form-control {
-    padding: 0;
-    margin-right: 10px;
-    height: 30px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    line-height: 1;
-    outline-style: none;
-    border-style: none;
-}
-
-.m-pagination-container.m-pagination--brand,
-.m-pagination-tools .m-form-control {
-    background-color: rgba(93, 120, 255, 0.1);
-}
-
-.m-pagination-tools select {
-    cursor: pointer;
-}
-
-.m-pagination-container .m-pagination-tools .pagination__desc {
-    -webkit-box-flex: 1;
-    flex-grow: 1;
-    font-weight: 500;
-    color: rgb(116, 120, 141);
 }

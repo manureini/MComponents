@@ -82,12 +82,17 @@ var mcomponents = (function () {
         },
 
         getColumnsWith: function (element) {
-
             var ret = [];
 
             if (element != null && element.children != null) {
-                var firsttd = element.children[1].children[0].children[0];;
-                var rowheight = firsttd.getBoundingClientRect().height;
+
+                //we grab the last td, because the first does not work
+                //something related to table: fixed? - I don't know, but it works with the last tr
+
+                var childs = element.children[1].children;
+                var lastTd = childs[childs.length - 1].children[0];;
+                var rowheight = lastTd.getBoundingClientRect().height;
+                console.log(rowheight);
                 ret.push(rowheight);
 
                 var children = element.children[0].children[0].children;

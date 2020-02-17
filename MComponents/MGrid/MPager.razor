@@ -16,7 +16,7 @@
                     <a @onclick="() => JumpTo(1)">1</a>
                 </li>
 
-                <li class="@GetCssClass(-1)">
+                <li class="@GetCssClass(-1) m-pagination-entry--more">
                     <a>...</a>
                 </li>
             }
@@ -33,7 +33,7 @@
 
             @if (mRightDots)
             {
-                <li class="@GetCssClass(-1)">
+                <li class="@GetCssClass(-1) m-pagination-entry--more">
                     <a>...</a>
                 </li>
 
