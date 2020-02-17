@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MComponents.Shared\MComponents.Shared.csproj" />
+    <ProjectReference Include="..\MComponents\MComponents.csproj" />
+  </ItemGroup>
+
+</Project>

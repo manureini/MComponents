@@ -235,7 +235,7 @@ namespace MComponents
                     if (IsInTableRow)
                     {
                         builder2.OpenElement(16, "td");
-                        builder2.AddMultipleAttributes(17, field.AdditionalAttributes);
+                   //     builder2.AddMultipleAttributes(17, field.AdditionalAttributes);
 
                         if (propertyInfo.PropertyType != null)
                         {

@@ -86,11 +86,16 @@ var mcomponents = (function () {
             var ret = [];
 
             if (element != null && element.children != null) {
+                var firsttd = element.children[1].children[0].children[0];;
+                var rowheight = firsttd.getBoundingClientRect().height;
+                ret.push(rowheight);
+
                 var children = element.children[0].children[0].children;
 
                 for (var i = 0; i < children.length; i++) {
                     var tableChild = children[i];
-                    ret.push(tableChild.offsetWidth);
+                    var rect = tableChild.getBoundingClientRect();
+                    ret.push(rect.width);
                 }
             }
 

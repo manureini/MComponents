@@ -2,5 +2,9 @@
   {
     "outputFile": "wwwroot/css/mcomponent.css",
     "inputFile": "wwwroot/css/mcomponent.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/mcomponents.css",
+    "inputFile": "wwwroot/css/mcomponents.scss"
   }
 ]

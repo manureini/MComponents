@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -17,6 +18,12 @@ namespace MComponents.MGrid
 {
     public class MGrid<T> : ComponentBase, IMGrid<T>
     {
+
+
+        public const int CSS_BORDER_WIDTH = 1; //keep in sync with css file!
+        public const int CSS_BORDER_TOP = 1;
+
+
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
@@ -93,7 +100,8 @@ namespace MComponents.MGrid
         protected object mFilterModel;
 
         protected ElementReference mTableReference;
-        protected int[] mColumnsWidth;
+        protected double[] mColumnsWidth;
+        protected double mRowHeight;
 
         protected SorterBuilder<T> mSorter = new SorterBuilder<T>();
         protected FilterBuilder<T> mFilter = new FilterBuilder<T>();
@@ -257,7 +265,7 @@ namespace MComponents.MGrid
 
 
                        builder2.OpenElement(9, "table");
-    
+
 
                        if (HtmlTableClass != null)
                        {
@@ -268,7 +276,7 @@ namespace MComponents.MGrid
                            builder2.AddAttribute(10, "class", "m-grid m-table m-table-striped m-table-bordered m-table-hover" + (EnableEditing ? " m-clickable" : string.Empty));
                        }
 
-                       string cssClass = "margin: 15px 0px !important;";
+                       string cssClass = "margin: 15px 0px !important; table-layout: fixed;";
 
                        builder2.AddAttribute(9, "style", cssClass);
 
@@ -296,9 +304,11 @@ namespace MComponents.MGrid
 
                            if (EditRow != null)
                            {
-                               int? width = GetColumnWidth(i);
+                               var width = GetColumnWidth(i);
                                if (width != null)
-                                   builder2.AddAttribute(8, "style", $"width: calc({width}px - (2 * (0.75rem)) - 1px);");
+                                   builder2.AddStyleWithAttribute(8, width);
+
+
                            }
 
 
@@ -394,7 +404,7 @@ namespace MComponents.MGrid
                                {
                                    builder3.OpenElement(20, "select");
                                    builder3.AddAttribute(21, "class", "m-form-control m-font-brand");
-                                   builder3.AddAttribute(22, "style", "width: 60px;");
+                                   builder3.AddAttribute(22, "style", "width: 60px;"); //TODO
 
                                    builder3.AddAttribute(23, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, OnPageSizeChange));
 
@@ -478,7 +488,7 @@ namespace MComponents.MGrid
             }
 
             pBuilder.OpenElement(19, "tr");
-            pBuilder.AddAttribute(20, "class", "m-grid-row m-grid-edit-row");
+            pBuilder.AddAttribute(20, "class", "m-grid-row m-grid-filter-row");
 
             pBuilder.OpenComponent<MForm<ExpandoObject>>(53);
             pBuilder.AddAttribute(54, nameof(MForm<ExpandoObject>.Model), mFilterModel);
@@ -500,7 +510,7 @@ namespace MComponents.MGrid
                 for (int i = 0; i < ColumnsList.Count; i++)
                 {
                     IMGridColumn column = ColumnsList[i];
-                    int? size = columnFixedSize ? GetColumnWidth(i) : null;
+                    var size = columnFixedSize ? GetColumnWidth(i) : null;
                     AddMFormField(builder3, column, true, size);
                 }
             }));
@@ -636,7 +646,7 @@ namespace MComponents.MGrid
             builder2.CloseElement(); //tr
         }
 
-        private void AddMFormField(RenderTreeBuilder builder3, IMGridColumn column, bool pIsInFilterRow, int? pSize)
+        private void AddMFormField(RenderTreeBuilder builder3, IMGridColumn column, bool pIsInFilterRow, double? pSize)
         {
             if (column is IMGridPropertyColumn pc)
             {
@@ -671,7 +681,7 @@ namespace MComponents.MGrid
             return propertyType;
         }
 
-        private void AddPropertyField<TProperty>(RenderTreeBuilder builder3, IMGridColumn column, IMGridPropertyColumn pc, bool pIsInFilterRow, int? pSize)
+        private void AddPropertyField<TProperty>(RenderTreeBuilder builder3, IMGridColumn column, IMGridPropertyColumn pc, bool pIsInFilterRow, double? pSize)
         {
             var attributes = mPropertyInfoCache[pc].GetAttributes()?.ToList() ?? new List<Attribute>();
 
@@ -706,7 +716,7 @@ namespace MComponents.MGrid
                     builder3.AddAttribute(23, "Template", complex.FormTemplate);
 
                 if (pSize != null)
-                    builder3.AddAttribute(8, "style", $"width: {pSize - 1}px;");
+                    builder3.AddStyleWithAttribute2(9, pSize, mRowHeight);
 
                 builder3.CloseComponent();
             }
@@ -719,23 +729,18 @@ namespace MComponents.MGrid
                 builder3.AddAttribute(8, "Attributes", attributes.ToArray());
 
                 if (pSize != null)
-                    builder3.AddAttribute(8, "style", $"width: {pSize - 1}px;");
+                    builder3.AddStyleWithAttribute2(9, pSize, mRowHeight);
 
                 builder3.CloseComponent();
             }
         }
 
-        private static void AddFieldGenerator(RenderTreeBuilder builder3, IMGridEditFieldGenerator<T> pFieldGenerator, int? pSize)
+        private void AddFieldGenerator(RenderTreeBuilder builder3, IMGridEditFieldGenerator<T> pFieldGenerator, double? pWidth)
         {
             builder3.OpenComponent<MFieldGenerator<T>>(5);
-            builder3.AddAttribute(23, "Template", pFieldGenerator.Template(pSize));
-
-            if (pSize != null)
-                builder3.AddAttribute(8, "style", $"width: {pSize - 1}px;");
-
+            builder3.AddAttribute(23, "Template", pFieldGenerator.Template(pWidth ?? 0, mRowHeight));
             builder3.CloseComponent();
         }
-
 
         protected async void OnRowClick(T pValue, MouseEventArgs pMouseArgs)
         {
@@ -844,7 +849,9 @@ namespace MComponents.MGrid
 
         private async Task UpdateColumnsWidth()
         {
-            mColumnsWidth = await JsRuntime.InvokeAsync<int[]>("mcomponents.getColumnsWith", new object[] { mTableReference });
+            mColumnsWidth = await JsRuntime.InvokeAsync<double[]>("mcomponents.getColumnsWith", new object[] { mTableReference });
+            mRowHeight = mColumnsWidth.FirstOrDefault() - CSS_BORDER_TOP;
+            mColumnsWidth = mColumnsWidth.Skip(1).Select(v => v - CSS_BORDER_WIDTH).ToArray();
         }
 
         public async Task StartAdd(bool pUserInteracted)
@@ -1167,7 +1174,7 @@ namespace MComponents.MGrid
             await StopEditing(true, pUserInteracted);
         }
 
-        protected int? GetColumnWidth(int pIndex)
+        protected double? GetColumnWidth(int pIndex)
         {
             if (mColumnsWidth == null)
                 return null;

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Timers;
 
 namespace MComponents.MGrid
@@ -66,29 +67,28 @@ namespace MComponents.MGrid
             Grid.InvokeStateHasChanged();
         }
 
-        public RenderFragment<MFieldGeneratorContext> Template(int? pSize)
+        public RenderFragment<MFieldGeneratorContext> Template(double pWidth, double pHeight)
         {
             return (templContext) => (builder) =>
             {
                 builder.OpenElement(1, "div");
                 builder.AddAttribute(2, "class", "m-action-column-cell");
 
-                if (pSize != null)
-                    builder.AddAttribute(2, "style", $"width: {pSize}px");
+                builder.AddStyleWithAttribute2(3, pWidth, pHeight);
 
                 builder.OpenElement(1, "div");
-                builder.AddAttribute(2, "style", "display:flex; justify-content:center; align-items:center;");
-
+                builder.AddAttribute(2, "class", "m-action-column-btn-group");
+              
                 if (templContext.Form.AdditionalAttributes != null && templContext.Form.AdditionalAttributes.ContainsKey("data-is-filterrow"))
                 {
                     builder.OpenElement(1, "button");
                     builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                    builder.AddAttribute(3, "style", "margin-top: 2px;");
+            
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
                         mGrid.ClearFilterValues();
                     }));
-                    builder.AddEventStopPropagationAttribute(4, "onclick", true);
+                    builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(1, "i");
                     builder.AddAttribute(3, "class", "fas fa-eraser mgrid-action-icon");
@@ -100,12 +100,12 @@ namespace MComponents.MGrid
                 {
                     builder.OpenElement(1, "button");
                     builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                    builder.AddAttribute(3, "style", "margin-top: 2px;");
+              
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
                         mGrid.SavePendingChanges(true);
                     }));
-                    builder.AddEventStopPropagationAttribute(4, "onclick", true);
+                    builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(1, "i");
                     builder.AddAttribute(3, "class", "fas fa-save m-grid-action-icon");
@@ -125,8 +125,8 @@ namespace MComponents.MGrid
             return builder =>
             {
                 builder.OpenElement(1, "div");
-                builder.AddAttribute(2, "style", "display:flex; justify-content:center; align-items:center; margin: -8px;");
-                builder.AddAttribute(2, "class", "m-action-column-cell");
+               
+                builder.AddAttribute(2, "class", "m-action-column-cell m-action-column-btn-group");
 
                 if (mGrid.EnableEditing)
                 {
@@ -136,7 +136,7 @@ namespace MComponents.MGrid
                     {
                         Grid.StartEditRow(pModel, a);
                     }));
-                    builder.AddEventStopPropagationAttribute(4, "onclick", true);
+                    builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(1, "i");
                     builder.AddAttribute(3, "class", "fas fa-edit mgrid-action-icon");
@@ -168,13 +168,13 @@ namespace MComponents.MGrid
 
                         Grid.StartDeleteRow(pModel, a);
                     }));
-                    builder.AddEventStopPropagationAttribute(4, "onclick", true);
+                    builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(1, "i");
 
                     if (DeletingLocked)
                     {
-                        builder.AddAttribute(3, "class", "fas fa-trash-alt mgrid-action-icon");
+                        builder.AddAttribute(3, "class", "fas fa-trash-alt mgrid-action-icon mgrid-action-icon--disabled");
                     }
                     else
                     {

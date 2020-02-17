@@ -1,0 +1,43 @@
+﻿@page "/fetchdata"
+
+@using MComponents.ExampleApp.Data
+@inject WeatherForecastService ForecastService
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MGrid DataSource="forecasts"
+           EnableAdding="true"
+           EnableDeleting="true"
+           EnableEditing="true"
+           EnableExport="true"
+           EnableFilterRow="true"
+           EnableUserSorting="true">
+        <MGridColumns>
+            <MGridColumn Property="@nameof(WeatherForecast.Date)" StringFormat="{0:dd.MM.yyyy}" />
+            <MGridColumn Property="@nameof(WeatherForecast.TemperatureC)" />
+            <MGridColumn Property="@nameof(WeatherForecast.TemperatureF)" />
+            <MGridColumn Property="@nameof(WeatherForecast.Summary)" />
+            <MGridActionColumn T="WeatherForecast" />
+        </MGridColumns>
+
+        <MGridPager />
+
+    </MGrid>
+}
+
+@code {
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+    }
+}
