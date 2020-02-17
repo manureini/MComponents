@@ -912,7 +912,12 @@ namespace MComponents.MGrid
 
         protected async void OnToggleFilter()
         {
-            IsFilterRowVisible = !IsFilterRowVisible;
+            await SetFilterRowVisible(!IsFilterRowVisible);
+        }
+
+        public async Task SetFilterRowVisible(bool pVisible)
+        {
+            IsFilterRowVisible = pVisible;
 
             if (IsFilterRowVisible)
             {

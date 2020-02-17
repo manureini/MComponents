@@ -44,7 +44,7 @@ namespace MComponents.MGrid
 
         public bool VisibleInExport => false;
 
-        protected bool DeletingLocked = true;
+        protected object RowDeleteEnabled;
 
         protected Timer mDeleteResetTimer;
 
@@ -59,8 +59,7 @@ namespace MComponents.MGrid
         private async void MDeleteResetTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             mDeleteResetTimer.Stop();
-
-            DeletingLocked = true;
+            RowDeleteEnabled = null;
 
             await InvokeAsync(StateHasChanged);
 
@@ -78,12 +77,12 @@ namespace MComponents.MGrid
 
                 builder.OpenElement(1, "div");
                 builder.AddAttribute(2, "class", "m-action-column-btn-group");
-              
+
                 if (templContext.Form.AdditionalAttributes != null && templContext.Form.AdditionalAttributes.ContainsKey("data-is-filterrow"))
                 {
                     builder.OpenElement(1, "button");
                     builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-            
+
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
                         mGrid.ClearFilterValues();
@@ -100,7 +99,7 @@ namespace MComponents.MGrid
                 {
                     builder.OpenElement(1, "button");
                     builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-              
+
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
                         mGrid.SavePendingChanges(true);
@@ -125,7 +124,7 @@ namespace MComponents.MGrid
             return builder =>
             {
                 builder.OpenElement(1, "div");
-               
+
                 builder.AddAttribute(2, "class", "m-action-column-cell m-action-column-btn-group");
 
                 if (mGrid.EnableEditing)
@@ -153,9 +152,9 @@ namespace MComponents.MGrid
                     builder.AddAttribute(2, "style", "margin-left: 4px;");
                     builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
-                        if (DeletingLocked)
+                        if (RowDeleteEnabled == null || !RowDeleteEnabled.Equals(pModel))
                         {
-                            DeletingLocked = false;
+                            RowDeleteEnabled = pModel;
                             mDeleteResetTimer.Stop();
                             mDeleteResetTimer.Start();
                             StateHasChanged();
@@ -172,7 +171,7 @@ namespace MComponents.MGrid
 
                     builder.OpenElement(1, "i");
 
-                    if (DeletingLocked)
+                    if (RowDeleteEnabled == null || !RowDeleteEnabled.Equals(pModel))
                     {
                         builder.AddAttribute(3, "class", "fas fa-trash-alt m-grid-action-icon m-grid-action-icon--disabled");
                     }
