@@ -273,7 +273,7 @@ namespace MComponents.MGrid
                        }
                        else
                        {
-                           builder2.AddAttribute(10, "class", "m-table m-table-striped m-table-bordered m-table-hover" + (EnableEditing ? " m-clickable" : string.Empty));
+                           builder2.AddAttribute(10, "class", "m-grid m-grid-striped m-grid-bordered m-grid-hover" + (EnableEditing ? " m-clickable" : string.Empty));
                        }
 
                        string cssClass = "margin: 15px 0px !important; table-layout: fixed;";
@@ -318,10 +318,10 @@ namespace MComponents.MGrid
                                if (sortInstr != null)
                                {
                                    if (sortInstr.Direction == MSortDirection.Ascending)
-                                       builder2.AddContent(15, (MarkupString)"<i class=\"fa fa-arrow-down m-table-header-icon\"></i>");
+                                       builder2.AddContent(15, (MarkupString)"<i class=\"fa fa-arrow-down m-grid-header-icon\"></i>");
 
                                    if (sortInstr.Direction == MSortDirection.Descending)
-                                       builder2.AddContent(15, (MarkupString)"<i class=\"fa fa-arrow-up m-table-header-icon\"></i>");
+                                       builder2.AddContent(15, (MarkupString)"<i class=\"fa fa-arrow-up m-grid-header-icon\"></i>");
                                }
                            }
 

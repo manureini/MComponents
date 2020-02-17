@@ -225,17 +225,17 @@ html button {
 
 /* START Table ----------------------------------------------------------------------------- */
 
-.m-table {
+.m-grid {
     width: 100%;
     margin-bottom: 1rem;
     color: $text_color;
     background-color: transparent;
 
-    &.m-table-striped tbody tr:nth-of-type(2n+1) {
+    &.m-grid-striped tbody tr:nth-of-type(2n+1) {
         background-color: #f7f8fa;
     }
 
-    &.m-table-sticky {
+    &.m-grid-sticky {
         position: relative !important;
 
         thead th {
@@ -249,7 +249,7 @@ html button {
         background-color: #dddfe2;
     }
 
-    &.m-table-hover {
+    &.m-grid-hover {
         tbody tr:not(.m-grid-highlight):hover {
             color: $text_color;
             background-color: #eaebeb;
@@ -271,18 +271,18 @@ html button {
         padding-bottom: 1rem;
     }
 
-    &:not(.m-table-bordered) thead td,
-    &:not(.m-table-bordered) thead th {
+    &:not(.m-grid-bordered) thead td,
+    &:not(.m-grid-bordered) thead th {
         border-top-width: 0;
     }
 
-    .m-table-header-icon {
+    .m-grid-header-icon {
         float: right;
         line-height: inherit;
     }
 }
 
-.m-table-bordered {
+.m-grid-bordered {
     border-width: 1px;
     border-style: solid;
     border-color: $gray;
