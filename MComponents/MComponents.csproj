@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="compilerconfig.json" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\mcomponents.css" />
   </ItemGroup>
 
   <ItemGroup>
