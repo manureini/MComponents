@@ -44,7 +44,6 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
-    <None Include="wwwroot\js\mcomponents.js" />
   </ItemGroup>
 
 </Project>
