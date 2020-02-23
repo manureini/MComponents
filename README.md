@@ -10,7 +10,25 @@ This is another Blazor component libary which supports
 * Grids
 * Wizards
 * Forms
-* Accordions
+* Paint
+
+### How to use?
+
+Add the following references to your _Host.cshtml
+
+```html
+<link href="_content/MComponents/css/fontawesome.css" rel="stylesheet" />
+<link href="_content/MComponents/css/mcomponents.css" rel="stylesheet" />
+<script src="_content/MComponents/js/mcomponents.js"></script>
+```
+If you want to use MPaint add
+```html
+<script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
+```
+
+
+
+
 
 
 ### Please create an issue or make Pull requests if you want to support this project
