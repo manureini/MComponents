@@ -472,15 +472,24 @@ html button {
     padding: 0;
     user-select: none;
 
+    span {
+        padding: 0.65rem;
+        line-height: 1.5;
+        display: inline-block;
+    }
+
     &.m-select--open {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }
 
-    span {
-        padding: 0.65rem;
-        line-height: 1.5;
-        display: inline-block;
+    &.m-select--disabled {
+        cursor: default;
+        background: #f7f8fa;
+
+        .m-select-dropdown-icon {
+            color: darken(#f7f8fa,25);
+        }
     }
 
     .m-select-dropdown-icon {
@@ -497,6 +506,7 @@ html button {
 .m-select-options-container {
     display: block;
     position: relative;
+    user-select: none;
 
     .m-select-search-container {
         display: block;
