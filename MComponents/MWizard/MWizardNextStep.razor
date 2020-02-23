@@ -1,7 +1,8 @@
-﻿@if (Wizard != null && !Wizard.FreezeCurrentStep)
+﻿
+@if (Wizard != null && !Wizard.FreezeCurrentStep)
 {
     <button class="m-wizard-btn m-btn m-btn-primary m-btn-md m-btn-tall m-btn-wide" data-action="next" @attributes="AdditionalAttributes" @onclick="Wizard.OnNextClicked">
-        Weiter
+        @L["Next"]
     </button>
 }
 

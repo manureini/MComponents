@@ -17,7 +17,7 @@
          style="width: @(Width)px; height: @(Height)px;">
         <BECanvas Width="@Width" Height="@Height" @ref="mCanvasRef"></BECanvas>
     </div>
-    <button @onclick="OnResetClick" class="m-btn m-btn-primary" style="width: @(Width)px">Reset</button>
+    <button @onclick="OnResetClick" class="m-btn m-btn-primary" style="width: @(Width)px">@L["Reset"]</button>
 </div>
 
 @code {
@@ -169,25 +169,7 @@
         mPaint = false;
         Redraw(true);
     }
-
-    /*
-    protected async void OnTouchMove(TouchEventArgs pArgs)
-    {
-
-        GetTouchPosition(pArgs, out var clientx, out var clienty);
-
-        if (clientx == -1)
-            return;
-
-        PositionInfo result = await JSRuntime.InvokeAsync<PositionInfo>("mcomponents.getPosition", mContext.Canvas);
-
-        double mouseX = clientx - result.left;
-        double mouseY = clienty - result.top;
-
-        OnTouchMove(mouseX, mouseY);
-    }        */
-
-
+ 
     protected void OnTouchMove(double mouseX, double mouseY)
     {
         AddClick(mouseX, mouseY, true);

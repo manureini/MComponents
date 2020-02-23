@@ -135,15 +135,7 @@ namespace MComponents
             string cssClass = "m-form-control";
 
             if (isReadOnly)
-            {
-              /*  if (typeof(T) == typeof(bool?) || tType.IsEnum)
-                {
-                    pBuilder.AddAttribute(33, "IsDisabled", true);
-                }
-                else
-                {
-                    pBuilder.AddAttribute(33, "disabled", string.Empty);
-                }*/
+            {     
                 pBuilder.AddAttribute(33, "disabled", string.Empty);
                 pBuilder.AddAttribute(33, "IsDisabled", true);
             }

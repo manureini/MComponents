@@ -15,13 +15,6 @@ namespace MComponents
             builder.AddEventStopPropagationAttribute(sequence, "ondblclick", true);
         }
 
-        public static void AddStyleWithAttribute(this RenderTreeBuilder builder, int sequence, double? pSize)
-        {
-            string value = $"{Convert.ToString(pSize, CultureInfo.InvariantCulture) }px";
-            //   builder.AddAttribute(sequence, "style", $"width: {value}; padding: 0");
-            builder.AddAttribute(sequence, "style", $"width: calc({value} - (2 * (0.75rem)));");
-        }
-
         public static void AddStyleWithAttribute2(this RenderTreeBuilder builder, int sequence, double? pWidth, double pHeight)
         {
             string width = $"{Convert.ToString(pWidth, CultureInfo.InvariantCulture) }px";

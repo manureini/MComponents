@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -69,6 +70,8 @@ namespace MComponents.MGrid
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
+        [Inject]
+        public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
         protected List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
         protected List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
@@ -222,7 +225,7 @@ namespace MComponents.MGrid
                                builder2.OpenElement(0, "button");
                                builder2.AddAttribute(0, "class", "m-btn m-btn-primary");
                                builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarAdd));
-                               builder2.AddContent(0, (MarkupString)"<i class=\"fa fa-plus\"></i> Hinzufügen");
+                               builder2.AddContent(0, (MarkupString)$"<i class=\"fa fa-plus\"></i> {L["Add"]}");
                                builder2.CloseElement(); // button
                            }
 
@@ -231,7 +234,7 @@ namespace MComponents.MGrid
                                builder2.OpenElement(0, "button");
                                builder2.AddAttribute(0, "class", "m-btn m-btn-primary");
                                builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarEdit));
-                               builder2.AddContent(0, (MarkupString)"<i class=\"fa fa-edit\"></i> Bearbeiten");
+                               builder2.AddContent(0, (MarkupString)$"<i class=\"fa fa-edit\"></i> {L["Edit"]}");
                                builder2.CloseElement(); // button
                            }
 
@@ -240,7 +243,7 @@ namespace MComponents.MGrid
                                builder2.OpenElement(0, "button");
                                builder2.AddAttribute(0, "class", "m-btn m-btn-primary");
                                builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarRemove));
-                               builder2.AddContent(0, (MarkupString)"<i class=\"fa fa-trash-alt\"></i> Löschen");
+                               builder2.AddContent(0, (MarkupString)$"<i class=\"fa fa-trash-alt\"></i> {L["Delete"]}");
                                builder2.CloseElement(); // button
                            }
 
@@ -255,7 +258,7 @@ namespace MComponents.MGrid
                            builder2.OpenElement(9, "i");
                            builder2.AddAttribute(10, "class", "fas fa-filter");
                            builder2.CloseElement(); //i
-                           builder2.AddContent(12, "Filter");
+                           builder2.AddContent(12, L["Filter"]);
                            builder2.CloseElement(); //button
                        }
 
@@ -295,16 +298,7 @@ namespace MComponents.MGrid
 
                            builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) => OnColumnHeaderClick(column, a)));
                            builder2.AddAttribute(14, "scope", "col");
-
-
-                           if (EditRow != null)
-                           {
-                               var width = GetColumnWidth(i);
-                               if (width != null)
-                                   builder2.AddStyleWithAttribute(8, width);
-                           }
-
-
+                           
                            builder2.AddContent(15, (MarkupString)column.HeaderText);
 
                            if (EnableUserSorting)
@@ -397,7 +391,7 @@ namespace MComponents.MGrid
                                {
                                    builder3.OpenElement(20, "select");
                                    builder3.AddAttribute(21, "class", "m-form-control");
-                    
+
                                    builder3.AddAttribute(23, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, OnPageSizeChange));
 
                                    foreach (var entry in Pager.SelectablePageSizes)
@@ -414,7 +408,8 @@ namespace MComponents.MGrid
 
                                builder3.AddMarkupContent(44, "\r\n");
 
-                               builder3.AddMarkupContent(45, $"<span class=\"m-pagination-descr\">{DataCache?.Count} Einträge aus {TotalDataCountCache}</span>");
+
+                               builder3.AddMarkupContent(45, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], DataCache?.Count, TotalDataCountCache)}</span>");
 
                                if (EnableExport)
                                {
@@ -553,7 +548,7 @@ namespace MComponents.MGrid
                 builder2.AddAttribute(51, "colspan", ColumnsList.Count);
 
                 builder2.OpenElement(50, "div");
-                builder2.OpenElement(50, "table");          
+                builder2.OpenElement(50, "table");
                 builder2.OpenElement(50, "tbody");
                 builder2.OpenElement(50, "tr");
 

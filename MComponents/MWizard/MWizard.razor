@@ -33,7 +33,7 @@
 
                     <div class="m-wizard-navigation-item m-wizard-navigation-item--@state" style="flex: 0 0 calc(100%/@visibleCount); @(!FreezeCurrentStep && canJump ? "cursor: pointer;": "cursor: default;")" @onclick="() => OnJumpToClicked(index)">
                         <div class="m-wizard-navigation-item-title-contaier">
-                            <span>@visible</span> @entry.Title
+                            <span>@(visible).</span> @entry.Title
                         </div>
                         <div class="m-wizard-navigation-item-bar"></div>
                     </div>
