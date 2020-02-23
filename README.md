@@ -10,7 +10,37 @@ This is another Blazor component libary which supports
 * Grids
 * Wizards
 * Forms
-* Accordions
+* Paint
+
+### Screenshots
+
+![mgrid](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MGrid.PNG)
+![mselect](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MSelect.png)
+![mwizard](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MWizard.PNG)
+
+### How to use?
+
+Add the following references to your _Host.cshtml
+
+```html
+<link href="_content/MComponents/css/fontawesome.css" rel="stylesheet" />
+<link href="_content/MComponents/css/mcomponents.css" rel="stylesheet" />
+<script src="_content/MComponents/js/mcomponents.js"></script>
+```
+If you want to use MPaint add
+```html
+<script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
+```
+
+If you use want to use localization Add to Startup.cs
+```c#
+services.AddLocalization(options => options.ResourcesPath = "Resources");
+services.Configure<RequestLocalizationOptions>(options =>
+{
+  options.SupportedUICultures = MComponentsLocalization.SupportedCultures;
+});
+```
+
 
 
 ### Please create an issue or make Pull requests if you want to support this project

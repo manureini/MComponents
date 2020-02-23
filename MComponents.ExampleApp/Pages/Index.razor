@@ -1,0 +1,55 @@
+﻿@page "/"
+
+
+<MComponents.MBadge.MBadge>MBadge</MComponents.MBadge.MBadge>
+
+<h1>MSelect</h1>
+
+<br />
+
+
+<CascadingValue Value="mEditContext">
+    <MSelect T="string" @bind-Value="mValue" Options="mValues" />
+
+    <br />
+    <br />
+
+    <MSelect T="string" @bind-Value="mValue" Options="mValues" EnableSearch="true" />
+
+
+    <br />
+    <br />
+    <MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
+
+    <br />
+
+    <MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
+
+</CascadingValue>
+
+
+<br />
+<br />
+<br />
+
+
+<MComponents.MPaint.MPaint />
+
+
+
+@code{
+
+    protected string mValue;
+    protected string[] mValues;
+    protected ICollection<string> mSelectedValues;
+
+    protected EditContext mEditContext = new EditContext(string.Empty);
+
+
+    override protected void OnInitialized()
+    {
+        mValues = Enumerable.Range(1, 1000).Select(v => "value" + v).ToArray();
+        mSelectedValues = mValues.Take(3).ToList();
+    }
+
+}

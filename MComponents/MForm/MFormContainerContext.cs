@@ -27,7 +27,10 @@ namespace MComponents
                 if (OnFormSubmit == null)
                     return submitSuccessful;
 
-                EventArgs args = new EventArgs();
+                var args = new MFormContainerContextSubmitArgs()
+                {
+                    UserInterated = true
+                };
 
                 foreach (var handler in OnFormSubmit.GetInvocationList())
                 {
@@ -54,7 +57,7 @@ namespace MComponents
                     }
                 }
 
-                Notificator.InvokeNotification(true, "Saved");
+                Notificator.InvokeNotification(true, "Gespeichert");
             }
 
             return submitSuccessful;

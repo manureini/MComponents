@@ -1,11 +1,11 @@
 ﻿
-@{ const string DISABLED_CLASS = "kt-datatable__pager-link--disabled"; }
+@{ const string DISABLED_CLASS = "m-pagination-entry--disabled"; }
 
-<div class="kt-pagination kt-pagination--brand">
-    <ul class="kt-pagination__links">
+<div class="m-pagination-container">
+    <ul class="m-pagination-entry m-pagination-list">
 
-        <li class="kt-datatable__pager-link kt-pagination__link--next @(CurrentPage <= 1 ? DISABLED_CLASS : string.Empty)">
-            <a @onclick=OnPrev><i class="fa fa-angle-left kt-font-brand"></i></a>
+        <li class="m-pagination-entry m-pagination-entry--prev @(CurrentPage <= 1 ? DISABLED_CLASS : string.Empty)">
+            <a @onclick=OnPrev><i class="fa fa-angle-left"></i></a>
         </li>
 
         @if (mCollapse)
@@ -16,7 +16,7 @@
                     <a @onclick="() => JumpTo(1)">1</a>
                 </li>
 
-                <li class="@GetCssClass(-1)">
+                <li class="@GetCssClass(-1) m-pagination-entry--more">
                     <a>...</a>
                 </li>
             }
@@ -33,7 +33,7 @@
 
             @if (mRightDots)
             {
-                <li class="@GetCssClass(-1)">
+                <li class="@GetCssClass(-1) m-pagination-entry--more">
                     <a>...</a>
                 </li>
 
@@ -54,8 +54,8 @@
             }
         }
 
-        <li class="kt-datatable__pager-link kt-pagination__link--prev @(CurrentPage == PageCount || PageCount == 0 ? DISABLED_CLASS : string.Empty)">
-            <a @onclick=OnNext><i class="fa fa-angle-right kt-font-brand"></i></a>
+        <li class="m-pagination-entry m-pagination-entry--next @(CurrentPage == PageCount || PageCount == 0 ? DISABLED_CLASS : string.Empty)">
+            <a @onclick=OnNext><i class="fa fa-angle-right"></i></a>
         </li>
 
     </ul>
@@ -185,8 +185,8 @@
     public string GetCssClass(int pIndex)
     {
         if (pIndex == CurrentPage)
-            return "kt-pagination__link kt-pagination__link--active";
-        return "kt-pagination__link";
+            return "m-pagination-entry m-pagination-entry--active";
+        return "m-pagination-entry";
     }
 
 }

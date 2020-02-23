@@ -18,11 +18,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="compilerconfig.json" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\mcomponents.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.0.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="3.1.2" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
   </ItemGroup>
 
@@ -33,6 +43,7 @@
 
 
   <ItemGroup>
+    <None Include="compilerconfig.json" />
     <None Include="wwwroot\js\mcomponents.js" />
   </ItemGroup>
 

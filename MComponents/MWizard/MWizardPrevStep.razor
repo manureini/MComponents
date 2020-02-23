@@ -1,7 +1,7 @@
 ﻿@if (Wizard != null && !Wizard.FreezeCurrentStep)
 {
-    <button class="btn btn-secondary btn-md btn-tall btn-wide kt-font-bold kt-font-transform-u" @attributes="AdditionalAttributes" data-ktwizard-type="action-prev" @onclick="Wizard.OnPrevClicked">
-        Zurück
+    <button class="m-wizard-btn m-btn m-btn-primary m-btn-md m-btn-tall m-btn-wide" data-action="prev" @attributes="AdditionalAttributes" @onclick="Wizard.OnPrevClicked">
+        @L["Back"]
     </button>
 }
 
