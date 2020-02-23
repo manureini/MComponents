@@ -397,8 +397,7 @@ namespace MComponents.MGrid
                                {
                                    builder3.OpenElement(20, "select");
                                    builder3.AddAttribute(21, "class", "m-form-control m-font-brand");
-                                   builder3.AddAttribute(22, "style", "width: 60px;"); //TODO
-
+                    
                                    builder3.AddAttribute(23, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, OnPageSizeChange));
 
                                    foreach (var entry in Pager.SelectablePageSizes)
@@ -554,10 +553,7 @@ namespace MComponents.MGrid
                 builder2.AddAttribute(51, "colspan", ColumnsList.Count);
 
                 builder2.OpenElement(50, "div");
-
-                builder2.OpenElement(50, "table");
-                builder2.AddAttribute(32, "style", "table-layout: fixed;");
-
+                builder2.OpenElement(50, "table");          
                 builder2.OpenElement(50, "tbody");
                 builder2.OpenElement(50, "tr");
 

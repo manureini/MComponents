@@ -455,19 +455,6 @@ html button {
 
     .m-pagination-tools {
 
-        .m-form-control {
-            padding: 0;
-            margin-right: 10px;
-            height: 30px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            line-height: 1;
-            outline-style: none;
-            border-style: none;
-            background-color: lighten($primary, 30%);
-            color: $primary;
-        }
-
         .m-pagination-descr {
             -webkit-box-flex: 1;
             flex-grow: 1;
@@ -475,8 +462,16 @@ html button {
             color: #74788d;
         }
 
-        select {
+        select.m-form-control {
             cursor: pointer;
+            margin-right: 10px;
+            width: min-content;
+            padding: 0 5px;
+            background-color: lighten($primary, 30%);
+            color: $primary;
+            font-size: 1.1rem;
+            font-weight: 500;
+            height: 30px;
         }
 
         button {
@@ -494,7 +489,7 @@ html button {
     user-select: none;
 
     span {
-        padding: 0.65rem;
+        padding: 0.65rem 0.75rem;
         line-height: 1.5;
         display: inline-block;
     }
