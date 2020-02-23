@@ -32,7 +32,7 @@ If you want to use MPaint add
 <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
 ```
 
-If you use want to use localization add to Startup.cs:
+Add to Startup.cs:
 ```c#
 services.AddLocalization(options => options.ResourcesPath = "Resources");
 services.Configure<RequestLocalizationOptions>(options =>
