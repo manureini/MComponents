@@ -1,6 +1,8 @@
-﻿using MComponents.MForm;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using MComponents.MForm;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,11 +12,14 @@ namespace MComponents.MGrid
 {
     public class MGridActionColumn<T> : ComponentBase, IMGridColumnGenerator<T>, IMGridEditFieldGenerator<T>, IDisposable
     {
+        [Inject]
+        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         [Parameter]
-        public string HeaderText { get; set; } = "Aktionen";
+        public string HeaderText { get; set; }
 
         [Parameter]
         public string Identifier { get; set; } = "Actions";
@@ -54,6 +59,12 @@ namespace MComponents.MGrid
 
             mDeleteResetTimer = new Timer(2000);
             mDeleteResetTimer.Elapsed += MDeleteResetTimer_Elapsed;
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            HeaderText = HeaderText ?? L["Actions"];
         }
 
         private async void MDeleteResetTimer_Elapsed(object sender, ElapsedEventArgs e)

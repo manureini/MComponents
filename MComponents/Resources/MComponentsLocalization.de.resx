@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Actions" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
   <data name="Add" xml:space="preserve">
     <value>Hinzufügen</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="Next" xml:space="preserve">
     <value>Weiter</value>
+  </data>
+  <data name="Please select..." xml:space="preserve">
+    <value>Bitte auswählen...</value>
   </data>
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>

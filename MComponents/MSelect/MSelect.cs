@@ -8,14 +8,17 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Components.Rendering;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Localization;
 
 namespace MComponents.MSelect
 {
     public class MSelect<T> : InputSelect<T>, IMSelect
     {
-
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
+
+        [Inject]
+        public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
         [CascadingParameter]
         protected EditContext CascadedEditContext2 { get; set; }
@@ -40,7 +43,7 @@ namespace MComponents.MSelect
 
         protected string mNullValueOverride;
 
-        private string mNullValueDescription = "Bitte auswählen...";
+        private string mNullValueDescription;
 
         [Parameter]
         public string NullValueDescription
@@ -96,6 +99,8 @@ namespace MComponents.MSelect
             {
                 FieldIdentifier = FieldIdentifier.Create(ValuesExpression);
             }
+
+            mNullValueDescription = mNullValueDescription ?? L["Please select..."];
         }
 
         protected override void OnInitialized()
