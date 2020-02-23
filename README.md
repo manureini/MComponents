@@ -14,9 +14,9 @@ This is another Blazor component libary which supports
 
 ### Screenshots
 
-![mgrid](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MGrid.PNG)
-![mselect](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MSelect.png)
-![mwizard](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MWizard.PNG)
+![mgrid](https://raw.githubusercontent.com/manureini/MComponents/master/Screenshots/MGrid.PNG)
+![mselect](https://raw.githubusercontent.com/manureini/MComponents/master/Screenshots/MSelect.png)
+![mwizard](https://raw.githubusercontent.com/manureini/MComponents/master/Screenshots/MWizard.PNG)
 
 ### How to use?
 
