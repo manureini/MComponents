@@ -106,7 +106,7 @@ app {
 }
 
 .valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+  /* outline: 1px solid #26b050; */
 }
 
 .invalid {

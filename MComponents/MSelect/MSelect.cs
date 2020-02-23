@@ -58,8 +58,6 @@ namespace MComponents.MSelect
         [Parameter]
         public Expression<Func<ICollection<T>>> ValuesExpression { get; set; }
 
-
-        protected ElementReference ComboBox { get; set; }
         protected ElementReference OptionsDiv { get; set; }
 
         protected bool mOptionsVisible = false;
@@ -145,36 +143,16 @@ namespace MComponents.MSelect
             }
 
             pBuilder.OpenElement(0, "span");
-            pBuilder.AddAttribute(1, "class", "m-select " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty));
-            //  pBuilder.AddAttribute(2, "dir", "ltr");
-            pBuilder.AddAttribute(3, "style", "height: unset; padding: 0;");
+            pBuilder.AddAttribute(9, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
+            pBuilder.AddAttribute(1, "class", "m-select m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
 
             if (AdditionalAttributes != null)
                 pBuilder.AddMultipleAttributes(4, AdditionalAttributes.Where(a => a.Key.ToLower() != "class"));
 
-            pBuilder.OpenElement(8, "span");
-            pBuilder.AddAttribute(9, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
-            pBuilder.AddAttribute(10, "class", "m-select-span2");
-            pBuilder.AddAttribute(3, "style", "border: unset;");
-            pBuilder.AddAttribute(11, "role", "combobox");
-
-            /*     
-                 pBuilder.AddAttribute(12, "aria-haspopup", "true");
-                 pBuilder.AddAttribute(13, "aria-expanded", "false");
-                 pBuilder.AddAttribute(14, "tabindex", "0");
-                 pBuilder.AddAttribute(15, "aria-disabled", "false");
-                 pBuilder.AddAttribute(16, "aria-labelledby", "select2-kt_select2_1-container");
-                 */
-
-            pBuilder.AddElementReferenceCapture(17, (__value) =>
-            {
-                ComboBox = __value;
-            });
 
             pBuilder.OpenElement(19, "span");
-            pBuilder.AddAttribute(20, "class", "m-select-span3");
+            pBuilder.AddAttribute(20, "class", "m-select-content");
             pBuilder.AddAttribute(21, "role", "textbox");
-            //    pBuilder.AddAttribute(22, "aria-readonly", "true");
 
             pBuilder.AddContent(24,
                   CurrentValueAsString == null || CurrentValueAsString == string.Empty ? NullValueDescription : CurrentValueAsString
@@ -182,19 +160,15 @@ namespace MComponents.MSelect
 
             pBuilder.CloseElement();
 
-            pBuilder.AddMarkupContent(27, "<span class=\"m-select-dropdown-icon\" role=\"presentation\"></span>");
-            pBuilder.CloseElement();
+            pBuilder.AddMarkupContent(27, "<span class=\"m-select-dropdown-icon fa fa-angle-down\" role =\"presentation\"></span>");
 
             pBuilder.CloseElement();
-            //    pBuilder.AddMarkupContent(29, "<span class=\"dropdown-wrapper\" aria-hidden=\"true\"></span>\r\n");
-
-
 
             if (mOptionsVisible)
             {
                 pBuilder.OpenElement(32, "div");
                 pBuilder.AddAttribute(33, "tabindex", "0");
-                //       pBuilder.AddAttribute(34, "onfocusout", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusLost));
+                pBuilder.AddAttribute(34, "onfocusout", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusLost));
 
                 pBuilder.AddAttribute(35, "class", "m-select-options-container");
                 pBuilder.AddElementReferenceCapture(36, (__value) =>
@@ -203,8 +177,7 @@ namespace MComponents.MSelect
                 });
 
                 pBuilder.OpenElement(38, "div");
-                //      pBuilder.AddAttribute(39, "class", "select2-dropdown select2-dropdown--below");
-                //      pBuilder.AddAttribute(40, "dir", "ltr");
+                pBuilder.AddAttribute(39, "class", "m-select-options-list-container");
 
                 if (EnableSearch)
                 {
@@ -215,7 +188,7 @@ namespace MComponents.MSelect
                     pBuilder.AddAttribute(47, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(this, OnSearchInputChanged));
                     pBuilder.AddAttribute(48, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, OnSearchInputKeyDown));
                     pBuilder.AddAttribute(49, "value", "");
-                    pBuilder.AddAttribute(50, "class", "m-select-search-input");
+                    pBuilder.AddAttribute(50, "class", "m-form-control m-select-search-input");
                     pBuilder.AddAttribute(51, "type", "search");
                     pBuilder.AddAttribute(52, "tabindex", "0");
                     pBuilder.AddAttribute(53, "autocomplete", "off");
@@ -223,11 +196,6 @@ namespace MComponents.MSelect
                     pBuilder.AddAttribute(55, "autocapitalize", "none");
                     pBuilder.AddAttribute(56, "spellcheck", "false");
                     pBuilder.AddAttribute(57, "role", "search");
-
-                    /*           pBuilder.AddAttribute(58, "aria-autocomplete", "list");
-                               pBuilder.AddAttribute(59, "aria-controls", "select2-kt_select2_1-results");
-                               pBuilder.AddAttribute(60, "aria-activedescendant", "select2-kt_select2_1-result-thse-OR");
-                               */
 
                     pBuilder.AddElementReferenceCapture(61, (__value) =>
                     {
@@ -254,12 +222,8 @@ namespace MComponents.MSelect
                     });
                 }
 
-
-                pBuilder.OpenElement(65, "div");
-                pBuilder.AddAttribute(66, "class", "m-select-options-container2");
-
                 pBuilder.OpenElement(68, "ul");
-                pBuilder.AddAttribute(69, "class", "m-select-options-list");
+                pBuilder.AddAttribute(69, "class", "m-select-options-list m-scrollbar");
                 pBuilder.AddAttribute(70, "role", "listbox");
 
                 /*
@@ -329,7 +293,6 @@ namespace MComponents.MSelect
                     pBuilder.CloseElement();
                 }
 
-                pBuilder.CloseElement();
                 pBuilder.CloseElement();
                 pBuilder.CloseElement();
                 pBuilder.CloseElement();
