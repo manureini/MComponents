@@ -48,7 +48,9 @@
             @if (CurrentStep >= 0 && mSteps.Count > CurrentStep)
             {
                 <div class="m-wizard-step">
-                    @mSteps[CurrentStep].Content
+                    <div>
+                        @mSteps[CurrentStep].Content
+                    </div>
                 </div>
             }
 

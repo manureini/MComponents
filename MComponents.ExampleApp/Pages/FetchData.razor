@@ -20,8 +20,8 @@ else
            EnableExport="true"
            EnableFilterRow="true"
            EnableUserSorting="true"
-           HtmlTableClass="m-grid m-grid-striped m-grid-bordered m-grid-hover m-grid-sticky"
-           >
+        
+           HtmlTableClass="m-grid m-grid-striped m-grid-bordered m-grid-hover m-grid-sticky">
         <MGridColumns>
             <MGridColumn Property="@nameof(WeatherForecast.Date)" StringFormat="{0:dd.MM.yyyy}" />
             <MGridColumn Property="@nameof(WeatherForecast.TemperatureC)" />
@@ -34,6 +34,12 @@ else
         <MGridPager />
 
     </MGrid>
+
+
+    <MFormContainer>
+        <MForm Model="forecasts.FirstOrDefault()" />
+    </MFormContainer>
+
 }
 
 @code {

@@ -209,7 +209,6 @@ namespace MComponents.MGrid
 
                        builder2.OpenElement(8, "div");
                        builder2.AddAttribute(51, "class", "m-btn-toolbar");
-                       builder2.AddAttribute(51, "style", "justify-content: space-between;");
                        builder2.AddAttribute(52, "role", "toolbar");
 
                        if (ToolbarItems != ToolbarItem.None)
@@ -275,10 +274,6 @@ namespace MComponents.MGrid
                        {
                            builder2.AddAttribute(10, "class", "m-grid m-grid-striped m-grid-bordered m-grid-hover" + (EnableEditing ? " m-clickable" : string.Empty));
                        }
-
-                       string cssClass = "margin: 15px 0px !important; table-layout: fixed;";
-
-                       builder2.AddAttribute(9, "style", cssClass);
 
                        builder2.AddElementReferenceCapture(27, (__value) =>
                        {
@@ -395,7 +390,7 @@ namespace MComponents.MGrid
                            {
                                builder3.AddMarkupContent(16, "\r\n\r\n    ");
                                builder3.OpenElement(17, "div");
-                               builder3.AddAttribute(18, "class", "m-pagination-tools");
+                               builder3.AddAttribute(18, "class", "m-pagination-entry m-pagination-tools");
                                builder3.AddMarkupContent(19, "\r\n        ");
 
                                if (Pager.SelectablePageSizes != null)
@@ -421,29 +416,22 @@ namespace MComponents.MGrid
                                builder3.AddMarkupContent(44, "\r\n");
 
                                builder3.AddMarkupContent(45, $"<span class=\"m-pagination-descr\">{DataCache?.Count} Einträge aus {TotalDataCountCache}</span>");
+
+                               if (EnableExport)
+                               {
+                                   builder3.OpenElement(0, "button");
+                                   builder3.AddAttribute(0, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
+                                   builder3.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnExportClicked));
+                                   builder3.AddContent(0, (MarkupString)"<i class=\"fas fa-download\"></i>");
+                                   builder3.CloseElement(); // button
+                               }
+
                                builder3.CloseElement(); //div
                            }
                            ));
 
                            builder2.CloseComponent();
                        }
-
-
-                       builder2.OpenElement(0, "div");
-                       builder2.AddAttribute(0, "style", "padding-top: 10px;");
-
-                       if (EnableExport)
-                       {
-                           builder2.OpenElement(0, "button");
-                           builder2.AddAttribute(0, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                           builder2.AddAttribute(0, "style", "float: right;");
-
-                           builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnExportClicked));
-                           builder2.AddContent(0, (MarkupString)"<i class=\"fas fa-download\"></i>");
-                           builder2.CloseElement(); // button
-                       }
-
-                       builder2.CloseElement();
 
 
                        builder2.CloseElement(); //div 

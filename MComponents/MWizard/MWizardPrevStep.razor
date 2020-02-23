@@ -1,6 +1,6 @@
 ﻿@if (Wizard != null && !Wizard.FreezeCurrentStep)
 {
-    <button class="m-btn m-btn-primary m-btn-md m-btn-tall m-btn-wide" @attributes="AdditionalAttributes" @onclick="Wizard.OnPrevClicked">
+    <button class="m-wizard-btn m-btn m-btn-primary m-btn-md m-btn-tall m-btn-wide" data-action="prev" @attributes="AdditionalAttributes" @onclick="Wizard.OnPrevClicked">
         Zurück
     </button>
 }

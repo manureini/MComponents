@@ -1,10 +1,32 @@
 ﻿@page "/counter"
 
-<h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
+<MComponents.MWizard.MWizard>
+    <Steps>
+        <MComponents.MWizard.MWizardStep Identifier="1" Title="Step1">
+            <Content>
+                <h1>Counter</h1>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+                <p>Current count: @currentCount</p>
+
+                <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+            </Content>
+        </MComponents.MWizard.MWizardStep>
+
+        <MComponents.MWizard.MWizardStep Identifier="2" Title="Step2">
+            <Content>
+
+            </Content>
+        </MComponents.MWizard.MWizardStep>
+
+        <MComponents.MWizard.MWizardStep Identifier="3" Title="Step3">
+            <Content>
+                <p>Current count: @currentCount</p>
+            </Content>
+        </MComponents.MWizard.MWizardStep>
+    </Steps>
+</MComponents.MWizard.MWizard>
 
 @code {
     private int currentCount = 0;

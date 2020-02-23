@@ -2,7 +2,7 @@
 @{ const string DISABLED_CLASS = "m-pagination-entry--disabled"; }
 
 <div class="m-pagination-container">
-    <ul class="m-pagination-list">
+    <ul class="m-pagination-entry m-pagination-list">
 
         <li class="m-pagination-entry m-pagination-entry--prev @(CurrentPage <= 1 ? DISABLED_CLASS : string.Empty)">
             <a @onclick=OnPrev><i class="fa fa-angle-left m-font-brand"></i></a>

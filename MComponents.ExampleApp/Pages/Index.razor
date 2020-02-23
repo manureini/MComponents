@@ -1,9 +1,12 @@
 ﻿@page "/"
 
 
+<MComponents.MBadge.MBadge>MBadge</MComponents.MBadge.MBadge>
+
 <h1>MSelect</h1>
 
 <br />
+
 
 <CascadingValue Value="mEditContext">
     <MSelect T="string" @bind-Value="mValue" Options="mValues" />
@@ -20,7 +23,7 @@
 
     <br />
 
-    <MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true"/>
+    <MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
 
 
 </CascadingValue>

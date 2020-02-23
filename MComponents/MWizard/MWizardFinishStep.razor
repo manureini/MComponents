@@ -1,7 +1,7 @@
 ﻿
 @if (Wizard != null && !Wizard.FreezeCurrentStep)
 {
-    <button class="m-btn m-btn-success m-btn-md m-btn-tall m-btn-wide" @attributes="AdditionalAttributes" @onclick="Wizard.OnFinishClicked">
+    <button class="m-wizard-btn m-btn m-btn-success m-btn-md m-btn-tall m-btn-wide" data-action="submit" @attributes="AdditionalAttributes" @onclick="Wizard.OnFinishClicked">
         Speichern
     </button>
 }

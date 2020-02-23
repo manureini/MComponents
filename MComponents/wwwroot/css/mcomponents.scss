@@ -1,5 +1,7 @@
 $white: #ffffff;
 $primary: #5867dd;
+$success: #28a745;
+
 $text_color: #212529;
 $gray: #ebedf2;
 
@@ -58,7 +60,7 @@ html, body {
 .m-btn-primary {
     color: $white;
     background-color: $primary;
-    border-color: darken($primary, 10%);
+    border-color: darken($primary, 5%);
 }
 
 .m-btn-primary:hover {
@@ -66,6 +68,20 @@ html, body {
     background-color: darken($primary, 5%);
     border-color: darken($primary, 10%);
 }
+
+.m-btn-success {
+    color: $white;
+    background-color: $success;
+    border-color: darken($success, 10%);
+}
+
+.m-btn-success:hover {
+    color: $white;
+    background-color: darken($success, 5%);
+    border-color: darken($success, 10%);
+}
+
+
 
 .m-btn-primary.disabled,
 .m-btn-primary:disabled {
@@ -78,7 +94,11 @@ html, body {
     display: flex;
     flex-wrap: wrap;
     -webkit-box-pack: start;
-    justify-content: flex-start;
+    justify-content: space-between;
+
+    button:first-child {
+        margin: auto 0 auto auto;
+    }
 }
 
 .m-btn-group,
@@ -227,9 +247,10 @@ html button {
 
 .m-grid {
     width: 100%;
-    margin-bottom: 1rem;
+    margin: 1rem 0;
     color: $text_color;
     background-color: transparent;
+    table-layout: fixed;
 
     &.m-grid-striped tbody tr:nth-of-type(2n+1) {
         background-color: #f7f8fa;
@@ -314,7 +335,6 @@ html button {
         background: #d4def5;
         border-radius: initial;
         border: 0;
-        padding: 0.75rem;
     }
 }
 
@@ -341,6 +361,7 @@ html button {
     line-height: 0;
 }
 
+
 .m-pagination-container {
     display: flex;
     -webkit-box-align: center;
@@ -352,13 +373,16 @@ html button {
     padding: 0;
     user-select: none;
 
-    .m-pagination-list {
+    .m-pagination-entry {
         display: flex;
-        -webkit-box-pack: center;
         justify-content: center;
-        -webkit-box-align: center;
         align-items: center;
         padding: 0;
+        margin: 0;
+    }
+
+    .m-pagination-list {
+
 
         .m-pagination-entry {
             display: flex;
@@ -430,11 +454,6 @@ html button {
     }
 
     .m-pagination-tools {
-        margin: 0;
-        display: flex;
-        -webkit-box-align: center;
-        align-items: center;
-        padding: 0;
 
         .m-form-control {
             padding: 0;
@@ -459,23 +478,29 @@ html button {
         select {
             cursor: pointer;
         }
+
+        button {
+            margin-left: 10px;
+        }
     }
 }
+
 
 /* END Table ----------------------------------------------------------------------------- */
 
 
-
 /* START Select ----------------------------------------------------------------------------- */
-
 .m-select {
-    padding: 0;
     user-select: none;
 
     span {
         padding: 0.65rem;
         line-height: 1.5;
         display: inline-block;
+    }
+
+    &.m-form-control {
+        padding: 0;
     }
 
     &.m-select--open {
@@ -497,11 +522,6 @@ html button {
     }
 }
 
-.m-grid-edit-row .m-select {
-    span {
-        padding: 0; //override if we are inside grid
-    }
-}
 
 .m-select-options-container {
     display: block;
@@ -545,6 +565,10 @@ html button {
 
             .m-select-options-entry {
                 padding: 5px 15px;
+
+                &.m-select-options-entry--highlighted {
+                    background: $gray;
+                }
             }
         }
     }
@@ -553,8 +577,123 @@ html button {
 .m-checkbox > input {
     margin: 5px; /* TODO */
 }
-
 /* END Select ----------------------------------------------------------------------------- */
+/* START Wizard ----------------------------------------------------------------------------- */
+.m-wizard {
+    display: flex;
+    flex-direction: column;
+
+    .m-wizard-navigation {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .m-wizard-navigation-item {
+        padding: 2rem 0.5rem;
+        user-select: none;
+
+        .m-wizard-navigation-item-bar {
+            height: 4px;
+            position: relative;
+            background-color: #dee1eb;
+
+            &:after {
+                content: ' ';
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 4px;
+                width: 0;
+                background-color: transparent;
+                transition: all 0.3s ease;
+            }
+        }
+
+        &.m-wizard-navigation-item--current .m-wizard-navigation-item-bar {
+
+            &:after {
+                width: 100%;
+                background-color: $primary;
+            }
+        }
+    }
+
+    .m-wizard-navigation-item--current .m-wizard-navigation-item-title-contaier {
+        color: $primary;
+    }
+
+    .m-wizard-navigation-item-title-contaier {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: darken($gray, 30);
+
+        span {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+        }
+    }
+
+    .m-wizard-step-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .m-wizard-step {
+        display: flex;
+        width: 60%;
+        padding: 20px 0;
+        border-bottom: 1px solid #eeeef4;
+    }
+
+    .m-wizard-action-group {
+        width: 60%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-top: 20px;
+    }
+
+    .m-wizard-btn {
+        text-transform: uppercase;
+    }
+
+    &.m-wizard--first .m-wizard-btn[data-action="submit"], &.m-wizard--between .m-wizard-btn[data-action="submit"] {
+        display: none;
+    }
+
+    &.m-wizard--first .m-wizard-btn[data-action="prev"] {
+        display: none;
+    }
+
+    .m-wizard-btn[data-action="next"] {
+        margin: auto 0 auto auto;
+    }
+
+    &.m-wizard--last .m-wizard-btn[data-action="next"] {
+        display: none;
+    }
+}
+/* END Wizard ----------------------------------------------------------------------------- */
+.m-badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: 0;
+    margin: 0;
+    padding: 1rem 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 4px;
+
+    &.m-badge--primary {
+        color: white;
+        background: $primary;
+    }
+}
+
 
 
 
@@ -568,6 +707,7 @@ html button {
     border-style: solid;
     border-color: rgb(226, 229, 236);
     border-radius: 4px;
+    padding: 0.75rem;
     transition-duration: 0.15s, 0.15s, 0.15s;
     transition-timing-function: ease-in-out, ease-in-out, ease-in-out;
     transition-delay: 0s, 0s, 0s;
@@ -578,7 +718,11 @@ html button {
         background-color: white;
         border-color: #9aabff;
         outline-width: 0;
-        box-shadow: rgba(88, 103, 221, 0.25) 0 0 0 0.2rem;
+        box-shadow: rgba($primary, 0.05) 0 0 0 0.15rem;
+    }
+
+    &:disabled {
+        background-color: $gray;
     }
 }
 
