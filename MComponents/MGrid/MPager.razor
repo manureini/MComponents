@@ -5,7 +5,7 @@
     <ul class="m-pagination-entry m-pagination-list">
 
         <li class="m-pagination-entry m-pagination-entry--prev @(CurrentPage <= 1 ? DISABLED_CLASS : string.Empty)">
-            <a @onclick=OnPrev><i class="fa fa-angle-left m-font-brand"></i></a>
+            <a @onclick=OnPrev><i class="fa fa-angle-left"></i></a>
         </li>
 
         @if (mCollapse)
@@ -55,7 +55,7 @@
         }
 
         <li class="m-pagination-entry m-pagination-entry--next @(CurrentPage == PageCount || PageCount == 0 ? DISABLED_CLASS : string.Empty)">
-            <a @onclick=OnNext><i class="fa fa-angle-right m-font-brand"></i></a>
+            <a @onclick=OnNext><i class="fa fa-angle-right"></i></a>
         </li>
 
     </ul>

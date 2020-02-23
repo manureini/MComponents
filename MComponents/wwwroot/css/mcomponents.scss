@@ -7,15 +7,7 @@ $gray: #ebedf2;
 
 $secondary: #595d6e;
 
-
-html, body {
-    font-size: 13px;
-    font-weight: 300;
-    font-family: Poppins, Helvetica, sans-serif;
-    -ms-text-size-adjust: 100%;
-    -webkit-font-smoothing: antialiased;
-}
-
+$padding: 0.65rem;
 
 .m-clickable {
     cursor: pointer;
@@ -34,17 +26,15 @@ html, body {
     border-width: 1px;
     border-style: solid;
     border-color: transparent;
-    padding: 0.65rem 1rem;
+    padding: $padding 1rem;
     font-size: 1rem;
     line-height: 1.5;
     border-radius: 0.25rem;
     transition-duration: 0.15s, 0.15s, 0.15s, 0.15s, 0.15s;
     transition-timing-function: ease-in-out, ease-in-out, ease-in-out, ease-in-out, ease-in-out;
     transition-delay: 0s, 0s, 0s, 0s, 0s;
-    transition-property: color, background-color, border-color, box-shadow, -webkit-box-shadow;
+    transition-property: color, background-color, border-color, box-shadow;
     outline-style: none;
-    -webkit-box-align: center;
-    align-items: center;
 }
 
 .m-btn:hover {
@@ -81,8 +71,6 @@ html, body {
     border-color: darken($success, 10%);
 }
 
-
-
 .m-btn-primary.disabled,
 .m-btn-primary:disabled {
     color: $white;
@@ -90,34 +78,6 @@ html, body {
     border-color: $gray;
 }
 
-.m-btn-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    -webkit-box-pack: start;
-    justify-content: space-between;
-
-    button:first-child {
-        margin: auto 0 auto auto;
-    }
-}
-
-.m-btn-group,
-.m-btn-group-vertical {
-    position: relative;
-    display: inline-flex;
-    vertical-align: middle;
-}
-
-.m-btn-group > .m-btn,
-.m-btn-group-vertical > .m-btn {
-    position: relative;
-    -webkit-box-flex: 1;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: auto;
-}
-
-.m-btn-group-sm > .m-btn,
 .m-btn-sm {
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
@@ -125,9 +85,6 @@ html, body {
     border-radius: 0.2rem;
 }
 
-.m-btn:focus:not(.m-btn-elevate) {
-    box-shadow: none;
-}
 
 .m-btn-secondary {
     color: darken($secondary,10%);
@@ -144,74 +101,23 @@ html, body {
 
 .m-btn-secondary.disabled,
 .m-btn-secondary:disabled {
-    color: $text_color;
+    color: darken($secondary,10%);
 }
 
 .m-btn.m-btn-icon {
     display: inline-flex;
-    -webkit-box-align: center;
     align-items: center;
-    -webkit-box-pack: center;
     justify-content: center;
     padding: 0;
     height: 3rem;
     width: 3rem;
+
+    &.m-btn-sm {
+        height: 2.5rem;
+        width: 2.5rem;
+    }
 }
 
-.m-btn-group-sm > .m-btn.m-btn-icon,
-.m-btn.m-btn-icon.m-btn-sm {
-    height: 2.5rem;
-    width: 2.5rem;
-}
-
-button.m-btn,
-input.m-btn,
-label.m-btn {
-    cursor: pointer;
-}
-
-.mr-2,
-.mx-2 {
-    margin-right: 0.5rem;
-}
-
-button {
-    border-radius: 0;
-}
-
-button:focus {
-    outline-color: -webkit-focus-ring-color;
-    outline-style: auto;
-    outline-width: 5px;
-}
-
-
-button,
-input {
-    overflow-x: visible;
-    overflow-y: visible;
-}
-
-button,
-select {
-    text-transform: none;
-}
-
-[type="button"],
-[type="reset"],
-[type="submit"],
-button {
-    -webkit-appearance: button;
-}
-
-
-
-body a,
-body button,
-html a,
-html button {
-    outline-style: none;
-}
 
 /* Font Awesome ----------------------------------------------------------------------------- */
 
@@ -226,11 +132,7 @@ html button {
     line-height: 0;
 }
 
-
-.m-btn.m-btn-sm [class^="fa-"],
-.m-btn-group-sm > .m-btn [class^="fa-"],
-.m-btn.m-btn-sm [class*=" fa-"],
-.m-btn-group-sm > .m-btn [class*=" fa-"] {
+.m-btn.m-btn-sm [class*=" fa-"] {
     font-size: 1rem;
 }
 
@@ -244,6 +146,16 @@ html button {
 
 
 /* START Table ----------------------------------------------------------------------------- */
+
+.m-grid-container .m-btn-toolbar {
+    display: flex;
+    justify-content: space-between;
+
+    button:first-child {
+        margin: auto 0 auto auto;
+    }
+}
+
 
 .m-grid {
     width: 100%;
@@ -278,7 +190,7 @@ html button {
     }
 
     td, th {
-        padding: 0.75rem;
+        padding: $padding;
         vertical-align: top;
         border-top-width: 1px;
         border-top-style: solid;
@@ -364,10 +276,8 @@ html button {
 
 .m-pagination-container {
     display: flex;
-    -webkit-box-align: center;
     align-items: center;
     flex-wrap: wrap;
-    -webkit-box-pack: justify;
     justify-content: space-between;
     margin: 0;
     padding: 0;
@@ -386,9 +296,7 @@ html button {
 
         .m-pagination-entry {
             display: flex;
-            -webkit-box-pack: center;
             justify-content: center;
-            -webkit-box-align: center;
             align-items: center;
             margin-right: 0.5rem;
             border-radius: 4px;
@@ -442,9 +350,7 @@ html button {
                 padding: 0 0.2rem;
                 display: flex;
                 flex-wrap: wrap;
-                -webkit-box-pack: center;
                 justify-content: center;
-                -webkit-box-align: center;
                 align-items: center;
                 min-width: 30px;
                 min-height: 30px;
@@ -456,7 +362,6 @@ html button {
     .m-pagination-tools {
 
         .m-pagination-descr {
-            -webkit-box-flex: 1;
             flex-grow: 1;
             font-weight: 500;
             color: #74788d;
@@ -489,7 +394,7 @@ html button {
     user-select: none;
 
     span {
-        padding: 0.65rem 0.75rem;
+        padding: $padding;
         line-height: 1.5;
         display: inline-block;
     }
@@ -573,6 +478,8 @@ html button {
     margin: 5px; /* TODO */
 }
 /* END Select ----------------------------------------------------------------------------- */
+
+
 /* START Wizard ----------------------------------------------------------------------------- */
 .m-wizard {
     display: flex;
@@ -670,7 +577,11 @@ html button {
         display: none;
     }
 }
+
+
 /* END Wizard ----------------------------------------------------------------------------- */
+
+
 .m-badge {
     display: inline-flex;
     justify-content: center;
@@ -695,18 +606,18 @@ html button {
 .m-form-control {
     display: block;
     width: 100%;
-    height: calc(1.5em + 1.3rem + 2px);
+    height: calc(#{$padding} * 2 + 1.3rem + 2px);
     background-color: white;
     background-clip: padding-box;
     border-width: 1px;
     border-style: solid;
-    border-color: rgb(226, 229, 236);
+    border-color: rgb(223, 226, 233);
     border-radius: 4px;
-    padding: 0.75rem;
+    padding: $padding;
     transition-duration: 0.15s, 0.15s, 0.15s;
     transition-timing-function: ease-in-out, ease-in-out, ease-in-out;
     transition-delay: 0s, 0s, 0s;
-    transition-property: border-color, box-shadow, -webkit-box-shadow;
+    transition-property: border-color, box-shadow;
 
     &:focus {
         color: rgb(73, 80, 87);

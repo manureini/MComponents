@@ -396,7 +396,7 @@ namespace MComponents.MGrid
                                if (Pager.SelectablePageSizes != null)
                                {
                                    builder3.OpenElement(20, "select");
-                                   builder3.AddAttribute(21, "class", "m-form-control m-font-brand");
+                                   builder3.AddAttribute(21, "class", "m-form-control");
                     
                                    builder3.AddAttribute(23, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, OnPageSizeChange));
 
