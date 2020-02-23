@@ -5,19 +5,19 @@
 
 @inject IJSRuntime JSRuntime
 
-<div class="mpaint-container">
-    <div @onmousedown="OnMouseDown"
+<div class="m-paint-container">
+    <div class="m-paint"
+         @onmousedown="OnMouseDown"
          @onmousemove="OnMouseMove"
          @onmouseup="OnMouseUp"
          @onmouseout="OnMouseOut"
          @onmouseover="OnMouseOver"
          @ontouchstart="OnTouchStart"
          @ontouchend="OnTouchEnd"
-         style="border: solid; border-color: black; border-width: 1px; width: @(Width)px; height: @(Height)px; border-radius: 5px;">
+         style="width: @(Width)px; height: @(Height)px;">
         <BECanvas Width="@Width" Height="@Height" @ref="mCanvasRef"></BECanvas>
     </div>
-    <br />
-    <button @onclick="OnResetClick" class="btn btn-primary" style="width: @(Width)px">Reset</button>
+    <button @onclick="OnResetClick" class="m-btn m-btn-primary" style="width: @(Width)px">Reset</button>
 </div>
 
 @code {
