@@ -12,6 +12,12 @@ This is another Blazor component libary which supports
 * Forms
 * Paint
 
+### Screenshots
+
+![mgrid](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MGrid.PNG)
+![mselect](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MSelect.png)
+![mwizard](https://raw.githubusercontent.com/manureini/MComponents/Screenshots/MWizard.PNG)
+
 ### How to use?
 
 Add the following references to your _Host.cshtml
