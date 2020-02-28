@@ -431,7 +431,7 @@ $borderRadius: 0.25rem;
 
     .m-select-search-container {
         display: block;
-        padding: 15px;
+        padding: 10px 10px 5px 10px;
 
         .m-select-search-input {
             height: 2.3em;
@@ -467,16 +467,76 @@ $borderRadius: 0.25rem;
             .m-select-options-entry {
                 padding: 5px 15px;
 
+                &:first-child {
+                    margin-top: 6px;
+                }
+
                 &.m-select-options-entry--highlighted {
-                    background: $gray;
+                    background: darken($gray, 2%);
+
+                    &:hover {
+                        background: darken($gray, 3%);
+                    }
+                }
+
+                &:hover {
+                    background: lighten($gray, 2%);
                 }
             }
         }
     }
 }
 
-.m-checkbox > input {
-    margin: 5px; /* TODO */
+
+
+
+.m-checkbox {
+    position: relative;
+    padding-left: 25px;
+    margin: 0;
+
+    > input {
+        position: absolute;
+        visibility: hidden;
+
+        &:checked ~ span {
+            //  background-color: $gray;
+            &:after {
+                content: "";
+                position: absolute;
+                left: 6px;
+                top: 2px;
+                width: 5px;
+                height: 10px;
+                border: solid $secondary;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+            }
+        }
+
+        ~ span {
+            position: absolute;
+            top: 1px;
+            left: 0;
+            height: 18px;
+            width: 18px;
+            border: 1px solid #d1d7e2;
+            border-radius: $borderRadius;
+        }
+    }
+    /* Create the checkmark/indicator (hidden when not checked) */
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+    /* Show the checkmark when checked */
+    .container input:checked ~ .checkmark:after {
+        display: block;
+    }
+    /* Style the checkmark/indicator */
+    .container .checkmark:after {
+    }
 }
 /* END Select ----------------------------------------------------------------------------- */
 

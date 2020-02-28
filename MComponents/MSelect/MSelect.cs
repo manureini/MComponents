@@ -173,7 +173,7 @@ namespace MComponents.MSelect
             {
                 pBuilder.OpenElement(32, "div");
                 pBuilder.AddAttribute(33, "tabindex", "0");
-                pBuilder.AddAttribute(34, "onfocusout", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusLost));
+                //             pBuilder.AddAttribute(34, "onfocusout", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusLost));
 
                 pBuilder.AddAttribute(35, "class", "m-select-options-container");
                 pBuilder.AddElementReferenceCapture(36, (__value) =>
@@ -231,12 +231,6 @@ namespace MComponents.MSelect
                 pBuilder.AddAttribute(69, "class", "m-select-options-list m-scrollbar");
                 pBuilder.AddAttribute(70, "role", "listbox");
 
-                /*
-                pBuilder.AddAttribute(72, "aria-expanded", "true");
-                pBuilder.AddAttribute(73, "aria-hidden", "false");
-                */
-
-
                 int i = 0;
 
                 foreach (var entry in DisplayValues)
@@ -247,17 +241,20 @@ namespace MComponents.MSelect
 
                     pBuilder.OpenElement(76, "li");
                     pBuilder.AddAttribute(77, "class", "m-select-options-entry m-clickable" + (isSelected ? " m-select-options-entry--highlighted" : string.Empty));
+                    pBuilder.AddAttribute(80, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOptionSelect(index)));
                     pBuilder.AddAttribute(78, "role", "option");
-                    //       pBuilder.AddAttribute(79, "aria-selected", isSelected);
 
                     if (MultipleSelectMode)
                     {
                         pBuilder.OpenElement(76, "label");
-                        pBuilder.AddAttribute(78, "class", "m-checkbox m-select-checkbox");
+                        pBuilder.AddAttribute(78, "class", "m-checkbox m-select-checkbox m-clickable");
+                        pBuilder.AddEventStopPropagationClicksAttribute(81);
 
                         pBuilder.OpenElement(76, "input");
                         pBuilder.AddAttribute(78, "type", "checkbox");
+
                         pBuilder.AddAttribute(80, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, () => OnOptionSelect(index)));
+                        pBuilder.AddEventStopPropagationClicksAttribute(81);
 
                         if (Values.Contains(entry))
                         {
@@ -266,10 +263,10 @@ namespace MComponents.MSelect
 
                         pBuilder.CloseElement(); //input
 
-                        pBuilder.AddContent(81, FormatValueAsString(entry));
+                        pBuilder.OpenElement(81, "span"); //this is required for design magic
+                        pBuilder.CloseElement();
 
-                        //       pBuilder.OpenElement(76, "span");
-                        //       pBuilder.CloseElement(); //span
+                        pBuilder.AddContent(81, FormatValueAsString(entry));
 
                         pBuilder.CloseElement(); //label
                     }
