@@ -119,12 +119,6 @@ namespace MComponents.MGrid
                 Formatter = new MGridDefaultObjectFormatter<T>();
         }
 
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            ClearDataCache();
-        }
-
         public void RegisterColumn(IMGridColumn pColumn)
         {
             if (ColumnsList.Any(c => c.Identifier == pColumn.Identifier))
