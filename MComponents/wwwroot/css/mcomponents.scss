@@ -164,6 +164,7 @@ $borderRadius: 0.25rem;
     color: $text_color;
     background-color: transparent;
     border-spacing: 0px;
+    border-collapse: separate;
 
     table {
         border-collapse: separate;
@@ -252,6 +253,8 @@ $borderRadius: 0.25rem;
 
     & > td {
         position: relative;
+        border-width: 0;
+        padding: 0;
     }
 
     .m-action-column-cell {
@@ -262,6 +265,7 @@ $borderRadius: 0.25rem;
         background: #d4def5;
         border-radius: initial;
         border: 0;
+        height: 100%;
     }
 }
 
@@ -280,6 +284,8 @@ $borderRadius: 0.25rem;
         color: lighten($secondary,30%);
     }
 }
+
+
 //download button
 .m-btn.m-btn-icon i {
     padding: 0;

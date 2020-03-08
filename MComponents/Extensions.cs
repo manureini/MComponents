@@ -16,8 +16,11 @@ namespace MComponents
             builder.AddEventStopPropagationAttribute(sequence, "ondblclick", true);
         }
 
-        public static void AddStyleWithAttribute2(this RenderTreeBuilder builder, int sequence, double pLeftOffset, BoundingBox pBoundingBox)
+        public static void AddStyleWithAttribute(this RenderTreeBuilder builder, int sequence, double pLeftOffset, BoundingBox pBoundingBox)
         {
+            if (pBoundingBox == null)
+                return;
+
             string width = $"{Convert.ToString(pBoundingBox.Width, CultureInfo.InvariantCulture) }px";
             string height = $"{Convert.ToString(pBoundingBox.Height, CultureInfo.InvariantCulture) }px";
 

@@ -239,12 +239,7 @@ namespace MComponents
 
                         if (propertyInfo.PropertyType != null)
                         {
-                            // builder2.OpenElement(23, "div");
-                            //  builder2.AddMultipleAttributes(17, field.AdditionalAttributes);
-
                             AddInput(builder2, field, propertyInfo, inpId);
-
-                            //  builder2.CloseElement();
                         }
 
                         builder2.CloseElement();

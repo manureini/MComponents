@@ -111,6 +111,12 @@ namespace MComponents.MGrid
 
         protected bool mHasActionColumn;
 
+
+        public bool IsEditingRow => EditRow != null;
+
+        public bool FixedColumns => IsEditingRow || IsFilterRowVisible;
+
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -175,6 +181,14 @@ namespace MComponents.MGrid
             Events = pEvents;
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await UpdateColumnsWidth();
+            }
+        }
+
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             base.BuildRenderTree(builder);
@@ -190,8 +204,8 @@ namespace MComponents.MGrid
                         };
 
                 builder.OpenComponent<CascadingValue<MGrid<T>>>(4);
-                builder.AddAttribute(5, "Value", this);
-                builder.AddAttribute(6, "ChildContent", child());
+                builder.AddAttribute(207, "Value", this);
+                builder.AddAttribute(208, "ChildContent", child());
                 builder.CloseComponent();
             }
 
@@ -199,45 +213,45 @@ namespace MComponents.MGrid
             RenderFragment childMain() =>
                    (builder2) =>
                    {
-                       builder2.OpenElement(7, "div");
-                       builder2.AddAttribute(54, "class", "m-grid-container");
-                       builder2.AddMultipleAttributes(8, AdditionalAttributes);
+                       builder2.OpenElement(216, "div");
+                       builder2.AddAttribute(217, "class", "m-grid-container");
+                       builder2.AddMultipleAttributes(218, AdditionalAttributes);
+               
 
-
-                       builder2.OpenElement(8, "div");
-                       builder2.AddAttribute(51, "class", "m-btn-toolbar");
-                       builder2.AddAttribute(52, "role", "toolbar");
+                       builder2.OpenElement(221, "div");
+                       builder2.AddAttribute(222, "class", "m-btn-toolbar");
+                       builder2.AddAttribute(223, "role", "toolbar");
 
                        if (ToolbarItems != ToolbarItem.None)
                        {
-                           builder2.OpenElement(53, "div");
-                           builder2.AddAttribute(54, "class", "m-btn-group mr-2");
-                           builder2.AddAttribute(55, "role", "group");
+                           builder2.OpenElement(227, "div");
+                           builder2.AddAttribute(228, "class", "m-btn-group mr-2");
+                           builder2.AddAttribute(229, "role", "group");
 
                            if (EnableAdding && ToolbarItems.HasFlag(ToolbarItem.Add))
                            {
-                               builder2.OpenElement(0, "button");
-                               builder2.AddAttribute(0, "class", "m-btn m-btn-primary");
-                               builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarAdd));
-                               builder2.AddContent(0, (MarkupString)$"<i class=\"fa fa-plus\"></i> {L["Add"]}");
+                               builder2.OpenElement(233, "button");
+                               builder2.AddAttribute(234, "class", "m-btn m-btn-primary");
+                               builder2.AddAttribute(235, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarAdd));
+                               builder2.AddContent(236, (MarkupString)$"<i class=\"fa fa-plus\"></i> {L["Add"]}");
                                builder2.CloseElement(); // button
                            }
 
                            if (EnableEditing && ToolbarItems.HasFlag(ToolbarItem.Edit))
                            {
-                               builder2.OpenElement(0, "button");
-                               builder2.AddAttribute(0, "class", "m-btn m-btn-primary");
-                               builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarEdit));
-                               builder2.AddContent(0, (MarkupString)$"<i class=\"fa fa-edit\"></i> {L["Edit"]}");
+                               builder2.OpenElement(242, "button");
+                               builder2.AddAttribute(243, "class", "m-btn m-btn-primary");
+                               builder2.AddAttribute(244, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarEdit));
+                               builder2.AddContent(245, (MarkupString)$"<i class=\"fa fa-edit\"></i> {L["Edit"]}");
                                builder2.CloseElement(); // button
                            }
 
                            if (EnableDeleting && ToolbarItems.HasFlag(ToolbarItem.Delete))
                            {
-                               builder2.OpenElement(0, "button");
-                               builder2.AddAttribute(0, "class", "m-btn m-btn-primary");
-                               builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarRemove));
-                               builder2.AddContent(0, (MarkupString)$"<i class=\"fa fa-trash-alt\"></i> {L["Delete"]}");
+                               builder2.OpenElement(251, "button");
+                               builder2.AddAttribute(252, "class", "m-btn m-btn-primary");
+                               builder2.AddAttribute(253, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarRemove));
+                               builder2.AddContent(254, (MarkupString)$"<i class=\"fa fa-trash-alt\"></i> {L["Delete"]}");
                                builder2.CloseElement(); // button
                            }
 
@@ -246,13 +260,13 @@ namespace MComponents.MGrid
 
                        if (EnableFilterRow)
                        {
-                           builder2.OpenElement(9, "button");
-                           builder2.AddAttribute(10, "class", "m-btn m-btn-primary m-btn-sm");
-                           builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleFilter));
-                           builder2.OpenElement(9, "i");
-                           builder2.AddAttribute(10, "class", "fas fa-filter");
+                           builder2.OpenElement(263, "button");
+                           builder2.AddAttribute(264, "class", "m-btn m-btn-primary m-btn-sm");
+                           builder2.AddAttribute(265, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleFilter));
+                           builder2.OpenElement(266, "i");
+                           builder2.AddAttribute(267, "class", "fas fa-filter");
                            builder2.CloseElement(); //i
-                           builder2.AddContent(12, L["Filter"]);
+                           builder2.AddContent(269, L["Filter"]);
                            builder2.CloseElement(); //button
                        }
 
@@ -260,30 +274,30 @@ namespace MComponents.MGrid
                        builder2.CloseElement(); // div
 
 
-                       builder2.OpenElement(9, "table");
+                       builder2.OpenElement(277, "table");
 
 
                        if (HtmlTableClass != null)
                        {
-                           builder2.AddAttribute(10, "class", HtmlTableClass + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
+                           builder2.AddAttribute(282, "class", HtmlTableClass + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
                        }
                        else
                        {
-                           builder2.AddAttribute(10, "class", "m-grid m-grid-striped m-grid-bordered m-grid-hover" + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
+                           builder2.AddAttribute(286, "class", "m-grid m-grid-striped m-grid-bordered m-grid-hover" + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
                        }
 
-                       if (IsEditingRow)
+                       if (FixedColumns)
                        {
-                           builder2.AddAttribute(2, "style", "table-layout: fixed;");
+                           builder2.AddAttribute(291, "style", "table-layout: fixed;");
                        }
 
-                       builder2.AddElementReferenceCapture(27, (__value) =>
+                       builder2.AddElementReferenceCapture(294, async (__value) =>
                        {
                            mTableReference = __value;
                        });
 
-                       builder2.OpenElement(11, "thead");
-                       builder2.OpenElement(12, "tr");
+                       builder2.OpenElement(299, "thead");
+                       builder2.OpenElement(300, "tr");
 
                        for (int i = 0; i < ColumnsList.Count; i++)
                        {
@@ -292,19 +306,19 @@ namespace MComponents.MGrid
                            if (!column.ShouldRenderColumn)
                                continue;
 
-                           builder2.OpenElement(13, "th");
+                           builder2.OpenElement(309, "th");
                            builder2.AddMultipleAttributes(24, column.AdditionalAttributes);
 
-                           if (IsEditingRow)
+                           if (FixedColumns)
                            {
                                var width = GetColumnWidth(i);
-                               builder2.AddAttribute(18, "style", $"width: {width.ToString(CultureInfo.InvariantCulture)}px");
+                               builder2.AddAttribute(315, "style", $"width: {width.ToString(CultureInfo.InvariantCulture)}px");
                            }
 
-                           builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) => OnColumnHeaderClick(column, a)));
-                           builder2.AddAttribute(14, "scope", "col");
+                           builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) => OnColumnHeaderClick(column, a)));
+                           builder2.AddAttribute(319, "scope", "col");
 
-                           builder2.AddContent(15, (MarkupString)column.HeaderText);
+                           builder2.AddContent(321, (MarkupString)column.HeaderText);
 
                            if (EnableUserSorting)
                            {
@@ -312,10 +326,10 @@ namespace MComponents.MGrid
                                if (sortInstr != null)
                                {
                                    if (sortInstr.Direction == MSortDirection.Ascending)
-                                       builder2.AddContent(15, (MarkupString)"<i class=\"fa fa-arrow-down m-grid-header-icon\"></i>");
+                                       builder2.AddContent(329, (MarkupString)"<i class=\"fa fa-arrow-down m-grid-header-icon\"></i>");
 
                                    if (sortInstr.Direction == MSortDirection.Descending)
-                                       builder2.AddContent(15, (MarkupString)"<i class=\"fa fa-arrow-up m-grid-header-icon\"></i>");
+                                       builder2.AddContent(332, (MarkupString)"<i class=\"fa fa-arrow-up m-grid-header-icon\"></i>");
                                }
                            }
 
@@ -325,8 +339,8 @@ namespace MComponents.MGrid
                        builder2.CloseElement(); //tr
                        builder2.CloseElement(); //thead
 
-                       builder2.AddMarkupContent(16, "\r\n");
-                       builder2.OpenElement(17, "tbody");
+                       builder2.AddMarkupContent(342, "\r\n");
+                       builder2.OpenElement(434, "tbody");
 
                        if (DataCache == null)
                        {
@@ -374,54 +388,54 @@ namespace MComponents.MGrid
                        builder2.CloseElement(); //tbody
 
                        builder2.CloseElement(); // table
-                       builder2.AddMarkupContent(25, "\r\n");
+                       builder2.AddMarkupContent(391, "\r\n");
 
                        if (Pager != null)
                        {
                            int pagecount = (int)Math.Ceiling(DataCountCache / (double)Pager.PageSize);
 
                            builder2.OpenComponent<MPager>(11);
-                           builder2.AddAttribute(12, "CurrentPage", Pager.CurrentPage);
-                           builder2.AddAttribute(12, "PageCount", pagecount);
-                           builder2.AddAttribute(5, "OnPageChanged", EventCallback.Factory.Create<int>(this, OnPagerPageChanged));
+                           builder2.AddAttribute(398, "CurrentPage", Pager.CurrentPage);
+                           builder2.AddAttribute(399, "PageCount", pagecount);
+                           builder2.AddAttribute(400, "OnPageChanged", EventCallback.Factory.Create<int>(this, OnPagerPageChanged));
 
-                           builder2.AddAttribute(15, "ChildContent", (RenderFragment)((builder3) =>
+                           builder2.AddAttribute(402, "ChildContent", (RenderFragment)((builder3) =>
                            {
-                               builder3.AddMarkupContent(16, "\r\n\r\n    ");
-                               builder3.OpenElement(17, "div");
-                               builder3.AddAttribute(18, "class", "m-pagination-entry m-pagination-tools");
-                               builder3.AddMarkupContent(19, "\r\n        ");
+                               builder3.AddMarkupContent(404, "\r\n\r\n    ");
+                               builder3.OpenElement(405, "div");
+                               builder3.AddAttribute(406, "class", "m-pagination-entry m-pagination-tools");
+                               builder3.AddMarkupContent(407, "\r\n        ");
 
                                if (Pager.SelectablePageSizes != null)
                                {
-                                   builder3.OpenElement(20, "select");
-                                   builder3.AddAttribute(21, "class", "m-form-control");
+                                   builder3.OpenElement(411, "select");
+                                   builder3.AddAttribute(412, "class", "m-form-control");
 
-                                   builder3.AddAttribute(23, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, OnPageSizeChange));
+                                   builder3.AddAttribute(413, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, OnPageSizeChange));
 
                                    foreach (var entry in Pager.SelectablePageSizes)
                                    {
-                                       builder3.OpenElement(40, "option");
-                                       builder3.AddAttribute(41, "value", entry);
-                                       builder3.AddContent(42, entry);
+                                       builder3.OpenElement(418, "option");
+                                       builder3.AddAttribute(419, "value", entry);
+                                       builder3.AddContent(420, entry);
                                        builder3.CloseElement();
                                    }
 
-                                   builder3.AddMarkupContent(43, "\r\n");
+                                   builder3.AddMarkupContent(424, "\r\n");
                                    builder3.CloseElement(); //select
                                }
 
-                               builder3.AddMarkupContent(44, "\r\n");
+                               builder3.AddMarkupContent(428, "\r\n");
 
 
-                               builder3.AddMarkupContent(45, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], DataCache?.Count, TotalDataCountCache)}</span>");
+                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], DataCache?.Count, TotalDataCountCache)}</span>");
 
                                if (EnableExport)
                                {
-                                   builder3.OpenElement(0, "button");
-                                   builder3.AddAttribute(0, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                                   builder3.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnExportClicked));
-                                   builder3.AddContent(0, (MarkupString)"<i class=\"fas fa-download\"></i>");
+                                   builder3.OpenElement(435, "button");
+                                   builder3.AddAttribute(436, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
+                                   builder3.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnExportClicked));
+                                   builder3.AddContent(438, (MarkupString)"<i class=\"fas fa-download\"></i>");
                                    builder3.CloseElement(); // button
                                }
 
@@ -436,10 +450,7 @@ namespace MComponents.MGrid
                        builder2.CloseElement(); //div 
                    };
 
-            builder.OpenComponent<CascadingValue<object>>(4);
-            builder.AddAttribute(5, "Value", "");
-            builder.AddAttribute(6, "ChildContent", childMain());
-            builder.CloseComponent();
+            builder.AddContent(453, childMain());
 
             builder.CloseRegion();
         }
@@ -472,49 +483,25 @@ namespace MComponents.MGrid
                 mFilterModel = fmodel;
             }
 
-            pBuilder.OpenElement(19, "tr");
-            pBuilder.AddAttribute(20, "class", "m-grid-row m-grid-edit-row m-grid-filter-row");
 
-            pBuilder.OpenComponent<MForm<ExpandoObject>>(53);
-            pBuilder.AddAttribute(54, nameof(MForm<ExpandoObject>.Model), mFilterModel);
-            pBuilder.AddAttribute(55, nameof(MForm<ExpandoObject>.IsInTableRow), true);
-            pBuilder.AddAttribute(55, nameof(MForm<ExpandoObject>.EnableValidation), false);
-            pBuilder.AddAttribute(55, "data-is-filterrow", true);
+            pBuilder.OpenElement(487, "tr");
+            pBuilder.AddAttribute(489, "class", "m-grid-row m-grid-edit-row m-grid-filter-row");
 
-            pBuilder.AddAttribute(58, nameof(MForm<ExpandoObject>.MFormGridContext), new MFormGridContext()
-            {
-                Action = MGridAction.FilterRow
-            });
+            AddInlineTrHeight(pBuilder);
 
-            pBuilder.AddAttribute(23, nameof(MForm<ExpandoObject>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<ExpandoObject>>(this, OnFilterValueChanged));
+            AddEditRow<ExpandoObject>(pBuilder, MGridAction.FilterRow, true, (ExpandoObject)mFilterModel);
 
-            pBuilder.AddAttribute(56, nameof(MForm<ExpandoObject>.Fields), (RenderFragment)((builder3) =>
-            {
-                //     bool columnFixedSize = !(mHasActionColumn && !EnableEditing && !EnableDeleting);
-
-                for (int i = 0; i < ColumnsList.Count; i++)
-                {
-                    IMGridColumn column = ColumnsList[i];
-                    var size = (double?)null; // columnFixedSize ? GetColumnWidth(i) : null;
-                                              //    AddMFormField(builder3, column, true, size, 100);
-                                              //TODO
-                }
-            }));
-
-            pBuilder.CloseComponent();
-
-            pBuilder.CloseElement(); //tr;
+            pBuilder.CloseElement();
         }
 
-
-        private void AddContentRow(RenderTreeBuilder builder2, T entry, MGridAction pAction)
+        private void AddContentRow(RenderTreeBuilder pBuilder, T pEntry, MGridAction pAction)
         {
-            Guid entryId = GetId(entry);
+            Guid entryId = GetId(pEntry);
 
             bool rowEdit = EditRow.HasValue && EditRow.Value == entryId;
 
-            builder2.AddMarkupContent(18, "\r\n");
-            builder2.OpenElement(19, "tr");
+            pBuilder.AddMarkupContent(503, "\r\n");
+            pBuilder.OpenElement(504, "tr");
 
             string cssClass = "m-grid-row";
 
@@ -527,148 +514,29 @@ namespace MComponents.MGrid
             if (selected)
                 cssClass += " m-grid-highlight";
 
-            Formatter.AppendToTableRow(builder2, ref cssClass, entry, selected);
+            Formatter.AppendToTableRow(pBuilder, ref cssClass, pEntry, selected);
 
-            builder2.AddAttribute(20, "class", cssClass);
+            pBuilder.AddAttribute(519, "class", cssClass);
 
 
-            builder2.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
+            pBuilder.AddAttribute(522, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
             {
-                OnRowClick(entry, a);
+                OnRowClick(pEntry, a);
             }));
 
-            builder2.AddEventStopPropagationAttribute(4, "onclick", true);
+            pBuilder.AddEventStopPropagationAttribute(527, "onclick", true);
 
 
-            builder2.AddAttribute(21, "ondblclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (a) =>
+            pBuilder.AddAttribute(530, "ondblclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (a) =>
             {
-                await StartEditRow(entry, a);
+                await StartEditRow(pEntry, a);
             }));
 
 
             if (rowEdit)
             {
-                EditValue = entry;
-
-                var inlineTrHeight = mFieldBoundingBox.Height;
-
-                if (mFieldBoundingBox.BorderCollapse == "collapse")
-                {
-                    inlineTrHeight += mFieldBoundingBox.BorderTop / 2 - mTableBorderTop / 2;
-                }
-
-                builder2.AddAttribute(20, "style", $"height: {(inlineTrHeight).ToString(CultureInfo.InvariantCulture)}px");
-
-                builder2.OpenElement(50, "td");
-                builder2.AddAttribute(51, "colspan", ColumnsList.Count);
-
-                //     builder2.OpenElement(50, "div");
-                builder2.OpenElement(50, "table");
-                builder2.OpenElement(50, "tbody");
-                builder2.OpenElement(50, "tr");
-
-                {
-
-                    builder2.OpenComponent<MForm<T>>(53);
-                    builder2.AddAttribute(54, nameof(MForm<T>.Model), EditValue);
-                    builder2.AddAttribute(55, nameof(MForm<T>.IsInTableRow), true);
-                    builder2.AddAttribute(23, nameof(MForm<T>.OnValidSubmit), EventCallback.Factory.Create<MFormSubmitArgs>(this, async (a) =>
-                    {
-                        await OnFormSubmit(a);
-                    }));
-                    builder2.AddAttribute(23, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<T>>(this, OnEditValueChanged));
-                    builder2.AddAttribute(56, nameof(MForm<T>.Fields), (RenderFragment)((builder3) =>
-                    {
-                        double left = 0;
-
-                        for (int i = 0; i < ColumnsList.Count; i++)
-                        {
-                            IMGridColumn column = ColumnsList[i];
-                            if (!column.ShouldRenderColumn)
-                                continue;
-
-                            var columnWidth = GetColumnWidth(i);
-
-                            var bWidth = columnWidth;
-                            var bHeight = mFieldBoundingBox.Height;
-
-                            if (mFieldBoundingBox.BorderCollapse == "separate")
-                            {
-                                bWidth -= mFieldBoundingBox.BorderRight;
-
-                            }
-                            else if (mFieldBoundingBox.BorderCollapse == "collapse")
-                            {
-                                if (i == 0)
-                                {
-                                    bWidth -= mFieldBoundingBox.BorderRight / 2;        
-                                }
-                                else
-                                    bWidth -= mFieldBoundingBox.BorderRight;
-
-                                if(i == 0 || i == ColumnsList.Count - 1)
-                                {
-                                    bWidth -= mTableBorderLeft / 2;
-                                }                               
-                            }
-
-                            BoundingBox box = new BoundingBox()
-                            {
-                                BorderTop = 0,
-                                BorderRight = mFieldBoundingBox.BorderRight,
-                                BorderSpace = mFieldBoundingBox.BorderSpace,
-                                BorderCollapse = mFieldBoundingBox.BorderCollapse,
-
-                                Width = bWidth,
-                                Height = bHeight,
-                            };
-
-                            AddMFormField(builder3, column, false, left, box);
-
-                            if (mFieldBoundingBox.BorderCollapse == "separate")
-                            {
-                                left += columnWidth + mFieldBoundingBox.BorderSpace;
-                            }
-                            else if (mFieldBoundingBox.BorderCollapse == "collapse")
-                            {
-                                if (i == 0)
-                                {
-                                    left += columnWidth + mFieldBoundingBox.BorderRight / 2 + mFieldBoundingBox.BorderSpace;
-                                    left -= mTableBorderLeft / 2;
-                                }
-                                else
-                                {
-                                    left += columnWidth + mFieldBoundingBox.BorderSpace;
-                                }
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException($"border-collapse {mFieldBoundingBox.BorderCollapse} not supported!");
-                            }
-                        }
-                    }));
-
-                    builder2.AddAttribute(58, nameof(MForm<T>.MFormGridContext), new MFormGridContext()
-                    {
-                        Action = pAction
-                    });
-
-                    builder2.AddComponentReferenceCapture(12, (__value) =>
-                    {
-                        EditForm = (MForm<T>)__value;
-                    });
-
-                    builder2.CloseComponent();
-                }
-
-                builder2.CloseElement(); //tr
-                builder2.CloseElement(); //tbody
-                builder2.CloseElement(); //table
-
-                //       builder2.CloseElement(); //div
-
-                builder2.CloseElement(); //td  
-
+                EditValue = pEntry;
+                AddEditRow(pBuilder, pAction, false, EditValue);
             }
             else
             {
@@ -679,36 +547,173 @@ namespace MComponents.MGrid
                     if (!column.ShouldRenderColumn)
                         continue;
 
-                    builder2.OpenElement(22, "td");
+                    pBuilder.OpenElement(550, "td");
 
-                    if (IsEditingRow)
-                    {
-                        var width = GetColumnWidth(i);
-                        //            builder2.AddAttribute(18, "style", $"width: {width.ToString(CultureInfo.InvariantCulture)}px");
-                    }
-
-                    Formatter.AppendToTableRowData(builder2, column, entry);
+                    Formatter.AppendToTableRowData(pBuilder, column, pEntry);
 
                     if (column is IMGridColumnGenerator<T> generator)
                     {
-                        builder2.AddContent(25, generator.GenerateContent(entry));
+                        pBuilder.AddContent(556, generator.GenerateContent(pEntry));
                     }
                     else if (column is IMGridPropertyColumn pc)
                     {
                         var iprop = mPropertyInfoCache[pc];
-                        builder2.AddContent(25, Formatter.FormatPropertyColumnValue(pc, iprop, entry));
+                        pBuilder.AddContent(561, Formatter.FormatPropertyColumnValue(pc, iprop, pEntry));
                     }
 
-                    builder2.CloseElement(); //td
+                    pBuilder.CloseElement(); //td
                 }
             }
 
-            builder2.CloseElement(); //tr
+            pBuilder.CloseElement(); //tr
         }
 
-        private void AddMFormField(RenderTreeBuilder builder3, IMGridColumn column, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
+        private void AddEditRow<M>(RenderTreeBuilder pBuilder, MGridAction pAction, bool pIsFilterRow, M pValue)
         {
-            if (column is IMGridPropertyColumn pc)
+            var visibleColumns = ColumnsList.Where(c => c.ShouldRenderColumn).ToArray();
+
+            AddInlineTrHeight(pBuilder);
+
+            pBuilder.OpenElement(577, "td");
+            pBuilder.AddAttribute(578, "colspan", visibleColumns.Length);
+
+            pBuilder.OpenElement(580, "table");
+            pBuilder.OpenElement(581, "tbody");
+            pBuilder.OpenElement(582, "tr");
+
+            {
+
+                pBuilder.OpenComponent<MForm<M>>(53);
+                pBuilder.AddAttribute(587, nameof(MForm<M>.Model), pValue);
+                pBuilder.AddAttribute(588, nameof(MForm<M>.IsInTableRow), true);
+                pBuilder.AddAttribute(589, nameof(MForm<M>.Fields), (RenderFragment)((builder3) =>
+                {
+                    AddInlineFormFields(builder3, visibleColumns, pIsFilterRow);
+                }));
+
+                pBuilder.AddAttribute(594, nameof(MForm<M>.MFormGridContext), new MFormGridContext()
+                {
+                    Action = pAction
+                });
+
+                if (pIsFilterRow)
+                {
+                    pBuilder.AddAttribute(601, nameof(MForm<M>.EnableValidation), false);
+                    pBuilder.AddAttribute(602, "data-is-filterrow", true);
+
+                    pBuilder.AddAttribute(604, nameof(MForm<M>.OnValueChanged),
+                        EventCallback.Factory.Create<MFormValueChangedArgs<ExpandoObject>>(this, OnFilterValueChanged));
+                }
+                else
+                {
+                    //T == M here
+
+                    pBuilder.AddAttribute(611, nameof(MForm<T>.OnValidSubmit), EventCallback.Factory.Create<MFormSubmitArgs>(this, async (a) =>
+                    {
+                        await OnFormSubmit(a);
+                    }));
+
+                    pBuilder.AddAttribute(616, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<T>>(this, OnEditValueChanged));
+
+                    pBuilder.AddComponentReferenceCapture(618, (__value) =>
+                    {
+                        EditForm = (MForm<T>)__value;
+                    });
+                }
+
+                pBuilder.CloseComponent();
+            }
+
+            pBuilder.CloseElement(); //tr
+            pBuilder.CloseElement(); //tbody
+            pBuilder.CloseElement(); //table
+
+            pBuilder.CloseElement(); //td  
+        }
+
+        private void AddInlineTrHeight(RenderTreeBuilder pBuilder)
+        {
+            var inlineTrHeight = mFieldBoundingBox.Height;
+
+            if (mFieldBoundingBox.BorderCollapse == "collapse")
+            {
+                inlineTrHeight += mFieldBoundingBox.BorderTop / 2 - mTableBorderTop / 2;
+            }
+
+            pBuilder.AddAttribute(643, "style", $"height: {(inlineTrHeight).ToString(CultureInfo.InvariantCulture)}px");
+        }
+
+        private void AddInlineFormFields(RenderTreeBuilder pBuilder, IMGridColumn[] pVisibleColumns, bool pIsFilterRow)
+        {
+            double left = 0;
+
+            for (int i = 0; i < pVisibleColumns.Length; i++)
+            {
+                IMGridColumn column = pVisibleColumns[i];
+
+                var columnWidth = GetColumnWidth(i);
+
+                var bWidth = columnWidth;
+                var bHeight = mFieldBoundingBox.Height;
+
+                if (mFieldBoundingBox.BorderCollapse == "separate")
+                {
+                    bWidth -= mFieldBoundingBox.BorderRight;
+                }
+                else if (mFieldBoundingBox.BorderCollapse == "collapse")
+                {
+                    if (i == 0)
+                    {
+                        bWidth -= mFieldBoundingBox.BorderRight / 2;
+                    }
+                    else
+                        bWidth -= mFieldBoundingBox.BorderRight;
+
+                    if (i == 0 || i == pVisibleColumns.Length - 1)
+                    {
+                        bWidth -= mTableBorderLeft / 2;
+                    }
+                }
+
+                BoundingBox box = new BoundingBox()
+                {
+                    BorderTop = 0,
+                    BorderRight = mFieldBoundingBox.BorderRight,
+                    BorderSpace = mFieldBoundingBox.BorderSpace,
+                    BorderCollapse = mFieldBoundingBox.BorderCollapse,
+
+                    Width = bWidth,
+                    Height = bHeight,
+                };
+
+                AddMFormField(pBuilder, column, pIsFilterRow, left, box);
+
+                if (mFieldBoundingBox.BorderCollapse == "separate")
+                {
+                    left += columnWidth + mFieldBoundingBox.BorderSpace;
+                }
+                else if (mFieldBoundingBox.BorderCollapse == "collapse")
+                {
+                    if (i == 0)
+                    {
+                        left += columnWidth + mFieldBoundingBox.BorderRight / 2 + mFieldBoundingBox.BorderSpace;
+                        left -= mTableBorderLeft / 2;
+                    }
+                    else
+                    {
+                        left += columnWidth + mFieldBoundingBox.BorderSpace;
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException($"border-collapse {mFieldBoundingBox.BorderCollapse} not supported!");
+                }
+            }
+        }
+
+        private void AddMFormField(RenderTreeBuilder pBuilder, IMGridColumn pColumn, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
+        {
+            if (pColumn is IMGridPropertyColumn pc)
             {
                 var propertyType = mPropertyInfoCache[pc].PropertyType;
 
@@ -716,90 +721,90 @@ namespace MComponents.MGrid
                     propertyType = GetNullableTypeIfNeeded(propertyType);
 
                 var method = typeof(MGrid<T>).GetMethod(nameof(MGrid<T>.AddPropertyField), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(propertyType);
-                method.Invoke(this, new object[] { builder3, column, pc, pIsInFilterRow, pLeftOffset, pBoundingBox });
+                method.Invoke(this, new object[] { pBuilder, pColumn, pc, pIsInFilterRow, pLeftOffset, pBoundingBox });
 
                 //  AddPropertyField(builder3, column, pc, propertyType);
             }
-            else if (column is IMGridEditFieldGenerator<T> fieldGenerator)
+            else if (pColumn is IMGridEditFieldGenerator<T> fieldGenerator)
             {
-                // AddFieldGenerator(builder3, fieldGenerator, pBoundingBox);
+                AddFieldGenerator(pBuilder, fieldGenerator, pIsInFilterRow, pLeftOffset, pBoundingBox);
             }
             else
             {
-                builder3.OpenComponent<MField>(5);
-                builder3.CloseComponent();
+                pBuilder.OpenComponent<MField>(5);
+                pBuilder.CloseComponent();
             }
         }
 
-        private static Type GetNullableTypeIfNeeded(Type propertyType)
+        private static Type GetNullableTypeIfNeeded(Type pPropertyType)
         {
-            if (propertyType.IsValueType && (!propertyType.IsGenericType || propertyType.GetGenericTypeDefinition() != typeof(Nullable<>)))
+            if (pPropertyType.IsValueType && (!pPropertyType.IsGenericType || pPropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)))
             {
-                propertyType = typeof(Nullable<>).MakeGenericType(propertyType);
+                pPropertyType = typeof(Nullable<>).MakeGenericType(pPropertyType);
             }
 
-            return propertyType;
+            return pPropertyType;
         }
 
-        private void AddPropertyField<TProperty>(RenderTreeBuilder builder3, IMGridColumn column, IMGridPropertyColumn pc, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
+        private void AddPropertyField<TProperty>(RenderTreeBuilder pBuilder, IMGridColumn pColumn, IMGridPropertyColumn pPropertyColumn, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
         {
-            var attributes = mPropertyInfoCache[pc].GetAttributes()?.ToList() ?? new List<Attribute>();
+            var attributes = mPropertyInfoCache[pPropertyColumn].GetAttributes()?.ToList() ?? new List<Attribute>();
 
             if (pIsInFilterRow)
             {
-                if (!column.EnableFilter && !attributes.OfType<ReadOnlyAttribute>().Any())
+                if (!pColumn.EnableFilter && !attributes.OfType<ReadOnlyAttribute>().Any())
                 {
                     attributes.Add(new ReadOnlyAttribute());
                 }
-                if (column.EnableFilter && attributes.Any(a => a is ReadOnlyAttribute))
+                if (pColumn.EnableFilter && attributes.Any(a => a is ReadOnlyAttribute))
                 {
                     attributes = attributes.Where(a => !(a is ReadOnlyAttribute)).ToList();
                 }
             }
 
-            if (column is IMGridComplexEditableColumn<TProperty> complex)
+            if (pColumn is IMGridComplexEditableColumn<TProperty> complex)
             {
                 if (pIsInFilterRow)
                 {
-                    builder3.OpenComponent<MComplexPropertyField<ExpandoObject, TProperty>>(5);
+                    pBuilder.OpenComponent<MComplexPropertyField<ExpandoObject, TProperty>>(5);
                 }
                 else
                 {
-                    builder3.OpenComponent<MComplexPropertyField<T, TProperty>>(5);
+                    pBuilder.OpenComponent<MComplexPropertyField<T, TProperty>>(5);
                 }
 
-                builder3.AddAttribute(6, "Property", pc.Property);
-                builder3.AddAttribute(7, "PropertyType", typeof(TProperty));
-                builder3.AddAttribute(8, "Attributes", attributes.ToArray());
+                pBuilder.AddAttribute(776, "Property", pPropertyColumn.Property);
+                pBuilder.AddAttribute(777, "PropertyType", typeof(TProperty));
+                pBuilder.AddAttribute(778, "Attributes", attributes.ToArray());
 
-                if (complex.FormTemplate != null && !pIsInFilterRow || (pIsInFilterRow && column.EnableFilter))
-                    builder3.AddAttribute(23, "Template", complex.FormTemplate);
+                if (complex.FormTemplate != null && !pIsInFilterRow || (pIsInFilterRow && pColumn.EnableFilter))
+                    pBuilder.AddAttribute(781, "Template", complex.FormTemplate);
 
 
-                builder3.AddStyleWithAttribute2(9, pLeftOffset, pBoundingBox);
+                pBuilder.AddStyleWithAttribute(784, pLeftOffset, pBoundingBox);
 
-                builder3.CloseComponent();
+                pBuilder.CloseComponent();
             }
             else
             {
-                builder3.OpenComponent<MField>(5);
+                pBuilder.OpenComponent<MField>(790);
 
-                builder3.AddAttribute(6, "Property", pc.Property);
-                builder3.AddAttribute(7, "PropertyType", typeof(TProperty));
-                builder3.AddAttribute(8, "Attributes", attributes.ToArray());
+                pBuilder.AddAttribute(792, "Property", pPropertyColumn.Property);
+                pBuilder.AddAttribute(793, "PropertyType", typeof(TProperty));
+                pBuilder.AddAttribute(794, "Attributes", attributes.ToArray());
 
+                pBuilder.AddStyleWithAttribute(976, pLeftOffset, pBoundingBox);
 
-                builder3.AddStyleWithAttribute2(9, pLeftOffset, pBoundingBox);
-
-                builder3.CloseComponent();
+                pBuilder.CloseComponent();
             }
         }
 
-        private void AddFieldGenerator(RenderTreeBuilder builder3, IMGridEditFieldGenerator<T> pFieldGenerator, double? pWidth)
+        private void AddFieldGenerator(RenderTreeBuilder pBuilder, IMGridEditFieldGenerator<T> pFieldGenerator, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
         {
-            builder3.OpenComponent<MFieldGenerator<T>>(5);
-            builder3.AddAttribute(23, "Template", pFieldGenerator.Template(pWidth ?? 0, mFieldBoundingBox.Height));
-            builder3.CloseComponent();
+            pBuilder.OpenElement(804, "td");
+            pBuilder.AddStyleWithAttribute(805, pLeftOffset, pBoundingBox);
+            pBuilder.AddContent(806, pFieldGenerator.EditFieldTemplate(pLeftOffset, pBoundingBox, pIsInFilterRow));
+            pBuilder.CloseElement();
         }
 
         protected async void OnRowClick(T pValue, MouseEventArgs pMouseArgs)
@@ -984,7 +989,7 @@ namespace MComponents.MGrid
             await StartDeleteRow(value, pMouseEventArgs);
         }
 
-        protected async void OnToggleFilter()
+        protected async Task OnToggleFilter()
         {
             await SetFilterRowVisible(!IsFilterRowVisible);
         }
@@ -1095,27 +1100,30 @@ namespace MComponents.MGrid
             await StopEditing(false, false);
         }
 
-        protected void OnPagerPageChanged(int pPage)
+        protected async Task OnPagerPageChanged(int pPage)
         {
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             Pager.CurrentPage = pPage;
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
+            await StopEditing(false, false);
+
             ClearDataCache();
             StateHasChanged();
         }
 
-        protected void OnPageSizeChange(ChangeEventArgs pValue)
+        protected async Task OnPageSizeChange(ChangeEventArgs pValue)
         {
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             Pager.PageSize = int.Parse(pValue.Value.ToString());
             Pager.CurrentPage = 1;
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
+            await StopEditing(false, false);
+
             ClearDataCache();
             StateHasChanged();
         }
-
 
         protected void OnColumnHeaderClick(IMGridColumn pColumn, MouseEventArgs pArgs)
         {
@@ -1175,7 +1183,7 @@ namespace MComponents.MGrid
             }
         }
 
-        protected void OnFilterValueChanged(MFormValueChangedArgs<ExpandoObject> pArgs)
+        protected async Task OnFilterValueChanged(MFormValueChangedArgs<ExpandoObject> pArgs)
         {
             var iprop = mPropertyInfoCache.First(v => v.Key.Property == pArgs.Property).Value;
 
@@ -1194,6 +1202,8 @@ namespace MComponents.MGrid
             if (Pager != null)
                 Pager.CurrentPage = 1;
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+
+            await StopEditing(false, false);
 
             ClearDataCache();
             StateHasChanged();
@@ -1253,13 +1263,6 @@ namespace MComponents.MGrid
 
         protected double GetColumnWidth(int pIndex)
         {
-
-            /*
-            if (pIndex == mColumnsWidth.Length - 1)
-            {
-                return mColumnsWidth[pIndex] - 1;
-            } */
-
             if (pIndex < mColumnsWidth.Length)
             {
                 return mColumnsWidth[pIndex];
@@ -1274,8 +1277,5 @@ namespace MComponents.MGrid
             mFilterModel = null;
             Refresh();
         }
-
-        public bool IsEditingRow => EditRow != null;
-
     }
 }

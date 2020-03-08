@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MComponents
 {
-    public struct BoundingBox
+    public class BoundingBox
     {
         public double Width;
         public double Height;

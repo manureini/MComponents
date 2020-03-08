@@ -120,7 +120,7 @@ var mcomponents = (function () {
             }
 
             return ret;
-        }
+        },              
     };
 })();
 

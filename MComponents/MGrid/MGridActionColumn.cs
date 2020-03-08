@@ -77,20 +77,17 @@ namespace MComponents.MGrid
             Grid.InvokeStateHasChanged();
         }
 
-        public RenderFragment<MFieldGeneratorContext> Template(double pWidth, double pHeight)
+        public RenderFragment EditFieldTemplate(double pLeftOffset, BoundingBox pBoundingBox, bool pIsFilterRow)
         {
-            return (templContext) => (builder) =>
+            return (builder) =>
             {
                 builder.OpenElement(1, "div");
                 builder.AddAttribute(2, "class", "m-action-column-cell");
 
-          //      builder.AddStyleWithAttribute2(3, pWidth, pHeight, 100);
-          //TODO
-
                 builder.OpenElement(1, "div");
                 builder.AddAttribute(2, "class", "m-action-column-btn-group");
 
-                if (templContext.Form.AdditionalAttributes != null && templContext.Form.AdditionalAttributes.ContainsKey("data-is-filterrow"))
+                if (pIsFilterRow)
                 {
                     builder.OpenElement(1, "button");
                     builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
