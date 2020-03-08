@@ -163,9 +163,18 @@ $borderRadius: 0.25rem;
     margin: 1rem 0;
     color: $text_color;
     background-color: transparent;
-    table-layout: fixed;
+    border-spacing: 0px;
 
-    &.m-grid-striped tbody tr:nth-of-type(2n+1) {
+    table {
+        border-collapse: separate;
+        border-spacing: 8px;
+
+        .m-grid-bordered td {
+            border: none;
+        }
+    }
+
+    &:not(.m-grid-highlight).m-grid-striped tbody tr:nth-of-type(2n+1) {
         background-color: #f7f8fa;
     }
 
@@ -201,8 +210,7 @@ $borderRadius: 0.25rem;
     thead td,
     thead th {
         font-weight: 500;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+        //   padding: 0;
     }
 
     &:not(.m-grid-bordered) thead td,
@@ -216,28 +224,34 @@ $borderRadius: 0.25rem;
     }
 }
 
+
 .m-grid-bordered {
     border-width: 1px;
     border-style: solid;
     border-color: $gray;
+    border-collapse: collapse;
 
     td, th {
         border-width: 1px;
         border-left-width: 0;
-        border-right-width: 1px; //keep in sync with c#
         border-style: solid;
         border-color: $gray;
         border-bottom-width: 0;
     }
 }
 
+
 .m-grid-edit-row {
-    &:not(.m-grid-filter-row) > td {
-        border: 0;
+
+    table td {
+        padding: 0;
+        position: absolute;
+        top: 0;
+        border-width: 0;
     }
 
-    td {
-        padding: 0;
+    & > td {
+        position: relative;
     }
 
     .m-action-column-cell {
@@ -266,7 +280,6 @@ $borderRadius: 0.25rem;
         color: lighten($secondary,30%);
     }
 }
-
 //download button
 .m-btn.m-btn-icon i {
     padding: 0;
@@ -385,11 +398,7 @@ $borderRadius: 0.25rem;
         }
     }
 }
-
-
 /* END Table ----------------------------------------------------------------------------- */
-
-
 /* START Select ----------------------------------------------------------------------------- */
 .m-select {
     user-select: none;
@@ -539,8 +548,6 @@ $borderRadius: 0.25rem;
     }
 }
 /* END Select ----------------------------------------------------------------------------- */
-
-
 /* START Wizard ----------------------------------------------------------------------------- */
 .m-wizard {
     display: flex;
@@ -638,11 +645,7 @@ $borderRadius: 0.25rem;
         display: none;
     }
 }
-
-
 /* END Wizard ----------------------------------------------------------------------------- */
-
-
 .m-badge {
     display: inline-flex;
     justify-content: center;
@@ -674,7 +677,7 @@ $borderRadius: 0.25rem;
 .m-form-control {
     display: block;
     width: 100%;
-    height: calc(#{$padding} * 2 + 1.3rem + 2px);
+    height: calc(#{$padding} * 2 + 1.3rem + 1px);
     background-color: white;
     background-clip: padding-box;
     border-width: 1px;

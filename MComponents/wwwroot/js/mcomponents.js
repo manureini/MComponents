@@ -81,26 +81,41 @@ var mcomponents = (function () {
             document.body.removeChild(link);
         },
 
-        getColumnsWith: function (element) {
+        getColumnSizes: function (element) {
             var ret = [];
 
             if (element != null && element.children != null) {
 
-                //we grab the last td, because the first does not work
-                //something related to table: fixed? - I don't know, but it works with the last tr
+                var tableBorderTop = getComputedStyle(element, null).getPropertyValue('border-top-width');
+                var tableBorderLeft = getComputedStyle(element, null).getPropertyValue('border-left-width');
+                ret.push(tableBorderTop);
+                ret.push(tableBorderLeft);
+
+                //we grab the last td, because the first may be the filter row
 
                 var childs = element.children[1].children;
-                var lastTd = childs[childs.length - 1].children[0];;
+                var lastTd = childs[childs.length - 1].children[0];
+
                 var rowheight = lastTd.getBoundingClientRect().height;
-                console.log(rowheight);
-                ret.push(rowheight);
+
+
+                var borderRight = getComputedStyle(lastTd, null).getPropertyValue('border-right-width');
+                var borderTop = getComputedStyle(lastTd, null).getPropertyValue('border-top-width');
+                var borderSpacing = getComputedStyle(lastTd, null).getPropertyValue('border-spacing');
+                var borderCollapse = getComputedStyle(lastTd, null).getPropertyValue('border-collapse');
+
+                ret.push(borderRight);
+                ret.push(borderTop);
+                ret.push(borderSpacing);
+                ret.push(borderCollapse);
+                ret.push(rowheight.toString());
 
                 var children = element.children[0].children[0].children;
 
                 for (var i = 0; i < children.length; i++) {
                     var tableChild = children[i];
                     var rect = tableChild.getBoundingClientRect();
-                    ret.push(rect.width);
+                    ret.push(rect.width.toString());
                 }
             }
 

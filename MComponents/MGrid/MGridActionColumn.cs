@@ -84,7 +84,8 @@ namespace MComponents.MGrid
                 builder.OpenElement(1, "div");
                 builder.AddAttribute(2, "class", "m-action-column-cell");
 
-                builder.AddStyleWithAttribute2(3, pWidth, pHeight);
+          //      builder.AddStyleWithAttribute2(3, pWidth, pHeight, 100);
+          //TODO
 
                 builder.OpenElement(1, "div");
                 builder.AddAttribute(2, "class", "m-action-column-btn-group");

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Text;
 
@@ -15,12 +16,24 @@ namespace MComponents
             builder.AddEventStopPropagationAttribute(sequence, "ondblclick", true);
         }
 
-        public static void AddStyleWithAttribute2(this RenderTreeBuilder builder, int sequence, double? pWidth, double pHeight)
+        public static void AddStyleWithAttribute2(this RenderTreeBuilder builder, int sequence, double pLeftOffset, BoundingBox pBoundingBox)
         {
-            string width = $"{Convert.ToString(pWidth, CultureInfo.InvariantCulture) }px";
-            string height = $"{Convert.ToString(pHeight, CultureInfo.InvariantCulture) }px";
-            builder.AddAttribute(sequence, "style", $"width: {width}; height: {height};");
+            string width = $"{Convert.ToString(pBoundingBox.Width, CultureInfo.InvariantCulture) }px";
+            string height = $"{Convert.ToString(pBoundingBox.Height, CultureInfo.InvariantCulture) }px";
+
+            string top = $"{Convert.ToString(pBoundingBox.BorderTop, CultureInfo.InvariantCulture) }px";
+            string left = $"{Convert.ToString(pLeftOffset, CultureInfo.InvariantCulture) }px";
+
+            builder.AddAttribute(sequence, "style", $"width: {width}; height: {height}; top: {top}; left: {left}");
         }
+
+        public static double FromPixelToDouble(this string pPixelString)
+        {
+            string value = pPixelString.Contains("px") ? pPixelString.Substring(0, pPixelString.IndexOf("px")) : pPixelString;
+            return double.Parse(value, CultureInfo.InvariantCulture);
+        }
+
+
     }
 
 }
