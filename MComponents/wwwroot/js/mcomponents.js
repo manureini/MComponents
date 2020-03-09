@@ -94,10 +94,14 @@ var mcomponents = (function () {
                 //we grab the last td, because the first may be the filter row
 
                 var childs = element.children[1].children;
+
+                if (childs[childs.length - 1] == null) { //Table is empty
+                    childs = element.children[0].children;
+                }
+
                 var lastTd = childs[childs.length - 1].children[0];
 
                 var rowheight = lastTd.getBoundingClientRect().height;
-
 
                 var borderRight = getComputedStyle(lastTd, null).getPropertyValue('border-right-width');
                 var borderTop = getComputedStyle(lastTd, null).getPropertyValue('border-top-width');
@@ -120,7 +124,7 @@ var mcomponents = (function () {
             }
 
             return ret;
-        },              
+        },
     };
 })();
 
