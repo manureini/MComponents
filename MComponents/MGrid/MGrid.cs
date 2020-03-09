@@ -291,7 +291,7 @@ namespace MComponents.MGrid
                            builder2.AddAttribute(291, "style", "table-layout: fixed;");
                        }
 
-                       builder2.AddElementReferenceCapture(294, async (__value) =>
+                       builder2.AddElementReferenceCapture(294, (__value) =>
                        {
                            mTableReference = __value;
                        });
@@ -482,7 +482,6 @@ namespace MComponents.MGrid
 
                 mFilterModel = fmodel;
             }
-
 
             pBuilder.OpenElement(487, "tr");
             pBuilder.AddAttribute(489, "class", "m-grid-row m-grid-edit-row m-grid-filter-row");
