@@ -123,6 +123,8 @@ namespace MComponents.MGrid
 
             if (Formatter == null)
                 Formatter = new MGridDefaultObjectFormatter<T>();
+
+            Formatter.L = this.L;
         }
 
         public void RegisterColumn(IMGridColumn pColumn)

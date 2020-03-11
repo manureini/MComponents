@@ -173,7 +173,7 @@ namespace MComponents.MSelect
             {
                 pBuilder.OpenElement(32, "div");
                 pBuilder.AddAttribute(33, "tabindex", "0");
-                //             pBuilder.AddAttribute(34, "onfocusout", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusLost));
+                pBuilder.AddAttribute(34, "onfocusout", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusLost));
 
                 pBuilder.AddAttribute(35, "class", "m-select-options-container");
                 pBuilder.AddElementReferenceCapture(36, (__value) =>

@@ -1,14 +1,16 @@
 ﻿using MComponents.Shared.Attributes;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.Extensions.Localization;
 using System;
+using System.Globalization;
 using System.Linq;
 
 namespace MComponents.MGrid
 {
     public class MGridDefaultObjectFormatter<T> : IMGridObjectFormatter<T>
     {
-
-        public static IFormatProvider FormatProvider = new System.Globalization.CultureInfo("de-DE");
+        public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
         public virtual void AppendToTableRow(RenderTreeBuilder pBuilder, ref string pCssClass, T pRow, bool pSelected)
         {
@@ -40,14 +42,14 @@ namespace MComponents.MGrid
 
             if (pColumn.StringFormat != null)
             {
-                return String.Format(FormatProvider, pColumn.StringFormat, value);
+                return String.Format(pColumn.StringFormat, value);
             }
 
             Type pType = Nullable.GetUnderlyingType(pPropertyInfo.PropertyType) ?? pPropertyInfo.PropertyType;
 
             if (pType == typeof(bool))
             {
-                return (bool)value == true ? "ja" : "nein";
+                return (bool)value == true ? L["True"] : L["False"];
             }
 
             if (pType.IsEnum)

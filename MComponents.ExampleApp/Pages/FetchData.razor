@@ -20,13 +20,13 @@ else
            EnableExport="true"
            EnableFilterRow="true"
            EnableUserSorting="true"
-        
            HtmlTableClass="m-grid m-grid-striped m-grid-bordered m-grid-hover m-grid-sticky">
         <MGridColumns>
             <MGridColumn Property="@nameof(WeatherForecast.Date)" StringFormat="{0:dd.MM.yyyy}" />
             <MGridColumn Property="@nameof(WeatherForecast.TemperatureC)" />
             <MGridColumn Property="@nameof(WeatherForecast.TemperatureF)" />
             <MGridColumn Property="@nameof(WeatherForecast.ForcastType)" />
+            <MGridColumn Property="@nameof(WeatherForecast.IsGoodWeather)" />
             <MGridColumn Property="@nameof(WeatherForecast.Summary)" />
             <MGridActionColumn T="WeatherForecast" />
         </MGridColumns>

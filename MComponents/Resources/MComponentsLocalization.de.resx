@@ -132,6 +132,9 @@
   <data name="Edit" xml:space="preserve">
     <value>Bearbeiten</value>
   </data>
+  <data name="False" xml:space="preserve">
+    <value>Nein</value>
+  </data>
   <data name="Filter" xml:space="preserve">
     <value>Filter</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="Save" xml:space="preserve">
     <value>Speichern</value>
+  </data>
+  <data name="True" xml:space="preserve">
+    <value>Ja</value>
   </data>
   <data name="{0} entries of {1}" xml:space="preserve">
     <value>{0} Einträge aus {1}</value>

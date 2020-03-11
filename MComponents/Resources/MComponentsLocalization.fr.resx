@@ -132,6 +132,9 @@
   <data name="Edit" xml:space="preserve">
     <value>Éditer</value>
   </data>
+  <data name="False" xml:space="preserve">
+    <value>Faux</value>
+  </data>
   <data name="Filter" xml:space="preserve">
     <value>Filtrez</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="Save" xml:space="preserve">
     <value>Sauvegarder</value>
+  </data>
+  <data name="True" xml:space="preserve">
+    <value>Vrai</value>
   </data>
   <data name="{0} entries of {1}" xml:space="preserve">
     <value>{0} entrées de {1}</value>
