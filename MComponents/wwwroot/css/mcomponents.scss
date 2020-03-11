@@ -253,7 +253,6 @@ $borderRadius: 0.25rem;
 
     & > td {
         position: relative;
-        border-width: 0;
         padding: 0;
     }
 
@@ -561,13 +560,15 @@ $borderRadius: 0.25rem;
 
 .m-switch {
     position: relative;
- 
+
     label {
         cursor: pointer;
 
         input {
             position: absolute;
             opacity: 0;
+            width: 0;
+            height: 0;
 
             &:focus {
                 box-shadow: none;
