@@ -218,7 +218,7 @@ namespace MComponents.MGrid
                        builder2.OpenElement(216, "div");
                        builder2.AddAttribute(217, "class", "m-grid-container");
                        builder2.AddMultipleAttributes(218, AdditionalAttributes);
-               
+
 
                        builder2.OpenElement(221, "div");
                        builder2.AddAttribute(222, "class", "m-btn-toolbar");
@@ -916,6 +916,9 @@ namespace MComponents.MGrid
         private async Task UpdateColumnsWidth()
         {
             var values = await JsRuntime.InvokeAsync<string[]>("mcomponents.getColumnSizes", new object[] { mTableReference });
+
+            if (values == null || values.Length <= 0)
+                return;
 
             mTableBorderTop = values[0].FromPixelToDouble();
             mTableBorderLeft = values[1].FromPixelToDouble();

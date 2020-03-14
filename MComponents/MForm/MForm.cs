@@ -215,7 +215,7 @@ namespace MComponents
             if (groupResult.Key != 0 && !IsInTableRow)
             {
                 builder2.OpenElement(10, "div");
-                builder2.AddAttribute(11, "class", "m-form-row");
+                builder2.AddAttribute(11, "class", "m-form-row row");
             }
 
             foreach (var field in groupResult)
@@ -224,11 +224,11 @@ namespace MComponents
                 {
                     var propertyInfo = GetPropertyInfo(propField);
 
+                    if (propertyInfo.GetCustomAttribute(typeof(HiddenAttribute)) != null)
+                        continue;
+
                     if (field.Attributes != null)
                         propertyInfo.SetAttributes(field.Attributes);
-
-                    if (propertyInfo.GetCustomAttribute(typeof(HiddenAttribute)) != null)
-                        return;
 
                     var inpId = Guid.NewGuid();
 
