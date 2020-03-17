@@ -298,10 +298,17 @@ namespace MComponents
                         Form = this
                     };
 
-                    builder2.OpenElement(16, "td");
+                    if (IsInTableRow)
+                    {
+                        builder2.OpenElement(16, "td");
+                    }
 
                     builder2.AddContent(42, fieldGenerator.Template?.Invoke(context));
-                    builder2.CloseElement();
+
+                    if (IsInTableRow)
+                    {
+                        builder2.CloseElement();
+                    }
                 }
             }
 
