@@ -56,10 +56,10 @@ namespace MComponents
                 return Expression.AndAlso(Expression.GreaterThanOrEqual(property, day), Expression.LessThan(property, nextDay));
             }
 
-            if (typeof(object).IsAssignableFrom(pInstruction.PropertyInfo.PropertyType))
+            if (typeof(object).IsAssignableFrom(pInstruction.PropertyInfo.PropertyType) && pInstruction.Value != null)
             {
                 var value = Expression.Constant(pInstruction.Value);
-                return Expression.Call(property, ObjectEquals, value);
+                return Expression.Call(value, ObjectEquals, property);
             }
 
             return Expression.Equal(property, Expression.Constant(pInstruction.Value));
