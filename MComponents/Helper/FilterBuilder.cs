@@ -17,6 +17,8 @@ namespace MComponents
         private static readonly MethodInfo StringContains = typeof(string).GetMethod("Contains", new[] { typeof(string) });
         private static readonly MethodInfo StringToLower = typeof(string).GetMethod("ToLowerInvariant");
 
+        private static readonly MethodInfo ObjectEquals = typeof(object).GetMethod("Equals", BindingFlags.Instance | BindingFlags.Public);
+
         private static IQueryable<TSource> PerformOperation(IQueryable<TSource> source, FilterInstruction pInstruction, MethodInfo pMethodInfo)
         {
             var param = Expression.Parameter(typeof(TSource), "p");
@@ -52,6 +54,12 @@ namespace MComponents
                 var nextDay = Expression.Convert(Expression.Constant(value.Date.Add(TimeSpan.FromDays(1))), pInstruction.PropertyInfo.PropertyType);
 
                 return Expression.AndAlso(Expression.GreaterThanOrEqual(property, day), Expression.LessThan(property, nextDay));
+            }
+
+            if (typeof(object).IsAssignableFrom(pInstruction.PropertyInfo.PropertyType))
+            {
+                var value = Expression.Constant(pInstruction.Value);
+                return Expression.Call(property, ObjectEquals, value);
             }
 
             return Expression.Equal(property, Expression.Constant(pInstruction.Value));

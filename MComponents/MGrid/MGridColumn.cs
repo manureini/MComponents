@@ -28,7 +28,7 @@ namespace MComponents.MGrid
         public int SortIndex { get; set; }
 
         [Parameter]
-        public bool EnableSort { get; set; } = true;
+        public bool EnableSorting { get; set; } = true;
         
         [Parameter]
         public bool EnableFilter { get; set; } = true;

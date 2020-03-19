@@ -6,6 +6,6 @@
 
         int SortIndex { get; }
 
-        bool EnableSort { get; }
+        bool EnableSorting { get; }
     }
 }

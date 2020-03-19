@@ -17,5 +17,7 @@ namespace MComponents.ExampleApp.Data
         public WeatherForecastType ForcastType { get; set; }
 
         public bool IsGoodWeather { get; set; }
+
+        public WeatherStation WeatherStation { get; set; }
     }
 }

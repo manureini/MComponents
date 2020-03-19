@@ -150,14 +150,15 @@ namespace MComponents.MGrid
 
                 mPropertyInfoCache.Add(propc, iprop);
 
-                object comparer = null;
-
-                if (pColumn is IMGridCustomComparer)
-                {
-                    comparer = ((dynamic)pColumn).Comparer;
-                }
-
                 if (pColumn is IMGridSortableColumn sc && sc.SortDirection != MSortDirection.None)
+                {
+                    object comparer = null;
+
+                    if (pColumn is IMGridCustomComparer)
+                    {
+                        comparer = ((dynamic)pColumn).Comparer;
+                    }
+
                     SortInstructions.Add(new SortInstruction()
                     {
                         Direction = sc.SortDirection,
@@ -165,6 +166,7 @@ namespace MComponents.MGrid
                         Index = sc.SortIndex,
                         Comparer = comparer
                     });
+                }
             }
 
             mFilterModel = null;
@@ -1134,7 +1136,7 @@ namespace MComponents.MGrid
             if (!EnableUserSorting)
                 return;
 
-            if (!(pColumn is IMGridSortableColumn sc) || !sc.EnableSort)
+            if (!(pColumn is IMGridSortableColumn sc) || !sc.EnableSorting)
                 return;
 
             var propInfoColumn = pColumn as IMGridPropertyColumn;

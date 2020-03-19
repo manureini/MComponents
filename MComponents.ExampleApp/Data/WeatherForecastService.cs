@@ -11,6 +11,16 @@ namespace MComponents.ExampleApp.Data
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
+        public WeatherStation[] AllWeatherStations = new[] {
+                new WeatherStation() {
+                    Name = "Main Station"
+                },
+                new WeatherStation() {
+                    Name = "Secondary Station"
+                },
+            };
+
+
         public Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
         {
             var rng = new Random();
@@ -18,7 +28,8 @@ namespace MComponents.ExampleApp.Data
             {
                 Date = startDate.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
+                Summary = Summaries[rng.Next(Summaries.Length)],
+                WeatherStation = AllWeatherStations[rng.Next(0, 2)]
             }).ToArray());
         }
     }

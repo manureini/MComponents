@@ -83,8 +83,9 @@ namespace MComponents.MGrid
 
         [Parameter]
         public int SortIndex { get; set; }
-            
-        public bool EnableSort => Comparer != null;
+
+        [Parameter]
+        public bool EnableSorting { get; set; } = typeof(IComparable).IsAssignableFrom(typeof(TProperty)) || typeof(IComparable<TProperty>).IsAssignableFrom(typeof(TProperty));
 
         [Parameter]
         public IComparer<TProperty> Comparer { get; set; }
