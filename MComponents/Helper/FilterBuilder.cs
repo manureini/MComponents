@@ -56,22 +56,16 @@ namespace MComponents
                 return Expression.AndAlso(Expression.GreaterThanOrEqual(property, day), Expression.LessThan(property, nextDay));
             }
 
-            if (typeof(object).IsAssignableFrom(pInstruction.PropertyInfo.PropertyType) && pInstruction.Value != null)
-            {
-                var value = Expression.Constant(pInstruction.Value);
-                return Expression.Call(value, ObjectEquals, property);
-            }
-
             return Expression.Equal(property, Expression.Constant(pInstruction.Value));
         }
 
-        public IQueryable<TSource> FilterBy(IQueryable<TSource> source, ICollection<FilterInstruction> instrcutions)
+        public IQueryable<TSource> FilterBy(IQueryable<TSource> source, ICollection<FilterInstruction> instructions)
         {
             IQueryable<TSource> result = source;
 
-            foreach (var instrcution in instrcutions)
+            foreach (var instruction in instructions)
             {
-                result = PerformOperation(result, instrcution, WhereMethod);
+                result = PerformOperation(result, instruction, WhereMethod);
             }
 
             return result;
