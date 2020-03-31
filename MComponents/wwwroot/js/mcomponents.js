@@ -81,7 +81,7 @@ var mcomponents = (function () {
             document.body.removeChild(link);
         },
 
-        getColumnSizes: function (element) {
+        getColumnSizes: function (element, columns) {
             var ret = [];
 
             if (element != null && element.children != null) {
@@ -114,10 +114,17 @@ var mcomponents = (function () {
                 ret.push(borderCollapse);
                 ret.push(rowheight.toString());
 
-                var children = element.children[0].children[0].children;
+                var children = Array.from(element.children[0].children[0].children);
 
-                for (var i = 0; i < children.length; i++) {
-                    var tableChild = children[i];
+                for (var i = 0; i < columns.length; i++) {
+
+                    var tableChild = children.find(c => c.getAttribute("data-identifier") == columns[i]);
+
+                    if (tableChild == null) {
+                        ret.push("75");
+                        continue;
+                    }
+
                     var rect = tableChild.getBoundingClientRect();
                     ret.push(rect.width.toString());
                 }

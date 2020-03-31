@@ -320,7 +320,8 @@ namespace MComponents.MGrid
                                continue;
 
                            builder2.OpenElement(309, "th");
-                           builder2.AddMultipleAttributes(24, column.AdditionalAttributes);
+                           builder2.AddAttribute(310, "data-identifier", column.Identifier);
+                           builder2.AddMultipleAttributes(311, column.AdditionalAttributes);
 
                            if (FixedColumns)
                            {
@@ -926,7 +927,7 @@ namespace MComponents.MGrid
 
         private async Task UpdateColumnsWidth()
         {
-            var values = await JsRuntime.InvokeAsync<string[]>("mcomponents.getColumnSizes", new object[] { mTableReference });
+            var values = await JsRuntime.InvokeAsync<string[]>("mcomponents.getColumnSizes", new object[] { mTableReference, ColumnsList.Select(c => c.Identifier).ToArray() });
 
             if (values == null || values.Length <= 0)
                 return;
