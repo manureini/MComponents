@@ -29,7 +29,8 @@ namespace MComponents.ExampleApp.Data
                 Date = startDate.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)],
-                WeatherStation = AllWeatherStations[rng.Next(0, 2)]
+                WeatherStation = AllWeatherStations[rng.Next(0, 2)],
+                IsGoodWeather = rng.Next(0, 2) == 0
             }).ToArray());
         }
     }

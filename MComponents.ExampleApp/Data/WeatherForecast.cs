@@ -1,3 +1,4 @@
+using MComponents.Shared.Attributes;
 using System;
 
 namespace MComponents.ExampleApp.Data
@@ -16,6 +17,7 @@ namespace MComponents.ExampleApp.Data
 
         public WeatherForecastType ForcastType { get; set; }
 
+        [ReadOnly]
         public bool IsGoodWeather { get; set; }
 
         public WeatherStation WeatherStation { get; set; }

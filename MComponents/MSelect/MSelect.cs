@@ -440,6 +440,11 @@ namespace MComponents.MSelect
                 return evalue.ToName();
             }
 
+            if (mtType == typeof(bool))
+            {
+                return (bool)(object)value ? L["True"] : L["False"];
+            }
+
             return value.ToString();
         }
 

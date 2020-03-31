@@ -243,6 +243,7 @@ $borderRadius: 0.25rem;
 
 
 .m-grid-edit-row {
+    cursor: default;
 
     table td {
         padding: 0;
@@ -535,17 +536,17 @@ $borderRadius: 0.25rem;
             border-radius: $borderRadius;
         }
     }
-    /* Create the checkmark/indicator (hidden when not checked) */
+
     .checkmark:after {
         content: "";
         position: absolute;
         display: none;
     }
-    /* Show the checkmark when checked */
+
     .container input:checked ~ .checkmark:after {
         display: block;
     }
-    /* Style the checkmark/indicator */
+
     .container .checkmark:after {
     }
 }
@@ -558,20 +559,32 @@ $borderRadius: 0.25rem;
     text-align: center;
 }
 
+
+
 .m-switch {
     position: relative;
 
+    &.m-form-control {
+        padding: 0;
+        border: 0;
+    }
+
     label {
-        cursor: pointer;
 
         input {
             position: absolute;
             opacity: 0;
             width: 0;
             height: 0;
+            color: black;
 
             &:focus {
                 box-shadow: none;
+            }
+
+            &:disabled ~ span {
+                color: darken($gray, 25);
+                cursor: default;
             }
 
             ~ span {
@@ -582,6 +595,7 @@ $borderRadius: 0.25rem;
                 height: 30px;
                 width: 57px;
                 border-radius: 15px;
+                cursor: pointer;
 
                 &:before {
                     position: absolute;
@@ -619,10 +633,18 @@ $borderRadius: 0.25rem;
             &:checked {
                 ~ span {
                     &:after {
-                        background-color: $primary;
                         color: white;
+                        background-color: $primary;
                         content: '\f00c';
                         margin-left: 26px;
+                    }
+                }
+            }
+
+            &:disabled {
+                ~ span {
+                    &:after {
+                        background-color: darken($gray, 6);
                     }
                 }
             }
