@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Components.Rendering;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,13 +12,13 @@ namespace MComponents
 {
     public static class Extensions
     {
-        public static void AddEventStopPropagationClicksAttribute(this RenderTreeBuilder builder, int sequence)
+        internal static void AddEventStopPropagationClicksAttribute(this RenderTreeBuilder builder, int sequence)
         {
             builder.AddEventStopPropagationAttribute(sequence, "onclick", true);
             builder.AddEventStopPropagationAttribute(sequence, "ondblclick", true);
         }
 
-        public static void AddStyleWithAttribute(this RenderTreeBuilder builder, int sequence, double pLeftOffset, BoundingBox pBoundingBox)
+        internal static void AddStyleWithAttribute(this RenderTreeBuilder builder, int sequence, double pLeftOffset, BoundingBox pBoundingBox)
         {
             if (pBoundingBox == null)
                 return;
@@ -30,13 +32,20 @@ namespace MComponents
             builder.AddAttribute(sequence, "style", $"width: {width}; height: {height}; top: {top}; left: {left}");
         }
 
-        public static double FromPixelToDouble(this string pPixelString)
+        internal static double FromPixelToDouble(this string pPixelString)
         {
             string value = pPixelString.Contains("px") ? pPixelString.Substring(0, pPixelString.IndexOf("px")) : pPixelString;
             return double.Parse(value, CultureInfo.InvariantCulture);
         }
 
-
+        public static void AddMComponents(this IServiceCollection pServices)
+        {
+            pServices.AddLocalization(options => options.ResourcesPath = "Resources");
+            pServices.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.SupportedUICultures = MComponentsLocalization.SupportedCultures;
+            });
+        }
     }
 
 }

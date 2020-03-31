@@ -29,12 +29,8 @@ namespace MComponents.ExampleApp
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
-            
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
-            services.Configure<RequestLocalizationOptions>(options =>
-            {
-                options.SupportedUICultures = MComponentsLocalization.SupportedCultures;
-            });
+
+            services.AddMComponents();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

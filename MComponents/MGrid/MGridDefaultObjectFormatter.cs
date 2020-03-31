@@ -49,7 +49,7 @@ namespace MComponents.MGrid
 
             if (pType == typeof(bool))
             {
-                return (bool)value == true ? L["True"] : L["False"];
+                return (bool)value ? L["True"] : L["False"];
             }
 
             if (pType.IsEnum)

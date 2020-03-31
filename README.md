@@ -34,13 +34,12 @@ If you want to use MPaint add
 
 Add to Startup.cs:
 ```c#
-services.AddLocalization(options => options.ResourcesPath = "Resources");
-services.Configure<RequestLocalizationOptions>(options =>
-{
-  options.SupportedUICultures = MComponentsLocalization.SupportedCultures;
-});
+services.AddMComponents();
 ```
-
+and if you want to use RequestLocalization
+```c#
+app.UseRequestLocalization();
+```
 
 
 ### Please create an issue or make Pull requests if you want to support this project

@@ -7,6 +7,6 @@ namespace MComponents
 {
     public class MComponentsLocalization
     {
-        public static List<CultureInfo> SupportedCultures { get; } = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("fr") };
+        public static CultureInfo[] SupportedCultures { get; } = new[] { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("fr") };
     }
 }
