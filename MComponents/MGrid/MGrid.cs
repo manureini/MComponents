@@ -116,6 +116,7 @@ namespace MComponents.MGrid
 
         public bool FixedColumns => IsEditingRow || IsFilterRowVisible;
 
+        public bool UpdateColumnsWidthOnNextRender;
 
         protected override void OnInitialized()
         {
@@ -190,6 +191,14 @@ namespace MComponents.MGrid
             if (firstRender)
             {
                 await UpdateColumnsWidth();
+            }
+
+            if (UpdateColumnsWidthOnNextRender)
+            {
+                await UpdateColumnsWidth();
+                UpdateColumnsWidthOnNextRender = false;
+
+                StateHasChanged();
             }
         }
 
@@ -1212,6 +1221,8 @@ namespace MComponents.MGrid
             await StopEditing(false, false);
 
             ClearDataCache();
+
+            UpdateColumnsWidthOnNextRender = true;
             StateHasChanged();
         }
 

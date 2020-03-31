@@ -86,6 +86,10 @@ $borderRadius: 0.25rem;
     border-radius: $borderRadius;
 }
 
+.m-btn-tall {
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+}
 
 .m-btn-secondary {
     color: darken($secondary,10%);
@@ -409,6 +413,12 @@ $borderRadius: 0.25rem;
 .m-select {
     user-select: none;
 
+    &.m-form-control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
     span {
         padding: $padding;
         line-height: 1.5;
@@ -556,10 +566,7 @@ $borderRadius: 0.25rem;
     display: inline-block;
     width: 100%;
     height: 100%;
-    text-align: center;
 }
-
-
 
 .m-switch {
     position: relative;
@@ -570,6 +577,11 @@ $borderRadius: 0.25rem;
     }
 
     label {
+        display: flex;
+        margin: 0;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
 
         input {
             position: absolute;
@@ -589,9 +601,7 @@ $borderRadius: 0.25rem;
 
             ~ span {
                 position: relative;
-                display: inline-block;
                 line-height: 30px;
-                margin: 3px 0;
                 height: 30px;
                 width: 57px;
                 border-radius: 15px;
@@ -662,11 +672,19 @@ $borderRadius: 0.25rem;
     .m-wizard-navigation {
         display: flex;
         flex-direction: row;
+
+        @media(max-width: 768px) {
+            flex-direction: column;
+        }
     }
 
     .m-wizard-navigation-item {
         padding: 2rem 0.5rem;
         user-select: none;
+
+        @media(max-width: 768px) {
+            padding: 0.5rem 0.5rem;
+        }
 
         .m-wizard-navigation-item-bar {
             height: 4px;
@@ -721,6 +739,10 @@ $borderRadius: 0.25rem;
         width: 60%;
         padding: 20px 0;
         border-bottom: 1px solid #eeeef4;
+
+        @media(max-width: 768px) {
+            width: 90%;
+        }
     }
 
     .m-wizard-action-group {
