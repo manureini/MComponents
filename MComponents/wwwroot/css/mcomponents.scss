@@ -271,6 +271,11 @@ $borderRadius: 0.25rem;
         border: 0;
         height: 100%;
     }
+
+    .m-select-content {
+        padding-right: 0;
+        overflow: hidden;
+    }
 }
 
 .m-action-column-cell {
@@ -479,6 +484,7 @@ $borderRadius: 0.25rem;
         width: 100%;
         display: block;
         z-index: 50;
+        min-width: min-content;
 
         .m-select-options-list {
             min-height: 19px;
