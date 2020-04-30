@@ -1,6 +1,7 @@
 ﻿$white: #ffffff;
 $primary: #5867dd;
 $success: #28a745;
+$disabled: #f0f1f3;
 
 $text_color: #212529;
 $gray: #ebedf2;
@@ -75,8 +76,8 @@ $borderRadius: 0.25rem;
 .m-btn-primary.disabled,
 .m-btn-primary:disabled {
     color: $white;
-    background-color: $gray;
-    border-color: $gray;
+    background-color: $disabled;
+    border-color: $disabled;
 }
 
 .m-btn-sm {
@@ -441,10 +442,10 @@ $borderRadius: 0.25rem;
 
     &.m-select--disabled {
         cursor: default;
-        background: #f7f8fa;
+        background: $disabled;
 
         .m-select-dropdown-icon {
-            color: darken(#f7f8fa,25);
+            color: darken($gray,25);
         }
     }
 
@@ -604,7 +605,7 @@ $borderRadius: 0.25rem;
             }
 
             &:disabled ~ span {
-                color: darken($gray, 25);
+                color: darken($disabled, 25);
                 cursor: default;
             }
 
@@ -836,7 +837,7 @@ $borderRadius: 0.25rem;
     }
 
     &:disabled {
-        background-color: $gray;
+        background-color: $disabled;
     }
 }
 
