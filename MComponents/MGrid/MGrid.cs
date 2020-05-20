@@ -9,7 +9,6 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
@@ -31,6 +30,12 @@ namespace MComponents.MGrid
 
         [Parameter]
         public IEnumerable<T> DataSource { get; set; }
+
+        [Parameter]
+        public Func<IQueryable<T>, Task<IEnumerable<T>>> TaskDataSource { get; set; }
+
+        [Parameter]
+        public Func<IQueryable<T>, Task<long>> TaskDataCount { get; set; }
 
         [Parameter]
         public IMGridObjectFormatter<T> Formatter { get; set; }
@@ -200,6 +205,26 @@ namespace MComponents.MGrid
 
                 StateHasChanged();
             }
+
+            if (DataCache == null && TaskDataSource != null)
+            {
+                var queryable = GetIQueryable(Enumerable.Empty<T>());
+
+                await Task.Run(() => TaskDataSource.Invoke(queryable)).ContinueWith(a =>
+                {
+                    DataCache = a.Result.ToArray();
+
+                    DataCountCache = DataCache.Count;
+                    StateHasChanged();
+                });
+
+                await Task.Run(() => TaskDataCount.Invoke(queryable)).ContinueWith(a =>
+                {
+                    TotalDataCountCache = a.Result;
+                    DataCountCache = TotalDataCountCache;
+                    StateHasChanged();
+                });
+            }
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -358,31 +383,12 @@ namespace MComponents.MGrid
 
                        if (DataCache == null)
                        {
-                           IQueryable<T> data = DataSource as IQueryable<T>;
-
-                           if (data == null)
-                               data = DataSource.AsQueryable();
-
-                           TotalDataCountCache = data.LongCount();
-
-                           if (FilterInstructions.Count > 0)
+                           if (DataSource != null)
                            {
-                               data = mFilter.FilterBy(data, FilterInstructions);
+                               DataCache = GetIQueryable(DataSource).ToArray();
                            }
-
-                           DataCountCache = data.LongCount();
-
-                           if (SortInstructions.Count > 0)
-                           {
-                               data = mSorter.SortBy(data, SortInstructions);
-                           }
-
-                           if (Pager != null)
-                           {
-                               data = data.Skip(Pager.PageSize * (Pager.CurrentPage - 1)).Take(Pager.PageSize);
-                           }
-
-                           DataCache = data.ToArray();
+                           else if (TaskDataSource == null)
+                               throw new InvalidOperationException("Please provide a " + nameof(DataSource));
                        }
 
                        if (IsFilterRowVisible)
@@ -390,10 +396,11 @@ namespace MComponents.MGrid
                            AddFilterRow(builder2);
                        }
 
-                       foreach (var entry in DataCache)
-                       {
-                           AddContentRow(builder2, entry, MGridAction.Edit);
-                       }
+                       if (DataCache != null)
+                           foreach (var entry in DataCache)
+                           {
+                               AddContentRow(builder2, entry, MGridAction.Edit);
+                           }
 
                        if (NewValue != null)
                            AddContentRow(builder2, NewValue, MGridAction.Add);
@@ -467,6 +474,35 @@ namespace MComponents.MGrid
             builder.AddContent(453, childMain());
 
             builder.CloseRegion();
+        }
+
+        private IQueryable<T> GetIQueryable(IEnumerable<T> pSource)
+        {
+            IQueryable<T> data = pSource as IQueryable<T>;
+
+            if (data == null)
+                data = pSource.AsQueryable();
+
+            TotalDataCountCache = data.LongCount();
+
+            if (FilterInstructions.Count > 0)
+            {
+                data = mFilter.FilterBy(data, FilterInstructions);
+            }
+
+            DataCountCache = data.LongCount();
+
+            if (SortInstructions.Count > 0)
+            {
+                data = mSorter.SortBy(data, SortInstructions);
+            }
+
+            if (Pager != null)
+            {
+                data = data.Skip(Pager.PageSize * (Pager.CurrentPage - 1)).Take(Pager.PageSize);
+            }
+
+            return data;
         }
 
         protected override void OnAfterRender(bool firstRender)
