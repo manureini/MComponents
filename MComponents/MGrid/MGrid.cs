@@ -1,4 +1,5 @@
-﻿using MComponents.MForm;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using MComponents.MForm;
 using MComponents.Shared.Attributes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -32,10 +33,7 @@ namespace MComponents.MGrid
         public IEnumerable<T> DataSource { get; set; }
 
         [Parameter]
-        public Func<IQueryable<T>, Task<IEnumerable<T>>> TaskDataSource { get; set; }
-
-        [Parameter]
-        public Func<IQueryable<T>, Task<long>> TaskDataCount { get; set; }
+        public IMGridDataAdapter<T> DataAdapter { get; set; }
 
         [Parameter]
         public IMGridObjectFormatter<T> Formatter { get; set; }
@@ -206,25 +204,7 @@ namespace MComponents.MGrid
                 StateHasChanged();
             }
 
-            if (DataCache == null && TaskDataSource != null)
-            {
-                var queryable = GetIQueryable(Enumerable.Empty<T>());
-
-                await Task.Run(() => TaskDataSource.Invoke(queryable)).ContinueWith(a =>
-                {
-                    DataCache = a.Result.ToArray();
-
-                    DataCountCache = DataCache.Count;
-                    StateHasChanged();
-                });
-
-                await Task.Run(() => TaskDataCount.Invoke(queryable)).ContinueWith(a =>
-                {
-                    TotalDataCountCache = a.Result;
-                    DataCountCache = TotalDataCountCache;
-                    StateHasChanged();
-                });
-            }
+            await UpdateDataCacheIfDataAdapter();
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -387,8 +367,8 @@ namespace MComponents.MGrid
                            {
                                DataCache = GetIQueryable(DataSource).ToArray();
                            }
-                           else if (TaskDataSource == null)
-                               throw new InvalidOperationException("Please provide a " + nameof(DataSource));
+                           else if (DataAdapter == null)
+                               throw new InvalidOperationException("Please provide a " + nameof(DataSource) + " or " + nameof(DataAdapter));
                        }
 
                        if (IsFilterRowVisible)
@@ -1084,6 +1064,11 @@ namespace MComponents.MGrid
             if (DataSource is ICollection<T> coll)
                 coll.Remove(value);
 
+            if (DataAdapter != null)
+            {
+                await DataAdapter.Remove(GetId(value), value);
+            }
+
             if (Events?.OnAfterDelete != null)
             {
                 await Events.OnAfterDelete.InvokeAsync(new AfterDeleteArgs<T>()
@@ -1095,6 +1080,7 @@ namespace MComponents.MGrid
 
             Selected = null;
             ClearDataCache();
+            await UpdateDataCacheIfDataAdapter();
 
             StateHasChanged();
         }
@@ -1112,6 +1098,13 @@ namespace MComponents.MGrid
 
         protected async Task OnFormSubmit(MFormSubmitArgs args)
         {
+            //////////////////////////////////////////////////////////////////////////////////////////////////
+            // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
+            //////////////////////////////////////////////////////////////////////////////////////////////////
+
+            // START
+
+
             if (args.ChangedValues.Count > 0 || args.UserInteracted)
             {
                 if (NewValue == null)
@@ -1122,6 +1115,25 @@ namespace MComponents.MGrid
                     {
                         int index = ds.IndexOf(value);
                         ds[index] = value;
+                    }
+
+                    if (DataAdapter != null)
+                    {
+                        // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
+                        _ = DataAdapter.Update(GetId(value), value).ContinueWith(async t =>
+                        {
+                            if (Events?.OnAfterEdit != null)
+                            {
+                                await Events.OnAfterEdit.InvokeAsync(new AfterEditArgs<T>()
+                                {
+                                    Row = value
+                                });
+                            }
+
+                            ClearDataCache();
+                            await UpdateDataCacheIfDataAdapter();
+                        });
+                        return;
                     }
 
                     if (Events?.OnAfterEdit != null)
@@ -1137,6 +1149,26 @@ namespace MComponents.MGrid
                     if (DataSource is ICollection<T> coll)
                         coll.Add(NewValue);
 
+                    if (DataAdapter != null)
+                    {
+                        // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
+                        _ = DataAdapter.Add(GetId(NewValue), NewValue).ContinueWith(async t =>
+                        {
+                            if (Events?.OnAfterAdd != null)
+                            {
+                                await Events.OnAfterAdd.InvokeAsync(new AfterAddArgs<T>()
+                                {
+                                    Row = NewValue
+                                });
+                            }
+
+                            ClearDataCache();
+                            await UpdateDataCacheIfDataAdapter();
+                            await StopEditing(false, false);
+                        });
+                        return;
+                    }
+
                     if (Events?.OnAfterAdd != null)
                     {
                         await Events.OnAfterAdd.InvokeAsync(new AfterAddArgs<T>()
@@ -1150,6 +1182,12 @@ namespace MComponents.MGrid
             }
 
             await StopEditing(false, false);
+
+            //END
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////
+            // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
+            //////////////////////////////////////////////////////////////////////////////////////////////////
         }
 
         protected async Task OnPagerPageChanged(int pPage)
@@ -1161,6 +1199,7 @@ namespace MComponents.MGrid
             await StopEditing(false, false);
 
             ClearDataCache();
+            await UpdateDataCacheIfDataAdapter();
             StateHasChanged();
         }
 
@@ -1174,6 +1213,7 @@ namespace MComponents.MGrid
             await StopEditing(false, false);
 
             ClearDataCache();
+            await UpdateDataCacheIfDataAdapter();
             StateHasChanged();
         }
 
@@ -1258,6 +1298,7 @@ namespace MComponents.MGrid
             await StopEditing(false, false);
 
             ClearDataCache();
+            await UpdateDataCacheIfDataAdapter();
 
             UpdateColumnsWidthOnNextRender = true;
             StateHasChanged();
@@ -1265,7 +1306,14 @@ namespace MComponents.MGrid
 
         protected async void OnExportClicked()
         {
-            var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, mPropertyInfoCache, DataSource, Formatter);
+            IEnumerable<T> dataForExport = DataSource;
+
+            if(dataForExport == null && DataAdapter != null)
+            {
+                dataForExport = await DataAdapter.GetData(Enumerable.Empty<T>().AsQueryable());
+            }
+
+            var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, mPropertyInfoCache, dataForExport, Formatter);
             await FileUtil.SaveAs(JsRuntime, "Export.xlsx", data);
         }
 
@@ -1289,6 +1337,30 @@ namespace MComponents.MGrid
             DataCache = null;
             DataCountCache = -1;
             TotalDataCountCache = -1;
+        }
+
+        protected async Task UpdateDataCacheIfDataAdapter()
+        {
+            if (DataCache == null && DataAdapter != null)
+            {
+                var queryable = GetIQueryable(Enumerable.Empty<T>());
+
+                await Task.Run(() => DataAdapter.GetData(queryable)).ContinueWith(async a =>
+                {
+                    DataCache = a.Result.ToArray();
+
+                    await Task.Run(() => DataAdapter.GetDataCount(queryable)).ContinueWith(async a =>
+                    {
+                        DataCountCache = a.Result;
+
+                        await Task.Run(() => DataAdapter.GetTotalDataCount()).ContinueWith(a =>
+                        {
+                            TotalDataCountCache = a.Result;
+                            InvokeAsync(() => StateHasChanged());
+                        });
+                    });
+                });
+            }
         }
 
         public void Refresh()
