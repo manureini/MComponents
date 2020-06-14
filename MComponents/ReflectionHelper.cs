@@ -12,10 +12,8 @@ namespace MComponents
             if (pObject == null)
                 return null;
 
-            if (pObject is ExpandoObject)
+            if (pObject is IDictionary<string, object> dict)
             {
-                var dict = pObject as IDictionary<string, object>;
-
                 object value = dict[pProperty];
 
                 if (value is Delegate)
@@ -65,6 +63,18 @@ namespace MComponents
 
             return new MPropertyInfo(pi, pParent);
         }
+
+
+        public static IEnumerable<IMPropertyInfo> GetProperties(object pValue)
+        {
+            if (pValue is IDictionary<string, object> dict)
+            {
+                return dict.Select(v => GetIMPropertyInfo(pValue.GetType(), v.Key, v.Value.GetType()));
+            }
+
+            return pValue.GetType().GetProperties().Select(v => GetIMPropertyInfo(pValue.GetType(), v.Name, v.PropertyType));
+        }
+
 
     }
 }

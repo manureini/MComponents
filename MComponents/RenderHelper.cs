@@ -192,7 +192,7 @@ namespace MComponents
 
         private static Expression<Func<T>> GetValueExpression<T>(IMPropertyInfo pPropertyInfo, object pModel)
         {
-            if (pModel is ExpandoObject)
+            if (pModel is IDictionary<string, object>)
             {
                 var fake = new FakePropertyInfo<T>(pPropertyInfo.Name);
 

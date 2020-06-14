@@ -140,9 +140,9 @@ namespace MComponents
                         }
                         else
                         {
-                            foreach (var groupResult in Model.GetType().GetProperties().Select(pi => GetField(pi)).GroupBy(p =>
+                            foreach (var groupResult in ReflectionHelper.GetProperties(Model).Select(pi => GetField(pi)).GroupBy(p =>
                             {
-                                var rowAttr = p.Attributes.FirstOrDefault(a => a.GetType() == typeof(RowAttribute)) as RowAttribute;
+                                var rowAttr = p.Attributes?.FirstOrDefault(a => a.GetType() == typeof(RowAttribute)) as RowAttribute;
 
                                 if (rowAttr == null)
                                     return 0;
@@ -196,13 +196,13 @@ namespace MComponents
             return pi;
         }
 
-        protected IMPropertyField GetField(PropertyInfo pPropertyInfo)
+        protected IMPropertyField GetField(IMPropertyInfo pPropertyInfo)
         {
             return new MField()
             {
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
 
-                Attributes = pPropertyInfo.GetCustomAttributes().Select(a => a as Attribute).Where(a => a != null).ToArray(),
+                Attributes = pPropertyInfo.GetAttributes()?.ToArray(),
                 Property = pPropertyInfo.Name,
                 PropertyType = pPropertyInfo.PropertyType
 
