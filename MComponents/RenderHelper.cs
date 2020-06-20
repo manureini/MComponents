@@ -47,7 +47,7 @@ namespace MComponents
 
         public static void AppendInput<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, bool pIsInFilterRow)
         {
-            if (!IsTypeSupported(typeof(T)))
+            if (!IsTypeSupported(typeof(T)) || IsPropertyHolderNull(pPropertyInfo, pModel))
             {
                 ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId, pParent);
                 return;
@@ -135,7 +135,7 @@ namespace MComponents
             string cssClass = "m-form-control";
 
             if (isReadOnly)
-            {     
+            {
                 pBuilder.AddAttribute(33, "disabled", string.Empty);
                 pBuilder.AddAttribute(33, "IsDisabled", true);
             }
@@ -224,6 +224,16 @@ namespace MComponents
                 var propertyholder = pPropertyInfo.GetPropertyHolder(pModel);
                 return Expression.Lambda<Func<T>>(Expression.Property(Expression.Constant(propertyholder), pPropertyInfo.Name));
             }
+        }
+
+        private static bool IsPropertyHolderNull(IMPropertyInfo pPropertyInfo, object pModel)
+        {
+            if (pModel is IDictionary<string, object>)
+            {
+                return false;
+            }
+
+            return pPropertyInfo.GetPropertyHolder(pModel) == null;
         }
 
 
