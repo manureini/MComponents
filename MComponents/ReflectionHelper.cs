@@ -58,6 +58,11 @@ namespace MComponents
 
             var pi = pObjectType.GetProperty(pProperty);
 
+            if (pi == null && pObjectType.IsInterface)
+            {
+                pi = pObjectType.GetInterfaces().SelectMany(i => i.GetProperties()).SingleOrDefault(p => p.Name == pProperty);
+            }
+
             if (pi == null)
                 throw new InvalidOperationException(pObjectType + " does not have property " + pProperty);
 
