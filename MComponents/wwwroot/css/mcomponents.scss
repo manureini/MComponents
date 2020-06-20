@@ -856,3 +856,8 @@ $borderRadius: 0.25rem;
     box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
     border-radius: $borderRadius*2;
 }
+
+.m-form-row.multiple-forms-in-row {
+    display: flex;
+    flex-wrap: wrap;
+}

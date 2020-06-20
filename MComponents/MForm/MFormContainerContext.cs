@@ -1,4 +1,5 @@
 ﻿using MComponents.MForm;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -18,7 +19,7 @@ namespace MComponents
             Forms.Add(pForm);
         }
 
-        public bool NotifySubmit()
+        public bool NotifySubmit(IStringLocalizer<MComponentsLocalization> pLocalizer)
         {
             bool submitSuccessful = true;
 
@@ -57,7 +58,7 @@ namespace MComponents
                     }
                 }
 
-                Notificator.InvokeNotification(true, "Gespeichert");
+                Notificator.InvokeNotification(false, pLocalizer["Gespeichert!"]);
             }
 
             return submitSuccessful;

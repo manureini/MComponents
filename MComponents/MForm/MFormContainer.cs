@@ -42,12 +42,25 @@ namespace MComponents
 
             builder.CloseElement();
 
+            builder.OpenElement(55, "div");
+            builder.AddAttribute(56, "class", "m-form-row");
+
+            builder.OpenElement(55, "div");
+            builder.AddAttribute(56, "class", "form-group col-12");
+
+            builder.OpenElement(55, "div");
+            builder.AddAttribute(56, "class", "col-12");
+
             builder.OpenElement(19, "button");
             builder.AddAttribute(20, "type", "button");
             builder.AddAttribute(20, "class", "m-btn m-btn-primary");
             builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, Click));
             builder.AddContent(22, L["Save"]);
             builder.CloseElement();
+
+            builder.CloseElement(); //div
+            builder.CloseElement(); //div
+            builder.CloseElement(); //div
 
             builder.CloseRegion();
         }
@@ -59,7 +72,7 @@ namespace MComponents
 
         public bool TrySubmit()
         {
-            return mFormContext.NotifySubmit();
+            return mFormContext.NotifySubmit(L);
         }
 
         public bool HasUnsavedChanges

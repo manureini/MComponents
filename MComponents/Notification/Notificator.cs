@@ -6,7 +6,7 @@ namespace MComponents
     {
         public static Action<Notification> NotificationHandler;
 
-        internal static void InvokeNotification(bool pIsError, string pText)
+        internal static void InvokeNotification(bool pIsError, string pLocalizedText)
         {
             if (NotificationHandler == null)
                 return;
@@ -14,7 +14,7 @@ namespace MComponents
             NotificationHandler.Invoke(new Notification()
             {
                 IsError = pIsError,
-                Text = pText
+                Text = pLocalizedText
             });
         }
     }

@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 
@@ -43,6 +45,9 @@ namespace MComponents
         [Parameter]
         public EventCallback<MFormValueChangedArgs<T>> OnValueChanged { get; set; }
 
+        [Inject]
+        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+
 
         protected HashSet<FieldIdentifier> ChangedValues { get; set; } = new HashSet<FieldIdentifier>();
 
@@ -77,7 +82,7 @@ namespace MComponents
 
         private void NotifyContainer()
         {
-            ContainerContext?.NotifySubmit();
+            ContainerContext?.NotifySubmit(L);
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -215,7 +220,7 @@ namespace MComponents
             if (groupResult.Key != 0 && !IsInTableRow)
             {
                 builder2.OpenElement(10, "div");
-                builder2.AddAttribute(11, "class", "m-form-row row");
+                builder2.AddAttribute(11, "class", "m-form-row" + (groupResult.Count() > 1 ? " multiple-forms-in-row" : string.Empty));
             }
 
             foreach (var field in groupResult)
@@ -255,7 +260,7 @@ namespace MComponents
                     //  <div class="form-group">
                     builder2.OpenElement(10, "div");
 
-                    string cssClass = "m-form-row form-group col-"; //TODO we use bootstrap here - good idea or bad?
+                    string cssClass = "form-group col-"; //TODO we use bootstrap here - good idea or bad?
 
                     if (groupResult.Key == 0)
                     {
@@ -263,7 +268,7 @@ namespace MComponents
                     }
                     else
                     {
-                        cssClass += (12 / groupResult.Count());
+                        cssClass += 12 / groupResult.Count();
                     }
 
                     builder2.AddAttribute(11, "class", cssClass);
@@ -271,13 +276,22 @@ namespace MComponents
                     //  <label for="@inpId">@property.Name</label>
                     builder2.OpenElement(13, "label");
                     builder2.AddAttribute(14, "for", inpId);
-                    builder2.AddAttribute(14, "class", "col-sm-2 col-form-label"); //TODO we use bootstrap here - good idea or bad?
+                    builder2.AddAttribute(14, "class", "col-sm-12 col-form-label"); //TODO we use bootstrap here - good idea or bad?
 
-                    builder2.AddContent(15, propertyInfo.Name);
+                    var displayAttribute = propertyInfo.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                    if (displayAttribute != null)
+                    {
+                        builder2.AddContent(280, displayAttribute.Name);
+                    }
+                    else
+                    {
+                        builder2.AddContent(284, propertyInfo.Name);
+                    }
+
                     builder2.CloseElement();
 
                     builder2.OpenElement(16, "div");
-                    builder2.AddAttribute(17, "class", "col-sm-10");  //TODO we use bootstrap here - good idea or bad?
+                    builder2.AddAttribute(17, "class", "col-sm-12");  //TODO we use bootstrap here - good idea or bad?
 
                     AddInput(builder2, field, propertyInfo, inpId);
 
