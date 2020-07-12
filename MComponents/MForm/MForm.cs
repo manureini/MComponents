@@ -136,7 +136,7 @@ namespace MComponents
                             builder2.CloseComponent();
                         }
 
-                        if (Fields != null)
+                        if (FieldList.Any())
                         {
                             foreach (var groupResult in FieldList.GroupBy(p => 0))
                             {
@@ -409,6 +409,18 @@ namespace MComponents
         public void RegisterField(IMField pField)
         {
             FieldList.Add(pField);
+            StateHasChanged();
+        }
+
+        public void UnregisterField(IMField pField)
+        {
+            FieldList.Remove(pField);
+            StateHasChanged();
+        }
+
+        public void ClearFields()
+        {
+            FieldList.Clear();
             StateHasChanged();
         }
 

@@ -487,7 +487,10 @@ namespace MComponents.MSelect
 
         protected void UpdateDescription()
         {
-            mNullValueOverride = string.Join(", ", Values.Select(v => FormatValueAsString(v)));
+            if (Values == null)
+                mNullValueOverride = null;
+            else
+                mNullValueOverride = string.Join(", ", Values.Select(v => FormatValueAsString(v)));
 
             if (mNullValueOverride == string.Empty)
                 mNullValueOverride = null;
