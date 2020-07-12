@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-
-namespace MComponents.MGrid
+﻿namespace MComponents.MGrid
 {
     public class BeginRowSelectArgs<T> : RowEventArgs<T>, ICancelableEvent
     {

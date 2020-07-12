@@ -1,9 +1,7 @@
 ﻿using MComponents.Shared.Attributes;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Localization;
 using System;
-using System.Globalization;
 using System.Linq;
 
 namespace MComponents.MGrid

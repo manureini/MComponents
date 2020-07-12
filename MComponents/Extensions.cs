@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
-using System.Text;
 
 namespace MComponents
 {
