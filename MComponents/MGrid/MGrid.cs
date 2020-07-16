@@ -809,7 +809,7 @@ namespace MComponents.MGrid
                     pBuilder.AddAttribute(781, "Template", complex.FormTemplate);
 
 
-                pBuilder.AddStyleWithAttribute(784, pLeftOffset, pBoundingBox);
+                pBuilder.AddStyleWithAttribute(784, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
 
                 pBuilder.CloseComponent();
             }
@@ -821,7 +821,7 @@ namespace MComponents.MGrid
                 pBuilder.AddAttribute(793, "PropertyType", typeof(TProperty));
                 pBuilder.AddAttribute(794, "Attributes", attributes.ToArray());
 
-                pBuilder.AddStyleWithAttribute(976, pLeftOffset, pBoundingBox);
+                pBuilder.AddStyleWithAttribute(976, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
 
                 pBuilder.CloseComponent();
             }
@@ -830,7 +830,7 @@ namespace MComponents.MGrid
         private void AddFieldGenerator(RenderTreeBuilder pBuilder, IMGridEditFieldGenerator<T> pFieldGenerator, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
         {
             pBuilder.OpenElement(804, "td");
-            pBuilder.AddStyleWithAttribute(805, pLeftOffset, pBoundingBox);
+            pBuilder.AddStyleWithAttribute(805, "style", pLeftOffset, pBoundingBox);
             pBuilder.AddContent(806, pFieldGenerator.EditFieldTemplate(pLeftOffset, pBoundingBox, pIsInFilterRow));
             pBuilder.CloseElement();
         }
@@ -1307,7 +1307,7 @@ namespace MComponents.MGrid
         {
             IEnumerable<T> dataForExport = DataSource;
 
-            if(dataForExport == null && DataAdapter != null)
+            if (dataForExport == null && DataAdapter != null)
             {
                 dataForExport = await DataAdapter.GetData(Enumerable.Empty<T>().AsQueryable());
             }

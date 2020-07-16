@@ -44,7 +44,7 @@ namespace MComponents
             return mSupportedTypes.Contains(pType);
         }
 
-        public static void AppendInput<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, bool pIsInFilterRow)
+        public static void AppendInput<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, bool pIsInFilterRow, IMField pField)
         {
             if (!IsTypeSupported(typeof(T)) || IsPropertyHolderNull(pPropertyInfo, pModel))
             {
@@ -112,6 +112,11 @@ namespace MComponents
             {
                 pBuilder.AddAttribute(33, "type", "password");
             }
+
+            if (pField.AdditionalAttributes != null)
+                pBuilder.AddMultipleAttributes(17, pField.AdditionalAttributes
+                    .Where(a => a.Key != Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE)
+                    .ToDictionary(a => a.Key, a => a.Value));
 
             pBuilder.AddAttribute(1, "id", pId);
             pBuilder.AddAttribute(2, "Value", value);

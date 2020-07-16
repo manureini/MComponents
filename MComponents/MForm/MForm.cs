@@ -12,6 +12,7 @@ using System.Linq;
 
 namespace MComponents
 {
+
     public class MForm<T> : ComponentBase, IMForm
     {
         protected EditContext mEditContext;
@@ -239,7 +240,13 @@ namespace MComponents
                     if (IsInTableRow)
                     {
                         builder2.OpenElement(16, "td");
-                        builder2.AddMultipleAttributes(17, field.AdditionalAttributes);
+                        //       builder2.AddMultipleAttributes(17, field.AdditionalAttributes);
+                        // update 13.07.2020, add AdditionalAttributes to Input
+
+                        if (field.AdditionalAttributes != null && field.AdditionalAttributes.TryGetValue(Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, out object value))
+                        {
+                            builder2.AddAttribute(247, "style", value);
+                        }
 
                         if (propertyInfo.PropertyType != null)
                         {
@@ -345,7 +352,7 @@ namespace MComponents
                 bool isInFilterRow = AdditionalAttributes != null && AdditionalAttributes.ContainsKey("data-is-filterrow");
 
                 var method = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
-                method.Invoke(null, new object[] { builder2, propertyInfo, Model, inpId, this, isInFilterRow });
+                method.Invoke(null, new object[] { builder2, propertyInfo, Model, inpId, this, isInFilterRow, field });
             }
         }
 

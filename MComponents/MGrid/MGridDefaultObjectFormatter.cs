@@ -25,19 +25,6 @@ namespace MComponents.MGrid
             if (value == null)
                 return null;
 
-            if (HasAttribute(pColumn, pPropertyInfo, typeof(TimeAttribute)))
-            {
-                if (value is DateTime dt)
-                {
-                    return dt.ToString("HH:mm");
-                }
-
-                if (value is DateTime?)
-                {
-                    return ((DateTime?)value).Value.ToString("HH:mm");
-                }
-            }
-
             if (pColumn.StringFormat != null)
             {
                 return String.Format(pColumn.StringFormat, value);
@@ -53,6 +40,17 @@ namespace MComponents.MGrid
             if (pType.IsEnum)
             {
                 return ((Enum)value).ToName();
+            }
+
+            if (pType == typeof(DateTime)) //TODO
+            {
+                if (HasAttribute(pColumn, pPropertyInfo, typeof(TimeAttribute)))
+                    return ((DateTime)value).ToString("HH:mm");
+
+                if (HasAttribute(pColumn, pPropertyInfo, typeof(DateTimeAttribute)))
+                    return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm");
+
+                return ((DateTime)value).ToString("yyyy-MM-dd");
             }
 
             return value.ToString();
