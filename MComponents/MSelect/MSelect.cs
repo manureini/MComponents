@@ -81,7 +81,6 @@ namespace MComponents.MSelect
 
         protected bool MultipleSelectMode => ValuesExpression != null;
 
-
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             //Workaround for bypass check is ValueExpression is set
@@ -106,7 +105,10 @@ namespace MComponents.MSelect
         protected override void OnInitialized()
         {
             if (Values != null && Value != null)
-                throw new ArgumentException($"Specify {nameof(Values)} or {nameof(Value)} through bind-value");
+                throw new ArgumentException($"use {nameof(Values)} or {nameof(Value)} through bind-value, but not both");
+
+            if (MultipleSelectMode && Values == null)
+                throw new ArgumentException($"{nameof(Values)} must be != null");
 
             if (Options == null && mtType.IsEnum)
             {
