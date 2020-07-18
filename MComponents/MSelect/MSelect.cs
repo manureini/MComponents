@@ -175,6 +175,9 @@ namespace MComponents.MSelect
             {
                 pBuilder.OpenElement(32, "div");
                 pBuilder.AddAttribute(33, "tabindex", "0");
+
+                //This causes sometimes an error in console
+                //see https://github.com/dotnet/aspnetcore/issues/21241
                 pBuilder.AddAttribute(34, "onfocusout", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusLost));
 
                 pBuilder.AddAttribute(35, "class", "m-select-options-container");
@@ -212,20 +215,18 @@ namespace MComponents.MSelect
 
                     pBuilder.CloseElement(); //span
 
-                    Task.Run(async () =>
+                    Task.Delay(50).ContinueWith((a) =>
                     {
-                        await Task.Delay(50);
                         if (SearchInput.Id != null)
-                            await JSRuntime.InvokeVoidAsync("mcomponents.focusElement", SearchInput);
+                            _ = JSRuntime.InvokeVoidAsync("mcomponents.focusElement", SearchInput);
                     });
                 }
                 else
                 {
-                    Task.Run(async () =>
+                    Task.Delay(50).ContinueWith((a) =>
                     {
-                        await Task.Delay(50);
                         if (OptionsDiv.Id != null)
-                            await JSRuntime.InvokeVoidAsync("mcomponents.focusElement", OptionsDiv);
+                            _ = JSRuntime.InvokeVoidAsync("mcomponents.focusElement", OptionsDiv);
                     });
                 }
 
@@ -325,10 +326,8 @@ namespace MComponents.MSelect
                 ToggleOptions();
         }
 
-        protected async void OnFocusLost(FocusEventArgs pArgs)
+        protected void OnFocusLost(FocusEventArgs pArgs)
         {
-            await Task.Delay(100);
-
             if (mOptionsVisible)
                 ToggleOptions();
         }
