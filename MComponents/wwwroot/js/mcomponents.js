@@ -101,6 +101,10 @@ var mcomponents = (function () {
 
                 var lastTd = childs[childs.length - 1].children[0];
 
+                if (lastTd == undefined) { //table has data, but no columns
+                    lastTd = childs[childs.length - 1];
+                }
+
                 var rowheight = lastTd.getBoundingClientRect().height;
 
                 var borderRight = getComputedStyle(lastTd, null).getPropertyValue('border-right-width');
