@@ -46,119 +46,127 @@ namespace MComponents
 
         public static void AppendInput<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, bool pIsInFilterRow, IMField pField)
         {
-            if (!IsTypeSupported(typeof(T)) || IsPropertyHolderNull(pPropertyInfo, pModel))
+            try
             {
-                ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId, pParent);
-                return;
-            }
-
-            T value = (T)(pPropertyInfo.GetValue(pModel) ?? default(T));
-            Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-            bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute(typeof(ReadOnlyAttribute)) != null;
-
-            if (mNumberTypes.Contains(tType))
-            {
-                pBuilder.OpenComponent<InputNumber<T>>(0);
-            }
-            else if (tType == typeof(DateTime) || tType == typeof(DateTimeOffset))
-            {
-                if (pPropertyInfo.GetCustomAttribute(typeof(TimeAttribute)) != null)
+                if (!IsTypeSupported(typeof(T)) || IsPropertyHolderNull(pPropertyInfo, pModel))
                 {
-                    pBuilder.OpenComponent<InputTime<T>>(0);
+                    ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId, pParent);
+                    return;
                 }
-                else if (pPropertyInfo.GetCustomAttribute(typeof(DateTimeAttribute)) != null)
+
+                T value = (T)(pPropertyInfo.GetValue(pModel) ?? default(T));
+                Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+                bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute(typeof(ReadOnlyAttribute)) != null;
+
+                if (mNumberTypes.Contains(tType))
                 {
-                    pBuilder.OpenComponent<InputDateTime<T>>(0);
+                    pBuilder.OpenComponent<InputNumber<T>>(0);
                 }
-                else
+                else if (tType == typeof(DateTime) || tType == typeof(DateTimeOffset))
                 {
-                    pBuilder.OpenComponent<InputDate<T>>(0);
+                    if (pPropertyInfo.GetCustomAttribute(typeof(TimeAttribute)) != null)
+                    {
+                        pBuilder.OpenComponent<InputTime<T>>(0);
+                    }
+                    else if (pPropertyInfo.GetCustomAttribute(typeof(DateTimeAttribute)) != null)
+                    {
+                        pBuilder.OpenComponent<InputDateTime<T>>(0);
+                    }
+                    else
+                    {
+                        pBuilder.OpenComponent<InputDate<T>>(0);
+                    }
                 }
-            }
-            else if (typeof(T) == typeof(bool))
-            {
-                pBuilder.OpenComponent<MInputCheckbox>(0);
-            }
-            else if (typeof(T) == typeof(bool?))
-            {
-                pBuilder.OpenComponent<MSelect<T>>(0);
-                if (pIsInFilterRow)
-                    pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
-            }
-            else if (tType == typeof(Guid))
-            {
-                pBuilder.OpenComponent<InputGuid<T>>(0);
-            }
-            else if (tType.IsEnum)
-            {
-                pBuilder.OpenComponent<MSelect<T>>(0);
-                if (pIsInFilterRow)
-                    pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
-            }
-            else
-            {
-                if (pPropertyInfo.GetCustomAttribute(typeof(TextAreaAttribute)) != null)
+                else if (typeof(T) == typeof(bool))
                 {
-                    pBuilder.OpenComponent<InputTextArea>(0);
+                    pBuilder.OpenComponent<MInputCheckbox>(0);
+                }
+                else if (typeof(T) == typeof(bool?))
+                {
+                    pBuilder.OpenComponent<MSelect<T>>(0);
+                    if (pIsInFilterRow)
+                        pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
+                }
+                else if (tType == typeof(Guid))
+                {
+                    pBuilder.OpenComponent<InputGuid<T>>(0);
+                }
+                else if (tType.IsEnum)
+                {
+                    pBuilder.OpenComponent<MSelect<T>>(0);
+                    if (pIsInFilterRow)
+                        pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
                 }
                 else
                 {
-                    pBuilder.OpenComponent<InputText>(0);
+                    if (pPropertyInfo.GetCustomAttribute(typeof(TextAreaAttribute)) != null)
+                    {
+                        pBuilder.OpenComponent<InputTextArea>(0);
+                    }
+                    else
+                    {
+                        pBuilder.OpenComponent<InputText>(0);
+                    }
                 }
-            }
 
-            if (pPropertyInfo.GetCustomAttribute(typeof(PasswordAttribute)) != null)
-            {
-                pBuilder.AddAttribute(33, "type", "password");
-            }
+                if (pPropertyInfo.GetCustomAttribute(typeof(PasswordAttribute)) != null)
+                {
+                    pBuilder.AddAttribute(33, "type", "password");
+                }
 
-            if (pField.AdditionalAttributes != null)
-                pBuilder.AddMultipleAttributes(17, pField.AdditionalAttributes
-                    .Where(a => a.Key != Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE)
-                    .ToDictionary(a => a.Key, a => a.Value));
+                if (pField.AdditionalAttributes != null)
+                    pBuilder.AddMultipleAttributes(17, pField.AdditionalAttributes
+                        .Where(a => a.Key != Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE)
+                        .ToDictionary(a => a.Key, a => a.Value));
 
-            pBuilder.AddAttribute(1, "id", pId);
-            pBuilder.AddAttribute(2, "Value", value);
+                pBuilder.AddAttribute(1, "id", pId);
+                pBuilder.AddAttribute(2, "Value", value);
 
-            pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, __value =>
-            {
-                pPropertyInfo.SetValue(pModel, __value);
-                pParent.OnInputValueChanged(pPropertyInfo.Name, __value);
-            }, value));
+                pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, __value =>
+                {
+                    pPropertyInfo.SetValue(pModel, __value);
+                    pParent.OnInputValueChanged(pPropertyInfo.Name, __value);
+                }, value));
 
-            pBuilder.AddAttribute(23, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
-            {
-                pParent.OnInputKeyUp(a);
-            }));
+                pBuilder.AddAttribute(23, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
+                {
+                    pParent.OnInputKeyUp(a);
+                }));
 
-            var valueExpression = GetValueExpression<T>(pPropertyInfo, pModel);
+                var valueExpression = GetValueExpression<T>(pPropertyInfo, pModel);
 
-            pBuilder.AddAttribute(4, "ValueExpression", valueExpression);
+                pBuilder.AddAttribute(4, "ValueExpression", valueExpression);
 
-            string cssClass = "m-form-control";
+                string cssClass = "m-form-control";
 
-            if (isReadOnly)
-            {
-                pBuilder.AddAttribute(33, "disabled", string.Empty);
-                pBuilder.AddAttribute(33, "IsDisabled", true);
-            }
+                if (isReadOnly)
+                {
+                    pBuilder.AddAttribute(33, "disabled", string.Empty);
+                    pBuilder.AddAttribute(33, "IsDisabled", true);
+                }
 
-            pBuilder.AddAttribute(10, "class", cssClass);
+                pBuilder.AddAttribute(10, "class", cssClass);
 
-            if (typeof(T) == typeof(bool?))
-            {
-                IEnumerable<bool?> options = new bool?[] { true, false };
-                pBuilder.AddAttribute(10, "Options", options);
-            }
+                if (typeof(T) == typeof(bool?))
+                {
+                    IEnumerable<bool?> options = new bool?[] { true, false };
+                    pBuilder.AddAttribute(10, "Options", options);
+                }
 
-            pBuilder.CloseComponent();
-
-            if (pParent.EnableValidation)
-            {
-                pBuilder.OpenComponent<ValidationMessage<T>>(60);
-                pBuilder.AddAttribute(61, "For", valueExpression);
                 pBuilder.CloseComponent();
+
+                if (pParent.EnableValidation)
+                {
+                    pBuilder.OpenComponent<ValidationMessage<T>>(60);
+                    pBuilder.AddAttribute(61, "For", valueExpression);
+                    pBuilder.CloseComponent();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                throw;
             }
         }
 

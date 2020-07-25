@@ -328,8 +328,11 @@ namespace MComponents.MSelect
 
         protected void OnFocusLost(FocusEventArgs pArgs)
         {
-            if (mOptionsVisible)
-                ToggleOptions();
+            Task.Delay(50).ContinueWith((a) =>
+            {
+                if (mOptionsVisible)
+                    ToggleOptions();
+            });
         }
 
         protected void ToggleOptions()

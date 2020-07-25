@@ -26,9 +26,10 @@ namespace MComponents.MGrid
                 return null;
 
             if (pColumn.StringFormat != null)
-            {
-                return String.Format(pColumn.StringFormat, value);
-            }
+                return string.Format(pColumn.StringFormat, value);
+
+            if (pPropertyInfo.PropertyType == null)
+                throw new ArgumentException($"{nameof(pPropertyInfo.PropertyType)} of column {pColumn.Identifier} is null, please specify it");
 
             Type pType = Nullable.GetUnderlyingType(pPropertyInfo.PropertyType) ?? pPropertyInfo.PropertyType;
 
