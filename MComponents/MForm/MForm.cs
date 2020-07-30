@@ -138,22 +138,14 @@ namespace MComponents
 
                         if (FieldList.Any())
                         {
-                            foreach (var groupResult in FieldList.GroupBy(p => 0))
+                            foreach (var groupResult in GroupByRow(FieldList))
                             {
                                 Process(builder2, groupResult);
                             }
                         }
                         else
                         {
-                            foreach (var groupResult in ReflectionHelper.GetProperties(Model).Select(pi => GetField(pi)).GroupBy(p =>
-                            {
-                                var rowAttr = p.Attributes?.FirstOrDefault(a => a.GetType() == typeof(RowAttribute)) as RowAttribute;
-
-                                if (rowAttr == null)
-                                    return 0;
-
-                                return rowAttr.RowId;
-                            }).OrderByDescending(g => g.Key).Reverse())
+                            foreach (var groupResult in GroupByRow(ReflectionHelper.GetProperties(Model).Select(pi => GetField(pi))))
                             {
                                 //    Console.WriteLine(property.PropertyType.FullName);
 
@@ -177,6 +169,19 @@ namespace MComponents
             }
 
             builder.CloseRegion();
+        }
+
+        private IEnumerable<IGrouping<int, IMField>> GroupByRow(IEnumerable<IMField> pFields)
+        {
+            return pFields.GroupBy(p =>
+            {
+                var rowAttr = p.Attributes?.FirstOrDefault(a => a.GetType() == typeof(RowAttribute)) as RowAttribute;
+
+                if (rowAttr == null)
+                    return 0;
+
+                return rowAttr.RowId;
+            }).OrderByDescending(g => g.Key).Reverse();
         }
 
         protected IMPropertyInfo GetPropertyInfo(IMPropertyField pField)
