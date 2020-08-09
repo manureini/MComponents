@@ -68,8 +68,7 @@ namespace MComponents
                 ContainerContext.OnFormSubmit += CascadedFormContext_OnFormSubmit;
             }
         }
-
-        /// <inheritdoc />
+             
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -393,7 +392,8 @@ namespace MComponents
                     if (changedDict.ContainsKey(fieldname))
                         continue;
 
-                    object value = ReflectionHelper.GetPropertyValue(entry.Model, entry.FieldName);
+                    //01.08.2020 entry.Model is an old wrong version of the model in client side
+                    object value = ReflectionHelper.GetPropertyValue(Model, entry.FieldName);
                     changedDict.Add(fieldname, value);
                 }
 
