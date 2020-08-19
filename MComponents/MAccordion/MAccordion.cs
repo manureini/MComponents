@@ -55,10 +55,10 @@ namespace MComponents.MAccordion
                 builder.AddAttribute(5, "class", "m-accordion-card");
 
                 builder.OpenElement(7, "div");
-                builder.AddAttribute(8, "class", "m-accordion-card-header");
+                builder.AddAttribute(8, "class", "m-accordion-card-header" + (IsReadOnly ? " m-readonly" : string.Empty));
 
                 builder.OpenElement(10, "div");
-                builder.AddAttribute(11, "class", "m-accordion-card-title m-collapsed");
+                builder.AddAttribute(11, "class", "m-accordion-card-title");
                 builder.AddAttribute(11, "style", "display: block;");
 
                 builder.AddAttribute(12, "data-toggle", "collapse");
@@ -85,7 +85,7 @@ namespace MComponents.MAccordion
                 builder.OpenElement(18, "div");
 
 
-                string cssClass = "m-collapse";
+                string cssClass = string.Empty;
 
                 if (isVisible)
                     cssClass += " m-show";

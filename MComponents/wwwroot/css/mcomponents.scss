@@ -415,6 +415,8 @@ $borderRadius: 0.25rem;
     }
 }
 /* END Table ----------------------------------------------------------------------------- */
+
+
 /* START Select ----------------------------------------------------------------------------- */
 .m-select {
     user-select: none;
@@ -672,9 +674,11 @@ $borderRadius: 0.25rem;
     }
 }
 
-
 /* END Select ----------------------------------------------------------------------------- */
+
+
 /* START Wizard ----------------------------------------------------------------------------- */
+
 .m-wizard {
     display: flex;
     flex-direction: column;
@@ -783,7 +787,67 @@ $borderRadius: 0.25rem;
         display: none;
     }
 }
+
 /* END Wizard ----------------------------------------------------------------------------- */
+
+
+
+/* START Accordion ------------------------------------------------------------------------ */
+
+.m-accordion {
+    .m-accordion-card {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid $gray;
+        border-radius: $borderRadius;
+
+        &:first-of-type {
+            border-bottom: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        &:not(:first-of-type) .m-accordion-card-header:first-child {
+            border-radius: 0;
+        }
+
+        &:last-of-type {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .m-accordion-card-header {
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            border-bottom: 0;
+            background-color: #f7f8fa;
+
+            &.m-readonly {
+                cursor: default;
+            }
+
+            .m-accordion-card-title {
+                margin: 0;
+                font-size: 1.1rem;
+                font-weight: 500;
+                padding: 1rem 1rem;
+                color: #595d6e;
+                display: block;
+            }
+        }
+
+        .m-accordion-card-body {
+            padding: 1.25rem;
+            font-size: 1rem;
+            flex: 1 1 auto;
+        }
+    }
+}
+
+/* END Accordion -------------------------------------------------------------------------- */
+
+
 .m-badge {
     display: inline-flex;
     justify-content: center;
@@ -802,7 +866,6 @@ $borderRadius: 0.25rem;
     }
 }
 
-
 .m-paint {
     border: solid;
     border-color: black;
@@ -810,7 +873,6 @@ $borderRadius: 0.25rem;
     border-radius: $borderRadius;
     margin-bottom: 10px;
 }
-
 
 .m-form-control {
     display: block;
@@ -841,6 +903,11 @@ $borderRadius: 0.25rem;
     }
 }
 
+.m-form-row.multiple-forms-in-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 
 .m-scrollbar::-webkit-scrollbar {
     width: 7px;
@@ -855,9 +922,4 @@ $borderRadius: 0.25rem;
 .m-scrollbar::-webkit-scrollbar-track {
     box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
     border-radius: $borderRadius*2;
-}
-
-.m-form-row.multiple-forms-in-row {
-    display: flex;
-    flex-wrap: wrap;
 }
