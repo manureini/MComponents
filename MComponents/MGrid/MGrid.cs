@@ -23,6 +23,9 @@ namespace MComponents.MGrid
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         [Parameter]
+        public string Identifier { get; set; } = typeof(T).Name;
+
+        [Parameter]
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
@@ -68,12 +71,15 @@ namespace MComponents.MGrid
         public IJSRuntime JsRuntime { get; set; }
 
         [Inject]
+        public MGridStateService StateService { get; set; }
+
+        [Inject]
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
-        protected List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
-        protected List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
+        internal List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
+        internal List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
 
-        protected Dictionary<IMGridPropertyColumn, IMPropertyInfo> mPropertyInfoCache = new Dictionary<IMGridPropertyColumn, IMPropertyInfo>();
+        internal Dictionary<IMGridPropertyColumn, IMPropertyInfo> PropertyInfos = new Dictionary<IMGridPropertyColumn, IMPropertyInfo>();
 
         public MGridPager Pager { get; set; }
         public MGridEvents<T> Events { get; set; }
@@ -85,7 +91,7 @@ namespace MComponents.MGrid
         public Guid? EditRow;
         public MForm<T> EditForm;
 
-        public bool IsFilterRowVisible { get; protected set; }
+        public bool IsFilterRowVisible { get; internal set; }
 
         protected EditContext EditContext;
 
@@ -151,23 +157,17 @@ namespace MComponents.MGrid
                     iprop.SetAttributes(propc.Attributes);
                 }
 
-                mPropertyInfoCache.Add(propc, iprop);
+                PropertyInfos.Add(propc, iprop);
 
                 if (pColumn is IMGridSortableColumn sc && sc.SortDirection != MSortDirection.None)
                 {
-                    object comparer = null;
-
-                    if (pColumn is IMGridCustomComparer)
-                    {
-                        comparer = ((dynamic)pColumn).Comparer;
-                    }
-
                     SortInstructions.Add(new SortInstruction()
                     {
+                        GridColumn = pColumn,
                         Direction = sc.SortDirection,
                         PropertyInfo = iprop,
                         Index = sc.SortIndex,
-                        Comparer = comparer
+                        Comparer = pColumn.GetComparer()
                     });
                 }
             }
@@ -193,6 +193,8 @@ namespace MComponents.MGrid
             if (firstRender)
             {
                 await UpdateColumnsWidth();
+
+                StateService.RestoreGridState(this);
             }
 
             if (UpdateColumnsWidthOnNextRender)
@@ -417,6 +419,12 @@ namespace MComponents.MGrid
                                    {
                                        builder3.OpenElement(418, "option");
                                        builder3.AddAttribute(419, "value", entry);
+
+                                       if (entry == Pager.PageSize)
+                                       {
+                                           builder3.AddAttribute(419, "selected", "selected");
+                                       }
+
                                        builder3.AddContent(420, entry);
                                        builder3.CloseElement();
                                    }
@@ -506,7 +514,15 @@ namespace MComponents.MGrid
                 foreach (var column in ColumnsList)
                 {
                     if (column is IMGridPropertyColumn pc)
-                        fmodel.Add(pc.Property, null);
+                    {
+                        object value = null;
+                        var instr = FilterInstructions.Where(f => f.GridColumn == pc).FirstOrDefault();
+
+                        if (instr != null)
+                            value = instr.Value;
+
+                        fmodel.Add(pc.Property, value);
+                    }
                 }
 
                 mFilterModel = fmodel;
@@ -585,7 +601,7 @@ namespace MComponents.MGrid
                     }
                     else if (column is IMGridPropertyColumn pc)
                     {
-                        var iprop = mPropertyInfoCache[pc];
+                        var iprop = PropertyInfos[pc];
                         pBuilder.AddContent(561, Formatter.FormatPropertyColumnValue(pc, iprop, pEntry));
                     }
 
@@ -743,15 +759,13 @@ namespace MComponents.MGrid
         {
             if (pColumn is IMGridPropertyColumn pc)
             {
-                var propertyType = mPropertyInfoCache[pc].PropertyType;
+                var propertyType = PropertyInfos[pc].PropertyType;
 
                 if (pIsInFilterRow)
                     propertyType = GetNullableTypeIfNeeded(propertyType);
 
                 var method = typeof(MGrid<T>).GetMethod(nameof(MGrid<T>.AddPropertyField), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(propertyType);
                 method.Invoke(this, new object[] { pBuilder, pColumn, pc, pIsInFilterRow, pLeftOffset, pBoundingBox });
-
-                //  AddPropertyField(builder3, column, pc, propertyType);
             }
             else if (pColumn is IMGridEditFieldGenerator<T> fieldGenerator)
             {
@@ -776,7 +790,7 @@ namespace MComponents.MGrid
 
         private void AddPropertyField<TProperty>(RenderTreeBuilder pBuilder, IMGridColumn pColumn, IMGridPropertyColumn pPropertyColumn, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
         {
-            var attributes = mPropertyInfoCache[pPropertyColumn].GetAttributes()?.ToList() ?? new List<Attribute>();
+            var attributes = PropertyInfos[pPropertyColumn].GetAttributes()?.ToList() ?? new List<Attribute>();
 
             if (pIsInFilterRow)
             {
@@ -804,6 +818,7 @@ namespace MComponents.MGrid
                 pBuilder.AddAttribute(776, "Property", pPropertyColumn.Property);
                 pBuilder.AddAttribute(777, "PropertyType", typeof(TProperty));
                 pBuilder.AddAttribute(778, "Attributes", attributes.ToArray());
+                pBuilder.AddAttribute(778, nameof(IMGridColumn), pColumn);
 
                 if (complex.FormTemplate != null && !pIsInFilterRow || (pIsInFilterRow && pColumn.EnableFilter))
                     pBuilder.AddAttribute(781, "Template", complex.FormTemplate);
@@ -820,6 +835,7 @@ namespace MComponents.MGrid
                 pBuilder.AddAttribute(792, "Property", pPropertyColumn.Property);
                 pBuilder.AddAttribute(793, "PropertyType", typeof(TProperty));
                 pBuilder.AddAttribute(794, "Attributes", attributes.ToArray());
+                pBuilder.AddAttribute(795, nameof(IMGridColumn), pColumn);
 
                 pBuilder.AddStyleWithAttribute(976, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
 
@@ -831,7 +847,7 @@ namespace MComponents.MGrid
         {
             pBuilder.OpenElement(804, "td");
             pBuilder.AddStyleWithAttribute(805, "style", pLeftOffset, pBoundingBox);
-            pBuilder.AddContent(806, pFieldGenerator.EditFieldTemplate(pLeftOffset, pBoundingBox, pIsInFilterRow));
+            pBuilder.AddContent(807, pFieldGenerator.EditFieldTemplate(pLeftOffset, pBoundingBox, pIsInFilterRow));
             pBuilder.CloseElement();
         }
 
@@ -1038,6 +1054,7 @@ namespace MComponents.MGrid
                 ClearFilterValues();
             }
 
+            StateService.SaveGridState(this);
             StateHasChanged();
         }
 
@@ -1195,6 +1212,8 @@ namespace MComponents.MGrid
             Pager.CurrentPage = pPage;
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
+            StateService.SaveGridState(this);
+
             await StopEditing(false, false);
 
             ClearDataCache();
@@ -1208,6 +1227,8 @@ namespace MComponents.MGrid
             Pager.PageSize = int.Parse(pValue.Value.ToString());
             Pager.CurrentPage = 1;
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+
+            StateService.SaveGridState(this);
 
             await StopEditing(false, false);
 
@@ -1236,7 +1257,7 @@ namespace MComponents.MGrid
                 if (!pArgs.ShiftKey)
                     SortInstructions.Clear();
 
-                var propInfo = mPropertyInfoCache[propInfoColumn];
+                var propInfo = PropertyInfos[propInfoColumn];
 
                 object comparer = null;
 
@@ -1247,6 +1268,7 @@ namespace MComponents.MGrid
 
                 SortInstructions.Add(new SortInstruction()
                 {
+                    GridColumn = pColumn,
                     Direction = MSortDirection.Ascending,
                     PropertyInfo = propInfo,
                     Index = SortInstructions.Count,
@@ -1262,6 +1284,8 @@ namespace MComponents.MGrid
                 SortInstructions.Remove(instr);
             }
 
+            StateService.SaveGridState(this);
+
             ClearDataCache();
             StateHasChanged();
         }
@@ -1276,14 +1300,17 @@ namespace MComponents.MGrid
 
         protected async Task OnFilterValueChanged(MFormValueChangedArgs<ExpandoObject> pArgs)
         {
-            var iprop = mPropertyInfoCache.First(v => v.Key.Property == pArgs.Property).Value;
+            var column = (IMGridColumn)pArgs.Field.AdditionalAttributes[nameof(IMGridColumn)];
 
-            FilterInstructions.RemoveAll(f => f.PropertyInfo == iprop);
+            FilterInstructions.RemoveAll(f => f.GridColumn.Identifier == column.Identifier);
+
+            var iprop = PropertyInfos.First(v => v.Key.Property == pArgs.Property).Value;
 
             if (pArgs.NewValue != null && !(pArgs.NewValue is string a && a == string.Empty)) //all values from filter are nullable
             {
                 FilterInstructions.Add(new FilterInstruction()
                 {
+                    GridColumn = column,
                     PropertyInfo = iprop,
                     Value = pArgs.NewValue
                 });
@@ -1299,6 +1326,8 @@ namespace MComponents.MGrid
             ClearDataCache();
             await UpdateDataCacheIfDataAdapter();
 
+            StateService.SaveGridState(this);
+
             UpdateColumnsWidthOnNextRender = true;
             StateHasChanged();
         }
@@ -1312,7 +1341,7 @@ namespace MComponents.MGrid
                 dataForExport = await DataAdapter.GetData(Enumerable.Empty<T>().AsQueryable());
             }
 
-            var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, mPropertyInfoCache, dataForExport, Formatter);
+            var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, PropertyInfos, dataForExport, Formatter);
             await FileUtil.SaveAs(JsRuntime, "Export.xlsx", data);
         }
 
@@ -1365,13 +1394,13 @@ namespace MComponents.MGrid
         public void Refresh()
         {
             ClearDataCache();
-            StateHasChanged();
+            InvokeStateHasChanged();
         }
 
         public void ClearColumns()
         {
             ColumnsList.Clear();
-            mPropertyInfoCache.Clear();
+            PropertyInfos.Clear();
             ClearFilterValues();
             Refresh();
         }
@@ -1400,6 +1429,8 @@ namespace MComponents.MGrid
         {
             FilterInstructions.Clear();
             mFilterModel = null;
+
+            StateService.SaveGridState(this);
             Refresh();
         }
     }

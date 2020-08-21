@@ -15,7 +15,7 @@ namespace MComponents
 
         void OnInputKeyUp(KeyboardEventArgs pArgs);
 
-        void OnInputValueChanged(string pProperty, object pNewValue);
+        void OnInputValueChanged(IMField pField, object pNewValue);
 
         bool IsInTableRow { get; }
 

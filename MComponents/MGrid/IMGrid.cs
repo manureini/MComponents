@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MComponents.MGrid
 {
-    public interface IMGrid<T> : IMRegister
+    public interface IMGrid<T> : IMRegister, IIdentifyable
     {
         void RegisterEvents(MGridEvents<T> pEvents);
 

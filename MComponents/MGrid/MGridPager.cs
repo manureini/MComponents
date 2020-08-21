@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.Runtime.CompilerServices;
 
 namespace MComponents.MGrid
 {
@@ -35,5 +36,6 @@ namespace MComponents.MGrid
                 }
             }
         }
+
     }
 }

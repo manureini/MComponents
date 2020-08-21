@@ -1,4 +1,6 @@
-﻿namespace MComponents
+﻿using MComponents.MForm;
+
+namespace MComponents
 {
     public class MFormValueChangedArgs<T>
     {
@@ -8,11 +10,14 @@
 
         public T Model { get; protected set; }
 
-        internal MFormValueChangedArgs(string pProperty, object pNewValue, T pModel)
+        public IMField Field { get; protected set; }
+
+        internal MFormValueChangedArgs(IMField pField, object pNewValue, T pModel)
         {
-            Property = pProperty;
             NewValue = pNewValue;
             Model = pModel;
+            Field = pField;
+            Property = (pField as IMPropertyField)?.Property;
         }
     }
 }

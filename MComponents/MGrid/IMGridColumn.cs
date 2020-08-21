@@ -2,13 +2,11 @@
 
 namespace MComponents.MGrid
 {
-    public interface IMGridColumn
+    public interface IMGridColumn : IIdentifyable
     {
         IReadOnlyDictionary<string, object> AdditionalAttributes { get; }
 
         string HeaderText { get; }
-
-        string Identifier { get; }
 
         bool EnableFilter { get; }
 

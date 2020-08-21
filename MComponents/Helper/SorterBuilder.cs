@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MComponents.MGrid;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -130,6 +131,8 @@ namespace MComponents
 
     public class SortInstruction
     {
+        public IMGridColumn GridColumn { get; set; }
+
         public IMPropertyInfo PropertyInfo { get; set; }
 
         public MSortDirection Direction { get; set; }

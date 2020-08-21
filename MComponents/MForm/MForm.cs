@@ -68,7 +68,7 @@ namespace MComponents
                 ContainerContext.OnFormSubmit += CascadedFormContext_OnFormSubmit;
             }
         }
-             
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -446,11 +446,11 @@ namespace MComponents
             }
         }
 
-        public void OnInputValueChanged(string pProperty, object pNewValue)
+        public void OnInputValueChanged(IMField pField, object pNewValue)
         {
             if (OnValueChanged.HasDelegate)
             {
-                var task = OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pProperty, pNewValue, Model));
+                var task = OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pNewValue, Model));
                 task.Wait();
             }
         }

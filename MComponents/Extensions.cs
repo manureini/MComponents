@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Blazored.LocalStorage;
+using MComponents.MGrid;
+using MComponents.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Buffers;
 using System.Globalization;
+using System.Text.Json;
 
 namespace MComponents
 {
@@ -37,6 +42,24 @@ namespace MComponents
             return double.Parse(value, CultureInfo.InvariantCulture);
         }
 
+        internal static object GetComparer(this IMGridColumn pColumn)
+        {
+            object comparer = null;
+
+            if (pColumn is IMGridCustomComparer)
+                comparer = ((dynamic)pColumn).Comparer;
+
+            return comparer;
+        }
+
+        internal static object ToObject(this JsonElement element, Type pType, JsonSerializerOptions options = null)
+        {
+            var bufferWriter = new ArrayBufferWriter<byte>();
+            using (var writer = new Utf8JsonWriter(bufferWriter))
+                element.WriteTo(writer);
+            return JsonSerializer.Deserialize(bufferWriter.WrittenSpan, pType, options);
+        }
+
         public static void AddMComponents(this IServiceCollection pServices)
         {
             pServices.AddLocalization(options => options.ResourcesPath = "Resources");
@@ -44,6 +67,11 @@ namespace MComponents
             {
                 options.SupportedUICultures = MComponentsLocalization.SupportedCultures;
             });
+
+            pServices.AddBlazoredLocalStorage();
+
+            pServices.AddScoped<MPersistService>();
+            pServices.AddScoped<MGridStateService>();
         }
     }
 

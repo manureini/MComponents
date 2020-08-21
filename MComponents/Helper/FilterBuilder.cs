@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System.Linq.Expressions;
+using MComponents.MGrid;
 
 namespace MComponents
 {
@@ -74,6 +75,8 @@ namespace MComponents
 
     public class FilterInstruction
     {
+        public IMGridColumn GridColumn { get; set; }
+
         public IMPropertyInfo PropertyInfo { get; set; }
 
         public object Value { get; set; }
