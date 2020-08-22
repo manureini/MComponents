@@ -70,7 +70,7 @@ namespace MComponents
 
             pServices.AddBlazoredLocalStorage();
 
-            pServices.AddScoped<MPersistService>();
+            pServices.AddScoped<MLocalStorageService>();
             pServices.AddScoped<MGridStateService>();
         }
     }

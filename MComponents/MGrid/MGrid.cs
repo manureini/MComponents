@@ -59,6 +59,9 @@ namespace MComponents.MGrid
         public bool EnableExport { get; set; }
 
         [Parameter]
+        public bool EnableSaveState { get; set; }
+
+        [Parameter]
         public ToolbarItem ToolbarItems { get; set; }
 
         [Parameter]
@@ -194,7 +197,8 @@ namespace MComponents.MGrid
             {
                 await UpdateColumnsWidth();
 
-                StateService.RestoreGridState(this);
+                if (EnableSaveState)
+                    StateService.RestoreGridState(this);
             }
 
             if (UpdateColumnsWidthOnNextRender)
@@ -892,6 +896,8 @@ namespace MComponents.MGrid
             }
 
             Selected = id;
+
+            SaveCurrentState();
             StateHasChanged();
         }
 
@@ -1054,7 +1060,7 @@ namespace MComponents.MGrid
                 ClearFilterValues();
             }
 
-            StateService.SaveGridState(this);
+            SaveCurrentState();
             StateHasChanged();
         }
 
@@ -1212,12 +1218,12 @@ namespace MComponents.MGrid
             Pager.CurrentPage = pPage;
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
-            StateService.SaveGridState(this);
-
             await StopEditing(false, false);
 
             ClearDataCache();
             await UpdateDataCacheIfDataAdapter();
+
+            SaveCurrentState();
             StateHasChanged();
         }
 
@@ -1228,12 +1234,12 @@ namespace MComponents.MGrid
             Pager.CurrentPage = 1;
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
-            StateService.SaveGridState(this);
-
             await StopEditing(false, false);
 
             ClearDataCache();
             await UpdateDataCacheIfDataAdapter();
+
+            SaveCurrentState();
             StateHasChanged();
         }
 
@@ -1284,9 +1290,9 @@ namespace MComponents.MGrid
                 SortInstructions.Remove(instr);
             }
 
-            StateService.SaveGridState(this);
-
             ClearDataCache();
+
+            SaveCurrentState();
             StateHasChanged();
         }
 
@@ -1326,9 +1332,9 @@ namespace MComponents.MGrid
             ClearDataCache();
             await UpdateDataCacheIfDataAdapter();
 
-            StateService.SaveGridState(this);
-
             UpdateColumnsWidthOnNextRender = true;
+
+            SaveCurrentState();
             StateHasChanged();
         }
 
@@ -1430,8 +1436,14 @@ namespace MComponents.MGrid
             FilterInstructions.Clear();
             mFilterModel = null;
 
-            StateService.SaveGridState(this);
+            SaveCurrentState();
             Refresh();
+        }
+
+        public void SaveCurrentState()
+        {
+            if (EnableSaveState)
+                StateService.SaveGridState(this);
         }
     }
 }
