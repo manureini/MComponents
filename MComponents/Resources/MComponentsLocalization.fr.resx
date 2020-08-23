@@ -156,4 +156,7 @@
   <data name="{0} entries of {1}" xml:space="preserve">
     <value>{0} entrées de {1}</value>
   </data>
+  <data name="{0} items selected" xml:space="preserve">
+    <value>{0} éléments sélectionnés</value>
+  </data>
 </root>

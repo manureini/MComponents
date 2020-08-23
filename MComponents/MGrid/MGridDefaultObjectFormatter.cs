@@ -43,15 +43,15 @@ namespace MComponents.MGrid
                 return ((Enum)value).ToName();
             }
 
-            if (pType == typeof(DateTime)) //TODO
+            if (pType == typeof(DateTime))
             {
                 if (HasAttribute(pColumn, pPropertyInfo, typeof(TimeAttribute)))
-                    return ((DateTime)value).ToString("HH:mm");
+                    return string.Format("{0:t}", ((DateTime)value));
 
                 if (HasAttribute(pColumn, pPropertyInfo, typeof(DateTimeAttribute)))
-                    return ((DateTime)value).ToString("yyyy-MM-ddTHH:mm");
+                    return string.Format("{0:g}", ((DateTime)value));
 
-                return ((DateTime)value).ToString("yyyy-MM-dd");
+                return string.Format("{0:d}", ((DateTime)value));
             }
 
             return value.ToString();

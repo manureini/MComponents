@@ -494,11 +494,25 @@ namespace MComponents.MSelect
             if (Values == null)
                 mNullValueOverride = null;
             else
-                mNullValueOverride = string.Join(", ", Values.Select(v => FormatValueAsString(v)));
+            {
+                if (Values.Count >= 3)
+                {
+                    mNullValueOverride = string.Format(L["{0} items selected"], Values.Count);
+                }
+                else
+                {
+                    mNullValueOverride = string.Join(", ", Values.Select(v => FormatValueAsString(v)));
+                }
+            }
 
             if (mNullValueOverride == string.Empty)
                 mNullValueOverride = null;
         }
 
+        public void Refresh()
+        {
+            UpdateDescription();
+            StateHasChanged();
+        }
     }
 }
