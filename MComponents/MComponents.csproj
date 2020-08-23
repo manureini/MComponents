@@ -11,11 +11,15 @@
     <PackageProjectUrl>https://github.com/manureini/MComponents/</PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <PackageTags>Blazor Components</PackageTags>
-    <AssemblyVersion>1.1.5.0</AssemblyVersion>
-    <FileVersion>1.1.5.0</FileVersion>
+    <AssemblyVersion>1.1.6.0</AssemblyVersion>
+    <FileVersion>1.1.6.0</FileVersion>
     <Company>MComponents</Company>
-    <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
