@@ -31,7 +31,6 @@ namespace MComponents
             return pi.GetValue(pObject);
         }
 
-
         public static IMPropertyInfo GetIMPropertyInfo(Type pObjectType, string pProperty, Type pPropertyType, IMPropertyInfo pParent = null)
         {
             if (typeof(IDictionary<string, object>).IsAssignableFrom(pObjectType))
@@ -68,7 +67,6 @@ namespace MComponents
             return new MPropertyInfo(pi, pParent);
         }
 
-
         public static IEnumerable<IMPropertyInfo> GetProperties(object pValue)
         {
             if (pValue is IDictionary<string, object> dict)
@@ -78,7 +76,5 @@ namespace MComponents
 
             return pValue.GetType().GetProperties().Select(v => GetIMPropertyInfo(pValue.GetType(), v.Name, v.PropertyType));
         }
-
-
     }
 }
