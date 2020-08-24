@@ -112,6 +112,11 @@ namespace MComponents.MGrid
 
             if (mFormTemplate == null && ReferencedValues == null)
                 throw new ArgumentNullException(nameof(ReferencedValues), $"Please specify {nameof(ReferencedValues)} or {nameof(FormTemplate)}");
+
+            if (Identifier == null)
+            {
+                Identifier = Property + typeof(TProperty).FullName + ReferencedPropertyToDisplay; 
+            }
         }
 
         public RenderFragment GenerateContent(T pModel)
