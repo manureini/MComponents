@@ -1,15 +1,24 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using MComponents.MForm;
+using MComponents.MSelect;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading;
 
 namespace MComponents.MGrid
 {
     public class MGridComplexPropertyColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridPropertyColumn, IMGridSortableColumn, IMGridCustomComparer<TProperty>, IMGridComplexEditableColumn<TProperty>, IMGridColumnGenerator<T>
     {
+        private RenderFragment<MComplexPropertyFieldContext<TProperty>> mFormTemplate;
+
         [Parameter]
-        public RenderFragment<MComplexPropertyFieldContext<TProperty>> FormTemplate { get; set; }
+        public RenderFragment<MComplexPropertyFieldContext<TProperty>> FormTemplate
+        {
+            get => mFormTemplate ?? DefaultFormTemplate;
+            set => mFormTemplate = value;
+        }
 
         [Parameter]
         public RenderFragment<T> CellTemplate { get; set; }
@@ -36,6 +45,9 @@ namespace MComponents.MGrid
 
         [Parameter]
         public string Property { get; set; }
+
+        [Parameter]
+        public string ReferencedPropertyToDisplay { get; set; }
 
         [Parameter]
         public Attribute[] Attributes { get; set; }
@@ -90,9 +102,56 @@ namespace MComponents.MGrid
         [Parameter]
         public IComparer<TProperty> Comparer { get; set; }
 
+        [Parameter]
+        public IEnumerable<TProperty> ReferencedValues { get; set; }
+
+        protected override void OnParametersSet()
+        {
+            if (CellTemplate == null && ReferencedPropertyToDisplay == null)
+                throw new ArgumentNullException(nameof(ReferencedPropertyToDisplay), $"Please specify {nameof(ReferencedPropertyToDisplay)} or {nameof(CellTemplate)}");
+
+            if (mFormTemplate == null && ReferencedValues == null)
+                throw new ArgumentNullException(nameof(ReferencedValues), $"Please specify {nameof(ReferencedValues)} or {nameof(FormTemplate)}");
+        }
+
         public RenderFragment GenerateContent(T pModel)
         {
+            if (CellTemplate == null)
+                return DefaultCell(pModel);
+
             return CellTemplate(pModel);
         }
+
+        private RenderFragment<T> DefaultCell => m =>
+                   (builder) =>
+                   {
+                       var propInfo = ReflectionHelper.GetIMPropertyInfo(typeof(T), Property, typeof(TProperty));
+
+                       var otherObj = propInfo.GetValue(m);
+
+                       if (otherObj == null)
+                           return;
+
+                       var otherPropDisplay = ReflectionHelper.GetIMPropertyInfo(typeof(TProperty), ReferencedPropertyToDisplay, typeof(string));
+
+                       var value = otherPropDisplay.GetValue(otherObj);
+
+                       builder.AddContent(22, value);
+                   };
+
+        private RenderFragment<MComplexPropertyFieldContext<TProperty>> DefaultFormTemplate => m =>
+                    (builder) =>
+                    {
+                        builder.OpenComponent<MSelect<TProperty>>(100);
+                        builder.AddAttribute(101, "id", m.InputId);
+                        builder.AddAttribute(102, "class", "form-control");
+                        builder.AddAttribute(102, nameof(MSelect<TProperty>.Property), ReferencedPropertyToDisplay);
+                        builder.AddAttribute(102, nameof(MSelect<TProperty>.Options), ReferencedValues);
+                        builder.AddAttribute(102, nameof(MSelect<TProperty>.Value), m.Value);
+                        builder.AddAttribute(102, nameof(MSelect<TProperty>.ValueChanged), m.ValueChanged);
+                        builder.AddAttribute(102, nameof(MSelect<TProperty>.ValueExpression), m.ValueExpression);
+                        builder.CloseComponent();
+                    };
+
     }
 }
