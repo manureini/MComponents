@@ -347,7 +347,7 @@ namespace MComponents.MGrid
 
                            if (EnableUserSorting)
                            {
-                               var sortInstr = SortInstructions.FirstOrDefault(si => si.PropertyInfo.GetFullName() == column.Identifier);
+                               var sortInstr = SortInstructions.FirstOrDefault(si => si.GridColumn == column);
                                if (sortInstr != null)
                                {
                                    if (sortInstr.Direction == MSortDirection.Ascending)
@@ -1281,7 +1281,7 @@ namespace MComponents.MGrid
             if (propInfoColumn == null)
                 return; // other columns not supported yet
 
-            var instr = SortInstructions.FirstOrDefault(s => s.PropertyInfo.GetFullName() == pColumn.Identifier);
+            var instr = SortInstructions.FirstOrDefault(s => s.GridColumn == pColumn);
 
             if (instr == null)
             {
