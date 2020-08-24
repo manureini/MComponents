@@ -41,10 +41,13 @@ namespace MComponents
             {
                 var value = Expression.Constant(((string)pInstruction.Value).Trim().ToLowerInvariant());
 
-                property = Expression.Call(property, StringToLower);
-                Expression.Call(property, StringContains, value);
+                var exprToLower = Expression.Call(property, StringToLower);
 
-                return Expression.Call(property, StringContains, value);
+                return Expression.Condition(
+                    Expression.Equal(property, Expression.Constant(null)),
+                    Expression.Constant(false),
+                    Expression.Call(exprToLower, StringContains, value)
+                    );
             }
 
             if (pInstruction.PropertyInfo.PropertyType == typeof(DateTime) || pInstruction.PropertyInfo.PropertyType == typeof(DateTime?))
