@@ -1,4 +1,5 @@
-﻿using MComponents.MForm;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using MComponents.MForm;
 using MComponents.Shared.Attributes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -509,6 +510,22 @@ namespace MComponents.MGrid
             }
         }
 
+        private void GetNestedExpandoValue(string[] pProperties, object pValue, ref Dictionary<string, object> pParent)
+        {
+            if (pProperties.Length > 1)
+            {
+                var property = pProperties[0];
+
+                var dict = new Dictionary<string, object>();
+                pParent.Add(property, dict);
+
+                GetNestedExpandoValue(pProperties.Skip(1).ToArray(), pValue, ref dict);
+                return;
+            }
+
+            pParent.Add(pProperties[0], pValue);
+        }
+
         private void AddFilterRow(RenderTreeBuilder pBuilder)
         {
             if (mFilterModel == null)
@@ -525,7 +542,15 @@ namespace MComponents.MGrid
                         if (instr != null)
                             value = instr.Value;
 
-                        fmodel.Add(pc.Property, value);
+                        if (!pc.Property.Contains("."))
+                            fmodel.Add(pc.Property, value);
+                        else
+                        {
+                            var properties = pc.Property.Split('.');
+                            var dict = new Dictionary<string, object>();
+                            GetNestedExpandoValue(properties.Skip(1).ToArray(), value, ref dict);
+                            fmodel.Add(properties.First(), dict);
+                        }
                     }
                 }
 
@@ -1310,7 +1335,7 @@ namespace MComponents.MGrid
 
             FilterInstructions.RemoveAll(f => f.GridColumn.Identifier == column.Identifier);
 
-            var iprop = PropertyInfos.First(v => v.Key.Property == pArgs.Property).Value;
+            var iprop = PropertyInfos.First(v => v.Value.GetFullName() == pArgs.PropertyInfo.GetFullName()).Value;
 
             if (pArgs.NewValue != null && !(pArgs.NewValue is string a && a == string.Empty)) //all values from filter are nullable
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace MComponents
 {
@@ -35,9 +36,14 @@ namespace MComponents
         {
             if (typeof(IDictionary<string, object>).IsAssignableFrom(pObjectType))
             {
-                return new MPropertyExpandoInfo(pProperty, pPropertyType);
+                return GetMPropertyExpandoInfo(pObjectType, pProperty, pPropertyType, pParent);
             }
 
+            return GetMPropertyInfo(pObjectType, pProperty, pParent);
+        }
+
+        private static IMPropertyInfo GetMPropertyInfo(Type pObjectType, string pProperty, IMPropertyInfo pParent)
+        {
             if (pProperty.Contains('.'))
             {
                 var properties = pProperty.Split('.');
@@ -45,15 +51,27 @@ namespace MComponents
                 if (properties.Length < 2)
                     throw new ArgumentException($"{nameof(pProperty)} not valid: " + pProperty);
 
-                var parentProperty = pObjectType.GetProperty(properties.First());
+                var parentProperty = GetPropertyInfo(pObjectType, properties.First());
 
                 string childProperties = string.Join(".", properties.Skip(1));
 
                 var parent = new MPropertyInfo(parentProperty, pParent);
 
-                return GetIMPropertyInfo(parentProperty.PropertyType, childProperties, null, parent); //TODO pPropertyType
+                var childPropType = parentProperty.PropertyType.GetProperty(properties.Skip(1).First());
+
+                return GetIMPropertyInfo(parentProperty.PropertyType, childProperties, childPropType.PropertyType, parent);
             }
 
+            PropertyInfo pi = GetPropertyInfo(pObjectType, pProperty);
+
+            if (pi == null)
+                throw new InvalidOperationException(pObjectType + " does not have property " + pProperty);
+
+            return new MPropertyInfo(pi, pParent);
+        }
+
+        private static PropertyInfo GetPropertyInfo(Type pObjectType, string pProperty)
+        {
             var pi = pObjectType.GetProperty(pProperty);
 
             if (pi == null && pObjectType.IsInterface)
@@ -61,10 +79,26 @@ namespace MComponents
                 pi = pObjectType.GetInterfaces().SelectMany(i => i.GetProperties()).SingleOrDefault(p => p.Name == pProperty);
             }
 
-            if (pi == null)
-                throw new InvalidOperationException(pObjectType + " does not have property " + pProperty);
+            return pi;
+        }
 
-            return new MPropertyInfo(pi, pParent);
+        private static IMPropertyInfo GetMPropertyExpandoInfo(Type pObjectType, string pProperty, Type pPropertyType, IMPropertyInfo pParent)
+        {
+            if (pProperty.Contains('.'))
+            {
+                var properties = pProperty.Split('.');
+
+                if (properties.Length < 2)
+                    throw new ArgumentException($"{nameof(pProperty)} not valid: " + pProperty);
+
+                var parent = new MPropertyExpandoInfo(properties.First(), null, pParent);
+
+                string childProperties = string.Join(".", properties.Skip(1));
+                
+                return GetIMPropertyInfo(pObjectType, childProperties, pPropertyType, parent);
+            }
+
+            return new MPropertyExpandoInfo(pProperty, pPropertyType, pParent);
         }
 
         public static IEnumerable<IMPropertyInfo> GetProperties(object pValue)

@@ -126,7 +126,7 @@ namespace MComponents
                 pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, __value =>
                 {
                     pPropertyInfo.SetValue(pModel, __value);
-                    pParent.OnInputValueChanged(pField, __value);
+                    pParent.OnInputValueChanged(pField, pPropertyInfo, __value);
                 }, value));
 
                 pBuilder.AddAttribute(23, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
@@ -192,7 +192,7 @@ namespace MComponents
             context.ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(pParent, __value =>
             {
                 pPropertyInfo.SetValue(pModel, __value);
-                pParent.OnInputValueChanged(pComplexField, __value);
+                pParent.OnInputValueChanged(pComplexField, pPropertyInfo, __value);
             }, value);
 
             context.ValueExpression = GetValueExpression<TProperty>(pPropertyInfo, pModel);

@@ -1,4 +1,5 @@
 ﻿using MComponents.MForm;
+using System.Reflection;
 
 namespace MComponents
 {
@@ -12,12 +13,15 @@ namespace MComponents
 
         public IMField Field { get; protected set; }
 
-        internal MFormValueChangedArgs(IMField pField, object pNewValue, T pModel)
+        public IMPropertyInfo PropertyInfo { get; protected set; }
+
+        internal MFormValueChangedArgs(IMField pField, IMPropertyInfo pPropertyInfo, object pNewValue, T pModel)
         {
             NewValue = pNewValue;
             Model = pModel;
             Field = pField;
-            Property = (pField as IMPropertyField)?.Property;
+            Property = pPropertyInfo.Name;
+            PropertyInfo = pPropertyInfo;
         }
     }
 }

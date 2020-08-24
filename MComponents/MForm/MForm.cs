@@ -49,7 +49,7 @@ namespace MComponents
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
 
-        protected HashSet<FieldIdentifier> ChangedValues { get; set; } = new HashSet<FieldIdentifier>();
+        protected HashSet<IMPropertyInfo> ChangedValues { get; set; } = new HashSet<IMPropertyInfo>();
 
 
         public List<IMField> FieldList = new List<IMField>();
@@ -60,7 +60,6 @@ namespace MComponents
             base.OnInitialized();
 
             mEditContext = new EditContext(Model);
-            mEditContext.OnFieldChanged += _fixedEditContext_OnFieldChanged;
 
             if (ContainerContext != null)
             {
@@ -72,11 +71,6 @@ namespace MComponents
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-        }
-
-        private void _fixedEditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
-        {
-            ChangedValues.Add(e.FieldIdentifier);
         }
 
         private void NotifyContainer()
@@ -387,14 +381,13 @@ namespace MComponents
             {
                 foreach (var entry in ChangedValues)
                 {
-                    string fieldname = entry.FieldName;
+                    var fullname = entry.GetFullName();
 
-                    if (changedDict.ContainsKey(fieldname))
+                    if (changedDict.ContainsKey(fullname))
                         continue;
 
-                    //01.08.2020 entry.Model is an old wrong version of the model in client side
-                    object value = ReflectionHelper.GetPropertyValue(Model, entry.FieldName);
-                    changedDict.Add(fieldname, value);
+                    object value = entry.GetValue(Model);
+                    changedDict.Add(fullname, value);
                 }
 
                 ChangedValues.Clear();
@@ -446,11 +439,13 @@ namespace MComponents
             }
         }
 
-        public void OnInputValueChanged(IMField pField, object pNewValue)
+        public void OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo, object pNewValue)
         {
+            ChangedValues.Add(pPropertyInfo);
+
             if (OnValueChanged.HasDelegate)
             {
-                var task = OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pNewValue, Model));
+                var task = OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pPropertyInfo, pNewValue, Model));
                 task.Wait();
             }
         }
