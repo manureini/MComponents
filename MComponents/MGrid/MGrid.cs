@@ -143,7 +143,7 @@ namespace MComponents.MGrid
         public void RegisterColumn(IMGridColumn pColumn)
         {
             if (ColumnsList.Any(c => c.Identifier == pColumn.Identifier))
-                return;
+                throw new ArgumentException($"A column with {nameof(IMGridColumn.Identifier)} {pColumn.Identifier} already exists. Please specify a custom value");
 
             ColumnsList.Add(pColumn);
 
