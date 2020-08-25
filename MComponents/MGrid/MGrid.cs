@@ -1290,12 +1290,7 @@ namespace MComponents.MGrid
 
                 var propInfo = PropertyInfos[propInfoColumn];
 
-                object comparer = null;
-
-                if (pColumn is IMGridCustomComparer)
-                {
-                    comparer = ((dynamic)pColumn).Comparer;
-                }
+                object comparer = pColumn.GetComparer();
 
                 SortInstructions.Add(new SortInstruction()
                 {

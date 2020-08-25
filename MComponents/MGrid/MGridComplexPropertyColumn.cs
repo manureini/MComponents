@@ -115,7 +115,12 @@ namespace MComponents.MGrid
 
             if (Identifier == null)
             {
-                Identifier = Property + typeof(TProperty).FullName + ReferencedPropertyToDisplay; 
+                Identifier = Property + typeof(TProperty).FullName + ReferencedPropertyToDisplay;
+            }
+
+            if (Comparer != null)
+            {
+                EnableSorting = true;
             }
         }
 
