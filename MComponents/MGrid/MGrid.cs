@@ -1086,7 +1086,7 @@ namespace MComponents.MGrid
             }
 
             SaveCurrentState();
-            StateHasChanged();
+            InvokeStateHasChanged();
         }
 
         public async Task StartDeleteRow(T value, MouseEventArgs pMouseEventArgs)
