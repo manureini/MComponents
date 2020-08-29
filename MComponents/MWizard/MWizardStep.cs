@@ -32,6 +32,9 @@ namespace MComponents.MWizard
             }
         }
 
+        [Parameter]
+        public int Position { get; set; } = 0;
+
         private IMWizard mWizard;
 
         [CascadingParameter]

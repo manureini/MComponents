@@ -10,7 +10,6 @@ namespace MComponents.MWizard
 {
     public partial class MWizard
     {
-
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
@@ -54,6 +53,7 @@ namespace MComponents.MWizard
                 return;
 
             mSteps.Add(pStep);
+            mSteps = mSteps.OrderBy(s => s.Position).ToList();
 
             if (CurrentStep == -1 && pStep.IsVisible)
                 CurrentStep = mSteps.Count - 1;
