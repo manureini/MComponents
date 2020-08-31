@@ -48,6 +48,7 @@ namespace MComponents
         [Inject]
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
+        public Type ModelType => typeof(T);
 
         protected HashSet<IMPropertyInfo> ChangedValues { get; set; } = new HashSet<IMPropertyInfo>();
 

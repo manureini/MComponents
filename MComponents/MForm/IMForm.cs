@@ -1,6 +1,7 @@
 ﻿using MComponents.MForm;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System;
 using System.Collections.Generic;
 
 namespace MComponents
@@ -22,5 +23,7 @@ namespace MComponents
         bool EnableValidation { get; }
 
         IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+
+        public Type ModelType { get; }
     }
 }

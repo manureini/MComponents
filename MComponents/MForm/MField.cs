@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MComponents.MForm
 {
@@ -35,6 +36,17 @@ namespace MComponents.MForm
                     mForm = value;
                     mForm.RegisterField(this);
                 }
+            }
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (Attributes == null)
+            {
+                var pi = ReflectionHelper.GetIMPropertyInfo(Form.ModelType, Property, PropertyType);
+                Attributes = pi.GetAttributes().ToArray();
             }
         }
     }

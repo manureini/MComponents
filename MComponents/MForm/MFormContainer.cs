@@ -15,9 +15,11 @@ namespace MComponents
         [Parameter]
         public RenderFragment<MFormContainerContext> ChildContent { get; set; }
 
+        [Parameter]
+        public bool EnableSaveButton { get; set; } = true;
+
         [Inject]
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
-
 
         protected MFormContainerContext mFormContext;
 
@@ -51,12 +53,15 @@ namespace MComponents
             builder.OpenElement(55, "div");
             builder.AddAttribute(56, "class", "col-12");
 
-            builder.OpenElement(19, "button");
-            builder.AddAttribute(20, "type", "button");
-            builder.AddAttribute(20, "class", "m-btn m-btn-primary");
-            builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, Click));
-            builder.AddContent(22, L["Save"]);
-            builder.CloseElement();
+            if (EnableSaveButton)
+            {
+                builder.OpenElement(19, "button");
+                builder.AddAttribute(20, "type", "button");
+                builder.AddAttribute(20, "class", "m-btn m-btn-primary");
+                builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, Click));
+                builder.AddContent(22, L["Save"]);
+                builder.CloseElement();
+            }
 
             builder.CloseElement(); //div
             builder.CloseElement(); //div
