@@ -11,7 +11,10 @@ namespace MComponents.MWizard
         public string Title { get; set; }
 
         [Parameter]
-        public RenderFragment Content { get; set; }
+        public RenderFragment<MWizardStepContext> Content { get; set; }
+
+        [Parameter]
+        public MWizardStepContext StepContext { get; set; }
 
         protected bool mIsVisible = true;
 
@@ -54,6 +57,12 @@ namespace MComponents.MWizard
             }
         }
 
+        protected override void OnParametersSet()
+        {
+            if (StepContext == null)
+                StepContext = new MWizardStepContext();
 
+            StepContext.CurrentStep = this;
+        }
     }
 }

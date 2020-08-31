@@ -25,13 +25,32 @@ namespace MComponents.MWizard
         [Parameter]
         public bool EnableJumpToAnyStep { get; set; }
 
+        [Parameter]
+        public RenderFragment ButtonPrev { get; set; } = (r) =>
+        {
+            r.OpenComponent<MWizardPrevButton>(30);
+            r.CloseComponent();
+        };
+
+        [Parameter]
+        public RenderFragment ButtonNext { get; set; } = (r) =>
+        {
+            r.OpenComponent<MWizardNextButton>(38);
+            r.CloseComponent();
+        };
+
+        [Parameter]
+        public RenderFragment ButtonFinish { get; set; } = (r) =>
+        {
+            r.OpenComponent<MWizardFinishButton>(45);
+            r.CloseComponent();
+        };
 
         public bool FreezeCurrentStep { get; set; }
 
         public int CurrentStep { get; protected set; }
 
-
-        protected List<MWizardStep> mSteps = new List<MWizardStep>();
+        public List<MWizardStep> WizardSteps { get; protected set; } = new List<MWizardStep>();
 
         protected SemaphoreSlim mLocker = new SemaphoreSlim(1, 1);
 
@@ -49,14 +68,14 @@ namespace MComponents.MWizard
 
         public void RegisterStep(MWizardStep pStep)
         {
-            if (mSteps.Any(s => s.Identifier == pStep.Identifier))
+            if (WizardSteps.Any(s => s.Identifier == pStep.Identifier))
                 return;
 
-            mSteps.Add(pStep);
-            mSteps = mSteps.OrderBy(s => s.Position).ToList();
+            WizardSteps.Add(pStep);
+            WizardSteps = WizardSteps.OrderBy(s => s.Position).ToList();
 
             if (CurrentStep == -1 && pStep.IsVisible)
-                CurrentStep = mSteps.Count - 1;
+                CurrentStep = WizardSteps.Count - 1;
 
             StateHasChanged();
         }
@@ -82,8 +101,8 @@ namespace MComponents.MWizard
                 {
                     OldStepIndex = oldStep,
                     NewStepIndex = newStep,
-                    OldStep = mSteps[oldStep],
-                    NewStep = mSteps[newStep],
+                    OldStep = WizardSteps[oldStep],
+                    NewStep = WizardSteps[newStep],
                     UserInteract = true
                 };
 
@@ -123,8 +142,8 @@ namespace MComponents.MWizard
                 {
                     OldStepIndex = oldStep,
                     NewStepIndex = newStep,
-                    OldStep = mSteps[oldStep],
-                    NewStep = mSteps[newStep],
+                    OldStep = WizardSteps[oldStep],
+                    NewStep = WizardSteps[newStep],
                     UserInteract = true
                 };
 
@@ -154,8 +173,7 @@ namespace MComponents.MWizard
             SetCurrentStep(pIndex, true);
         }
 
-
-        internal async void OnFinishClicked()
+        public async void OnFinishClicked()
         {
             if (FreezeCurrentStep)
                 return;
@@ -206,10 +224,10 @@ namespace MComponents.MWizard
             {
                 index = pModifier(index);
 
-                if (index < 0 || index >= mSteps.Count)
+                if (index < 0 || index >= WizardSteps.Count)
                     return null;
 
-                if (mSteps[index].IsVisible)
+                if (WizardSteps[index].IsVisible)
                     return index;
             }
         }
@@ -235,8 +253,8 @@ namespace MComponents.MWizard
                     {
                         OldStepIndex = oldStep,
                         NewStepIndex = newStep,
-                        OldStep = mSteps[oldStep],
-                        NewStep = mSteps[newStep],
+                        OldStep = WizardSteps[oldStep],
+                        NewStep = WizardSteps[newStep],
                         UserInteract = pUserInteract
                     };
 
