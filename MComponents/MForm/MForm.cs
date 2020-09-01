@@ -397,8 +397,7 @@ namespace MComponents
 
             if (OnValidSubmit.HasDelegate)
             {
-                var task = OnValidSubmit.InvokeAsync(new MFormSubmitArgs(mEditContext, changedDict, Model, e.UserInterated));
-                task.Wait();
+                _ = OnValidSubmit.InvokeAsync(new MFormSubmitArgs(mEditContext, changedDict, Model, e.UserInterated));
             }
         }
 
