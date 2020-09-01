@@ -49,7 +49,7 @@ namespace MComponents
         [Inject]
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
-        public Type ModelType => typeof(T);
+        public Type ModelType => Model?.GetType() ?? typeof(T);
 
         protected HashSet<IMPropertyInfo> ChangedValues { get; set; } = new HashSet<IMPropertyInfo>();
 
@@ -68,11 +68,6 @@ namespace MComponents
                 ContainerContext.RegisterForm(this);
                 ContainerContext.OnFormSubmit += CascadedFormContext_OnFormSubmit;
             }
-        }
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
         }
 
         private void NotifyContainer()
