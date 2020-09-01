@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MComponents
 {
@@ -16,7 +17,7 @@ namespace MComponents
 
         void OnInputKeyUp(KeyboardEventArgs pArgs);
 
-        void OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo,  object pNewValue);
+        Task OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo,  object pNewValue);
 
         bool IsInTableRow { get; }
 

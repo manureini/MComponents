@@ -123,10 +123,10 @@ namespace MComponents
                 pBuilder.AddAttribute(1, "id", pId);
                 pBuilder.AddAttribute(2, "Value", value);
 
-                pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, __value =>
+                pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, async __value =>
                 {
                     pPropertyInfo.SetValue(pModel, __value);
-                    pParent.OnInputValueChanged(pField, pPropertyInfo, __value);
+                    await pParent.OnInputValueChanged(pField, pPropertyInfo, __value);
                 }, value));
 
                 pBuilder.AddAttribute(23, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
@@ -189,10 +189,10 @@ namespace MComponents
             context.Value = value;
             context.MFormGridContext = pGridContext;
 
-            context.ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(pParent, __value =>
+            context.ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(pParent, async __value =>
             {
                 pPropertyInfo.SetValue(pModel, __value);
-                pParent.OnInputValueChanged(pComplexField, pPropertyInfo, __value);
+                await pParent.OnInputValueChanged(pComplexField, pPropertyInfo, __value);
             }, value);
 
             context.ValueExpression = GetValueExpression<TProperty>(pPropertyInfo, pModel);

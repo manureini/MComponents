@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MComponents
 {
@@ -440,14 +441,13 @@ namespace MComponents
             }
         }
 
-        public void OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo, object pNewValue)
+        public async Task OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo, object pNewValue)
         {
             ChangedValues.Add(pPropertyInfo);
 
             if (OnValueChanged.HasDelegate)
             {
-                var task = OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pPropertyInfo, pNewValue, Model));
-                task.Wait();
+                await OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pPropertyInfo, pNewValue, Model));
             }
         }
     }
