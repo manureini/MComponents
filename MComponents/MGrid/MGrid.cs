@@ -140,6 +140,14 @@ namespace MComponents.MGrid
             Formatter.L = this.L;
         }
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if ((EnableAdding || EnableDeleting) && DataSource != null && DataSource is T[])
+                throw new ArgumentException($"{DataSource} can not be an array. It must be a source which supports adding and deleting");
+        }
+
         public void RegisterColumn(IMGridColumn pColumn)
         {
             if (ColumnsList.Any(c => c.Identifier == pColumn.Identifier))
