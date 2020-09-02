@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MComponents
+namespace MComponents.MForm
 {
     public class MFormContainer : ComponentBase
     {
@@ -18,6 +18,9 @@ namespace MComponents
         [Parameter]
         public bool EnableSaveButton { get; set; } = true;
 
+        [Parameter]
+        public EventCallback<MFormContainerAfterAllFormsSubmittedArgs> OnAfterAllFormsSubmitted { get; set; }
+
         [Inject]
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
@@ -26,7 +29,7 @@ namespace MComponents
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            mFormContext = new MFormContainerContext();
+            mFormContext = new MFormContainerContext(this);
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)

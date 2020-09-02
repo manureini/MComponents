@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace MComponents
+namespace MComponents.MForm
 {
     public class MFormContainerContext
     {
@@ -13,6 +13,14 @@ namespace MComponents
         protected object mLocker = new object();
 
         public List<IMForm> Forms { get; set; } = new List<IMForm>();
+
+
+        public MFormContainer FormContainer { get; protected set; }
+
+        internal MFormContainerContext(MFormContainer pFormContainer)
+        {
+            FormContainer = pFormContainer;
+        }
 
         public void RegisterForm(IMForm pForm)
         {
@@ -56,6 +64,14 @@ namespace MComponents
                         Notificator.InvokeNotification(true, msg);
                         submitSuccessful = false;
                     }
+                }
+
+                if (FormContainer.OnAfterAllFormsSubmitted.HasDelegate)
+                {
+                    _ = FormContainer.OnAfterAllFormsSubmitted.InvokeAsync(new MFormContainerAfterAllFormsSubmittedArgs()
+                    {
+                        AllFormsSuccessful = submitSuccessful
+                    });
                 }
 
                 Notificator.InvokeNotification(false, pLocalizer["Gespeichert!"]);

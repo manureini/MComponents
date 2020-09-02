@@ -141,6 +141,9 @@
   <data name="Next" xml:space="preserve">
     <value>Weiter</value>
   </data>
+  <data name="Please check all forms. There is at least one validation error!" xml:space="preserve">
+    <value>Bitte überprüfe alle Felder. Mindestens ein Feld muss überprüft werden!</value>
+  </data>
   <data name="Please select..." xml:space="preserve">
     <value>Bitte auswählen...</value>
   </data>

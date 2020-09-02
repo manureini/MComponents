@@ -3,5 +3,9 @@
     public class MFormContainerContextSubmitArgs
     {
         public bool UserInterated { get; set; }
+
+        internal MFormContainerContextSubmitArgs()
+        {
+        }
     }
 }

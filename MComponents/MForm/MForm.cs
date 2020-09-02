@@ -11,9 +11,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MComponents
+namespace MComponents.MForm
 {
-
     public class MForm<T> : ComponentBase, IMForm
     {
         protected EditContext mEditContext;
@@ -32,7 +31,6 @@ namespace MComponents
 
         [Parameter]
         public MFormGridContext MFormGridContext { get; set; }
-
 
         [Parameter]
         public bool EnableValidation { get; set; } = true;
@@ -364,11 +362,11 @@ namespace MComponents
 
             if (!isValid)
             {
+                Console.WriteLine(typeof(T) + ": Not valid");
+
                 if (ContainerContext != null)
-                {
-                    throw new UserMessageException("Please check the values. There is at least one validation error!");
-                }
-                Console.WriteLine(typeof(T) + ": Not valid!");
+                    throw new UserMessageException(L["Please check all forms. There is at least one validation error!"]);
+
                 return;
             }
 
