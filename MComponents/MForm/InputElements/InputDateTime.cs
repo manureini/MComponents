@@ -28,16 +28,20 @@ namespace MComponents.InputElements
                 return false;
             }
 
-            object datetime = DateTime.Parse(value);
+            if (!DateTime.TryParse(value, out DateTime datetime))
+            {
+                result = default;
+                return false;
+            }
 
-            result = (T)datetime;
+            result = (T)(object)datetime;
             return true;
         }
 
         protected override string FormatValueAsString(T value)
         {
             if (value == null)
-                return null; 
+                return null;
 
             dynamic v = value;
             return v.ToString("yyyy-MM-ddTHH:mm");
