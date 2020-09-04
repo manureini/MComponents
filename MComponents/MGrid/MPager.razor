@@ -165,21 +165,21 @@
     {
         CurrentPage--;
         Update();
-        OnPageChanged.InvokeAsync(CurrentPage);
+        _ = OnPageChanged.InvokeAsync(CurrentPage);
     }
 
     public void OnNext()
     {
         CurrentPage++;
         Update();
-        OnPageChanged.InvokeAsync(CurrentPage);
+        _ = OnPageChanged.InvokeAsync(CurrentPage);
     }
 
     public void JumpTo(int pIndex)
     {
         CurrentPage = pIndex;
         Update();
-        OnPageChanged.InvokeAsync(CurrentPage);
+        _ = OnPageChanged.InvokeAsync(CurrentPage);
     }
 
     public string GetCssClass(int pIndex)

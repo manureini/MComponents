@@ -3,14 +3,19 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MComponents.MForm
 {
     public class MFormContainerContext
     {
-        public event EventHandler<MFormContainerContextSubmitArgs> OnFormSubmit;
+        public delegate Task AsyncEventHandler<TEventArgs>(object sender, TEventArgs e) where TEventArgs : EventArgs;
 
-        protected object mLocker = new object();
+
+        public event AsyncEventHandler<MFormContainerContextSubmitArgs> OnFormSubmit;
+
+        protected SemaphoreSlim mLocker = new SemaphoreSlim(1, 1);
 
         public List<IMForm> Forms { get; set; } = new List<IMForm>();
 
@@ -27,25 +32,27 @@ namespace MComponents.MForm
             Forms.Add(pForm);
         }
 
-        public bool NotifySubmit(IStringLocalizer<MComponentsLocalization> pLocalizer)
+        public async Task<bool> NotifySubmit(IStringLocalizer<MComponentsLocalization> pLocalizer)
         {
+            if (OnFormSubmit == null)
+                return true;
+
             bool submitSuccessful = true;
 
-            lock (mLocker)
+            try
             {
-                if (OnFormSubmit == null)
-                    return submitSuccessful;
+                await mLocker.WaitAsync();
 
                 var args = new MFormContainerContextSubmitArgs()
                 {
                     UserInterated = true
                 };
 
-                foreach (var handler in OnFormSubmit.GetInvocationList())
+                foreach (AsyncEventHandler<MFormContainerContextSubmitArgs> handler in OnFormSubmit.GetInvocationList())
                 {
                     try
                     {
-                        handler.Method.Invoke(handler.Target, new object[] { this, args });
+                        await handler(this, args);
                     }
                     catch (Exception e)
                     {
@@ -68,13 +75,17 @@ namespace MComponents.MForm
 
                 if (FormContainer.OnAfterAllFormsSubmitted.HasDelegate)
                 {
-                    _ = FormContainer.OnAfterAllFormsSubmitted.InvokeAsync(new MFormContainerAfterAllFormsSubmittedArgs()
+                    await FormContainer.OnAfterAllFormsSubmitted.InvokeAsync(new MFormContainerAfterAllFormsSubmittedArgs()
                     {
                         AllFormsSuccessful = submitSuccessful
                     });
                 }
 
                 Notificator.InvokeNotification(false, pLocalizer["Gespeichert!"]);
+            }
+            finally
+            {
+                mLocker.Release();
             }
 
             return submitSuccessful;

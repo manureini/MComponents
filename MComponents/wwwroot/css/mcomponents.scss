@@ -5,6 +5,7 @@ $disabled: #f0f1f3;
 
 $text_color: #212529;
 $gray: #ebedf2;
+$dark: #1f1c1c;
 
 $secondary: #595d6e;
 
@@ -878,6 +879,7 @@ $borderRadius: 0.25rem;
     display: block;
     width: 100%;
     height: calc(#{$padding} * 2 + 1.3rem + 1px);
+    color: #0a0a0a;
     background-color: white;
     background-clip: padding-box;
     border-width: 1px;
@@ -891,7 +893,7 @@ $borderRadius: 0.25rem;
     transition-property: border-color, box-shadow;
 
     &:focus {
-        color: rgb(73, 80, 87);
+        color: darken($dark, 5%);
         background-color: white;
         border-color: #9aabff;
         outline-width: 0;

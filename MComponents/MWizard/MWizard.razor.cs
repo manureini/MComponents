@@ -178,9 +178,7 @@ namespace MComponents.MWizard
             if (FreezeCurrentStep)
                 return;
 
-            await OnSubmit.InvokeAsync(new SubmitEventArgs()
-            {
-            });
+            await OnSubmit.InvokeAsync(new SubmitEventArgs());
 
             StateHasChanged();
         }

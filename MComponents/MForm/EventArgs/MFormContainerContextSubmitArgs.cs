@@ -1,6 +1,8 @@
-﻿namespace MComponents.MForm
+﻿using System;
+
+namespace MComponents.MForm
 {
-    public class MFormContainerContextSubmitArgs
+    public class MFormContainerContextSubmitArgs : EventArgs
     {
         public bool UserInterated { get; set; }
 

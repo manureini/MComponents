@@ -354,7 +354,7 @@ namespace MComponents.MForm
             get { return ChangedValues.Count > 0; }
         }
 
-        private void CascadedFormContext_OnFormSubmit(object sender, MFormContainerContextSubmitArgs e)
+        private async Task CascadedFormContext_OnFormSubmit(object sender, MFormContainerContextSubmitArgs e)
         {
             // Console.WriteLine("FormContextSubmit: " + typeof(T));
 
@@ -390,7 +390,7 @@ namespace MComponents.MForm
 
             if (OnValidSubmit.HasDelegate)
             {
-                _ = OnValidSubmit.InvokeAsync(new MFormSubmitArgs(mEditContext, changedDict, Model, e.UserInterated));
+                await OnValidSubmit.InvokeAsync(new MFormSubmitArgs(mEditContext, changedDict, Model, e.UserInterated));
             }
         }
 

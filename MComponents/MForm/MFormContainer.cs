@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MComponents.MForm
 {
@@ -78,7 +79,7 @@ namespace MComponents.MForm
             TrySubmit();
         }
 
-        public bool TrySubmit()
+        public Task<bool> TrySubmit()
         {
             return mFormContext.NotifySubmit(L);
         }
