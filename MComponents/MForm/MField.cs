@@ -43,7 +43,7 @@ namespace MComponents.MForm
         {
             base.OnParametersSet();
 
-            if (Attributes == null)
+            if (Attributes == null && Property != null)
             {
                 var pi = ReflectionHelper.GetIMPropertyInfo(Form.ModelType, Property, PropertyType);
                 Attributes = pi.GetAttributes().ToArray();

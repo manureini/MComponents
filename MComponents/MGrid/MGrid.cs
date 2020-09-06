@@ -82,7 +82,11 @@ namespace MComponents.MGrid
 
         internal List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
         internal List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
-        internal GroupByInstruction GroupByInstruction { get; set; }
+        internal List<SortInstruction> GroupByInstructions { get; set; } = new List<SortInstruction>();
+
+        internal List<object[]> HiddenGroupByKeys = new List<object[]>();
+
+        protected object[] mLastGroupByKeys;
 
         internal Dictionary<IMGridPropertyColumn, IMPropertyInfo> PropertyInfos = new Dictionary<IMGridPropertyColumn, IMPropertyInfo>();
 
@@ -123,7 +127,7 @@ namespace MComponents.MGrid
 
         protected SorterBuilder<T> mSorter = new SorterBuilder<T>();
         protected FilterBuilder<T> mFilter = new FilterBuilder<T>();
-        protected GroupByBuilder<T> mGrouper = new GroupByBuilder<T>();
+        //  protected GroupByBuilder<T> mGrouper = new GroupByBuilder<T>();
 
         protected bool mHasActionColumn;
 
@@ -400,7 +404,15 @@ namespace MComponents.MGrid
                                    DataCache = ((IQueryable<T>)queryable).ToArray();
                                }*/
 
-                               DataCache = GetIQueryable(DataSource).ToArray();
+
+                               if (GroupByInstructions.Any())
+                               {
+                                   DataCache = FetchGroupByParts();
+                               }
+                               else
+                               {
+                                   DataCache = GetIQueryable(DataSource).ToArray();
+                               }
                            }
                            else if (DataAdapter == null)
                                throw new InvalidOperationException("Please provide a " + nameof(DataSource) + " or " + nameof(DataAdapter));
@@ -426,21 +438,17 @@ namespace MComponents.MGrid
                            }
                        }*/
 
-                       object lastGroupedKey = null;
+                       mLastGroupByKeys = null;
+
+                       if (GroupByInstructions.Any())
+                       {
+                           mLastGroupByKeys = new object[GroupByInstructions.Count];
+                       }
 
                        if (DataCache != null)
                            foreach (var entry in DataCache)
                            {
-                               if (GroupByInstruction != null)
-                               {
-                                   var key = GroupByInstruction.PropertyInfo.GetValue(entry);
-                                   if ((key == null && lastGroupedKey != null) || !key.Equals(lastGroupedKey))
-                                   {
-                                       AddGroupByHeaderRow(builder2, key);
-                                       lastGroupedKey = key;
-                                   }
-                               }
-
+                               AddGroupByIfNeeded(builder2, entry);
                                AddContentRow(builder2, entry, MGridAction.Edit);
                            }
 
@@ -540,19 +548,9 @@ namespace MComponents.MGrid
 
             DataCountCache = data.LongCount();
 
-
-            if (GroupByInstruction != null)
+            if (GroupByInstructions.Count > 0)
             {
-
-                var instruction = new SortInstruction()
-                {
-                    Direction = MSortDirection.Ascending,
-                    GridColumn = GroupByInstruction.GridColumn,
-                    PropertyInfo = GroupByInstruction.PropertyInfo,
-
-                };
-
-                data = mSorter.SortBy(data, new[] { instruction });
+                data = mSorter.SortBy(data, GroupByInstructions);
             }
 
             if (SortInstructions.Count > 0)
@@ -575,7 +573,7 @@ namespace MComponents.MGrid
             }
             */
 
-            if (Pager != null)
+            if (Pager != null && GroupByInstructions.Count <= 0)
             {
                 data = data.Skip(Pager.PageSize * (Pager.CurrentPage - 1)).Take(Pager.PageSize);
             }
@@ -653,19 +651,56 @@ namespace MComponents.MGrid
             pBuilder.CloseElement();
         }
 
-        private void AddGroupByHeaderRow(RenderTreeBuilder pBuilder, object pKey)
+        protected void AddGroupByIfNeeded(RenderTreeBuilder pBuilder, T pModel)
+        {
+            if (!GroupByInstructions.Any())
+                return;
+
+            int index = 0;
+            foreach (var group in GroupByInstructions.OrderBy(g => g.Index))
+            {
+                AddGroupBy(pBuilder, pModel, group, index);
+                index++;
+            }
+        }
+
+        protected void AddGroupBy(RenderTreeBuilder pBuilder, T pRow, SortInstruction pInstruction, int pIndex)
+        {
+            var key = pInstruction.PropertyInfo.GetValue(pRow);
+
+            if (mLastGroupByKeys[pIndex] == null || !mLastGroupByKeys[pIndex].Equals(key))
+            {
+                AddGroupByHeaderRow(pBuilder, pInstruction.PropertyInfo, key, pIndex + 1);
+                mLastGroupByKeys[pIndex] = key;
+            }
+        }
+
+        protected void AddGroupByHeaderRow(RenderTreeBuilder pBuilder, IMPropertyInfo pProperty, object pKey, int pColumnIndex)
         {
             pBuilder.OpenElement(615, "tr");
             pBuilder.AddAttribute(616, "class", "m-grid-row");
 
+            pBuilder.AddAttribute(617, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
+            {
+                if (!HiddenGroupByKeys.Any(p => p.Any(n => n == pKey)))
+                {
+                    HiddenGroupByKeys.Add(new[] { pKey });
+                }
+
+                StateHasChanged();
+            }));
+
             AddInlineTrHeight(pBuilder);
 
             pBuilder.OpenElement(577, "td");
-            pBuilder.AddAttribute(618, "colspan", VisibleColumns.Length);
-
-            pBuilder.AddContent(625, pKey.ToString());
-
+            pBuilder.AddAttribute(618, "colspan", pColumnIndex);
             pBuilder.CloseElement(); //td
+
+            pBuilder.OpenElement(577, "td");
+            pBuilder.AddAttribute(618, "colspan", VisibleColumns.Length - pColumnIndex);
+            pBuilder.AddContent(625, pProperty.Name + ": " + pKey.ToString());
+            pBuilder.CloseElement(); //td
+
             pBuilder.CloseElement(); //tr
         }
 
@@ -947,7 +982,7 @@ namespace MComponents.MGrid
                 pBuilder.AddAttribute(776, "Property", pPropertyColumn.Property);
                 pBuilder.AddAttribute(777, "PropertyType", typeof(TProperty));
                 pBuilder.AddAttribute(778, "Attributes", attributes.ToArray());
-                pBuilder.AddAttribute(778, nameof(IMGridColumn), pColumn);
+                pBuilder.AddAttribute(779, nameof(IMGridColumn), pColumn);
 
                 if (complex.FormTemplate != null && !pIsInFilterRow || (pIsInFilterRow && pColumn.EnableFilter))
                     pBuilder.AddAttribute(781, "Template", complex.FormTemplate);
@@ -1381,13 +1416,6 @@ namespace MComponents.MGrid
             if (propInfoColumn == null)
                 return; // other columns not supported yet
 
-            var propInfo2 = PropertyInfos[propInfoColumn];
-            GroupByInstruction = new GroupByInstruction()
-            {
-                GridColumn = pColumn,
-                PropertyInfo = propInfo2,
-            };
-
             var instr = SortInstructions.FirstOrDefault(s => s.GridColumn == pColumn);
 
             if (instr == null)
@@ -1399,6 +1427,7 @@ namespace MComponents.MGrid
 
                 object comparer = pColumn.GetComparer();
 
+                /*
                 SortInstructions.Add(new SortInstruction()
                 {
                     GridColumn = pColumn,
@@ -1406,6 +1435,30 @@ namespace MComponents.MGrid
                     PropertyInfo = propInfo,
                     Index = SortInstructions.Count,
                     Comparer = comparer
+                });
+                */
+
+                GroupByInstructions.Add(new SortInstruction()
+                {
+                    GridColumn = pColumn,
+                    Direction = MSortDirection.Ascending,
+                    PropertyInfo = propInfo,
+                    Index = SortInstructions.Count,
+                    Comparer = comparer
+                });
+
+                /*
+                if(!ColumnsList.Any() || !(ColumnsList[0] is MGridGroupByColumn<T>))
+                {
+                    ColumnsList.Insert(0, new MGridGroupByColumn<T>()
+                    {
+                        Identifier = pColumn.Identifier
+                    });
+                }*/
+
+                ColumnsList.Insert(0, new MGridGroupByColumn<T>()
+                {
+                    Identifier = pColumn.Identifier
                 });
             }
             else if (instr.Direction == MSortDirection.Ascending)
@@ -1571,6 +1624,42 @@ namespace MComponents.MGrid
         {
             if (EnableSaveState)
                 StateService.SaveGridState(this);
+        }
+
+        public List<T> FetchGroupByParts()
+        {
+            List<T> data = new List<T>();
+
+            var keyCounts = MGridGroupByHelper.GetGroupKeyCounts<T>(GetIQueryable(DataSource), GroupByInstructions.Select(p => p.PropertyInfo));
+
+            var keys = MGridGroupByHelper.GetKeys(keyCounts, Pager.PageSize * (Pager.CurrentPage - 1), Pager.PageSize, HiddenGroupByKeys);
+
+            foreach (var entry in keys)
+            {
+                var keyObj = entry.Item1;
+                var skip = entry.Item2;
+
+                var propInfos = keyObj.GetType().GetProperties().Select(p => (p, PropertyInfos.First(pp => pp.Value.Name == p.Name))).ToList();
+
+                var filterInstr = propInfos.Select(p => new FilterInstruction()
+                {
+                    PropertyInfo = p.Item2.Value,
+                    Value = p.p.GetValue(keyObj)
+                }).ToArray();
+
+                var groupedPart = mFilter.FilterBy(GetIQueryable(DataSource), filterInstr);
+
+                groupedPart = groupedPart.Skip(skip);
+
+                if (Pager != null)
+                {
+                    groupedPart = groupedPart.Take(Pager.PageSize - data.Count);
+                }
+
+                data.AddRange(groupedPart.ToArray());
+            }
+
+            return data;
         }
     }
 }

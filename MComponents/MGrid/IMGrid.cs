@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MComponents.MGrid
@@ -19,7 +20,7 @@ namespace MComponents.MGrid
         Guid GetId(T pModel);
         void Refresh();
         void InvokeStateHasChanged();
- 
+
         bool EnableAdding { get; }
 
         bool EnableEditing { get; }
