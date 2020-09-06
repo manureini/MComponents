@@ -85,7 +85,7 @@ namespace MComponents
             return (IOrderedQueryable<TSource>)method.Invoke(null, new object[] { source, exp, pComparer });
         }
 
-        public IOrderedQueryable<TSource> SortBy(IQueryable<TSource> source, ICollection<SortInstruction> instrcutions)
+        public IOrderedQueryable<TSource> SortBy(IQueryable<TSource> source, IEnumerable<SortInstruction> instrcutions)
         {
             IOrderedQueryable<TSource> result = null;
 
@@ -100,9 +100,9 @@ namespace MComponents
             if (instruction.Comparer == null)
             {
                 if (instruction.Direction == MSortDirection.Ascending)
-                    return PerformOperation(source, instruction.PropertyInfo, OrderByMethod, instruction.Comparer);
+                    return PerformOperation(source, instruction.PropertyInfo, OrderByMethod, null);
 
-                return PerformOperation(source, instruction.PropertyInfo, OrderByDescendingMethod, instruction.Comparer);
+                return PerformOperation(source, instruction.PropertyInfo, OrderByDescendingMethod, null);
             }
 
 
@@ -117,9 +117,9 @@ namespace MComponents
             if (instruction.Comparer == null)
             {
                 if (instruction.Direction == MSortDirection.Ascending)
-                    return PerformOperation(source, instruction.PropertyInfo, ThenByMethod, instruction.Comparer);
+                    return PerformOperation(source, instruction.PropertyInfo, ThenByMethod, null);
 
-                return PerformOperation(source, instruction.PropertyInfo, ThenByDescendingMethod, instruction.Comparer);
+                return PerformOperation(source, instruction.PropertyInfo, ThenByDescendingMethod, null);
             }
 
             if (instruction.Direction == MSortDirection.Ascending)

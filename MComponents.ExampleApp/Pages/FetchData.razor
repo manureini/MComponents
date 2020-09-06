@@ -60,11 +60,11 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    private List<WeatherForecast> forecasts;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        forecasts = (await ForecastService.GetForecastAsync(DateTime.Now)).ToList();
 
         foreach (var entry in forecasts)
         {
@@ -74,5 +74,10 @@ else
                 Name = entry.WeatherStation.Name
             };
         }
+
+
+        var group = forecasts.GroupBy(f => f.ForcastType);
+
+
     }
 }

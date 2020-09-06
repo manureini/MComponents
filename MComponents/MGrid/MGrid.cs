@@ -82,6 +82,7 @@ namespace MComponents.MGrid
 
         internal List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
         internal List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
+        internal GroupByInstruction GroupByInstruction { get; set; }
 
         internal Dictionary<IMGridPropertyColumn, IMPropertyInfo> PropertyInfos = new Dictionary<IMGridPropertyColumn, IMPropertyInfo>();
 
@@ -107,6 +108,8 @@ namespace MComponents.MGrid
         protected long DataCountCache;
         protected long TotalDataCountCache;
 
+        protected IQueryable GroupedDataCache;
+
         protected object mFilterModel;
 
         protected ElementReference mTableReference;
@@ -120,6 +123,7 @@ namespace MComponents.MGrid
 
         protected SorterBuilder<T> mSorter = new SorterBuilder<T>();
         protected FilterBuilder<T> mFilter = new FilterBuilder<T>();
+        protected GroupByBuilder<T> mGrouper = new GroupByBuilder<T>();
 
         protected bool mHasActionColumn;
 
@@ -127,6 +131,8 @@ namespace MComponents.MGrid
         public bool IsEditingRow => EditRow != null;
 
         public bool FixedColumns => IsEditingRow || IsFilterRowVisible;
+
+        public IMGridColumn[] VisibleColumns => ColumnsList.Where(c => c.ShouldRenderColumn).ToArray();
 
         public bool UpdateColumnsWidthOnNextRender;
 
@@ -379,6 +385,21 @@ namespace MComponents.MGrid
                        {
                            if (DataSource != null)
                            {
+                               /*
+                               GroupedDataCache = null;
+                               DataCache = null;
+
+                               var queryable = GetIQueryable(DataSource);
+
+                               if (GroupByInstruction != null)
+                               {
+                                   GroupedDataCache = queryable;
+                               }
+                               else
+                               {
+                                   DataCache = ((IQueryable<T>)queryable).ToArray();
+                               }*/
+
                                DataCache = GetIQueryable(DataSource).ToArray();
                            }
                            else if (DataAdapter == null)
@@ -390,9 +411,36 @@ namespace MComponents.MGrid
                            AddFilterRow(builder2);
                        }
 
+                       /*
+                       if (GroupedDataCache != null)
+                       {
+                           foreach (System.Collections.IEnumerable grouped in GroupedDataCache)
+                           {
+                               object key = ((dynamic)grouped).Key;
+                               AddGroupByHeaderRow(builder2, key);
+
+                               foreach (var entry in grouped)
+                               {
+                                   AddContentRow(builder2, (T)entry, MGridAction.Edit);
+                               }
+                           }
+                       }*/
+
+                       object lastGroupedKey = null;
+
                        if (DataCache != null)
                            foreach (var entry in DataCache)
                            {
+                               if (GroupByInstruction != null)
+                               {
+                                   var key = GroupByInstruction.PropertyInfo.GetValue(entry);
+                                   if ((key == null && lastGroupedKey != null) || !key.Equals(lastGroupedKey))
+                                   {
+                                       AddGroupByHeaderRow(builder2, key);
+                                       lastGroupedKey = key;
+                                   }
+                               }
+
                                AddContentRow(builder2, entry, MGridAction.Edit);
                            }
 
@@ -478,7 +526,7 @@ namespace MComponents.MGrid
 
         private IQueryable<T> GetIQueryable(IEnumerable<T> pSource)
         {
-            IQueryable<T> data = pSource as IQueryable<T>;
+            var data = pSource as IQueryable<T>;
 
             if (data == null)
                 data = pSource.AsQueryable();
@@ -492,10 +540,40 @@ namespace MComponents.MGrid
 
             DataCountCache = data.LongCount();
 
+
+            if (GroupByInstruction != null)
+            {
+
+                var instruction = new SortInstruction()
+                {
+                    Direction = MSortDirection.Ascending,
+                    GridColumn = GroupByInstruction.GridColumn,
+                    PropertyInfo = GroupByInstruction.PropertyInfo,
+
+                };
+
+                data = mSorter.SortBy(data, new[] { instruction });
+            }
+
             if (SortInstructions.Count > 0)
             {
                 data = mSorter.SortBy(data, SortInstructions);
             }
+
+            /*
+            if (GroupByInstruction != null)
+            {
+                var grouped = mGrouper.GroupBy(data, GroupByInstruction);
+
+                if (Pager != null)
+                {
+                    grouped = mGrouper.Skip(grouped, Pager.PageSize * (Pager.CurrentPage - 1));
+                    grouped = mGrouper.Take(grouped, Pager.PageSize);
+                }
+
+                return grouped;
+            }
+            */
 
             if (Pager != null)
             {
@@ -575,6 +653,22 @@ namespace MComponents.MGrid
             pBuilder.CloseElement();
         }
 
+        private void AddGroupByHeaderRow(RenderTreeBuilder pBuilder, object pKey)
+        {
+            pBuilder.OpenElement(615, "tr");
+            pBuilder.AddAttribute(616, "class", "m-grid-row");
+
+            AddInlineTrHeight(pBuilder);
+
+            pBuilder.OpenElement(577, "td");
+            pBuilder.AddAttribute(618, "colspan", VisibleColumns.Length);
+
+            pBuilder.AddContent(625, pKey.ToString());
+
+            pBuilder.CloseElement(); //td
+            pBuilder.CloseElement(); //tr
+        }
+
         private void AddContentRow(RenderTreeBuilder pBuilder, T pEntry, MGridAction pAction)
         {
             Guid entryId = GetId(pEntry);
@@ -651,12 +745,10 @@ namespace MComponents.MGrid
 
         private void AddEditRow<M>(RenderTreeBuilder pBuilder, MGridAction pAction, bool pIsFilterRow, M pValue)
         {
-            var visibleColumns = ColumnsList.Where(c => c.ShouldRenderColumn).ToArray();
-
             AddInlineTrHeight(pBuilder);
 
             pBuilder.OpenElement(577, "td");
-            pBuilder.AddAttribute(578, "colspan", visibleColumns.Length);
+            pBuilder.AddAttribute(578, "colspan", VisibleColumns.Length);
 
             pBuilder.OpenElement(580, "table");
             pBuilder.OpenElement(581, "tbody");
@@ -669,7 +761,7 @@ namespace MComponents.MGrid
                 pBuilder.AddAttribute(588, nameof(MForm<M>.IsInTableRow), true);
                 pBuilder.AddAttribute(589, nameof(MForm<M>.Fields), (RenderFragment)((builder3) =>
                 {
-                    AddInlineFormFields(builder3, visibleColumns, pIsFilterRow);
+                    AddInlineFormFields(builder3, VisibleColumns, pIsFilterRow);
                 }));
 
                 pBuilder.AddAttribute(594, nameof(MForm<M>.MFormGridContext), new MFormGridContext()
@@ -1288,6 +1380,13 @@ namespace MComponents.MGrid
 
             if (propInfoColumn == null)
                 return; // other columns not supported yet
+
+            var propInfo2 = PropertyInfos[propInfoColumn];
+            GroupByInstruction = new GroupByInstruction()
+            {
+                GridColumn = pColumn,
+                PropertyInfo = propInfo2,
+            };
 
             var instr = SortInstructions.FirstOrDefault(s => s.GridColumn == pColumn);
 
