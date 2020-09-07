@@ -9,7 +9,7 @@ using System.Text;
 
 namespace MComponents.MGrid
 {
-
+    /*
     public class TestType
     {
         public bool IsGoodWeather { get; set; }
@@ -20,7 +20,7 @@ namespace MComponents.MGrid
 
         public override bool Equals(object obj)
         {
-            return MGridGroupByHelper.AnonymousTypeEquals(this, obj);
+            return MGridGroupByAnonymousTypeHelper.AnonymousTypeEquals(this, obj);
         }
 
         public override int GetHashCode()
@@ -28,7 +28,7 @@ namespace MComponents.MGrid
             //return MGridGroupByHelper.AnonymousTypeHashCode(this);
             return 42;
         }
-    }
+    }*/
 
     public class MGridGroupByHelper
     {
@@ -55,7 +55,7 @@ namespace MComponents.MGrid
         {
             pQueryable = pQueryable.ToArray().AsQueryable();
 
-            var anType = CreateAnonymousType(pProperties);
+            var anType = MGridGroupByAnonymousTypeHelper.GetAnonymousType(pProperties);
 
             ParameterExpression parameter = Expression.Parameter(typeof(T), "t");
 
@@ -99,142 +99,11 @@ namespace MComponents.MGrid
             return (IQueryable)groupSelectedQueryable;
         }
 
-
-
-
-
-
-        public static Type CreateAnonymousType(IEnumerable<IMPropertyInfo> pProperties)
-        {
-            AssemblyName dynamicAssemblyName = new AssemblyName("TempAssembly");
-            AssemblyBuilder dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(dynamicAssemblyName, AssemblyBuilderAccess.Run);
-            ModuleBuilder dynamicModule = dynamicAssembly.DefineDynamicModule("TempAssembly");
-
-            TypeBuilder dynamicAnonymousType = dynamicModule.DefineType("AnonymousType", TypeAttributes.Public);
-
-            foreach (var property in pProperties)
-                AddProperty(dynamicAnonymousType, property.Name, property.PropertyType);
-
-            AddEquals(dynamicAnonymousType);
-            AddGetHashCode(dynamicAnonymousType);
-
-            return dynamicAnonymousType.CreateType();
-        }
-
-        public static void AddProperty(TypeBuilder typeBuilder, string propertyName, Type propertyType)
-        {
-            const MethodAttributes getSetAttr = MethodAttributes.Public | MethodAttributes.HideBySig;
-
-            FieldBuilder field = typeBuilder.DefineField("_" + propertyName, propertyType, FieldAttributes.Private);
-            PropertyBuilder property = typeBuilder.DefineProperty(propertyName, PropertyAttributes.None, propertyType,
-                new[] { propertyType });
-
-            MethodBuilder getMethodBuilder = typeBuilder.DefineMethod("get_value", getSetAttr, propertyType,
-                Type.EmptyTypes);
-            ILGenerator getIl = getMethodBuilder.GetILGenerator();
-            getIl.Emit(OpCodes.Ldarg_0);
-            getIl.Emit(OpCodes.Ldfld, field);
-            getIl.Emit(OpCodes.Ret);
-
-            MethodBuilder setMethodBuilder = typeBuilder.DefineMethod("set_value", getSetAttr, null,
-                new[] { propertyType });
-            ILGenerator setIl = setMethodBuilder.GetILGenerator();
-            setIl.Emit(OpCodes.Ldarg_0);
-            setIl.Emit(OpCodes.Ldarg_1);
-            setIl.Emit(OpCodes.Stfld, field);
-            setIl.Emit(OpCodes.Ret);
-
-            property.SetGetMethod(getMethodBuilder);
-            property.SetSetMethod(setMethodBuilder);
-        }
-
-        public static void AddEquals(TypeBuilder pTypeBuilder)
-        {
-            var myMethod = pTypeBuilder.DefineMethod("Equals", MethodAttributes.Public | MethodAttributes.Virtual, typeof(bool), new[] { typeof(object) });
-            var il = myMethod.GetILGenerator();
-
-            Label lbl_6 = il.DefineLabel();
-
-            il.Emit(OpCodes.Ldarg_0);
-            il.Emit(OpCodes.Ldarg_1);
-            il.EmitCall(OpCodes.Call, typeof(MGridGroupByHelper).GetMethod(nameof(AnonymousTypeEquals)), new[] { typeof(object), typeof(object) });
-
-            /*
-            il.Emit(OpCodes.Stloc_0);
-            il.Emit(OpCodes.Br_S, lbl_6);
-            il.MarkLabel(lbl_6);
-            il.Emit(OpCodes.Ldloc_0);
-            */
-
-            il.Emit(OpCodes.Ret);
-        }
-
-        public static void AddGetHashCode(TypeBuilder pTypeBuilder)
-        {
-            var myMethod = pTypeBuilder.DefineMethod("GetHashCode", MethodAttributes.Public | MethodAttributes.Virtual, typeof(int), null);
-            var il = myMethod.GetILGenerator();
-
-            /*
-            il.Emit(OpCodes.Ldc_I4_S, 0x2A);
-            il.Emit(OpCodes.Ret);
-            */
-
-            /*
-            Label lbl_5 = il.DefineLabel();
-
-            il.Emit(OpCodes.Ldarg_0);
-
-            il.EmitCall(OpCodes.Call, typeof(MGridGroupByHelper).GetMethod(nameof(AnonymousTypeHashCode)), new[] { typeof(object) });
-            il.Emit(OpCodes.Stloc_0);
-            il.Emit(OpCodes.Br_S, lbl_5);
-            il.MarkLabel(lbl_5);
-            il.Emit(OpCodes.Ldloc_0);
-            il.Emit(OpCodes.Ret);
-            */
-
-
-            il.Emit(OpCodes.Ldarg_0);
-            il.EmitCall(OpCodes.Call, typeof(MGridGroupByHelper).GetMethod(nameof(AnonymousTypeHashCode)), new[] { typeof(object) });
-            il.Emit(OpCodes.Ret);
-
-        }
-
-        public static bool AnonymousTypeEquals(object pThis, object pOther)
-        {
-            if (pThis.GetType() != pOther.GetType())
-                return false;
-
-            var properties = pThis.GetType().GetProperties();
-
-            foreach (var property in properties)
-            {
-                var val1 = property.GetValue(pThis);
-                var val2 = property.GetValue(pOther);
-
-                if (!val1.Equals(val2))
-                    return false;
-            }
-
-            return true;
-        }
-
-        public static int AnonymousTypeHashCode(object pThis)
-        {
-            int hash = 42;
-
-            foreach (var property in pThis.GetType().GetProperties())
-            {
-                hash = hash * 23 + property.GetValue(pThis).GetHashCode();
-            }
-
-            return hash;
-        }
-
-        public static IEnumerable<(object, int)> GetKeys(IQueryable pKeyCounts, int pSkip, int pTake, List<object[]> hiddenGroupByKeys)
+        public static IEnumerable<MGridGroupByHelperKeyInfo> GetKeys(IQueryable pKeyCounts, int pSkip, int pTake, IEnumerable<object> hiddenGroupByKeys)
         {
             int currentIndex = 0;
 
-            List<(object, int)> keys = new List<(object, int)>();
+            List<MGridGroupByHelperKeyInfo> keys = new List<MGridGroupByHelperKeyInfo>();
 
             int rowsMissing = pTake;
 
@@ -248,21 +117,45 @@ namespace MComponents.MGrid
                 int countInGroupPart = entry.Item2;
                 currentIndex += countInGroupPart;
 
-                var properties = (IEnumerable<PropertyInfo>)dynamicKeyType.GetType().GetProperties();
-                var values = properties.Select(p => p.GetValue(dynamicKeyType)).ToArray();
+                //   var properties = (IEnumerable<PropertyInfo>)dynamicKeyType.GetType().GetProperties();
+                //   var values = properties.Select(p => p.GetValue(dynamicKeyType)).ToArray();
 
-                if (hiddenGroupByKeys.Any(k => k.All(n => values.Contains(n))))
+                if (hiddenGroupByKeys.Any(h => MGridGroupByAnonymousTypeHelper.AnonymousTypeEquals(h, dynamicKeyType)))
                 {
                     pSkip += countInGroupPart;
+
+                    if (currentIndex >= pSkip)
+                    {
+                        keys.Add(new MGridGroupByHelperKeyInfo()
+                        {
+                            DynamicKeyObj = dynamicKeyType,
+                            Offset = 0,
+                            Take = 0
+                        });
+                    }
+
                     continue;
                 }
 
                 if (currentIndex >= pSkip)
                 {
-                    var offset = pSkip - (currentIndex - countInGroupPart);
-                    keys.Add((dynamicKeyType, offset));
+                    var offset = Math.Max(0, pSkip - (currentIndex - countInGroupPart));
 
                     int entryCount = countInGroupPart - offset;
+
+                    var take = rowsMissing;
+
+                    if (take > entryCount)
+                    {
+                        take = entryCount;
+                    }
+
+                    keys.Add(new MGridGroupByHelperKeyInfo()
+                    {
+                        DynamicKeyObj = dynamicKeyType,
+                        Offset = offset,
+                        Take = take
+                    });
 
                     rowsMissing = pTake - entryCount;
                 }
@@ -270,5 +163,25 @@ namespace MComponents.MGrid
 
             return keys;
         }
+
+
+        public static long GetDataCount(IQueryable pKeyObjects, IEnumerable<object> hiddenGroupByKeys)
+        {
+            long total = 0;
+
+            foreach (dynamic tuple in pKeyObjects)
+            {
+                object keyObj = tuple.Item1;
+
+                if (hiddenGroupByKeys.Any(h => MGridGroupByAnonymousTypeHelper.AnonymousTypeEquals(h, keyObj)))
+                    continue;
+
+                int count = tuple.Item2;
+                total += count;
+            }
+
+            return total;
+        }
+
     }
 }
