@@ -52,9 +52,7 @@ namespace MComponents.MGrid
 
 
         public static IQueryable GetGroupKeyCounts<T>(IQueryable<T> pQueryable, IEnumerable<IMPropertyInfo> pProperties)
-        {
-            pQueryable = pQueryable.ToArray().AsQueryable();
-
+        {           
             var anType = MGridGroupByAnonymousTypeHelper.GetAnonymousType(pProperties);
 
             ParameterExpression parameter = Expression.Parameter(typeof(T), "t");
@@ -99,19 +97,20 @@ namespace MComponents.MGrid
             return (IQueryable)groupSelectedQueryable;
         }
 
-        public static IEnumerable<MGridGroupByHelperKeyInfo> GetKeys(IQueryable pKeyCounts, int pSkip, int pTake, IEnumerable<object> hiddenGroupByKeys)
+        public static IEnumerable<MGridGroupByHelperKeyInfo> GetKeys(IQueryable pKeyCounts, int pSkip, int? pTake, IEnumerable<object> hiddenGroupByKeys)
         {
             int currentIndex = 0;
 
             List<MGridGroupByHelperKeyInfo> keys = new List<MGridGroupByHelperKeyInfo>();
 
-            int rowsMissing = pTake;
+            int? rowsMissing = pTake;
+            var skip = pSkip;
 
             foreach (dynamic entry in pKeyCounts)
             {
                 var dynamicKeyType = entry.Item1;
 
-                if (rowsMissing <= 0)
+                if (rowsMissing.HasValue && rowsMissing <= 0)
                     break;
 
                 int countInGroupPart = entry.Item2;
@@ -122,9 +121,9 @@ namespace MComponents.MGrid
 
                 if (hiddenGroupByKeys.Any(h => MGridGroupByAnonymousTypeHelper.AnonymousTypeEquals(h, dynamicKeyType)))
                 {
-                    pSkip += countInGroupPart;
+                    skip += countInGroupPart;
 
-                    if (currentIndex >= pSkip)
+                    if (currentIndex >= skip)
                     {
                         keys.Add(new MGridGroupByHelperKeyInfo()
                         {
@@ -137,27 +136,38 @@ namespace MComponents.MGrid
                     continue;
                 }
 
-                if (currentIndex >= pSkip)
+                if (currentIndex > skip)
                 {
-                    var offset = Math.Max(0, pSkip - (currentIndex - countInGroupPart));
-
-                    int entryCount = countInGroupPart - offset;
-
-                    var take = rowsMissing;
-
-                    if (take > entryCount)
+                    if (rowsMissing.HasValue)
                     {
-                        take = entryCount;
+                        var offset = Math.Max(0, skip - (currentIndex - countInGroupPart));
+                        int entryCount = countInGroupPart - offset;
+
+                        var take = rowsMissing.Value;
+
+                        if (take > entryCount)
+                        {
+                            take = entryCount;
+                        }
+
+                        keys.Add(new MGridGroupByHelperKeyInfo()
+                        {
+                            DynamicKeyObj = dynamicKeyType,
+                            Offset = offset,
+                            Take = take
+                        });
+
+                        rowsMissing -= take;
                     }
-
-                    keys.Add(new MGridGroupByHelperKeyInfo()
+                    else
                     {
-                        DynamicKeyObj = dynamicKeyType,
-                        Offset = offset,
-                        Take = take
-                    });
-
-                    rowsMissing = pTake - entryCount;
+                        keys.Add(new MGridGroupByHelperKeyInfo()
+                        {
+                            DynamicKeyObj = dynamicKeyType,
+                            Offset = 0,
+                            Take = countInGroupPart
+                        });
+                    }
                 }
             }
 

@@ -107,7 +107,7 @@ namespace MComponents.MGrid
 
                           return new SortInstruction()
                           {
-                              GridColumn = column,
+                              GridColumn = propc,
                               Direction = s.Direction,
                               Index = s.Index,
                               PropertyInfo = pi,

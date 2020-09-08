@@ -46,11 +46,13 @@ namespace MComponents.MGrid
         public bool ShouldRenderColumn => true;
 
         public bool VisibleInExport => true;
+
+        public IMGridColumn GridColumn { get; set; }
         
         public RenderFragment GenerateContent(T pModel)
         {
             return builder =>
-            {                
+            {
             };
         } 
     }

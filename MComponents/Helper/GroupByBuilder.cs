@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using MComponents.MGrid;
 
 namespace MComponents
-{
+{/*
     public class GroupByBuilder<TSource>
     {
         private static readonly MethodInfo GroupByMethod =
@@ -61,12 +61,11 @@ namespace MComponents
             return (IQueryable)ret;
         }
     }
+    */
 
-    public class GroupByInstruction
+    public class GroupByInstruction<T> : SortInstruction
     {
-        public IMGridColumn GridColumn { get; set; }
-
-        public IMPropertyInfo PropertyInfo { get; set; }
+        public T FirstValue { get; set; } 
     }
 
 }

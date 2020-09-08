@@ -75,9 +75,11 @@ else
             };
         }
 
+        // {MComponents.ExampleApp.Data.WeatherForecast[].GroupBy(t => new AnonymousType() {IsGoodWeather = t.IsGoodWeather})
+        //.Select(t => new Tuple`2(t.Key, t.Count()))}
 
-        var group = forecasts.GroupBy(f => f.ForcastType);
-
-
+         
+     //   var grouped = forecasts.GroupBy(m => m.Summary).Select(g => (g.Key, g.Count()));
+      
     }
 }

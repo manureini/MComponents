@@ -130,6 +130,12 @@ namespace MComponents.MGrid
                 var val1 = property.GetValue(pThis);
                 var val2 = property.GetValue(pOther);
 
+                if ((val1 == null && val2 != null) || (val1 != null && val2 == null))
+                    return false;
+
+                if (val1 == null && val2 == null)
+                    return true;
+
                 if (!val1.Equals(val2))
                     return false;
             }
@@ -143,7 +149,12 @@ namespace MComponents.MGrid
 
             foreach (var property in pThis.GetType().GetProperties())
             {
-                hash = hash * 23 + property.GetValue(pThis).GetHashCode();
+                var value = property.GetValue(pThis);
+
+                if (value == null)
+                    hash = hash * 23;
+                else
+                    hash = hash * 23 + value.GetHashCode();
             }
 
             return hash;

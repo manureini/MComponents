@@ -131,7 +131,7 @@ namespace MComponents
 
     public class SortInstruction
     {
-        public IMGridColumn GridColumn { get; set; }
+        public IMGridPropertyColumn GridColumn { get; set; }
 
         public IMPropertyInfo PropertyInfo { get; set; }
 
