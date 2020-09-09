@@ -491,8 +491,8 @@ $borderRadius: 0.25rem;
         min-width: min-content;
 
         .m-select-options-list {
-            min-height: 19px;
-            max-height: 20vh;
+            min-height: 300px;
+            max-height: 0.5vh;
             height: auto;
             overflow-y: auto;
             list-style: none;
@@ -501,10 +501,6 @@ $borderRadius: 0.25rem;
 
             .m-select-options-entry {
                 padding: 5px 15px;
-
-                &:first-child {
-                    margin-top: 6px;
-                }
 
                 &.m-select-options-entry--highlighted {
                     background: darken($gray, 2%);
@@ -912,7 +908,7 @@ $borderRadius: 0.25rem;
 
 
 .m-scrollbar::-webkit-scrollbar {
-    width: 7px;
+    width: 8px;
 }
 
 .m-scrollbar::-webkit-scrollbar-thumb {
@@ -924,4 +920,8 @@ $borderRadius: 0.25rem;
 .m-scrollbar::-webkit-scrollbar-track {
     box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
     border-radius: $borderRadius*2;
+}
+
+.m-scrollbar:hover {
+    cursor: pointer;
 }
