@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -41,7 +42,16 @@ namespace MComponents
 
                 var exprGet = Expression.Property(p, "Item", expKey);
 
-                var expGetConvert = Expression.Convert(exprGet, pPropertyInfo.PropertyType);
+                Expression expGetConvert;
+
+                if (pPropertyInfo.PropertyType == typeof(string))
+                {
+                    expGetConvert = Expression.Call(exprGet, "ToString", Type.EmptyTypes);
+                }
+                else
+                {
+                    expGetConvert = Expression.Convert(exprGet, pPropertyInfo.PropertyType);
+                }
 
                 var ifnull = Expression.Condition(exprContains, expGetConvert, Expression.Constant(null, pPropertyInfo.PropertyType));
 

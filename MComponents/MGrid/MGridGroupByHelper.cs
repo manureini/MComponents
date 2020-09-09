@@ -52,7 +52,7 @@ namespace MComponents.MGrid
 
 
         public static IQueryable GetGroupKeyCounts<T>(IQueryable<T> pQueryable, IEnumerable<IMPropertyInfo> pProperties)
-        {           
+        {
             var anType = MGridGroupByAnonymousTypeHelper.GetAnonymousType(pProperties);
 
             ParameterExpression parameter = Expression.Parameter(typeof(T), "t");
@@ -97,7 +97,7 @@ namespace MComponents.MGrid
             return (IQueryable)groupSelectedQueryable;
         }
 
-        public static IEnumerable<MGridGroupByHelperKeyInfo> GetKeys(IQueryable pKeyCounts, int pSkip, int? pTake, IEnumerable<object> hiddenGroupByKeys)
+        public static IEnumerable<MGridGroupByHelperKeyInfo> GetKeys(IQueryable pKeyCounts, int pSkip, int? pTake, IDictionary<string, object>[] hiddenGroupByKeys)
         {
             int currentIndex = 0;
 
@@ -119,12 +119,16 @@ namespace MComponents.MGrid
                 //   var properties = (IEnumerable<PropertyInfo>)dynamicKeyType.GetType().GetProperties();
                 //   var values = properties.Select(p => p.GetValue(dynamicKeyType)).ToArray();
 
-                if (hiddenGroupByKeys.Any(h => MGridGroupByAnonymousTypeHelper.AnonymousTypeEquals(h, dynamicKeyType)))
+                var hiddenDict = hiddenGroupByKeys.FirstOrDefault(h => MGridGroupByAnonymousTypeHelper.AnonymousTypeContainsAllOfDictionary(dynamicKeyType, h));
+
+                if (hiddenDict != null)
                 {
                     skip += countInGroupPart;
 
                     if (currentIndex >= skip)
                     {
+                        //    var keyValues = MGridGroupByAnonymousTypeHelper.GetKeyValues(dynamicKeyType, hiddenDict.Count);
+
                         keys.Add(new MGridGroupByHelperKeyInfo()
                         {
                             DynamicKeyObj = dynamicKeyType,

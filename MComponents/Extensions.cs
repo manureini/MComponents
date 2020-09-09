@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.Json;
+using System.Xml.Schema;
 
 namespace MComponents
 {
@@ -50,6 +53,52 @@ namespace MComponents
                 comparer = ((dynamic)pColumn).Comparer;
 
             return comparer;
+        }
+
+        internal static bool DictionaryEqual(IDictionary<string, object> pDict0, IDictionary<string, object> pDict1)
+        {
+            if (!pDict0.Count.Equals(pDict1.Count))
+                return false;
+
+            if (!pDict0.Keys.SequenceEqual(pDict1.Keys))
+                return false;
+
+            foreach (string key in pDict0.Keys)
+            {
+                if ((pDict0[key] == null && pDict1[key] != null) || (pDict0[key] != null && pDict1[key] == null))
+                    return false;
+
+                if (pDict0[key] == null && pDict1[key] == null)
+                    continue;
+
+                if (!pDict0[key].Equals(pDict1[key]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static bool DictionaryEqualIfContains(IDictionary<string, object> pDict0, IDictionary<string, object> pDict1)
+        {
+            foreach (var key in pDict0.Keys)
+            {
+                if (!pDict1.ContainsKey(key))
+                    continue;
+
+                var val1 = pDict0[key];
+                var val2 = pDict1[key];
+
+                if ((val1 == null && val2 != null) || (val1 != null && val2 == null))
+                    return false;
+
+                if (val1 == null && val2 == null)
+                    continue;
+
+                if (!val1.Equals(val2))
+                    return false;
+            }
+
+            return true;
         }
 
         internal static object ToObject(this JsonElement element, Type pType, JsonSerializerOptions options = null)

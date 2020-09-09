@@ -84,7 +84,7 @@ namespace MComponents.MGrid
         internal List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
         internal List<SortInstruction> GroupByInstructions { get; set; } = new List<SortInstruction>();
 
-        internal List<(object, T)> HiddenGroupByKeys = new List<(object, T)>();
+        internal List<(IDictionary<string, object>, T)> HiddenGroupByKeys = new List<(IDictionary<string, object>, T)>();
 
         protected object[] mLastGroupByKeys;
 
@@ -409,6 +409,8 @@ namespace MComponents.MGrid
 
                        if (GroupedDataCache != null)
                        {
+                           var lastValues = new object[GroupByInstructions.Count];
+
                            foreach (var grouped in GroupedDataCache)
                            {
                                object key = grouped.Key;
@@ -417,8 +419,27 @@ namespace MComponents.MGrid
                                foreach (var prop in key.GetType().GetProperties())
                                {
                                    var keyValue = prop.GetValue(key);
-                                   var instr = GroupByInstructions[index];
-                                   AddGroupByHeaderRow(builder2, instr, key, keyValue, index + 1, grouped.FirstOrDefault());
+
+                                   bool renderRow = lastValues[index] == null;
+
+                                   if (lastValues[index] != null)
+                                   {
+                                       renderRow = !lastValues[index].Equals(keyValue);
+                                   }
+
+                                   if (index >= 1)
+                                   {
+                                       var keyValuesRow = MGridGroupByAnonymousTypeHelper.GetKeyValues(key, index);
+                                       renderRow = !HiddenGroupByKeys.Any(h => Extensions.DictionaryEqual(h.Item1, keyValuesRow));
+                                   }
+
+                                   if (renderRow)
+                                   {
+                                       var instr = GroupByInstructions[index];
+                                       AddGroupByHeaderRow(builder2, instr, key, keyValue, index + 1, grouped.FirstOrDefault());
+                                   }
+
+                                   lastValues[index] = keyValue;
                                    index++;
                                }
 
@@ -633,9 +654,11 @@ namespace MComponents.MGrid
             pBuilder.OpenElement(615, "tr");
             pBuilder.AddAttribute(616, "class", "m-grid-row");
 
+            var keyValuesRow = MGridGroupByAnonymousTypeHelper.GetKeyValues(pKey, pColumnIndex);
+
             pBuilder.AddAttribute(617, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (a) =>
             {
-                var existing = HiddenGroupByKeys.FirstOrDefault(p => MGridGroupByAnonymousTypeHelper.AnonymousTypeEquals(p.Item1, pKey));
+                var existing = HiddenGroupByKeys.FirstOrDefault(p => Extensions.DictionaryEqual(p.Item1, keyValuesRow));
 
                 if (existing.Item1 != null)
                 {
@@ -643,9 +666,10 @@ namespace MComponents.MGrid
                 }
                 else
                 {
-                    HiddenGroupByKeys.Add((pKey, pFirstValue));
+                    HiddenGroupByKeys.Add((keyValuesRow, pFirstValue));
                 }
 
+                Selected = null;
                 await ResetRowsAndCache();
             }));
 
@@ -660,7 +684,7 @@ namespace MComponents.MGrid
 
             pBuilder.OpenElement(695, "td");
 
-            var hidden = HiddenGroupByKeys.FirstOrDefault(p => MGridGroupByAnonymousTypeHelper.AnonymousTypeEquals(p.Item1, pKey));
+            var hidden = HiddenGroupByKeys.FirstOrDefault(p => Extensions.DictionaryEqual(p.Item1, keyValuesRow));
 
             T value = pFirstValue;
 
@@ -681,7 +705,7 @@ namespace MComponents.MGrid
 
             var pi = pInstruction.PropertyInfo;
 
-            pBuilder.AddContent(625, pi.Name + ": ");
+            pBuilder.AddContent(625, pInstruction.GridColumn.HeaderText + ": ");
             RenderValueTdContent(pBuilder, value, pInstruction.GridColumn);
 
             pBuilder.CloseElement(); //td
@@ -1637,7 +1661,7 @@ namespace MComponents.MGrid
             if (Pager != null)
                 skipvalues = Pager.PageSize * (Pager.CurrentPage - 1);
 
-            var keys = MGridGroupByHelper.GetKeys(keyCounts, skipvalues, Pager?.PageSize, HiddenGroupByKeys.Select(h => h.Item1));
+            var keys = MGridGroupByHelper.GetKeys(keyCounts, skipvalues, Pager?.PageSize, HiddenGroupByKeys.Select(h => h.Item1).ToArray());
 
             foreach (var entry in keys)
             {
@@ -1660,7 +1684,7 @@ namespace MComponents.MGrid
                 data.Add(part);
             }
 
-            DataCountCache = MGridGroupByHelper.GetDataCount(keyCounts, HiddenGroupByKeys.Select(h => h.Item1));
+            DataCountCache = -1; // MGridGroupByHelper.GetDataCount(keyCounts, HiddenGroupByKeys.Select(h => h.Item1));
 
             return data;
         }

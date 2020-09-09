@@ -51,9 +51,9 @@ namespace MComponents.MGrid
                       if (pGrid.Pager != null)
                       {
                           if (state.Page != null)
-                              pGrid.Pager.CurrentPage = state.Page.Value;
+                              pGrid.Pager.CurrentPage = Math.Max(1, state.Page.Value);
                           if (state.PageSize != null)
-                              pGrid.Pager.PageSize = state.PageSize.Value;
+                              pGrid.Pager.PageSize = Math.Max(1, state.PageSize.Value);
                       }
 
                       pGrid.FilterInstructions = state.FilterState.Select(filterState =>

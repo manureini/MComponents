@@ -134,7 +134,7 @@ namespace MComponents.MGrid
                     return false;
 
                 if (val1 == null && val2 == null)
-                    return true;
+                    continue;
 
                 if (!val1.Equals(val2))
                     return false;
@@ -158,6 +158,71 @@ namespace MComponents.MGrid
             }
 
             return hash;
+        }
+
+        public static bool AnonymousTypeEqualsDictionaryExact(object pThis, Dictionary<string, object> pDict)
+        {
+            var properties = pThis.GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                var val1 = property.GetValue(pThis);
+
+                if (!pDict.ContainsKey(property.Name))
+                    return false;
+
+                var val2 = pDict[property.Name];
+
+                if ((val1 == null && val2 != null) || (val1 != null && val2 == null))
+                    return false;
+
+                if (val1 == null && val2 == null)
+                    continue;
+
+                if (!val1.Equals(val2))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static bool AnonymousTypeContainsAllOfDictionary(object pThis, IDictionary<string, object> pDict)
+        {
+            var properties = pThis.GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                var val1 = property.GetValue(pThis);
+
+                if (!pDict.ContainsKey(property.Name))
+                    continue;
+
+                var val2 = pDict[property.Name];
+
+                if ((val1 == null && val2 != null) || (val1 != null && val2 == null))
+                    return false;
+
+                if (val1 == null && val2 == null)
+                    continue;
+
+                if (!val1.Equals(val2))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static IDictionary<string, object> GetKeyValues(object pKey, int pTake)
+        {
+            IDictionary<string, object> ret = new Dictionary<string, object>();
+
+            var properties = pKey.GetType().GetProperties().Take(pTake);
+            foreach (var prop in properties)
+            {
+                ret.Add(prop.Name, prop.GetValue(pKey));
+            }
+
+            return ret;
         }
     }
 }
