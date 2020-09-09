@@ -123,6 +123,9 @@
   <data name="Add" xml:space="preserve">
     <value>Hinzufügen</value>
   </data>
+  <data name="Are you sure?" xml:space="preserve">
+    <value>Eintrag löschen?</value>
+  </data>
   <data name="Back" xml:space="preserve">
     <value>Zurück</value>
   </data>

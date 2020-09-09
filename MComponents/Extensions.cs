@@ -60,7 +60,7 @@ namespace MComponents
             return JsonSerializer.Deserialize(bufferWriter.WrittenSpan, pType, options);
         }
 
-        public static void AddMComponents(this IServiceCollection pServices)
+        public static void AddMComponents(this IServiceCollection pServices, Action<MComponentSettings> pOptions)
         {
             pServices.AddLocalization(options => options.ResourcesPath = "Resources");
             pServices.Configure<RequestLocalizationOptions>(options =>
@@ -72,6 +72,10 @@ namespace MComponents
 
             pServices.AddScoped<MLocalStorageService>();
             pServices.AddScoped<MGridStateService>();
+
+            var settings = new MComponentSettings();
+            pOptions(settings);
+            pServices.AddSingleton(settings);
         }
     }
 

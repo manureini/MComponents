@@ -1,7 +1,9 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
+using MComponents.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Timers;
@@ -12,6 +14,12 @@ namespace MComponents.MGrid
     {
         [Inject]
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
+
+        [Inject]
+        public IJSRuntime JsRuntime { get; set; }
+
+        [Inject]
+        public MComponentSettings Settings { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
@@ -157,23 +165,31 @@ namespace MComponents.MGrid
                     builder.OpenElement(1, "button");
                     builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
                     builder.AddAttribute(2, "style", "margin-left: 4px;");
-                    builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
-                    {
-                        if (RowDeleteEnabled == null || !RowDeleteEnabled.Equals(pModel))
-                        {
-                            RowDeleteEnabled = pModel;
-                            mDeleteResetTimer.Stop();
-                            mDeleteResetTimer.Start();
-                            StateHasChanged();
-                            Grid.InvokeStateHasChanged();
-                            return;
-                        }
+                    builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (a) =>
+                     {
+                         if (Settings.UseDeleteConfirmationWithAlert)
+                         {
+                             bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", L["Are you sure?"].ToString());
+                             if (confirmed)
+                                 Grid.StartDeleteRow(pModel, a);
+                             return;
+                         }
 
-                        mDeleteResetTimer.Stop();
-                        mDeleteResetTimer.Start();
+                         if (RowDeleteEnabled == null || !RowDeleteEnabled.Equals(pModel))
+                         {
+                             RowDeleteEnabled = pModel;
+                             mDeleteResetTimer.Stop();
+                             mDeleteResetTimer.Start();
+                             StateHasChanged();
+                             Grid.InvokeStateHasChanged();
+                             return;
+                         }
 
-                        Grid.StartDeleteRow(pModel, a);
-                    }));
+                         mDeleteResetTimer.Stop();
+                         mDeleteResetTimer.Start();
+
+                         Grid.StartDeleteRow(pModel, a);
+                     }));
                     builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(1, "i");
