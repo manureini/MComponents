@@ -449,6 +449,11 @@ namespace MComponents.MGrid
                        {
                            int pagecount = (int)Math.Ceiling(DataCountCache / (double)Pager.PageSize);
 
+                           if (Pager.CurrentPage > pagecount)
+                           {
+                               OnPagerPageChanged(pagecount);
+                           }
+
                            builder2.OpenComponent<MPager>(11);
                            builder2.AddAttribute(398, "CurrentPage", Pager.CurrentPage);
                            builder2.AddAttribute(399, "PageCount", pagecount);
@@ -1374,7 +1379,6 @@ namespace MComponents.MGrid
         {
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             Pager.PageSize = int.Parse(pValue.Value.ToString());
-            Pager.CurrentPage = 1;
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
             await StopEditing(false, false);
@@ -1500,11 +1504,6 @@ namespace MComponents.MGrid
 
         public async Task ResetRowsAndCache()
         {
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            if (Pager != null)
-                Pager.CurrentPage = 1;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
-
             await StopEditing(false, false);
 
             ClearDataCache();

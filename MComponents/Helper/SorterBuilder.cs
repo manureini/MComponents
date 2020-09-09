@@ -63,17 +63,6 @@ namespace MComponents
 
         private static IOrderedQueryable<TSource> PerformOperation(IQueryable<TSource> source, IMPropertyInfo pField, MethodInfo mi, object pComparer)
         {
-            if (typeof(IDictionary<string, object>).IsAssignableFrom(typeof(TSource)))
-            {
-                Expression<Func<TSource, object>> keySelector = v => ((IDictionary<string, object>)v)[pField.Name];
-                var method2 = mi.MakeGenericMethod(new[] { typeof(TSource), typeof(object) });
-
-                if (pComparer == null)
-                    return (IOrderedQueryable<TSource>)method2.Invoke(null, new object[] { source, keySelector });
-
-                return (IOrderedQueryable<TSource>)method2.Invoke(null, new object[] { source, keySelector, pComparer });
-            }
-
             var param = Expression.Parameter(typeof(TSource), "p");
             var prop = pField.GetMemberExpression(param);
             var exp = Expression.Lambda(prop, param);

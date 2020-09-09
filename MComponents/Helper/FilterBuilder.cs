@@ -37,7 +37,7 @@ namespace MComponents
 
         private static Expression GetCompareExpression(FilterInstruction pInstruction, Expression property)
         {
-            if (pInstruction.PropertyInfo.PropertyType == typeof(string))
+            if (pInstruction.Value != null && pInstruction.PropertyInfo.PropertyType == typeof(string))
             {
                 var value = Expression.Constant(((string)pInstruction.Value).Trim().ToLowerInvariant());
 
@@ -50,7 +50,7 @@ namespace MComponents
                     );
             }
 
-            if (pInstruction.PropertyInfo.PropertyType == typeof(DateTime) || pInstruction.PropertyInfo.PropertyType == typeof(DateTime?))
+            if (pInstruction.Value != null && (pInstruction.PropertyInfo.PropertyType == typeof(DateTime) || pInstruction.PropertyInfo.PropertyType == typeof(DateTime?)))
             {
                 DateTime value = (DateTime)pInstruction.Value;
 

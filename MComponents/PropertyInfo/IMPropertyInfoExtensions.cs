@@ -8,7 +8,7 @@ namespace MComponents
     {
         public static ICollection<IMPropertyInfo> GetParents(this IMPropertyInfo pPropertyInfo)
         {
-            List<IMPropertyInfo> ret = new List<IMPropertyInfo>();           
+            List<IMPropertyInfo> ret = new List<IMPropertyInfo>();
             GetParents(pPropertyInfo, ref ret);
             ret.Reverse();
             return ret;
@@ -24,8 +24,30 @@ namespace MComponents
         }
 
 
-        public static MemberExpression GetMemberExpression(this IMPropertyInfo pPropertyInfo, ParameterExpression param)
+        public static Expression GetMemberExpression(this IMPropertyInfo pPropertyInfo, ParameterExpression param)
         {
+            if (typeof(IDictionary<string, object>).IsAssignableFrom(param.Type))
+            {
+                if (pPropertyInfo.Parent != null)
+                    throw new System.NotImplementedException();
+
+                var p = Expression.Convert(param, typeof(IDictionary<string, object>));
+
+                var expKey = Expression.Constant(pPropertyInfo.Name);
+
+                var containsMi = typeof(IDictionary<string, object>).GetMethod("ContainsKey");
+
+                var exprContains = Expression.Call(p, containsMi, expKey);
+
+                var exprGet = Expression.Property(p, "Item", expKey);
+
+                var expGetConvert = Expression.Convert(exprGet, pPropertyInfo.PropertyType);
+
+                var ifnull = Expression.Condition(exprContains, expGetConvert, Expression.Constant(null, pPropertyInfo.PropertyType));
+
+                return ifnull;
+            }
+
             MemberExpression propertyExpr = null;
 
             if (pPropertyInfo.Parent != null)
