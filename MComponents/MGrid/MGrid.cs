@@ -134,7 +134,7 @@ namespace MComponents.MGrid
 
         public bool IsEditingRow => EditRow != null;
 
-        public bool FixedColumns => IsEditingRow || IsFilterRowVisible;
+        public bool FixedColumns => (IsEditingRow || IsFilterRowVisible) && !UpdateColumnsWidthOnNextRender;
 
         public IMGridColumn[] VisibleColumns => ColumnsList.Where(c => c.ShouldRenderColumn).ToArray();
 
@@ -358,7 +358,7 @@ namespace MComponents.MGrid
                                builder2.AddAttribute(315, "style", $"width: {width.ToString(CultureInfo.InvariantCulture)}px");
                            }
 
-                           builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) => OnColumnHeaderClick(column, a)));
+                           builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async a => OnColumnHeaderClick(column, a)));
                            builder2.AddAttribute(319, "scope", "col");
 
                            builder2.AddContent(321, (MarkupString)column.HeaderText);
@@ -581,6 +581,9 @@ namespace MComponents.MGrid
 
         private void AddFilterRow(RenderTreeBuilder pBuilder)
         {
+            if (!FixedColumns)
+                return;
+
             if (mFilterModel == null)
             {
                 var fmodel = new ExpandoObject() as IDictionary<string, object>;
@@ -1383,7 +1386,7 @@ namespace MComponents.MGrid
             StateHasChanged();
         }
 
-        protected void OnColumnHeaderClick(IMGridColumn pColumn, MouseEventArgs pArgs)
+        protected async Task OnColumnHeaderClick(IMGridColumn pColumn, MouseEventArgs pArgs)
         {
             if (!EnableUserSorting)
                 return;
@@ -1399,7 +1402,6 @@ namespace MComponents.MGrid
             var propInfo = PropertyInfos[propInfoColumn];
 
             object comparer = pColumn.GetComparer();
-
 
             if (pArgs.CtrlKey)
             {
@@ -1427,6 +1429,8 @@ namespace MComponents.MGrid
                     GroupByInstructions.Remove(groupByInstr);
                     ColumnsList.RemoveAll(r => r is MGridGroupByColumn<T> gc && gc.GridColumn == pColumn);
                 }
+
+                await ResetRowsAndCache();
             }
             else
             {
@@ -1454,12 +1458,15 @@ namespace MComponents.MGrid
                 {
                     SortInstructions.Remove(instr);
                 }
+
+                await StopEditing(false, false);
+
+                ClearDataCache();
+                await UpdateDataCacheIfDataAdapter();
+
+                SaveCurrentState();
+                StateHasChanged();
             }
-
-            ClearDataCache();
-
-            SaveCurrentState();
-            StateHasChanged();
         }
 
         protected async void OnEditValueChanged(MFormValueChangedArgs<T> pArgs)
