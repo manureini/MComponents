@@ -179,7 +179,7 @@ namespace MComponents.MGrid
         }
 
 
-        public static long GetDataCount(IQueryable pKeyObjects, IEnumerable<object> hiddenGroupByKeys)
+        public static long GetDataCount(IQueryable pKeyObjects, IDictionary<string, object>[] hiddenGroupByKeys)
         {
             long total = 0;
 
@@ -187,7 +187,7 @@ namespace MComponents.MGrid
             {
                 object keyObj = tuple.Item1;
 
-                if (hiddenGroupByKeys.Any(h => MGridGroupByAnonymousTypeHelper.AnonymousTypeEquals(h, keyObj)))
+                if (hiddenGroupByKeys.Any(h => MGridGroupByAnonymousTypeHelper.AnonymousTypeContainsAllOfDictionary(keyObj, h)))
                     continue;
 
                 int count = tuple.Item2;

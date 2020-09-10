@@ -427,10 +427,12 @@ namespace MComponents.MGrid
                                        renderRow = !lastValues[index].Equals(keyValue);
                                    }
 
-                                   if (index >= 1)
+                                   for (int i = index; i >= 1; i--)
                                    {
-                                       var keyValuesRow = MGridGroupByAnonymousTypeHelper.GetKeyValues(key, index);
+                                       var keyValuesRow = MGridGroupByAnonymousTypeHelper.GetKeyValues(key, i);
                                        renderRow = !HiddenGroupByKeys.Any(h => Extensions.DictionaryEqual(h.Item1, keyValuesRow));
+                                       if (renderRow == false)
+                                           break;
                                    }
 
                                    if (renderRow)
@@ -696,6 +698,16 @@ namespace MComponents.MGrid
             else
             {
                 pBuilder.AddMarkupContent(697, "<i class=\"fas fa-arrow-down\"></i>");
+            }
+
+            if (value == null)
+            {
+                var hiddenChild = HiddenGroupByKeys.FirstOrDefault(p => Extensions.DictionaryEqualIfContains(p.Item1, keyValuesRow));
+
+                if (hiddenChild.Item1 != null)
+                {
+                    value = hiddenChild.Item2;
+                }
             }
 
             pBuilder.CloseElement(); //td
@@ -1661,7 +1673,10 @@ namespace MComponents.MGrid
             if (Pager != null)
                 skipvalues = Pager.PageSize * (Pager.CurrentPage - 1);
 
-            var keys = MGridGroupByHelper.GetKeys(keyCounts, skipvalues, Pager?.PageSize, HiddenGroupByKeys.Select(h => h.Item1).ToArray());
+            var hiddenDict = HiddenGroupByKeys.Select(h => h.Item1).ToArray();
+
+
+            var keys = MGridGroupByHelper.GetKeys(keyCounts, skipvalues, Pager?.PageSize, hiddenDict);
 
             foreach (var entry in keys)
             {
@@ -1684,7 +1699,7 @@ namespace MComponents.MGrid
                 data.Add(part);
             }
 
-            DataCountCache = -1; // MGridGroupByHelper.GetDataCount(keyCounts, HiddenGroupByKeys.Select(h => h.Item1));
+            DataCountCache = MGridGroupByHelper.GetDataCount(keyCounts, hiddenDict);
 
             return data;
         }
