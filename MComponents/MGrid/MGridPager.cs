@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace MComponents.MGrid
@@ -6,7 +7,11 @@ namespace MComponents.MGrid
     public class MGridPager : ComponentBase
     {
         [Parameter]
-        public int CurrentPage { get; set; } = 1;
+        public int CurrentPage
+        {
+            get => mCurrentPage;
+            set => mCurrentPage = Math.Max(1, value);
+        }
 
         [Parameter]
         public int PageCount { get; set; }
@@ -19,6 +24,7 @@ namespace MComponents.MGrid
 
 
         private IMRegister mGrid;
+        private int mCurrentPage = 1;
 
         [CascadingParameter]
         public IMRegister Grid

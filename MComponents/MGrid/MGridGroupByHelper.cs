@@ -110,9 +110,6 @@ namespace MComponents.MGrid
             {
                 var dynamicKeyType = entry.Item1;
 
-                if (rowsMissing.HasValue && rowsMissing <= 0)
-                    break;
-
                 int countInGroupPart = entry.Item2;
                 currentIndex += countInGroupPart;
 
@@ -139,6 +136,9 @@ namespace MComponents.MGrid
 
                     continue;
                 }
+
+                if (rowsMissing.HasValue && rowsMissing <= 0)
+                    break;
 
                 if (currentIndex > skip)
                 {

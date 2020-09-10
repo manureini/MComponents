@@ -37,27 +37,30 @@ namespace MComponents
 
         private static Expression GetCompareExpression(FilterInstruction pInstruction, Expression property)
         {
-            if (pInstruction.Value != null && pInstruction.PropertyInfo.PropertyType == typeof(string))
+            if (!pInstruction.MatchExact)
             {
-                var value = Expression.Constant(((string)pInstruction.Value).Trim().ToLowerInvariant());
+                if (pInstruction.Value != null && pInstruction.PropertyInfo.PropertyType == typeof(string))
+                {
+                    var value = Expression.Constant(((string)pInstruction.Value).Trim().ToLowerInvariant());
 
-                var exprToLower = Expression.Call(property, StringToLower);
+                    var exprToLower = Expression.Call(property, StringToLower);
 
-                return Expression.Condition(
-                    Expression.Equal(property, Expression.Constant(null)),
-                    Expression.Constant(false),
-                    Expression.Call(exprToLower, StringContains, value)
-                    );
-            }
+                    return Expression.Condition(
+                        Expression.Equal(property, Expression.Constant(null)),
+                        Expression.Constant(false),
+                        Expression.Call(exprToLower, StringContains, value)
+                        );
+                }
 
-            if (pInstruction.Value != null && (pInstruction.PropertyInfo.PropertyType == typeof(DateTime) || pInstruction.PropertyInfo.PropertyType == typeof(DateTime?)))
-            {
-                DateTime value = (DateTime)pInstruction.Value;
+                if (pInstruction.Value != null && (pInstruction.PropertyInfo.PropertyType == typeof(DateTime) || pInstruction.PropertyInfo.PropertyType == typeof(DateTime?)))
+                {
+                    DateTime value = (DateTime)pInstruction.Value;
 
-                var day = Expression.Convert(Expression.Constant(value.Date), pInstruction.PropertyInfo.PropertyType);
-                var nextDay = Expression.Convert(Expression.Constant(value.Date.Add(TimeSpan.FromDays(1))), pInstruction.PropertyInfo.PropertyType);
+                    var day = Expression.Convert(Expression.Constant(value.Date), pInstruction.PropertyInfo.PropertyType);
+                    var nextDay = Expression.Convert(Expression.Constant(value.Date.Add(TimeSpan.FromDays(1))), pInstruction.PropertyInfo.PropertyType);
 
-                return Expression.AndAlso(Expression.GreaterThanOrEqual(property, day), Expression.LessThan(property, nextDay));
+                    return Expression.AndAlso(Expression.GreaterThanOrEqual(property, day), Expression.LessThan(property, nextDay));
+                }
             }
 
             return Expression.Equal(property, Expression.Constant(pInstruction.Value));
@@ -83,6 +86,8 @@ namespace MComponents
         public IMPropertyInfo PropertyInfo { get; set; }
 
         public object Value { get; set; }
+
+        public bool MatchExact { get; set; }
     }
 
 }

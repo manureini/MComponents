@@ -516,8 +516,13 @@ namespace MComponents.MGrid
 
                                builder3.AddMarkupContent(428, "\r\n");
 
+                               var count = DataCache?.Count;
+                               if (GroupedDataCache != null)
+                               {
+                                   count = GroupedDataCache.Sum(g => g.Count());
+                               }
 
-                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], DataCache?.Count, TotalDataCountCache)}</span>");
+                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], count, TotalDataCountCache)}</span>");
 
                                if (EnableExport)
                                {
@@ -1675,27 +1680,37 @@ namespace MComponents.MGrid
 
             var hiddenDict = HiddenGroupByKeys.Select(h => h.Item1).ToArray();
 
-
             var keys = MGridGroupByHelper.GetKeys(keyCounts, skipvalues, Pager?.PageSize, hiddenDict);
 
             foreach (var entry in keys)
             {
                 var keyObj = entry.DynamicKeyObj;
-                var skip = entry.Offset;
 
-                var propInfos = keyObj.GetType().GetProperties().Select(p => (p, PropertyInfos.First(pp => pp.Value.Name == p.Name))).ToList();
+                T[] groupedPart;
 
-                var filterInstr = propInfos.Select(p => new FilterInstruction()
+                if (entry.Take > 0)
                 {
-                    PropertyInfo = p.Item2.Value,
-                    Value = p.p.GetValue(keyObj)
-                }).ToArray();
+                    var skip = entry.Offset;
 
-                var groupedPart = mFilter.FilterBy(GetIQueryable(DataSource), filterInstr);
+                    var propInfos = keyObj.GetType().GetProperties().Select(p => (p, PropertyInfos.First(pp => pp.Value.Name == p.Name))).ToList();
 
-                groupedPart = groupedPart.Skip(skip).Take(entry.Take);
+                    var filterInstr = propInfos.Select(p => new FilterInstruction()
+                    {
+                        PropertyInfo = p.Item2.Value,
+                        Value = p.p.GetValue(keyObj),
+                        MatchExact = true
+                    }).ToArray();
 
-                var part = new MGridGrouping<T>(keyObj, groupedPart.ToArray());
+                    var filtered = mFilter.FilterBy(GetIQueryable(DataSource), filterInstr);
+
+                    groupedPart = filtered.Skip(skip).Take(entry.Take).ToArray();
+                }
+                else
+                {
+                    groupedPart = new T[0];
+                }
+
+                var part = new MGridGrouping<T>(keyObj, groupedPart);
                 data.Add(part);
             }
 
