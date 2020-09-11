@@ -7,12 +7,8 @@ namespace MComponents.MGrid
     public class MGridPager : ComponentBase
     {
         [Parameter]
-        public int CurrentPage
-        {
-            get => mCurrentPage;
-            set => mCurrentPage = Math.Max(1, value);
-        }
-
+        public int CurrentPage { get; set; } = 1;
+            
         [Parameter]
         public int PageCount { get; set; }
 

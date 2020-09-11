@@ -577,7 +577,7 @@ namespace MComponents.MGrid
 
             if (Pager != null && GroupByInstructions.Count <= 0)
             {
-                data = data.Skip(Pager.PageSize * (Pager.CurrentPage - 1)).Take(Pager.PageSize);
+                data = data.Skip(Pager.PageSize * (Math.Max(0, Pager.CurrentPage - 1))).Take(Pager.PageSize);
             }
 
             return data;
@@ -1448,7 +1448,7 @@ namespace MComponents.MGrid
 
             object comparer = pColumn.GetComparer();
 
-            if (pArgs.CtrlKey)
+            if (pArgs.CtrlKey && pArgs.ShiftKey)
             {
                 var groupByInstr = GroupByInstructions.FirstOrDefault(s => s.GridColumn == pColumn);
 
@@ -1676,7 +1676,7 @@ namespace MComponents.MGrid
             var skipvalues = 0;
 
             if (Pager != null)
-                skipvalues = Pager.PageSize * (Pager.CurrentPage - 1);
+                skipvalues = Pager.PageSize * (Math.Max(0, Pager.CurrentPage - 1));
 
             var hiddenDict = HiddenGroupByKeys.Select(h => h.Item1).ToArray();
 
