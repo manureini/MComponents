@@ -224,6 +224,10 @@ namespace MComponents.MGrid
                                 {
                                     InvokeAsync(() => _ = Grid.StartDeleteRow(pModel, null));
                                 }
+                                else
+                                {
+                                    Grid.InvokeStateHasChanged();
+                                }
                             });
                         }
                     }
