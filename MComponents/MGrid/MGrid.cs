@@ -1293,7 +1293,7 @@ namespace MComponents.MGrid
             ClearDataCache();
             await UpdateDataCacheIfDataAdapter();
 
-            StateHasChanged();
+            InvokeStateHasChanged();
         }
 
         private T GetDataFromId(Guid? pId)

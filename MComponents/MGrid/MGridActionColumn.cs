@@ -201,7 +201,7 @@ namespace MComponents.MGrid
                          mDeleteResetTimer.Stop();
                          mDeleteResetTimer.Start();
 
-                         Grid.StartDeleteRow(pModel, a);
+                         _ = Grid.StartDeleteRow(pModel, a);
                      }));
                     builder.AddEventStopPropagationClicksAttribute(22);
 
@@ -216,10 +216,14 @@ namespace MComponents.MGrid
                             Task.Delay(150).ContinueWith(async t =>
                             {
                                 bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", L["Are you sure?"].ToString());
-                                if (confirmed)
-                                    Grid.StartDeleteRow(pModel, null);
 
-                                MDeleteResetTimer_Elapsed(null, null);
+                                RowDeleteEnabled = null;
+                                Grid.Formatter.ClearRowMetadata();
+
+                                if (confirmed)
+                                {
+                                    InvokeAsync(() => _ = Grid.StartDeleteRow(pModel, null));
+                                }
                             });
                         }
                     }
