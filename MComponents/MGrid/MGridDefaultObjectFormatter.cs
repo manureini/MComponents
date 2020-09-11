@@ -2,16 +2,25 @@
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Localization;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MComponents.MGrid
 {
     public class MGridDefaultObjectFormatter<T> : IMGridObjectFormatter<T>
     {
+        public const string ROW_DELETE_METADATA = "delete-row";
+
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
+
+        protected Dictionary<T, object> mRowMetadata = new Dictionary<T, object>();
 
         public virtual void AppendToTableRow(RenderTreeBuilder pBuilder, ref string pCssClass, T pRow, bool pSelected)
         {
+            if (mRowMetadata.ContainsKey(pRow) && mRowMetadata[pRow] == ROW_DELETE_METADATA)
+            {
+                pCssClass += " m-grid-row--delete";
+            }
         }
 
         public virtual void AppendToTableRowData(RenderTreeBuilder pBuilder, IMGridColumn pColumn, T pRow)
@@ -60,6 +69,22 @@ namespace MComponents.MGrid
         protected bool HasAttribute(IMGridPropertyColumn pColumn, IMPropertyInfo pPropertyInfo, Type pType)
         {
             return pPropertyInfo.GetCustomAttribute(pType) != null || (pColumn.Attributes != null && pColumn.Attributes.Any(a => a.GetType() == pType));
+        }
+
+        public void AddRowMetadata(T pRow, object pValue)
+        {
+            mRowMetadata.Remove(pRow); // right now we assume, that a user does not use this feature. Are there more use cases then delete row?
+            mRowMetadata.Add(pRow, pValue);
+        }
+
+        public void RemoveRowMetadata(T pRow)
+        {
+            mRowMetadata.Remove(pRow);
+        }
+
+        public void ClearRowMetadata()
+        {
+            mRowMetadata.Clear();
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace MComponents.MGrid
@@ -56,6 +57,7 @@ namespace MComponents.MGrid
         public bool VisibleInExport => false;
 
         protected object RowDeleteEnabled;
+        protected DateTime RowDeleteClicked;
 
         protected Timer mDeleteResetTimer;
 
@@ -78,8 +80,8 @@ namespace MComponents.MGrid
             mDeleteResetTimer.Stop();
             RowDeleteEnabled = null;
 
+            Grid.Formatter.ClearRowMetadata();
             await InvokeAsync(StateHasChanged);
-
             Grid.InvokeStateHasChanged();
         }
 
@@ -169,21 +171,32 @@ namespace MComponents.MGrid
                      {
                          if (Settings.UseDeleteConfirmationWithAlert)
                          {
-                             bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", L["Are you sure?"].ToString());
-                             if (confirmed)
-                                 Grid.StartDeleteRow(pModel, a);
+                             RowDeleteEnabled = pModel;
+                             Grid.Formatter.ClearRowMetadata();
+                             Grid.Formatter.AddRowMetadata(pModel, MGridDefaultObjectFormatter<T>.ROW_DELETE_METADATA);
+                             StateHasChanged();
+                             Grid.InvokeStateHasChanged();
                              return;
                          }
 
                          if (RowDeleteEnabled == null || !RowDeleteEnabled.Equals(pModel))
                          {
                              RowDeleteEnabled = pModel;
+                             Grid.Formatter.ClearRowMetadata();
+                             Grid.Formatter.AddRowMetadata(pModel, MGridDefaultObjectFormatter<T>.ROW_DELETE_METADATA);
+
+                             RowDeleteEnabled = pModel;
                              mDeleteResetTimer.Stop();
+
+                             RowDeleteClicked = DateTime.UtcNow;
                              mDeleteResetTimer.Start();
                              StateHasChanged();
                              Grid.InvokeStateHasChanged();
                              return;
                          }
+
+                         if (DateTime.UtcNow.Subtract(RowDeleteClicked).TotalMilliseconds < 500)
+                             return;
 
                          mDeleteResetTimer.Stop();
                          mDeleteResetTimer.Start();
@@ -194,13 +207,25 @@ namespace MComponents.MGrid
 
                     builder.OpenElement(1, "i");
 
-                    if (RowDeleteEnabled == null || !RowDeleteEnabled.Equals(pModel))
+                    if (RowDeleteEnabled != null && RowDeleteEnabled.Equals(pModel))
                     {
-                        builder.AddAttribute(3, "class", "fas fa-trash-alt m-grid-action-icon m-grid-action-icon--disabled");
+                        builder.AddAttribute(3, "class", "fas fa-trash-alt m-grid-action-icon");
+
+                        if (Settings.UseDeleteConfirmationWithAlert)
+                        {
+                            Task.Delay(150).ContinueWith(async t =>
+                            {
+                                bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", L["Are you sure?"].ToString());
+                                if (confirmed)
+                                    Grid.StartDeleteRow(pModel, null);
+
+                                MDeleteResetTimer_Elapsed(null, null);
+                            });
+                        }
                     }
                     else
                     {
-                        builder.AddAttribute(3, "class", "fas fa-trash-alt text-danger m-grid-action-icon");
+                        builder.AddAttribute(3, "class", "fas fa-trash-alt m-grid-action-icon m-grid-action-icon--disabled");
                     }
 
                     builder.CloseElement(); //i

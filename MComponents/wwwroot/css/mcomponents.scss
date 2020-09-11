@@ -228,6 +228,10 @@ $borderRadius: 0.25rem;
         float: right;
         line-height: inherit;
     }
+
+    .m-grid-row--delete {
+        background-color: rgba(204, 25, 25, 0.42) !important;
+    }
 }
 
 

@@ -34,6 +34,9 @@ namespace MComponents.MGrid
         bool EnableFilterRow { get; }
 
         bool IsEditingRow { get; }
+
         bool IsFilterRowVisible { get; }
+
+        IMGridObjectFormatter<T> Formatter { get; }
     }
 }
