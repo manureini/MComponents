@@ -14,6 +14,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MComponents.MGrid
@@ -130,7 +131,6 @@ namespace MComponents.MGrid
         //  protected GroupByBuilder<T> mGrouper = new GroupByBuilder<T>();
 
         protected bool mHasActionColumn;
-
 
         public bool IsEditingRow => EditRow != null;
 
@@ -761,12 +761,12 @@ namespace MComponents.MGrid
 
             pBuilder.AddEventStopPropagationAttribute(527, "onclick", true);
 
-
+            /*
             pBuilder.AddAttribute(530, "ondblclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (a) =>
             {
                 await StartEditRow(pEntry, a);
             }));
-
+            */
 
             if (rowEdit)
             {
@@ -1111,15 +1111,14 @@ namespace MComponents.MGrid
         public async Task StartEditRow(T pValue, MouseEventArgs pMouseEventArgs)
         {
             Guid id = GetId(pValue);
-
-            if (id == EditRow)
-                return;
-
             await StartEdit(id, true, pMouseEventArgs);
         }
 
         private async Task StartEdit(Guid? id, bool pUserInteracted, MouseEventArgs pMouseEventArgs)
         {
+            if (id == EditRow)
+                return;
+
             await StopEditing(true, pUserInteracted);
 
             if (!EnableEditing)
@@ -1148,6 +1147,7 @@ namespace MComponents.MGrid
 
             EditRow = toSelect;
             Selected = EditRow;
+
             StateHasChanged();
         }
 
