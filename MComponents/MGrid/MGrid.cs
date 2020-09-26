@@ -395,7 +395,7 @@ namespace MComponents.MGrid
                                }
                                else
                                {
-                                   DataCache = GetIQueryable(DataSource).ToArray();
+                                   DataCache = GetIQueryable(DataSource, true).ToArray();
                                }
                            }
                            else if (DataAdapter == null)
@@ -470,9 +470,11 @@ namespace MComponents.MGrid
 
                        if (Pager != null)
                        {
-                           int pagecount = (int)Math.Ceiling(DataCountCache / (double)Pager.PageSize);
+                           long dataCount = DataCountCache;
 
-                           if (Pager.CurrentPage > pagecount)
+                           long pagecount = (long)Math.Ceiling(dataCount / (double)Pager.PageSize);
+
+                           if (Pager.CurrentPage > pagecount && dataCount >= 0)
                            {
                                OnPagerPageChanged(pagecount);
                            }
@@ -480,7 +482,7 @@ namespace MComponents.MGrid
                            builder2.OpenComponent<MPager>(11);
                            builder2.AddAttribute(398, "CurrentPage", Pager.CurrentPage);
                            builder2.AddAttribute(399, "PageCount", pagecount);
-                           builder2.AddAttribute(400, "OnPageChanged", EventCallback.Factory.Create<int>(this, OnPagerPageChanged));
+                           builder2.AddAttribute(400, "OnPageChanged", EventCallback.Factory.Create<long>(this, OnPagerPageChanged));
 
                            builder2.AddAttribute(402, "ChildContent", (RenderFragment)((builder3) =>
                            {
@@ -549,21 +551,23 @@ namespace MComponents.MGrid
             builder.CloseRegion();
         }
 
-        private IQueryable<T> GetIQueryable(IEnumerable<T> pSource)
+        private IQueryable<T> GetIQueryable(IEnumerable<T> pSource, bool pUpdateDataCount)
         {
             var data = pSource as IQueryable<T>;
 
             if (data == null)
                 data = pSource.AsQueryable();
 
-            TotalDataCountCache = data.LongCount();
+            if (pUpdateDataCount)
+                TotalDataCountCache = data.LongCount();
 
             if (FilterInstructions.Count > 0)
             {
                 data = mFilter.FilterBy(data, FilterInstructions);
             }
 
-            DataCountCache = data.LongCount();
+            if (pUpdateDataCount)
+                DataCountCache = data.LongCount();
 
             if (GroupByInstructions.Count > 0)
             {
@@ -577,7 +581,7 @@ namespace MComponents.MGrid
 
             if (Pager != null && GroupByInstructions.Count <= 0)
             {
-                data = data.Skip(Pager.PageSize * (Math.Max(0, Pager.CurrentPage - 1))).Take(Pager.PageSize);
+                data = data.Skip((int)(Pager.PageSize * (Math.Max(0, Pager.CurrentPage - 1)))).Take(Pager.PageSize);
             }
 
             return data;
@@ -1401,7 +1405,7 @@ namespace MComponents.MGrid
             //////////////////////////////////////////////////////////////////////////////////////////////////
         }
 
-        protected async Task OnPagerPageChanged(int pPage)
+        protected async Task OnPagerPageChanged(long pPage)
         {
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             Pager.CurrentPage = pPage;
@@ -1596,17 +1600,17 @@ namespace MComponents.MGrid
         {
             if (DataCache == null && DataAdapter != null)
             {
-                var queryable = GetIQueryable(Enumerable.Empty<T>());
+                var queryable = GetIQueryable(Enumerable.Empty<T>(), false);
 
-                await Task.Run(() => DataAdapter.GetData(queryable)).ContinueWith(async a =>
+                await Task.Run(async () => await DataAdapter.GetData(queryable)).ContinueWith(async a =>
                 {
                     DataCache = a.Result.ToArray();
 
-                    await Task.Run(() => DataAdapter.GetDataCount(queryable)).ContinueWith(async a =>
+                    await Task.Run(async () => await DataAdapter.GetDataCount(queryable)).ContinueWith(async a =>
                     {
                         DataCountCache = a.Result;
 
-                        await Task.Run(() => DataAdapter.GetTotalDataCount()).ContinueWith(a =>
+                        await Task.Run(async () => await DataAdapter.GetTotalDataCount()).ContinueWith(a =>
                         {
                             TotalDataCountCache = a.Result;
                             InvokeAsync(() => StateHasChanged());
@@ -1671,9 +1675,9 @@ namespace MComponents.MGrid
 
             //TODO we could cache these values in the future and check if results matches the expected filter key
             //if the results does not match the calculated skip and take indexes, the collection changed in the database
-            var keyCounts = MGridGroupByHelper.GetGroupKeyCounts<T>(GetIQueryable(DataSource), GroupByInstructions.Select(p => p.PropertyInfo));
+            var keyCounts = MGridGroupByHelper.GetGroupKeyCounts<T>(GetIQueryable(DataSource, true), GroupByInstructions.Select(p => p.PropertyInfo));
 
-            var skipvalues = 0;
+            long skipvalues = 0;
 
             if (Pager != null)
                 skipvalues = Pager.PageSize * (Math.Max(0, Pager.CurrentPage - 1));
@@ -1701,9 +1705,9 @@ namespace MComponents.MGrid
                         MatchExact = true
                     }).ToArray();
 
-                    var filtered = mFilter.FilterBy(GetIQueryable(DataSource), filterInstr);
+                    var filtered = mFilter.FilterBy(GetIQueryable(DataSource, false), filterInstr);
 
-                    groupedPart = filtered.Skip(skip).Take(entry.Take).ToArray();
+                    groupedPart = filtered.Skip((int)skip).Take((int)entry.Take).ToArray();
                 }
                 else
                 {

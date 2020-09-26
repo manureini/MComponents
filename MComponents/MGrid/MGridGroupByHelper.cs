@@ -97,20 +97,20 @@ namespace MComponents.MGrid
             return (IQueryable)groupSelectedQueryable;
         }
 
-        public static IEnumerable<MGridGroupByHelperKeyInfo> GetKeys(IQueryable pKeyCounts, int pSkip, int? pTake, IDictionary<string, object>[] hiddenGroupByKeys)
+        public static IEnumerable<MGridGroupByHelperKeyInfo> GetKeys(IQueryable pKeyCounts, long pSkip, int? pTake, IDictionary<string, object>[] hiddenGroupByKeys)
         {
-            int currentIndex = 0;
+            long currentIndex = 0;
 
             List<MGridGroupByHelperKeyInfo> keys = new List<MGridGroupByHelperKeyInfo>();
 
-            int? rowsMissing = pTake;
+            long? rowsMissing = pTake;
             var skip = pSkip;
 
             foreach (dynamic entry in pKeyCounts)
             {
                 var dynamicKeyType = entry.Item1;
 
-                int countInGroupPart = entry.Item2;
+                long countInGroupPart = entry.Item2;
                 currentIndex += countInGroupPart;
 
                 //   var properties = (IEnumerable<PropertyInfo>)dynamicKeyType.GetType().GetProperties();
@@ -145,9 +145,9 @@ namespace MComponents.MGrid
                     if (rowsMissing.HasValue)
                     {
                         var offset = Math.Max(0, skip - (currentIndex - countInGroupPart));
-                        int entryCount = countInGroupPart - offset;
+                        long entryCount = (countInGroupPart - offset);
 
-                        var take = rowsMissing.Value;
+                        long take = rowsMissing.Value;
 
                         if (take > entryCount)
                         {

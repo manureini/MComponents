@@ -22,9 +22,9 @@
             }
 
 
-            for (int i = LeftValue; i < RightValue; i++)
+            for (var i = LeftValue; i < RightValue; i++)
             {
-                int index = i;
+                var index = i;
                 <li class="@GetCssClass(i)">
                     <a @onclick="@(() => JumpTo(index))">@i</a>
                 </li>
@@ -45,7 +45,7 @@
         }
         else
         {
-            for (int i = 1; i < PageCount + 1; i++)
+            for (var i = 1; i < PageCount + 1; i++)
             {
                 int index = i;
                 <li class="@GetCssClass(i)">
@@ -70,23 +70,23 @@
 @code {
 
     [Parameter]
-    public int PageCount { get; set; }
+    public long PageCount { get; set; }
 
     [Parameter]
     public int DisplayCount { get; set; } = 10;
 
     [Parameter]
-    public int CurrentPage { get; set; }
+    public long CurrentPage { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
-    public EventCallback<int> OnPageChanged { get; set; }
+    public EventCallback<long> OnPageChanged { get; set; }
 
 
-    int LeftValue = 0;
-    int RightValue = 0;
+    long LeftValue = 0;
+    long RightValue = 0;
 
     bool mCollapse = false;
 
@@ -125,14 +125,14 @@
 
         if (LeftValue < 1)
         {
-            int diff = 1 - LeftValue;
+            var diff = 1 - LeftValue;
             LeftValue += diff;
             RightValue += diff;
         }
 
         if (RightValue > PageCount)
         {
-            int diff = RightValue - PageCount - 1;
+            var diff = RightValue - PageCount - 1;
             LeftValue -= diff;
             RightValue -= diff;
             LeftValue = Math.Max(1, LeftValue);
@@ -175,14 +175,14 @@
         _ = OnPageChanged.InvokeAsync(CurrentPage);
     }
 
-    public void JumpTo(int pIndex)
+    public void JumpTo(long pIndex)
     {
         CurrentPage = pIndex;
         Update();
         _ = OnPageChanged.InvokeAsync(CurrentPage);
     }
 
-    public string GetCssClass(int pIndex)
+    public string GetCssClass(long pIndex)
     {
         if (pIndex == CurrentPage)
             return "m-pagination-entry m-pagination-entry--active";

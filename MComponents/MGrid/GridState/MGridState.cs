@@ -6,7 +6,7 @@ namespace MComponents.MGrid
 {
     public class MGridState
     {
-        public int? Page { get; set; }
+        public long? Page { get; set; }
 
         public int? PageSize { get; set; }
 

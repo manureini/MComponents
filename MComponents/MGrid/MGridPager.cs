@@ -7,10 +7,10 @@ namespace MComponents.MGrid
     public class MGridPager : ComponentBase
     {
         [Parameter]
-        public int CurrentPage { get; set; } = 1;
+        public long CurrentPage { get; set; } = 1;
             
         [Parameter]
-        public int PageCount { get; set; }
+        public long PageCount { get; set; }
 
         [Parameter]
         public int PageSize { get; set; } = 10;
@@ -20,7 +20,7 @@ namespace MComponents.MGrid
 
 
         private IMRegister mGrid;
-        private int mCurrentPage = 1;
+        private long mCurrentPage = 1;
 
         [CascadingParameter]
         public IMRegister Grid

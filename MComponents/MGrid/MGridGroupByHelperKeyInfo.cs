@@ -8,8 +8,8 @@ namespace MComponents.MGrid
     {
         public object DynamicKeyObj { get; set; }
 
-        public int Offset { get; set; }
+        public long Offset { get; set; }
 
-        public int Take { get; set; }
+        public long Take { get; set; }
     }
 }

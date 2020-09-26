@@ -1,0 +1,60 @@
+﻿@page "/fetchdata2"
+
+@using MComponents.ExampleApp.Data
+@inject WeatherForecastService ForecastService
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+
+<MGrid DataAdapter="mGridDataAdapter"
+       EnableAdding="true"
+       EnableDeleting="true"
+       EnableEditing="true"
+       EnableExport="true"
+       EnableFilterRow="true"
+       EnableUserSorting="true"
+       HtmlTableClass="m-grid m-grid-striped m-grid-bordered m-grid-hover m-grid-sticky">
+    <MGridColumns>
+        <MGridColumn Property="@nameof(WeatherForecast.Date)" StringFormat="{0:dd.MM.yyyy}" />
+        <MGridColumn Property="@nameof(WeatherForecast.TemperatureC)" />
+        <MGridColumn Property="@nameof(WeatherForecast.TemperatureF)" />
+        <MGridColumn Property="@nameof(WeatherForecast.ForcastType)" />
+        <MGridColumn Property="@nameof(WeatherForecast.IsGoodWeather)" />
+        <MGridColumn Property="@nameof(WeatherForecast.Summary)" />
+
+        <MGridComplexPropertyColumn T="WeatherForecast" Identifier="WeatherStation" TProperty="WeatherStation" Property=@nameof(WeatherForecast.WeatherStation)>
+            <FormTemplate Context="templContext">
+                <MSelect T="WeatherStation"
+                         id=@templContext.InputId
+                         class="form-control"
+                         Property="@nameof(WeatherStation.Name)"
+                         Options="ForecastService.AllWeatherStations"
+                         Value="templContext.Value"
+                         ValueChanged="templContext.ValueChanged"
+                         ValueExpression="templContext.ValueExpression" />
+            </FormTemplate>
+            <CellTemplate Context="templContext">
+                @templContext?.WeatherStation?.Name
+            </CellTemplate>
+        </MGridComplexPropertyColumn>
+
+        <MGridActionColumn T="WeatherForecast" />
+    </MGridColumns>
+
+    <MGridPager />
+
+</MGrid>
+
+
+@code {
+
+
+    protected GridDataAdapter mGridDataAdapter;
+
+    protected override void OnInitialized()
+    {
+        mGridDataAdapter = new GridDataAdapter(ForecastService);
+    }
+}
