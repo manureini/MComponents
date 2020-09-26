@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MComponents
 {
-    internal static class FileUtil
+    public static class FileUtil
     {
         public static async Task SaveAs(IJSRuntime pJsRuntime, string filename, byte[] data)
         {
