@@ -909,6 +909,17 @@ $borderRadius: 0.25rem;
     flex-wrap: wrap;
 }
 
+.m-combined-input-container {
+    padding: 0.65rem;
+}
+
+.m-combined-input {
+    height: initial;
+    padding: 0;
+    display: inline-flex;
+    border: 0;
+    outline: 0;
+}
 
 .m-scrollbar::-webkit-scrollbar {
     width: 8px;

@@ -350,12 +350,29 @@ namespace MComponents.MGrid
 
                            builder2.OpenElement(309, "th");
                            builder2.AddAttribute(310, "data-identifier", column.Identifier);
-                           builder2.AddMultipleAttributes(311, column.AdditionalAttributes);
+
+                           if (column.AdditionalAttributes != null)
+                               builder2.AddMultipleAttributes(312, column.AdditionalAttributes.Where(k => k.Key != "style"));
 
                            if (FixedColumns)
                            {
                                var width = GetColumnWidth(i);
-                               builder2.AddAttribute(315, "style", $"width: {width.ToString(CultureInfo.InvariantCulture)}px");
+
+                               string style = $"width: {width.ToString(CultureInfo.InvariantCulture)}px;";
+
+                               if (column.AdditionalAttributes != null && column.AdditionalAttributes.ContainsKey("style"))
+                               {
+                                   style += column.AdditionalAttributes["style"].ToString();
+                               }
+
+                               builder2.AddAttribute(313, "style", style); //same sequence than below !!
+                           }
+                           else
+                           {
+                               if (column.AdditionalAttributes != null && column.AdditionalAttributes.ContainsKey("style"))
+                               {
+                                   builder2.AddAttribute(313, "style", column.AdditionalAttributes["style"].ToString());
+                               }
                            }
 
                            builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async a => OnColumnHeaderClick(column, a)));
