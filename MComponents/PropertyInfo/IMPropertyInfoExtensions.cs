@@ -53,7 +53,7 @@ namespace MComponents
                     expGetConvert = Expression.Convert(exprGet, pPropertyInfo.PropertyType);
                 }
 
-                var ifnull = Expression.Condition(exprContains, expGetConvert, Expression.Constant(null, pPropertyInfo.PropertyType));
+                var ifnull = Expression.Condition(exprContains, expGetConvert, Expression.Default(pPropertyInfo.PropertyType));
 
                 return ifnull;
             }
