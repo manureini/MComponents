@@ -12,22 +12,20 @@
     <MSelect T="string" @bind-Value="mValue" Options="mValues" />
 
     <br />
-    <br />
-
     <MSelect T="string" @bind-Value="mValue" Options="mValues" EnableSearch="true" />
 
 
     <br />
-    <br />
     <MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
 
     <br />
-
     <MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
 
+    <br />
+    <MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime?" @bind-Value="mDateTime0" />
 
-    <MComponents.InputElements.InputDateTime T="DateTime?" @bind-Value="mDateTime0" />
-    <MComponents.InputElements.InputDateTime T="DateTime" @bind-Value="mDateTime1" />
+    <br />
+    <MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime" @bind-Value="mDateTime1" />
 
 </CascadingValue>
 
