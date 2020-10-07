@@ -25,6 +25,10 @@
 
     <MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
 
+
+    <MComponents.InputElements.InputDateTime T="DateTime?" @bind-Value="mDateTime0" />
+    <MComponents.InputElements.InputDateTime T="DateTime" @bind-Value="mDateTime1" />
+
 </CascadingValue>
 
 
@@ -32,6 +36,9 @@
 <br />
 <br />
 
+@mDateTime0
+<br />
+@mDateTime1
 
 <MComponents.MPaint.MPaint />
 
@@ -42,6 +49,8 @@
     protected string mValue;
     protected string[] mValues;
     protected ICollection<string> mSelectedValues;
+    protected DateTime? mDateTime0;
+    protected DateTime mDateTime1;
 
     protected EditContext mEditContext = new EditContext(string.Empty);
 
