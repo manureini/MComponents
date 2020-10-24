@@ -494,8 +494,7 @@ $borderRadius: 0.25rem;
         min-width: min-content;
 
         .m-select-options-list {
-            min-height: 230px;
-            max-height: 0.5vh;
+            max-height: 230px;
             height: auto;
             overflow-y: auto;
             list-style: none;
