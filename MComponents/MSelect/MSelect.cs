@@ -150,6 +150,11 @@ namespace MComponents.MSelect
             }
 
             pBuilder.OpenElement(0, "span");
+
+            if (!IsDisabled)
+                pBuilder.AddAttribute(2, "tabindex", "0");
+
+            pBuilder.AddAttribute(9, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusIn));
             pBuilder.AddAttribute(9, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
             pBuilder.AddAttribute(1, "class", "m-select m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
 
@@ -316,6 +321,16 @@ namespace MComponents.MSelect
         protected void OnComboboxClicked(MouseEventArgs args)
         {
             ToggleOptions();
+        }
+
+        protected void OnFocusIn(FocusEventArgs args)
+        {
+            if (!mOptionsVisible)
+                Task.Delay(150).ContinueWith((a) =>
+                {
+                    if (!mOptionsVisible)
+                        InvokeAsync(() => ToggleOptions());
+                });
         }
 
         protected void OnOptionSelect(int pIndex)
