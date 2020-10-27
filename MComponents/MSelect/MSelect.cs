@@ -62,8 +62,10 @@ namespace MComponents.MSelect
         public Expression<Func<ICollection<T>>> ValuesExpression { get; set; }
 
         protected ElementReference OptionsDiv { get; set; }
+        protected ElementReference SelectSpan { get; set; }
 
-        protected bool mOptionsVisible = false;
+        protected bool mOptionsVisible;
+        protected bool mBlockNextFocus;
 
         protected T[] DisplayValues = new T[0];
 
@@ -152,15 +154,22 @@ namespace MComponents.MSelect
             pBuilder.OpenElement(0, "span");
 
             if (!IsDisabled)
-                pBuilder.AddAttribute(2, "tabindex", "0");
+            {
+                pBuilder.AddAttribute(157, "tabindex", "0");
+                pBuilder.AddAttribute(158, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
+                pBuilder.AddAttribute(159, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusIn));
+                pBuilder.AddAttribute(161, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
+            }
 
-            pBuilder.AddAttribute(9, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusIn));
-            pBuilder.AddAttribute(9, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
-            pBuilder.AddAttribute(1, "class", "m-select m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
+            pBuilder.AddAttribute(12, "class", "m-select m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
 
             if (AdditionalAttributes != null)
                 pBuilder.AddMultipleAttributes(4, AdditionalAttributes.Where(a => a.Key.ToLower() != "class"));
 
+            pBuilder.AddElementReferenceCapture(163, (__value) =>
+            {
+                SelectSpan = __value;
+            });
 
             pBuilder.OpenElement(19, "span");
             pBuilder.AddAttribute(20, "class", "m-select-content");
@@ -180,6 +189,11 @@ namespace MComponents.MSelect
             {
                 pBuilder.OpenElement(32, "div");
                 pBuilder.AddAttribute(33, "tabindex", "0");
+
+                pBuilder.AddAttribute(11, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
+                pBuilder.AddEventStopPropagationAttribute(12, "onkeydown", true);
+                pBuilder.AddEventPreventDefaultAttribute(495, "onkeydown", true);
+                pBuilder.AddEventPreventDefaultAttribute(496, "onkeyup", true);
 
                 //This causes sometimes an error in console
                 //see https://github.com/dotnet/aspnetcore/issues/21241
@@ -201,7 +215,15 @@ namespace MComponents.MSelect
 
                     pBuilder.OpenElement(46, "input");
                     pBuilder.AddAttribute(47, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(this, OnSearchInputChanged));
-                    pBuilder.AddAttribute(48, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, OnSearchInputKeyDown));
+                    pBuilder.AddAttribute(48, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
+
+                    pBuilder.AddEventStopPropagationAttribute(483, "onkeydown", true);
+                    pBuilder.AddEventStopPropagationAttribute(484, "onkeyup", true);
+                    pBuilder.AddEventStopPropagationAttribute(485, "oninput", true);
+
+                    // pBuilder.AddEventPreventDefaultAttribute(485, "onkeydown", true);
+                    // pBuilder.AddEventPreventDefaultAttribute(486, "onkeyup", true);
+
                     pBuilder.AddAttribute(49, "value", "");
                     pBuilder.AddAttribute(50, "class", "m-form-control m-select-search-input");
                     pBuilder.AddAttribute(51, "type", "search");
@@ -306,6 +328,8 @@ namespace MComponents.MSelect
                 pBuilder.CloseElement();
                 pBuilder.CloseElement();
                 pBuilder.CloseElement();
+
+                JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
             }
         }
 
@@ -320,16 +344,22 @@ namespace MComponents.MSelect
 
         protected void OnComboboxClicked(MouseEventArgs args)
         {
-            ToggleOptions();
+            ToggleOptions(true);
         }
 
         protected void OnFocusIn(FocusEventArgs args)
         {
+            if (mBlockNextFocus)
+            {
+                mBlockNextFocus = false;
+                return;
+            }
+
             if (!mOptionsVisible)
                 Task.Delay(150).ContinueWith((a) =>
                 {
                     if (!mOptionsVisible)
-                        InvokeAsync(() => ToggleOptions());
+                        InvokeAsync(() => ToggleOptions(false));
                 });
         }
 
@@ -338,32 +368,56 @@ namespace MComponents.MSelect
             UpdateSelection(DisplayValues.ElementAt(pIndex));
 
             if (!MultipleSelectMode)
-                ToggleOptions();
+                ToggleOptions(true);
         }
 
         protected void OnFocusLost(FocusEventArgs pArgs)
         {
             Task.Delay(150).ContinueWith((a) =>
             {
-                if (mOptionsVisible)
-                    InvokeAsync(() => ToggleOptions());
+                HideOptions(false);
             });
         }
 
-        protected void ToggleOptions()
+        protected void ToggleOptions(bool pUserInteracted)
+        {
+            if (mOptionsVisible)
+            {
+                HideOptions(pUserInteracted);
+            }
+            else
+            {
+                ShowOptions();
+            }
+        }
+
+        public void ShowOptions()
         {
             if (IsDisabled)
                 return;
 
-            if (!mOptionsVisible)
-            {
-                if (Options != null)
-                    DisplayValues = Options.ToArray();
-                SelectedValue = CurrentValue;
-            }
+            if (Options != null)
+                DisplayValues = Options.ToArray();
+            SelectedValue = CurrentValue;
 
-            mOptionsVisible = !mOptionsVisible;
-            StateHasChanged();
+            mOptionsVisible = true;
+            InvokeAsync(() => StateHasChanged());
+        }
+
+        public void HideOptions(bool pUserInteracted)
+        {
+            mOptionsVisible = false;
+            InvokeAsync(() => StateHasChanged());
+
+            if (pUserInteracted)
+                Task.Delay(50).ContinueWith((a) =>
+                {
+                    if (SelectSpan.Id != null)
+                    {
+                        mBlockNextFocus = true;
+                        _ = JSRuntime.InvokeVoidAsync("mcomponents.focusElement", SelectSpan);
+                    }
+                });
         }
 
         protected void OnSearchInputChanged(ChangeEventArgs args)
@@ -383,25 +437,35 @@ namespace MComponents.MSelect
             StateHasChanged();
         }
 
-        protected void OnSearchInputKeyDown(KeyboardEventArgs args)
+        protected void InputKeyDown(KeyboardEventArgs args)
         {
+            if (!mOptionsVisible)
+            {
+                if (args.Key == "Enter" || args.Key == " ")
+                    ShowOptions();
+
+                return;
+            }
+
             if (args.Key == "Escape" || (args.Key == "Backspace" && InputValue.Length == 0))
             {
-                ToggleOptions();
+                HideOptions(true);
                 return;
             }
 
             if (args.Key == "Enter")
             {
-                if (SelectedValue == null || DisplayValues.Count() == 1)
+                if (SelectedValue == null || DisplayValues.Count() == 1 || !DisplayValues.Contains(SelectedValue))
                 {
                     UpdateSelection(DisplayValues.FirstOrDefault());
-                    ToggleOptions();
+                    HideOptions(true);
                     return;
                 }
 
-                UpdateSelection(SelectedValue);
-                ToggleOptions();
+                if (!MultipleSelectMode)
+                    UpdateSelection(SelectedValue);
+
+                HideOptions(true);
                 return;
             }
 
@@ -410,17 +474,14 @@ namespace MComponents.MSelect
                 int index = Array.IndexOf(DisplayValues, SelectedValue);
 
                 if (index < 0)
-                {
                     index = -1;
-                }
 
                 index++;
 
                 if (index >= DisplayValues.Count())
                     return;
 
-                SelectedValue = DisplayValues.ElementAt(index);
-                StateHasChanged();
+                SelectValue(DisplayValues.ElementAt(index));
                 return;
             }
 
@@ -429,17 +490,68 @@ namespace MComponents.MSelect
                 int index = Array.IndexOf(DisplayValues, SelectedValue);
 
                 if (index < 0)
-                {
                     index = 1;
-                }
 
                 index--;
 
                 if (index < 0)
                     return;
 
-                SelectedValue = DisplayValues.ElementAt(index);
-                StateHasChanged();
+                SelectValue(DisplayValues.ElementAt(index));
+                return;
+            }
+
+            if (args.Key == " ")
+            {
+                if (MultipleSelectMode)
+                {
+                    int index = Array.IndexOf(DisplayValues, SelectedValue);
+                    if (index >= 0)
+                        OnOptionSelect(index);
+                    return;
+                }
+
+                return;
+            }
+
+            if (args.Key == "End")
+            {
+                SelectValue(DisplayValues.LastOrDefault());
+                return;
+            }
+
+            if (args.Key == "Home")
+            {
+                SelectValue(DisplayValues.FirstOrDefault());
+                return;
+            }
+
+            if (args.Key == "PageDown")
+            {
+                int index = Array.IndexOf(DisplayValues, SelectedValue);
+                if (index < 0)
+                    return;
+
+                index += 8;
+
+                if (index > DisplayValues.Length - 1)
+                    return;
+
+                SelectValue(DisplayValues[index]);
+            }
+
+            if (args.Key == "PageUp")
+            {
+                int index = Array.IndexOf(DisplayValues, SelectedValue);
+                if (index < 0)
+                    return;
+
+                index -= 8;
+
+                if (index < 0)
+                    return;
+
+                SelectValue(DisplayValues[index]);
             }
         }
 
@@ -522,6 +634,13 @@ namespace MComponents.MSelect
 
             if (mNullValueOverride == string.Empty)
                 mNullValueOverride = null;
+        }
+
+        public void SelectValue(T pValue)
+        {
+            SelectedValue = pValue;
+            JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
+            StateHasChanged();
         }
 
         public void Refresh()

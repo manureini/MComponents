@@ -136,6 +136,27 @@ var mcomponents = (function () {
 
             return ret;
         },
+
+        scrollToSelectedEntry: function () {
+
+            window.setTimeout(function () {
+
+                var elements = document.getElementsByClassName("m-select-options-entry--highlighted");
+
+                if (elements.length == 0) {
+                    return;
+                }
+
+                var selected = elements[0];
+
+                var offset = selected.offsetTop;
+
+                offset -= selected.clientHeight * 4;
+
+                document.getElementsByClassName("m-select-options-list")[0].scrollTop = offset;
+            }, 150);
+
+        },
     };
 })();
 
