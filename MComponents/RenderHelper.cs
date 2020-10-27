@@ -1,5 +1,6 @@
 ﻿using MComponents.InputElements;
 using MComponents.MForm;
+using MComponents.MGrid;
 using MComponents.MSelect;
 using MComponents.Shared.Attributes;
 using Microsoft.AspNetCore.Components;
@@ -118,6 +119,7 @@ namespace MComponents
                 if (pField.AdditionalAttributes != null)
                     pBuilder.AddMultipleAttributes(17, pField.AdditionalAttributes
                         .Where(a => a.Key != Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE)
+                        .Where(a => a.Key != nameof(IMGridColumn))
                         .ToDictionary(a => a.Key, a => a.Value));
 
                 pBuilder.AddAttribute(1, "id", pId);

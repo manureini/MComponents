@@ -157,14 +157,17 @@ namespace MComponents.MSelect
             {
                 pBuilder.AddAttribute(157, "tabindex", "0");
                 pBuilder.AddAttribute(158, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
-                pBuilder.AddAttribute(159, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusIn));
+                pBuilder.AddEventStopPropagationAttribute(159, "onkeydown", true);
+                pBuilder.AddEventStopPropagationAttribute(4345, "onkeyup", true);
+
+                pBuilder.AddAttribute(160, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusIn));
                 pBuilder.AddAttribute(161, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
             }
 
             pBuilder.AddAttribute(12, "class", "m-select m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
 
             if (AdditionalAttributes != null)
-                pBuilder.AddMultipleAttributes(4, AdditionalAttributes.Where(a => a.Key.ToLower() != "class"));
+                pBuilder.AddMultipleAttributes(4, AdditionalAttributes.Where(a => a.Key.ToLower() != "class" && a.Key.ToLower() != "onkeydown" && a.Key.ToLower() != "onkeyup"));
 
             pBuilder.AddElementReferenceCapture(163, (__value) =>
             {
@@ -192,6 +195,7 @@ namespace MComponents.MSelect
 
                 pBuilder.AddAttribute(11, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
                 pBuilder.AddEventStopPropagationAttribute(12, "onkeydown", true);
+                pBuilder.AddEventStopPropagationAttribute(12, "onkeyup", true);
                 pBuilder.AddEventPreventDefaultAttribute(495, "onkeydown", true);
                 pBuilder.AddEventPreventDefaultAttribute(496, "onkeyup", true);
 
@@ -435,6 +439,7 @@ namespace MComponents.MSelect
             }
 
             StateHasChanged();
+            JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
         }
 
         protected void InputKeyDown(KeyboardEventArgs args)
