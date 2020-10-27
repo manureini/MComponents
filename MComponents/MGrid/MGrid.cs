@@ -156,6 +156,8 @@ namespace MComponents.MGrid
 
             if ((EnableAdding || EnableDeleting) && DataSource != null && DataSource is T[])
                 throw new ArgumentException($"{DataSource} can not be an array. It must be a source which supports adding and deleting");
+
+            ClearDataCache();
         }
 
         public void RegisterColumn(IMGridColumn pColumn)
