@@ -96,9 +96,9 @@ namespace MComponents.MGrid
 
         public List<IMGridColumn> ColumnsList { get; set; } = new List<IMGridColumn>();
 
-        public Guid? Selected;
+        public T Selected;
+        public T EditRow;
 
-        public Guid? EditRow;
         public MForm<T> EditForm;
 
         public bool IsFilterRowVisible { get; internal set; }
@@ -699,7 +699,7 @@ namespace MComponents.MGrid
                     HiddenGroupByKeys.Add((keyValuesRow, pFirstValue));
                 }
 
-                Selected = null;
+                Selected = default(T);
                 await ResetRowsAndCache();
             }));
 
@@ -755,9 +755,7 @@ namespace MComponents.MGrid
 
         private void AddContentRow(RenderTreeBuilder pBuilder, T pEntry, MGridAction pAction)
         {
-            Guid entryId = GetId(pEntry);
-
-            bool rowEdit = EditRow.HasValue && EditRow.Value == entryId;
+            bool rowEdit = EditRow != null && EditRow.Equals(pEntry);
 
             pBuilder.AddMarkupContent(503, "\r\n");
             pBuilder.OpenElement(504, "tr");
@@ -769,7 +767,7 @@ namespace MComponents.MGrid
                 cssClass += " m-grid-edit-row";
             }
 
-            bool selected = Selected.HasValue && Selected == entryId;
+            bool selected = Selected != null && Selected.Equals(pEntry);
             if (selected)
                 cssClass += " m-grid-highlight";
 
@@ -1069,16 +1067,14 @@ namespace MComponents.MGrid
 
         protected async void OnRowClick(T pValue, MouseEventArgs pMouseArgs)
         {
-            Guid id = GetId(pValue);
-
-            if (id == EditRow)
+            if (EditRow != null && EditRow.Equals(pValue))
                 return;
 
             if (Events?.OnBeginRowSelect != null)
             {
                 var args = new BeginRowSelectArgs<T>()
                 {
-                    Row = GetDataFromId(id),
+                    Row = pValue,
                     MouseEventArgs = pMouseArgs
                 };
 
@@ -1088,16 +1084,16 @@ namespace MComponents.MGrid
                     return;
             }
 
-            if (id == Selected)
+            if (Selected != null && Selected.Equals(pValue))
             {
-                if (EditRow != null && EditRow != Selected)
+                if (EditRow != null && !EditRow.Equals(Selected))
                 {
                     await StopEditing(true, true);
-                    await StartEdit(id, true, pMouseArgs);
+                    await StartEdit(pValue, true, pMouseArgs);
                 }
                 else if (EditRow == null)
                 {
-                    await StartEdit(id, true, pMouseArgs);
+                    await StartEdit(pValue, true, pMouseArgs);
                 }
                 return;
             }
@@ -1107,7 +1103,7 @@ namespace MComponents.MGrid
                 await StopEditing(true, true);
             }
 
-            Selected = id;
+            Selected = pValue;
 
             SaveCurrentState();
             StateHasChanged();
@@ -1126,20 +1122,19 @@ namespace MComponents.MGrid
 
             EditForm = null;
             NewValue = default(T);
-            EditRow = null;
+            EditRow = default(T);
 
             StateHasChanged();
         }
 
         public async Task StartEditRow(T pValue, MouseEventArgs pMouseEventArgs)
         {
-            Guid id = GetId(pValue);
-            await StartEdit(id, true, pMouseEventArgs);
+            await StartEdit(pValue, true, pMouseEventArgs);
         }
 
-        private async Task StartEdit(Guid? id, bool pUserInteracted, MouseEventArgs pMouseEventArgs)
+        private async Task StartEdit(T pRow, bool pUserInteracted, MouseEventArgs pMouseEventArgs)
         {
-            if (id == EditRow)
+            if (EditRow != null && EditRow.Equals(pRow))
                 return;
 
             await StopEditing(true, pUserInteracted);
@@ -1147,7 +1142,7 @@ namespace MComponents.MGrid
             if (!EnableEditing)
                 return;
 
-            Guid? toSelect = id ?? Selected;
+            T toSelect = pRow ?? Selected;
 
             if (toSelect == null)
                 return;
@@ -1156,7 +1151,7 @@ namespace MComponents.MGrid
             {
                 var args = new BeginEditArgs<T>()
                 {
-                    Row = GetDataFromId(toSelect),
+                    Row = toSelect,
                     MouseEventArgs = pMouseEventArgs
                 };
 
@@ -1215,9 +1210,8 @@ namespace MComponents.MGrid
                     return;
             }
 
-            EditRow = GetId(newv);
-            Selected = EditRow;
-
+            EditRow = newv;
+            Selected = newv;
             NewValue = newv;
 
             await UpdateColumnsWidth();
@@ -1239,7 +1233,7 @@ namespace MComponents.MGrid
                 return;
             }
 
-            await StartEdit(null, true, pMouseEventArgs);
+            await StartEdit(default(T), true, pMouseEventArgs);
         }
 
         protected async void OnToolbarRemove(MouseEventArgs pMouseEventArgs)
@@ -1249,9 +1243,7 @@ namespace MComponents.MGrid
             if (Selected == null)
                 return;
 
-            T value = GetDataFromId(Selected);
-
-            await StartDeleteRow(value, pMouseEventArgs);
+            await StartDeleteRow(Selected, pMouseEventArgs);
         }
 
         protected async Task OnToggleFilter()
@@ -1300,7 +1292,7 @@ namespace MComponents.MGrid
 
             if (DataAdapter != null)
             {
-                await DataAdapter.Remove(GetId(value), value);
+                await DataAdapter.Remove(value);
             }
 
             if (Events?.OnAfterDelete != null)
@@ -1312,22 +1304,11 @@ namespace MComponents.MGrid
                 });
             }
 
-            Selected = null;
+            Selected = default(T);
             ClearDataCache();
             await UpdateDataCacheIfDataAdapter();
 
             InvokeStateHasChanged();
-        }
-
-        private T GetDataFromId(Guid? pId)
-        {
-            if (!pId.HasValue)
-                return default;
-
-            if (DataCache == null)
-                return default;
-
-            return DataCache.FirstOrDefault(d => GetId(d) == pId);
         }
 
         protected async Task OnFormSubmit(MFormSubmitArgs args)
@@ -1354,7 +1335,7 @@ namespace MComponents.MGrid
                     if (DataAdapter != null)
                     {
                         // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
-                        _ = DataAdapter.Update(GetId(value), value).ContinueWith(async t =>
+                        _ = DataAdapter.Update(value).ContinueWith(async t =>
                         {
                             if (Events?.OnAfterEdit != null)
                             {
@@ -1386,7 +1367,7 @@ namespace MComponents.MGrid
                     if (DataAdapter != null)
                     {
                         // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
-                        _ = DataAdapter.Add(GetId(NewValue), NewValue).ContinueWith(async t =>
+                        _ = DataAdapter.Add(NewValue).ContinueWith(async t =>
                         {
                             if (Events?.OnAfterAdd != null)
                             {
@@ -1590,11 +1571,6 @@ namespace MComponents.MGrid
 
             var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, PropertyInfos, dataForExport, Formatter);
             await FileUtil.SaveAs(JsRuntime, "Export.xlsx", data);
-        }
-
-        public Guid GetId(T pItem)
-        {
-            return (Guid)ReflectionHelper.GetPropertyValue(pItem, "Id");
         }
 
         protected T CreateNewT()

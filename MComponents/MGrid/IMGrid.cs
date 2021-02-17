@@ -17,8 +17,6 @@ namespace MComponents.MGrid
 
         void ClearFilterValues();
 
-        Guid GetId(T pModel);
-
         void Refresh();
 
         void InvokeStateHasChanged();

@@ -46,7 +46,7 @@ namespace MComponents.MGrid
                       if (state == null)
                           return;
 
-                      pGrid.Selected = state.SelectedRow;
+                   //   pGrid.Selected = state.SelectedRow;
 
                       if (pGrid.Pager != null)
                       {
@@ -155,7 +155,7 @@ namespace MComponents.MGrid
                 IsFilterRowVisible = pGrid.IsFilterRowVisible,
                 Page = pGrid.Pager?.CurrentPage,
                 PageSize = pGrid.Pager?.PageSize,
-                SelectedRow = pGrid.Selected,
+              //  SelectedRow = pGrid.Selected,
 
                 FilterState = pGrid.FilterInstructions.Select(f =>
                 {

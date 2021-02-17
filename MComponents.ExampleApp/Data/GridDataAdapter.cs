@@ -16,7 +16,7 @@ namespace MComponents.ExampleApp.Data
             mWeatherForecastService = pWeatherForecastService;
         }
 
-        public Task Add(Guid pId, WeatherForecast pNewValue)
+        public Task Add(WeatherForecast pNewValue)
         {
             return Task.CompletedTask;
         }
@@ -49,12 +49,12 @@ namespace MComponents.ExampleApp.Data
             return (IEnumerable<WeatherForecast>)compiled.DynamicInvoke();
         }
 
-        public Task Remove(Guid pId, WeatherForecast pValue)
+        public Task Remove(WeatherForecast pValue)
         {
             return Task.CompletedTask;
         }
 
-        public Task Update(Guid pId, WeatherForecast pValue)
+        public Task Update(WeatherForecast pValue)
         {
             return Task.CompletedTask;
         }
