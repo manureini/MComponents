@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Localization;
-using System.Collections.Generic;
 
 namespace MComponents.MGrid
 {

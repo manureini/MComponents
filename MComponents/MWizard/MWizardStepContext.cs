@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MComponents.MWizard
+﻿namespace MComponents.MWizard
 {
     public class MWizardStepContext
     {

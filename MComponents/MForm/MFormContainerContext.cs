@@ -1,5 +1,4 @@
-﻿using MComponents.MForm;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
