@@ -105,7 +105,7 @@ namespace MComponents
         {
             if (pValue is IDictionary<string, object> dict)
             {
-                return dict.Select(v => GetIMPropertyInfo(pValue.GetType(), v.Key, v.Value.GetType()));
+                return dict.Select(v => GetIMPropertyInfo(pValue.GetType(), v.Key, v.Value?.GetType() ?? typeof(object)));
             }
 
             return pValue.GetType().GetProperties().Select(v => GetIMPropertyInfo(pValue.GetType(), v.Name, v.PropertyType));
