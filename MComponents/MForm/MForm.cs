@@ -269,27 +269,35 @@ namespace MComponents.MForm
                         cssClass += 12 / groupResult.Count();
                     }
 
-                    builder2.AddAttribute(11, "class", cssClass);
+                    builder2.AddAttribute(272, "class", cssClass);
 
                     //  <label for="@inpId">@property.Name</label>
-                    builder2.OpenElement(13, "label");
-                    builder2.AddAttribute(14, "for", inpId);
-                    builder2.AddAttribute(14, "class", "col-sm-12 col-form-label"); //TODO we use bootstrap here - good idea or bad?
+                    builder2.OpenElement(275, "label");
+                    builder2.AddAttribute(276, "for", inpId);
+                    builder2.AddAttribute(277, "class", "col-sm-12 col-form-label"); //TODO we use bootstrap here - good idea or bad?
 
                     var displayAttribute = propertyInfo.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
                     if (displayAttribute != null)
                     {
-                        builder2.AddContent(280, displayAttribute.Name);
+                        builder2.AddContent(282, displayAttribute.Name);
                     }
                     else
                     {
-                        builder2.AddContent(284, propertyInfo.Name);
+                        builder2.AddContent(286, propertyInfo.Name);
+                    }
+
+                    if (propertyInfo.GetCustomAttribute(typeof(RequiredAttribute)) != null)
+                    {
+                        builder2.OpenElement(291, "span");
+                        builder2.AddAttribute(292, "style", "color: red;");
+                        builder2.AddContent(293, " *");
+                        builder2.CloseElement();
                     }
 
                     builder2.CloseElement();
 
-                    builder2.OpenElement(16, "div");
-                    builder2.AddAttribute(17, "class", "col-sm-12");  //TODO we use bootstrap here - good idea or bad?
+                    builder2.OpenElement(296, "div");
+                    builder2.AddAttribute(297, "class", "col-sm-12");  //TODO we use bootstrap here - good idea or bad?
 
                     AddInput(builder2, field, propertyInfo, inpId);
 
