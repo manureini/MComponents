@@ -4,21 +4,21 @@ using Microsoft.AspNetCore.Components;
 
 namespace MComponents.MForm
 {
-    public class MFieldGenerator<T> : ComponentBase, IMFieldGenerator
+    public class MFieldGenerator : ComponentBase, IMFieldGenerator
     {
         [Parameter]
-        public Attribute[] Attributes { get; set; }
+        public virtual Attribute[] Attributes { get; set; }
 
         [Parameter]
-        public RenderFragment<MFieldGeneratorContext> Template { get; set; }
+        public virtual RenderFragment<MFieldGeneratorContext> Template { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
-        public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+        public virtual IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         private IMForm mForm;
 
         [CascadingParameter]
-        public IMForm Form
+        public virtual IMForm Form
         {
             get
             {
@@ -33,6 +33,5 @@ namespace MComponents.MForm
                 }
             }
         }
-
     }
 }
