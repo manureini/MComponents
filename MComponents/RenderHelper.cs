@@ -60,7 +60,15 @@ namespace MComponents
 
                 bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute(typeof(ReadOnlyAttribute)) != null;
 
-                if (mNumberTypes.Contains(tType))
+                var restrictValues = (RestrictValuesAttribute)pPropertyInfo.GetCustomAttribute(typeof(RestrictValuesAttribute));
+
+                if (typeof(T) == typeof(bool?) || tType.IsEnum || restrictValues != null)
+                {
+                    pBuilder.OpenComponent<MSelect<T>>(0);
+                    if (pIsInFilterRow)
+                        pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
+                }
+                else if (mNumberTypes.Contains(tType))
                 {
                     pBuilder.OpenComponent<InputNumber<T>>(0);
                 }
@@ -83,21 +91,9 @@ namespace MComponents
                 {
                     pBuilder.OpenComponent<MInputCheckbox>(0);
                 }
-                else if (typeof(T) == typeof(bool?))
-                {
-                    pBuilder.OpenComponent<MSelect<T>>(0);
-                    if (pIsInFilterRow)
-                        pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
-                }
                 else if (tType == typeof(Guid))
                 {
                     pBuilder.OpenComponent<InputGuid<T>>(0);
-                }
-                else if (tType.IsEnum)
-                {
-                    pBuilder.OpenComponent<MSelect<T>>(0);
-                    if (pIsInFilterRow)
-                        pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
                 }
                 else
                 {
@@ -150,7 +146,20 @@ namespace MComponents
 
                 pBuilder.AddAttribute(10, "class", cssClass);
 
-                if (typeof(T) == typeof(bool?))
+                if (restrictValues != null)
+                {
+                    foreach (var allowedValue in restrictValues.AllowedValues)
+                    {
+                        if (!typeof(T).IsAssignableFrom(allowedValue.GetType()))
+                        {
+                            throw new Exception($"Allowed value {allowedValue} does not implement property type {typeof(T).AssemblyQualifiedName}");
+                        }
+                    }
+
+                    IEnumerable<T> options = restrictValues.AllowedValues.Cast<T>().ToArray();
+                    pBuilder.AddAttribute(10, "Options", options);
+                }
+                else if (typeof(T) == typeof(bool?))
                 {
                     IEnumerable<bool?> options = new bool?[] { true, false };
                     pBuilder.AddAttribute(10, "Options", options);
