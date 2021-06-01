@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace MComponents.MGrid
 {
+    //TODO remove TProperty
     public class MGridComplexColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridColumnGenerator<T>, IMGridComplexExport<T>
     {     
         [Parameter]
