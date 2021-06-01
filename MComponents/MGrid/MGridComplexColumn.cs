@@ -5,8 +5,7 @@ using System.Collections.Generic;
 
 namespace MComponents.MGrid
 {
-    //TODO remove TProperty
-    public class MGridComplexColumn<T, TProperty> : ComponentBase, IMGridColumn, IMGridColumnGenerator<T>, IMGridComplexExport<T>
+    public class MGridComplexColumn<T> : ComponentBase, IMGridColumn, IMGridColumnGenerator<T>, IMGridComplexExport<T>
     {     
         [Parameter]
         public RenderFragment<T> CellTemplate { get; set; }

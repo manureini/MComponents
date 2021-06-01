@@ -1018,23 +1018,14 @@ namespace MComponents.MGrid
 
             if (pColumn is IMGridComplexEditableColumn<TProperty> complex)
             {
-                if (pIsInFilterRow)
-                {
-                    pBuilder.OpenComponent<MComplexPropertyField<ExpandoObject, TProperty>>(5);
-                }
-                else
-                {
-                    pBuilder.OpenComponent<MComplexPropertyField<T, TProperty>>(5);
-                }
-
-                pBuilder.AddAttribute(776, "Property", pPropertyColumn.Property);
-                pBuilder.AddAttribute(777, "PropertyType", typeof(TProperty));
-                pBuilder.AddAttribute(778, "Attributes", attributes.ToArray());
+                pBuilder.OpenComponent<MComplexPropertyField<TProperty>>(5);
+                pBuilder.AddAttribute(776, nameof(MField.Property), pPropertyColumn.Property);
+                pBuilder.AddAttribute(777, nameof(MField.PropertyType), typeof(TProperty));
+                pBuilder.AddAttribute(778, nameof(MField.Attributes), attributes.ToArray());
                 pBuilder.AddAttribute(779, nameof(IMGridColumn), pColumn);
 
                 if (complex.FormTemplate != null && !pIsInFilterRow || (pIsInFilterRow && pColumn.EnableFilter))
-                    pBuilder.AddAttribute(781, "Template", complex.FormTemplate);
-
+                    pBuilder.AddAttribute(781, nameof(MComplexPropertyField<TProperty>.Template), complex.FormTemplate);
 
                 pBuilder.AddStyleWithAttribute(784, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
 
@@ -1044,9 +1035,9 @@ namespace MComponents.MGrid
             {
                 pBuilder.OpenComponent<MField>(790);
 
-                pBuilder.AddAttribute(792, "Property", pPropertyColumn.Property);
-                pBuilder.AddAttribute(793, "PropertyType", typeof(TProperty));
-                pBuilder.AddAttribute(794, "Attributes", attributes.ToArray());
+                pBuilder.AddAttribute(792, nameof(MField.Property), pPropertyColumn.Property);
+                pBuilder.AddAttribute(793, nameof(MField.PropertyType), typeof(TProperty));
+                pBuilder.AddAttribute(794, nameof(MField.Attributes), attributes.ToArray());
                 pBuilder.AddAttribute(795, nameof(IMGridColumn), pColumn);
 
                 pBuilder.AddStyleWithAttribute(976, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);

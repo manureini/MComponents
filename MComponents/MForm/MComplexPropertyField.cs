@@ -3,7 +3,7 @@ using System;
 
 namespace MComponents.MForm
 {
-    public class MComplexPropertyField<T, TProperty> : MField, IMComplexField
+    public class MComplexPropertyField<TProperty> : MField, IMComplexField
     {
         [Parameter]
         public RenderFragment<MComplexPropertyFieldContext<TProperty>> Template { get; set; }

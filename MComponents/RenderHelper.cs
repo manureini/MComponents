@@ -181,7 +181,7 @@ namespace MComponents
             }
         }
 
-        public static void AppendComplexType<T, TProperty>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, T pModel, Guid pId, IMForm pParent, MComplexPropertyField<T, TProperty> pComplexField,
+        public static void AppendComplexType<T, TProperty>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, T pModel, Guid pId, IMForm pParent, MComplexPropertyField<TProperty> pComplexField,
             MFormGridContext pGridContext)
         {
             if (pComplexField.Template == null)
