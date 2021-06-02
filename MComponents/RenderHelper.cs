@@ -29,6 +29,7 @@ namespace MComponents
             mSupportedTypes.Add(typeof(DateTime));
             mSupportedTypes.Add(typeof(bool));
             mSupportedTypes.Add(typeof(Guid));
+            mSupportedTypes.Add(typeof(Type));
         }
 
         public static bool IsTypeSupported(Type pType)
@@ -94,6 +95,10 @@ namespace MComponents
                 else if (tType == typeof(Guid))
                 {
                     pBuilder.OpenComponent<InputGuid<T>>(0);
+                }
+                else if (tType == typeof(Type))
+                {
+                    pBuilder.OpenComponent<InputType>(0);
                 }
                 else
                 {

@@ -28,6 +28,7 @@ else
             <MGridColumn Property="@nameof(WeatherForecast.ForcastType)" />
             <MGridColumn Property="@nameof(WeatherForecast.IsGoodWeather)" />
             <MGridColumn Property="@nameof(WeatherForecast.Summary)" />
+            <MGridColumn Property="@nameof(WeatherForecast.TypeOfClouds)" />
 
             <MGridComplexPropertyColumn T="WeatherForecast" Identifier="WeatherStation" TProperty="WeatherStation" Property=@nameof(WeatherForecast.WeatherStation)>
                 <FormTemplate Context="templContext">

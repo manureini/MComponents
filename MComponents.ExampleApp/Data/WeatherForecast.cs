@@ -22,6 +22,8 @@ namespace MComponents.ExampleApp.Data
         [ReadOnly]
         public bool IsGoodWeather { get; set; }
 
+        public Type TypeOfClouds { get; set; }
+
         public WeatherStation WeatherStation { get; set; }
     }
 }
