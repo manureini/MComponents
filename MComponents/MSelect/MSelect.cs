@@ -565,7 +565,7 @@ namespace MComponents.MSelect
             if (value == null)
                 return NullValueDescription;
 
-            if (Property != null)
+            if (Property != null && mPropertyInfo != null)
             {
                 return mPropertyInfo.GetValue(value)?.ToString();
             }
