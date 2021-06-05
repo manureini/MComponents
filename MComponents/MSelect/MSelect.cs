@@ -178,9 +178,7 @@ namespace MComponents.MSelect
             pBuilder.AddAttribute(20, "class", "m-select-content");
             pBuilder.AddAttribute(21, "role", "textbox");
 
-            pBuilder.AddContent(24,
-                  CurrentValueAsString == null || CurrentValueAsString == string.Empty ? NullValueDescription : CurrentValueAsString
-            );
+            pBuilder.AddContent(24, CurrentValueAsString);
 
             pBuilder.CloseElement();
 
