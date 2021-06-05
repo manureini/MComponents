@@ -330,6 +330,17 @@ namespace MComponents.MForm
                         builder2.CloseElement();
                     }
                 }
+                else if (field is MFieldComponent mfieldComponent)
+                {
+                    builder2.OpenComponent(336, mfieldComponent.CompnentType);
+
+                    if (mfieldComponent.AdditionalAttributes != null)
+                    {
+                        builder2.AddMultipleAttributes(339, mfieldComponent.AdditionalAttributes);
+                    }
+
+                    builder2.CloseComponent();
+                }
             }
 
             if (groupResult.Key != 0 && !IsInTableRow)
@@ -408,7 +419,7 @@ namespace MComponents.MForm
                 UserInterated = pUserInteracted
             };
 
-            CascadedFormContext_OnFormSubmit(null, args);
+            _ = CascadedFormContext_OnFormSubmit(null, args);
         }
 
         public void RegisterField(IMField pField)
