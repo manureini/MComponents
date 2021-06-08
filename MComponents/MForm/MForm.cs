@@ -35,6 +35,9 @@ namespace MComponents.MForm
         public bool EnableValidation { get; set; } = true;
 
         [Parameter]
+        public bool EnableValidationSummary { get; set; } = true;
+
+        [Parameter]
         public RenderFragment Fields { get; set; }
 
         [Parameter]
@@ -50,6 +53,7 @@ namespace MComponents.MForm
 
         protected HashSet<IMPropertyInfo> ChangedValues { get; set; } = new HashSet<IMPropertyInfo>();
 
+        protected ValidationMessageStore mValidationMessageStore;
 
         public List<IMField> FieldList = new List<IMField>();
 
@@ -59,6 +63,14 @@ namespace MComponents.MForm
             base.OnInitialized();
 
             mEditContext = new EditContext(Model);
+
+            if (EnableValidation && typeof(IDictionary<string, object>).IsAssignableFrom(ModelType))
+            {
+                mValidationMessageStore = new ValidationMessageStore(mEditContext);
+
+                mEditContext.OnValidationRequested += MEditContext_OnValidationRequested;
+                mEditContext.OnFieldChanged += MEditContext_OnFieldChanged;
+            }
 
             if (ContainerContext != null)
             {
@@ -117,7 +129,7 @@ namespace MComponents.MForm
                             builder2.CloseComponent();
                         }
 
-                        if (!IsInTableRow)
+                        if (EnableValidationSummary && !IsInTableRow)
                         {
                             builder2.OpenComponent<ValidationSummary>(1);
                             builder2.CloseComponent();
@@ -156,6 +168,35 @@ namespace MComponents.MForm
             }
 
             builder.CloseRegion();
+        }
+
+        private void MEditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
+        {
+
+        }
+
+        private void MEditContext_OnValidationRequested(object sender, ValidationRequestedEventArgs e)
+        {
+            foreach (var field in FieldList.OfType<IMPropertyField>())
+            {
+                var propInfo = GetPropertyInfo(field);
+
+                if (propInfo.GetCustomAttribute(typeof(RequiredAttribute)) != null)
+                {
+                    var fieldIdentifier = mEditContext.Field(propInfo.Name);
+
+                    mValidationMessageStore.Clear(fieldIdentifier);
+
+                    var value = propInfo.GetValue(Model);
+
+                    if (value == null || value is string str && string.IsNullOrWhiteSpace(str))
+                    {
+                        mValidationMessageStore.Add(fieldIdentifier, $"{fieldIdentifier.FieldName} is required"); //Localization
+                    }
+                }
+            }
+
+            mEditContext.NotifyValidationStateChanged();
         }
 
         private IEnumerable<IGrouping<int, IMField>> GroupByRow(IEnumerable<IMField> pFields)
@@ -459,6 +500,11 @@ namespace MComponents.MForm
             {
                 await OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pPropertyInfo, pNewValue, Model));
             }
+        }
+
+        public bool Validate()
+        {
+            return mEditContext.Validate();
         }
     }
 }

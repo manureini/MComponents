@@ -45,7 +45,7 @@ namespace MComponents
 
             var dict = pModel as IDictionary<string, object>;
 
-            if (!dict.ContainsKey(Name))
+            if (dict == null || !dict.ContainsKey(Name))
                 return null;
 
             object value = dict[Name];
