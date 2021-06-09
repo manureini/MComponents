@@ -126,6 +126,8 @@ namespace MComponents
                 pBuilder.AddAttribute(1, "id", pId);
                 pBuilder.AddAttribute(2, "Value", value);
 
+                pBuilder.AddAttribute(129, "form", pParent.FormId);
+
                 pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, async __value =>
                 {
                     pPropertyInfo.SetValue(pModel, __value);
@@ -170,6 +172,7 @@ namespace MComponents
                     pBuilder.AddAttribute(10, "Options", options);
                 }
 
+
                 pBuilder.CloseComponent();
 
                 if (pParent.EnableValidation)
@@ -201,7 +204,8 @@ namespace MComponents
 
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             context.Row = pModel;
-            context.InputId = pId;
+            context.InputId = pId.ToString();
+            context.FormId = pParent.FormId.ToString();
             context.Value = value;
             context.MFormGridContext = pGridContext;
 

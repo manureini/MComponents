@@ -153,11 +153,12 @@ namespace MComponents.MGrid
                         builder.OpenComponent<MSelect<TProperty>>(100);
                         builder.AddAttribute(101, "id", m.InputId);
                         builder.AddAttribute(102, "class", "form-control");
-                        builder.AddAttribute(102, nameof(MSelect<TProperty>.Property), ReferencedPropertyToDisplay);
-                        builder.AddAttribute(102, nameof(MSelect<TProperty>.Options), ReferencedValues);
-                        builder.AddAttribute(102, nameof(MSelect<TProperty>.Value), m.Value);
-                        builder.AddAttribute(102, nameof(MSelect<TProperty>.ValueChanged), m.ValueChanged);
-                        builder.AddAttribute(102, nameof(MSelect<TProperty>.ValueExpression), m.ValueExpression);
+                        builder.AddAttribute(103, "form", m.FormId);
+                        builder.AddAttribute(104, nameof(MSelect<TProperty>.Property), ReferencedPropertyToDisplay);
+                        builder.AddAttribute(105, nameof(MSelect<TProperty>.Options), ReferencedValues);
+                        builder.AddAttribute(106, nameof(MSelect<TProperty>.Value), m.Value);
+                        builder.AddAttribute(107, nameof(MSelect<TProperty>.ValueChanged), m.ValueChanged);
+                        builder.AddAttribute(108, nameof(MSelect<TProperty>.ValueExpression), m.ValueExpression);
                         builder.CloseComponent();
                     };
 

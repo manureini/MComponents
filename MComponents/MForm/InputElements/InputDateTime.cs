@@ -28,6 +28,7 @@ namespace MComponents.InputElements
             builder.AddAttribute(24, "class", "m-combined-input-container " + CssClass);
 
             builder.OpenComponent<InputDate<T>>(20);
+            builder.AddMultipleAttributes(31, AdditionalAttributes);
             builder.AddAttribute(21, "Value", CurrentDateValue);
             builder.AddAttribute(22, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(this, async __value =>
             {
@@ -40,6 +41,7 @@ namespace MComponents.InputElements
             builder.CloseComponent();
 
             builder.OpenComponent<InputTime<T>>(30);
+            builder.AddMultipleAttributes(44, AdditionalAttributes);
             builder.AddAttribute(31, "Value", CurrentTimeValue);
             builder.AddAttribute(22, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(this, async __value =>
             {

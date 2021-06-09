@@ -11,7 +11,7 @@ namespace MComponents.MGrid
 
         Task StartDeleteRow(T value, MouseEventArgs pMouseEventArgs);
 
-        Task SavePendingChanges(bool pUserInteracted);
+        Task<bool> SavePendingChanges(bool pUserInteracted);
 
         void ClearFilterValues();
 

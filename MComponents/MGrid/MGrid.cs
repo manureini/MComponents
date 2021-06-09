@@ -1098,15 +1098,21 @@ namespace MComponents.MGrid
             StateHasChanged();
         }
 
-        protected async Task StopEditing(bool pInvokeSubmit, bool pUserInteracted)
+        protected async Task<bool> StopEditing(bool pInvokeSubmit, bool pUserInteracted)
         {
-            if (pInvokeSubmit)
+            if (pInvokeSubmit && EditForm != null)
             {
                 //Currently not sure if this makes sense. This should move the focus from an open input element which triggers to save the value
                 //right now it's unknown if this workaround is needed or if it works anyway
                 await JsRuntime.InvokeVoidAsync("mcomponents.focusElement", mTableReference);
                 await Task.Delay(10);
-                EditForm?.CallLocalSubmit(pUserInteracted);
+
+                if (EditForm == null)
+                    return false;
+
+                var success = await EditForm.CallLocalSubmit(pUserInteracted);
+                if (!success)
+                    return false;
             }
 
             EditForm = null;
@@ -1114,6 +1120,7 @@ namespace MComponents.MGrid
             EditRow = default(T);
 
             StateHasChanged();
+            return true;
         }
 
         public async Task StartEditRow(T pValue, MouseEventArgs pMouseEventArgs)
@@ -1227,7 +1234,14 @@ namespace MComponents.MGrid
 
         protected async void OnToolbarRemove(MouseEventArgs pMouseEventArgs)
         {
-            await StopEditing(true, true);
+            var success = await StopEditing(true, true);
+
+            //stop editing failed, but force deletion
+            if (!success && NewValue != null)
+            {
+                await StopEditing(false, false);
+                return;
+            }
 
             if (Selected == null)
                 return;
@@ -1623,9 +1637,9 @@ namespace MComponents.MGrid
             InvokeAsync(StateHasChanged);
         }
 
-        public async Task SavePendingChanges(bool pUserInteracted)
+        public async Task<bool> SavePendingChanges(bool pUserInteracted)
         {
-            await StopEditing(true, pUserInteracted);
+            return await StopEditing(true, pUserInteracted);
         }
 
         protected double GetColumnWidth(int pIndex)

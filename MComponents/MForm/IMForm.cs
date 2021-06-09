@@ -24,6 +24,8 @@ namespace MComponents.MForm
 
         IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
-        public Type ModelType { get; }
+        Type ModelType { get; }
+
+        Guid FormId { get; }
     }
 }

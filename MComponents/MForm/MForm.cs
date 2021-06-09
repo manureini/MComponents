@@ -57,6 +57,8 @@ namespace MComponents.MForm
 
         public List<IMField> FieldList = new List<IMField>();
 
+        public Guid FormId { get; } =  Guid.NewGuid();
+
 
         protected override void OnInitialized()
         {
@@ -79,6 +81,12 @@ namespace MComponents.MForm
             }
         }
 
+        protected override void OnParametersSet()
+        {
+            if (IsInTableRow)
+                ContainerContext = null;
+        }
+
         private void NotifyContainer()
         {
             ContainerContext?.NotifySubmit(L);
@@ -96,13 +104,15 @@ namespace MComponents.MForm
             if (!IsInTableRow)
             {
                 builder.OpenElement(0, "form");
+                builder.AddAttribute(1, "id", FormId.ToString());
                 builder.AddMultipleAttributes(1, AdditionalAttributes);
                 builder.AddAttribute(2, "onsubmit", EventCallback.Factory.Create(this, NotifyContainer));
 
                 if (EnableValidation)
                     builder.AddAttribute(11, "class", "m-form-validation");
-            }
 
+                builder.CloseElement();
+            }
 
             if (Fields != null)
             {
@@ -153,7 +163,7 @@ namespace MComponents.MForm
                         }
 
                         if (!IsInTableRow)
-                            builder2.AddMarkupContent(27, "<button type=\"submit\" style=\"display: none;\">Submit</button>\r\n");
+                            builder2.AddMarkupContent(27, $"<button form=\"{FormId}\" type=\"submit\" style=\"display: none;\">Submit</button>\r\n");
                     };
 
             builder.OpenComponent<CascadingValue<EditContext>>(3);
@@ -161,11 +171,6 @@ namespace MComponents.MForm
             builder.AddAttribute(5, "Value", mEditContext);
             builder.AddAttribute(6, "ChildContent", child(mEditContext));
             builder.CloseComponent();
-
-            if (!IsInTableRow)
-            {
-                builder.CloseElement();
-            }
 
             builder.CloseRegion();
         }
@@ -273,6 +278,7 @@ namespace MComponents.MForm
                     if (IsInTableRow)
                     {
                         builder2.OpenElement(16, "td");
+                        builder2.AddAttribute(281, "data-is-in-table-row");
                         //       builder2.AddMultipleAttributes(17, field.AdditionalAttributes);
                         // update 13.07.2020, add AdditionalAttributes to Input
 
@@ -413,7 +419,7 @@ namespace MComponents.MForm
             get { return ChangedValues.Count > 0; }
         }
 
-        private async Task CascadedFormContext_OnFormSubmit(object sender, MFormContainerContextSubmitArgs e)
+        private async Task<bool> CascadedFormContext_OnFormSubmit(object sender, MFormContainerContextSubmitArgs e)
         {
             // Console.WriteLine("FormContextSubmit: " + typeof(T));
 
@@ -423,10 +429,10 @@ namespace MComponents.MForm
             {
                 Console.WriteLine(typeof(T) + ": Not valid");
 
-                if (ContainerContext != null)
-                    throw new UserMessageException(L["Please check all forms. There is at least one validation error!"]);
+                //       if (ContainerContext != null)
+                //           throw new UserMessageException(L["Please check all forms. There is at least one validation error!"]);
 
-                return;
+                return false;
             }
 
             Dictionary<string, object> changedDict = new Dictionary<string, object>();
@@ -451,16 +457,18 @@ namespace MComponents.MForm
             {
                 await OnValidSubmit.InvokeAsync(new MFormSubmitArgs(mEditContext, changedDict, Model, e.UserInterated));
             }
+
+            return true;
         }
 
-        public void CallLocalSubmit(bool pUserInteracted)
+        public Task<bool> CallLocalSubmit(bool pUserInteracted)
         {
             var args = new MFormContainerContextSubmitArgs()
             {
                 UserInterated = pUserInteracted
             };
 
-            _ = CascadedFormContext_OnFormSubmit(null, args);
+            return CascadedFormContext_OnFormSubmit(this, args);
         }
 
         public void RegisterField(IMField pField)
@@ -487,7 +495,11 @@ namespace MComponents.MForm
             {
                 if (ContainerContext == null)
                 {
-                    CallLocalSubmit(true);
+                    //value may not be updated
+                    Task.Delay(10).ContinueWith((a) =>
+                    {
+                        _ = CallLocalSubmit(true);
+                    });
                 }
             }
         }
