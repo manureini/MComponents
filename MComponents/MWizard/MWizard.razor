@@ -48,7 +48,12 @@
             @if (CurrentStep >= 0 && WizardSteps.Count > CurrentStep)
             {
                 <div class="m-wizard-step">
-                    @WizardSteps[CurrentStep].Content.Invoke(WizardSteps[CurrentStep].StepContext)
+                    @if(mEmptyRender)
+                    {
+                        <span>empty</span>
+                    } else {
+                        @WizardSteps[CurrentStep].Content.Invoke(WizardSteps[CurrentStep].StepContext)
+                    }
                 </div>
             }
 

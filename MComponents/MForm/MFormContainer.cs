@@ -20,6 +20,9 @@ namespace MComponents.MForm
         public bool EnableSaveButton { get; set; } = true;
 
         [Parameter]
+        public string SaveButtonText { get; set; } = "Save";
+
+        [Parameter]
         public EventCallback<MFormContainerAfterAllFormsSubmittedArgs> OnAfterAllFormsSubmitted { get; set; }
 
         [Inject]
@@ -60,7 +63,7 @@ namespace MComponents.MForm
                 builder.AddAttribute(20, "type", "button");
                 builder.AddAttribute(20, "class", "m-btn m-btn-primary");
                 builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, Click));
-                builder.AddContent(22, L["Save"]);
+                builder.AddContent(22, L[SaveButtonText]);
                 builder.CloseElement();
 
                 builder.CloseElement(); //div

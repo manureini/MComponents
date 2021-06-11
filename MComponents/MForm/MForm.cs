@@ -46,6 +46,9 @@ namespace MComponents.MForm
         [Parameter]
         public EventCallback<MFormValueChangedArgs<T>> OnValueChanged { get; set; }
 
+        [Parameter]
+        public bool PreventDefaultRendering { get; set; }
+
         [Inject]
         public IStringLocalizer<MComponentsLocalization> L { get; set; }
 
@@ -154,11 +157,14 @@ namespace MComponents.MForm
                         }
                         else
                         {
-                            foreach (var groupResult in GroupByRow(ReflectionHelper.GetProperties(Model).Select(pi => GetField(pi))))
+                            if (!PreventDefaultRendering)
                             {
-                                //    Console.WriteLine(property.PropertyType.FullName);
+                                foreach (var groupResult in GroupByRow(ReflectionHelper.GetProperties(Model).Select(pi => GetField(pi))))
+                                {
+                                    //    Console.WriteLine(property.PropertyType.FullName);
 
-                                Process(builder2, groupResult);
+                                    Process(builder2, groupResult);
+                                }
                             }
                         }
 

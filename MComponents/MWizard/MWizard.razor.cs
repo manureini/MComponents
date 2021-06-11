@@ -54,6 +54,8 @@ namespace MComponents.MWizard
 
         protected SemaphoreSlim mLocker = new SemaphoreSlim(1, 1);
 
+        protected bool mEmptyRender = true;
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", DotNetObjectReference.Create(this));
@@ -78,6 +80,15 @@ namespace MComponents.MWizard
                 CurrentStep = WizardSteps.Count - 1;
 
             StateHasChanged();
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {            
+            if(mEmptyRender)
+            {
+                mEmptyRender = false;
+                StateHasChanged();
+            }
         }
 
         internal async void OnNextClicked()
@@ -113,6 +124,7 @@ namespace MComponents.MWizard
                     return;
 
                 CurrentStep = newStep;
+                mEmptyRender = true;
 
                 StateHasChanged();
             }
@@ -153,6 +165,7 @@ namespace MComponents.MWizard
                     return;
 
                 CurrentStep = newStep;
+                mEmptyRender = true;
 
                 StateHasChanged();
             }
@@ -265,6 +278,7 @@ namespace MComponents.MWizard
                         return;
 
                     CurrentStep = newStep;
+                    mEmptyRender = true;
 
                     await InvokeAsync(() =>
                     {
