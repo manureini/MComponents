@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace MComponents.MForm
 {
@@ -60,7 +61,7 @@ namespace MComponents.MForm
 
         public List<IMField> FieldList = new List<IMField>();
 
-        public Guid FormId { get; } =  Guid.NewGuid();
+        public Guid FormId { get; } = Guid.NewGuid();
 
 
         protected override void OnInitialized()
@@ -202,7 +203,8 @@ namespace MComponents.MForm
 
                     if (value == null || value is string str && string.IsNullOrWhiteSpace(str))
                     {
-                        mValidationMessageStore.Add(fieldIdentifier, $"{fieldIdentifier.FieldName} is required"); //Localization
+                        string displayname = GetDisplayName(propInfo, false);
+                        mValidationMessageStore.Add(fieldIdentifier, $"{displayname} is required"); //Localization
                     }
                 }
             }
@@ -329,15 +331,7 @@ namespace MComponents.MForm
                     builder2.AddAttribute(276, "for", inpId);
                     builder2.AddAttribute(277, "class", "col-sm-12 col-form-label"); //TODO we use bootstrap here - good idea or bad?
 
-                    var displayAttribute = propertyInfo.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-                    if (displayAttribute != null)
-                    {
-                        builder2.AddContent(282, displayAttribute.Name);
-                    }
-                    else
-                    {
-                        builder2.AddContent(286, propertyInfo.Name);
-                    }
+                    builder2.AddMarkupContent(286, GetDisplayName(propertyInfo, true));
 
                     if (propertyInfo.GetCustomAttribute(typeof(RequiredAttribute)) != null)
                     {
@@ -477,9 +471,25 @@ namespace MComponents.MForm
             return CascadedFormContext_OnFormSubmit(this, args);
         }
 
-        public void RegisterField(IMField pField)
+        protected string GetDisplayName(IMPropertyInfo pPropertyInfo, bool pMarkup)
+        {
+            var displayAttribute = pPropertyInfo.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+            if (displayAttribute != null)
+            {
+                if (pMarkup)
+                    return HttpUtility.HtmlEncode(displayAttribute?.Name ?? string.Empty).Replace("\n", "<br>");
+                return displayAttribute.Name;
+            }
+            return pPropertyInfo.Name;
+        }
+
+        public void RegisterField(IMField pField, bool pSkipRendering = false)
         {
             FieldList.Add(pField);
+
+            if (pSkipRendering)
+                return;
+
             StateHasChanged();
         }
 
@@ -523,6 +533,11 @@ namespace MComponents.MForm
         public bool Validate()
         {
             return mEditContext.Validate();
+        }
+
+        public void InvokeStateHasChanged()
+        {
+            StateHasChanged();
         }
     }
 }

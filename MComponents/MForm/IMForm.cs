@@ -12,7 +12,7 @@ namespace MComponents.MForm
 
         bool HasUnsavedChanges { get; }
 
-        void RegisterField(IMField pField);
+        void RegisterField(IMField pField, bool pSkipRendering = false);
 
         void OnInputKeyUp(KeyboardEventArgs pArgs);
 

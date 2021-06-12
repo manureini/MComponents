@@ -906,6 +906,19 @@ $borderRadius: 0.25rem;
 .m-form-row.multiple-forms-in-row {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-end;
+
+    .form-group {
+        padding-left: 3px;
+        padding-right: 0;
+
+        label, div {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
 }
 
 .m-combined-input-container {
