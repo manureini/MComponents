@@ -749,7 +749,7 @@ $borderRadius: 0.25rem;
 
     .m-wizard-step {
         display: block;
-        width: 60%;
+        width: 70%;
         padding: 20px 0;
         border-bottom: 1px solid #eeeef4;
 
@@ -907,9 +907,9 @@ $borderRadius: 0.25rem;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    justify-content: space-around;
-    align-items: flex-end;
+    justify-content: flex-start;
 
+    /*
     .form-group {
         padding-left: 3px;
         padding-right: 0;
@@ -919,6 +919,7 @@ $borderRadius: 0.25rem;
             padding-right: 0;
         }
     }
+        */
 }
 
 .m-combined-input-container {

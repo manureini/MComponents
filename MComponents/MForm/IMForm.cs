@@ -26,6 +26,6 @@ namespace MComponents.MForm
 
         Type ModelType { get; }
 
-        Guid FormId { get; }
+        Guid Id { get; }
     }
 }

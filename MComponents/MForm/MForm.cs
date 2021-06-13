@@ -61,8 +61,8 @@ namespace MComponents.MForm
 
         public List<IMField> FieldList = new List<IMField>();
 
-        public Guid FormId { get; } = Guid.NewGuid();
-
+        [Parameter]
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         protected override void OnInitialized()
         {
@@ -108,7 +108,7 @@ namespace MComponents.MForm
             if (!IsInTableRow)
             {
                 builder.OpenElement(0, "form");
-                builder.AddAttribute(1, "id", FormId.ToString());
+                builder.AddAttribute(1, "id", Id.ToString());
                 builder.AddMultipleAttributes(1, AdditionalAttributes);
                 builder.AddAttribute(2, "onsubmit", EventCallback.Factory.Create(this, NotifyContainer));
 
@@ -170,7 +170,7 @@ namespace MComponents.MForm
                         }
 
                         if (!IsInTableRow)
-                            builder2.AddMarkupContent(27, $"<button form=\"{FormId}\" type=\"submit\" style=\"display: none;\">Submit</button>\r\n");
+                            builder2.AddMarkupContent(27, $"<button form=\"{Id}\" type=\"submit\" style=\"display: none;\">Submit</button>\r\n");
                     };
 
             builder.OpenComponent<CascadingValue<EditContext>>(3);
@@ -184,32 +184,45 @@ namespace MComponents.MForm
 
         private void MEditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
         {
+            var field = FieldList.OfType<IMPropertyField>().FirstOrDefault(f => f.Property == e.FieldIdentifier.FieldName);
 
+            if (field == null)
+                return;
+
+            ValidateField(field);
+            mEditContext.NotifyValidationStateChanged();
         }
 
         private void MEditContext_OnValidationRequested(object sender, ValidationRequestedEventArgs e)
         {
+            mValidationMessageStore.Clear();
+
             foreach (var field in FieldList.OfType<IMPropertyField>())
             {
-                var propInfo = GetPropertyInfo(field);
-
-                if (propInfo.GetCustomAttribute(typeof(RequiredAttribute)) != null)
-                {
-                    var fieldIdentifier = mEditContext.Field(propInfo.Name);
-
-                    mValidationMessageStore.Clear(fieldIdentifier);
-
-                    var value = propInfo.GetValue(Model);
-
-                    if (value == null || value is string str && string.IsNullOrWhiteSpace(str))
-                    {
-                        string displayname = GetDisplayName(propInfo, false);
-                        mValidationMessageStore.Add(fieldIdentifier, $"{displayname} is required"); //Localization
-                    }
-                }
+                ValidateField(field);
             }
 
             mEditContext.NotifyValidationStateChanged();
+        }
+
+        private void ValidateField(IMPropertyField field)
+        {
+            var propInfo = GetPropertyInfo(field);
+
+            if (propInfo.GetCustomAttribute(typeof(RequiredAttribute)) != null)
+            {
+                var fieldIdentifier = mEditContext.Field(propInfo.Name);
+
+                mValidationMessageStore.Clear(fieldIdentifier);
+
+                var value = propInfo.GetValue(Model);
+
+                if (value == null || value is string str && string.IsNullOrWhiteSpace(str))
+                {
+                    string displayname = GetDisplayName(propInfo, false);
+                    mValidationMessageStore.Add(fieldIdentifier, $"{displayname} is required"); //Localization
+                }
+            }
         }
 
         private IEnumerable<IGrouping<int, IMField>> GroupByRow(IEnumerable<IMField> pFields)
