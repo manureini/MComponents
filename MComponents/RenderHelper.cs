@@ -55,8 +55,18 @@ namespace MComponents
                     ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId, pParent);
                     return;
                 }
-                                
-                T value = (T)(Convert.ChangeType(pPropertyInfo.GetValue(pModel) ?? default(T), typeof(T)));
+
+                T value = default(T);
+                var val = pPropertyInfo.GetValue(pModel);
+
+                if (val != null)
+                {
+                    Console.WriteLine(val);
+                    Console.WriteLine(val.GetType());
+
+                    value = (T)(Convert.ChangeType(val, typeof(T)));
+                }
+
                 Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
                 bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute(typeof(ReadOnlyAttribute)) != null;
