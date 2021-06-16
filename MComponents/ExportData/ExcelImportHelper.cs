@@ -1,14 +1,12 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
 using MComponents.MGrid;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MComponents.ExportData
@@ -58,7 +56,7 @@ namespace MComponents.ExportData
                     {
                         if (pi.PropertyType.IsEnum)
                         {
-                            rowVal = Enum.Parse(pi.PropertyType, rowVal.ToString());
+                            Enum.TryParse(pi.PropertyType, rowVal.ToString(), true, out rowVal);
                         }
                         else
                         {
@@ -80,20 +78,58 @@ namespace MComponents.ExportData
 
             foreach (string propname in pValues)
             {
-                var entry = pGridDict.FirstOrDefault(p => p.Value.Name == propname);
+                var entry = pGridDict.FirstOrDefault(p => p.Key.Property == propname);
 
                 if (entry.Value != null)
+                {
                     ret.Add(entry.Value);
+                    continue;
+                }
+
+                entry = pGridDict.FirstOrDefault(p => p.Key.HeaderText == propname);
+
+                if (entry.Value != null)
+                {
+                    ret.Add(entry.Value);
+                    continue;
+                }
             }
 
             return ret;
         }
+
         private static List<object> GetRow(SpreadsheetDocument doc, SharedStringTable sst, Row row)
         {
             List<object> values = new List<object>();
 
+            int lastIndex = 1;
+            bool addedAny = false;
+
+            Console.WriteLine("------------");
             foreach (var cell in row.OfType<Cell>())
             {
+                int index = ColumnIndex(cell.CellReference);
+
+                Console.WriteLine(cell.CellReference);
+                Console.WriteLine(index);
+
+                int distance = index - lastIndex;
+
+                if (distance > 0 && !addedAny)
+                {
+                    values.Add(null);
+                    Console.WriteLine("add extra");
+                }
+
+                for (int i = (distance - 1); i > 0; i--)
+                {
+                    values.Add(null);
+                    Console.WriteLine("add");
+                }
+
+                lastIndex = index;
+                addedAny = true;
+
                 object value = null;
 
                 if (cell.DataType != null && cell.DataType == CellValues.InlineString)
@@ -139,5 +175,14 @@ namespace MComponents.ExportData
             return values;
         }
 
+
+        private static int ColumnIndex(string reference)
+        {
+            int ci = 0;
+            reference = reference.ToUpper();
+            for (int ix = 0; ix < reference.Length && reference[ix] >= 'A'; ix++)
+                ci = (ci * 26) + ((int)reference[ix] - 64);
+            return ci;
+        }
     }
 }

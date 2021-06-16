@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace MComponents
 {
-    public class StringLocalizer : IStringLocalizer
+    internal class StringLocalizer : IStringLocalizer
     {
         protected readonly IStringLocalizer mLocalizer;
 
