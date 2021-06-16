@@ -105,26 +105,20 @@ namespace MComponents.ExportData
             int lastIndex = 1;
             bool addedAny = false;
 
-            Console.WriteLine("------------");
             foreach (var cell in row.OfType<Cell>())
             {
                 int index = ColumnIndex(cell.CellReference);
-
-                Console.WriteLine(cell.CellReference);
-                Console.WriteLine(index);
 
                 int distance = index - lastIndex;
 
                 if (distance > 0 && !addedAny)
                 {
                     values.Add(null);
-                    Console.WriteLine("add extra");
                 }
 
                 for (int i = (distance - 1); i > 0; i--)
                 {
                     values.Add(null);
-                    Console.WriteLine("add");
                 }
 
                 lastIndex = index;
