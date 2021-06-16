@@ -14,7 +14,7 @@ namespace MComponents.MGrid
     public class MGridActionColumn<T> : ComponentBase, IMGridColumnGenerator<T>, IMGridEditFieldGenerator<T>, IDisposable
     {
         [Inject]
-        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+        public IStringLocalizer L { get; set; }
 
         [Inject]
         public IJSRuntime JsRuntime { get; set; }

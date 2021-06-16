@@ -77,7 +77,7 @@ namespace MComponents.MGrid
         public MGridStateService StateService { get; set; }
 
         [Inject]
-        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+        public IStringLocalizer L { get; set; }
 
         internal List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
         internal List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();

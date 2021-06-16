@@ -31,7 +31,7 @@ namespace MComponents.MForm
             Forms.Add(pForm);
         }
 
-        public async Task<bool> NotifySubmit(IStringLocalizer<MComponentsLocalization> pLocalizer)
+        public async Task<bool> NotifySubmit(IStringLocalizer pLocalizer)
         {
             if (OnFormSubmit == null)
                 return true;

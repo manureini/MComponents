@@ -5,7 +5,7 @@ namespace MComponents.MGrid
 {
     public interface IMGridObjectFormatter<T>
     {
-        IStringLocalizer<MComponentsLocalization> L { get; set; }
+        IStringLocalizer L { get; set; }
 
         string FormatPropertyColumnValue(IMGridPropertyColumn pColumn, IMPropertyInfo pPropertyInfo, T pRow);
 

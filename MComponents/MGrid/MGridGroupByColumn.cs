@@ -8,7 +8,7 @@ namespace MComponents.MGrid
     public class MGridGroupByColumn<T> : ComponentBase, IMGridColumnGenerator<T>
     {
         [Inject]
-        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+        public IStringLocalizer L { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }

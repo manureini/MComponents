@@ -26,7 +26,7 @@ namespace MComponents.MForm
         public EventCallback<MFormContainerAfterAllFormsSubmittedArgs> OnAfterAllFormsSubmitted { get; set; }
 
         [Inject]
-        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+        public IStringLocalizer L { get; set; }
 
         protected MFormContainerContext mFormContext;
 

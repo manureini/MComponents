@@ -110,21 +110,28 @@ namespace MComponents
 
         public static void AddMComponents(this IServiceCollection pServices, Action<MComponentSettings> pOptions = null)
         {
-            pServices.AddLocalization(options => options.ResourcesPath = "Resources");
-            pServices.Configure<RequestLocalizationOptions>(options =>
+            var settings = new MComponentSettings();
+
+            pOptions?.Invoke(settings);
+            pServices.AddSingleton(settings);
+
+            if (settings.RegisterResourceLocalizer)
             {
-                options.SupportedUICultures = MComponentsLocalization.SupportedCultures;
-            });
+                pServices.AddLocalization(options => options.ResourcesPath = "Resources");
+            }
+
+            if (settings.SetRequestLocalizationOptions)
+            {
+                pServices.Configure<RequestLocalizationOptions>(options =>
+                {
+                    options.SupportedUICultures = settings.SupportedCultures;
+                });
+            }
 
             pServices.AddBlazoredLocalStorage();
 
             pServices.AddScoped<MLocalStorageService>();
             pServices.AddScoped<MGridStateService>();
-
-            var settings = new MComponentSettings();
-            if (pOptions != null)
-                pOptions(settings);
-            pServices.AddSingleton(settings);
         }
     }
 

@@ -61,9 +61,6 @@ namespace MComponents
 
                 if (val != null)
                 {
-                    Console.WriteLine(val);
-                    Console.WriteLine(val.GetType());
-
                     value = (T)(Convert.ChangeType(val, typeof(T)));
                 }
 
@@ -230,6 +227,13 @@ namespace MComponents
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
             pBuilder.AddContent(42, pComplexField.Template?.Invoke(context));
+
+            if (pParent.EnableValidation)
+            {
+                pBuilder.OpenComponent<ValidationMessage<TProperty>>(236);
+                pBuilder.AddAttribute(237, "For", context.ValueExpression);
+                pBuilder.CloseComponent();
+            }
         }
 
         private static Expression<Func<T>> GetValueExpression<T>(IMPropertyInfo pPropertyInfo, object pModel)

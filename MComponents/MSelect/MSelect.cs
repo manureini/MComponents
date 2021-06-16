@@ -18,7 +18,7 @@ namespace MComponents.MSelect
         private IJSRuntime JSRuntime { get; set; }
 
         [Inject]
-        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+        public IStringLocalizer L { get; set; }
 
         [CascadingParameter]
         protected EditContext CascadedEditContext2 { get; set; }

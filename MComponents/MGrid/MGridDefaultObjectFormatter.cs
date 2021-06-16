@@ -11,7 +11,7 @@ namespace MComponents.MGrid
     {
         public const string ROW_DELETE_METADATA = "delete-row";
 
-        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+        public IStringLocalizer L { get; set; }
 
         protected Dictionary<T, object> mRowMetadata = new Dictionary<T, object>();
 

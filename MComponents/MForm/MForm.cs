@@ -51,7 +51,7 @@ namespace MComponents.MForm
         public bool PreventDefaultRendering { get; set; }
 
         [Inject]
-        public IStringLocalizer<MComponentsLocalization> L { get; set; }
+        public IStringLocalizer L { get; set; }
 
         public Type ModelType => Model?.GetType() ?? typeof(T);
 
@@ -489,10 +489,21 @@ namespace MComponents.MForm
             var displayAttribute = pPropertyInfo.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
             if (displayAttribute != null)
             {
+                var display = displayAttribute.GetName();
+
+                if (displayAttribute.ResourceType == null)
+                {
+                    display = L[displayAttribute.Name];
+                }
+
+                display ??= string.Empty;
+
                 if (pMarkup)
-                    return HttpUtility.HtmlEncode(displayAttribute?.Name ?? string.Empty).Replace("\n", "<br>");
-                return displayAttribute.Name;
+                    return HttpUtility.HtmlEncode(display).Replace("\n", "<br>");
+
+                return display;
             }
+
             return pPropertyInfo.Name;
         }
 

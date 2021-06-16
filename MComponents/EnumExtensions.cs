@@ -20,7 +20,7 @@ namespace MComponents
         public static string ToName(this Enum value)
         {
             var attribute = value.GetAttribute<DisplayAttribute>();
-            return attribute == null ? value.ToString() : attribute.Name;
+            return attribute == null ? value.ToString() : attribute.GetName();
         }
     }
 }
