@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using MComponents.ExportData;
 using MComponents.MGrid;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace MComponents
 {
     internal static class ExcelExportHelper
     {
+        private const int DATE_NUMBER_FORMAT = 14;
+
         public static byte[] GetExcelSpreadsheet<T>(IEnumerable<IMGridColumn> pColumns, IDictionary<IMGridPropertyColumn, IMPropertyInfo> pPropertyInfos, IEnumerable<T> pData, IMGridObjectFormatter<T> pFormatter)
         {
             var columns = pColumns.Where(c => c.VisibleInExport);
@@ -35,7 +38,7 @@ namespace MComponents
                                 new CellFormat(),
                                 new CellFormat
                                 {
-                                    NumberFormatId = 14,
+                                    NumberFormatId = DATE_NUMBER_FORMAT,
                                     ApplyNumberFormat = true
                                 })
                     };
@@ -156,15 +159,38 @@ namespace MComponents
 
         public static Cell CreateDateCell(DateTime? pDate)
         {
+            var value = string.Empty;
+
+            if (pDate != null)
+            {
+                value = pDate.Value.ToOADate().ToString(CultureInfo.InvariantCulture);
+            }
+
+            var cell = new Cell
+            {
+                DataType = CellValues.Number,
+                CellValue = new CellValue(value),
+                StyleIndex = 1, //must match to date number format
+            };
+
+            return cell;
+        }
+
+        /*
+        public static Cell CreateDateCell(DateTime? pDate)
+        {
+            //var formatString = ExcelHelper.GetDateTimeFormat(DATE_NUMBER_FORMAT);
+
             var cell = new Cell
             {
                 DataType = CellValues.Date,
-                CellValue = new CellValue(pDate?.ToString("s") ?? string.Empty),
+                CellValue = new CellValue(pDate?.ToString("s",  CultureInfo.InvariantCulture) ?? string.Empty),
                 StyleIndex = 1
             };
 
             return cell;
         }
+        */
 
         public static Cell CreateNumberCell(string pValue)
         {

@@ -1,4 +1,6 @@
-﻿using MComponents.MForm;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using MComponents.ExportData;
+using MComponents.MForm;
 using MComponents.Shared.Attributes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -11,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -59,6 +62,9 @@ namespace MComponents.MGrid
         public bool EnableExport { get; set; }
 
         [Parameter]
+        public bool EnableImport { get; set; }
+
+        [Parameter]
         public bool EnableSaveState { get; set; }
 
         [Parameter]
@@ -103,9 +109,8 @@ namespace MComponents.MGrid
 
         protected EditContext EditContext;
 
-        protected T EditValue;
-
-        protected T NewValue;
+        internal T EditValue;
+        internal T NewValue;
 
         protected ICollection<T> DataCache;
         protected long DataCountCache;
@@ -137,6 +142,8 @@ namespace MComponents.MGrid
         public IMGridColumn[] VisibleColumns => ColumnsList.Where(c => c.ShouldRenderColumn).ToArray();
 
         public bool UpdateColumnsWidthOnNextRender;
+
+        protected string mInputFileId = Guid.NewGuid().ToString();
 
         protected override void OnInitialized()
         {
@@ -493,7 +500,7 @@ namespace MComponents.MGrid
 
                            if (Pager.CurrentPage > pagecount && dataCount >= 0)
                            {
-                               OnPagerPageChanged(pagecount);
+                               _ = OnPagerPageChanged(pagecount);
                            }
 
                            builder2.OpenComponent<MPager>(11);
@@ -543,11 +550,26 @@ namespace MComponents.MGrid
 
                                builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], count, TotalDataCountCache)}</span>");
 
+                               if (EnableImport)
+                               {
+                                   builder3.OpenElement(560, "button");
+                                   builder3.AddAttribute(561, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
+                                   builder3.AddAttribute(562, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnBtnImportClicked));
+                                   builder3.AddContent(563, (MarkupString)"<i class=\"fas fa-upload\"></i>");
+                                   builder3.CloseElement(); // button
+
+                                   builder3.OpenComponent<InputFile>(566);
+                                   builder3.AddAttribute(567, "accept", ".xlsx");
+                                   builder3.AddAttribute(568, "OnChange", EventCallback.Factory.Create<InputFileChangeEventArgs>(this, OnFileChange));
+                                   builder3.AddAttribute(567, "style", "visibility: hidden; position: absolute; top: -1000px;");
+                                   builder3.AddAttribute(567, "id", mInputFileId);
+                                   builder3.CloseElement(); // InputFile
+                               }
                                if (EnableExport)
                                {
                                    builder3.OpenElement(435, "button");
                                    builder3.AddAttribute(436, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                                   builder3.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnExportClicked));
+                                   builder3.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => ExportContent()));
                                    builder3.AddContent(438, (MarkupString)"<i class=\"fas fa-download\"></i>");
                                    builder3.CloseElement(); // button
                                }
@@ -1119,7 +1141,7 @@ namespace MComponents.MGrid
             NewValue = default(T);
             EditRow = default(T);
 
-            StateHasChanged();
+            _ = InvokeAsync(StateHasChanged);
             return true;
         }
 
@@ -1314,7 +1336,7 @@ namespace MComponents.MGrid
             InvokeStateHasChanged();
         }
 
-        protected async Task OnFormSubmit(MFormSubmitArgs args)
+        internal async Task OnFormSubmit(MFormSubmitArgs args)
         {
             //////////////////////////////////////////////////////////////////////////////////////////////////
             // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
@@ -1563,7 +1585,7 @@ namespace MComponents.MGrid
             StateHasChanged();
         }
 
-        protected async void OnExportClicked()
+        public async void ExportContent(string pFileName = "Export.xlsx")
         {
             IEnumerable<T> dataForExport = DataSource;
 
@@ -1573,10 +1595,47 @@ namespace MComponents.MGrid
             }
 
             var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, PropertyInfos, dataForExport, Formatter);
-            await FileUtil.SaveAs(JsRuntime, "Export.xlsx", data);
+            await FileUtil.SaveAs(JsRuntime, pFileName, data);
         }
 
-        protected T CreateNewT()
+        protected void OnBtnImportClicked()
+        {
+            _ = JsRuntime.InvokeVoidAsync("mcomponents.invokeClick", mInputFileId);
+        }
+
+        protected async Task OnFileChange(InputFileChangeEventArgs e)
+        {
+            var file = e.GetMultipleFiles(1).FirstOrDefault();
+
+            if (file == null)
+                return;
+
+            try
+            {
+                using var stream = file.OpenReadStream(long.MaxValue);
+
+                using var ms = new MemoryStream();
+                await stream.CopyToAsync(ms);
+                stream.Close();
+
+                ms.Position = 0;
+                await ImportContent(ms);
+                ms.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                Notificator.InvokeNotification(true, "Error Importing file");
+            }
+        }
+
+
+        public async Task ImportContent(Stream pStream)
+        {
+            await ExcelImportHelper.ImportFile<T>(this, pStream);
+        }
+
+        internal T CreateNewT()
         {
             if (ModelFactory != null)
             {

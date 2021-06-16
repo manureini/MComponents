@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -126,6 +127,10 @@ namespace MComponents
                 {
                     options.SupportedUICultures = settings.SupportedCultures;
                 });
+            }
+            if (settings.RegisterStringLocalizer)
+            {
+                pServices.AddSingleton<IStringLocalizer, StringLocalizer>();
             }
 
             pServices.AddBlazoredLocalStorage();

@@ -155,8 +155,16 @@ var mcomponents = (function () {
 
                 document.getElementsByClassName("m-select-options-list")[0].scrollTop = offset;
             }, 150);
-
         },
+
+        invokeClick: function (id) {
+            var elem = document.getElementById(id);
+            if (elem && document.createEvent) {
+                var evt = document.createEvent("MouseEvents");
+                evt.initEvent("click", true, false);
+                elem.dispatchEvent(evt);
+            }
+        }
     };
 })();
 

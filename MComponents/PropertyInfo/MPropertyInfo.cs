@@ -87,6 +87,9 @@ namespace MComponents
             if (pModel == null)
                 throw new InvalidOperationException("Can not set null value");
 
+            if(!mPropertyInfo.CanWrite)
+                throw new InvalidOperationException("Can not write");
+
             mPropertyInfo.SetValue(pModel, value);
         }
 

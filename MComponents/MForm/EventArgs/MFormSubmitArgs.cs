@@ -13,7 +13,7 @@ namespace MComponents
 
         public bool UserInteracted { get; protected set; }
 
-        internal MFormSubmitArgs(EditContext pContext, IDictionary<string, object> pValues, object pModel, bool pUserInteracted)
+        public MFormSubmitArgs(EditContext pContext, IDictionary<string, object> pValues, object pModel, bool pUserInteracted)
         {
             EditContext = pContext;
             ChangedValues = pValues;

@@ -30,7 +30,12 @@ namespace MComponents.ExampleApp
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
-            services.AddMComponents();
+            services.AddMComponents(options =>
+            {
+                options.RegisterResourceLocalizer = true;
+                options.SetRequestLocalizationOptions = true;
+                options.RegisterStringLocalizer = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
