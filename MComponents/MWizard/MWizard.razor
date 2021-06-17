@@ -50,7 +50,7 @@
                 <div class="m-wizard-step">
                     @if(mEmptyRender)
                     {
-                        <span>empty</span>
+                        <span class="m-wizard-empty"></span>
                     } else {
                         @WizardSteps[CurrentStep].Content.Invoke(WizardSteps[CurrentStep].StepContext)
                     }

@@ -164,13 +164,23 @@ namespace MComponents
                 {
                     foreach (var allowedValue in restrictValues.AllowedValues)
                     {
-                        if (!typeof(T).IsAssignableFrom(allowedValue.GetType()))
+                        if (typeof(T) != typeof(string) && !typeof(T).IsAssignableFrom(allowedValue.GetType()))
                         {
                             throw new Exception($"Allowed value {allowedValue} does not implement property type {typeof(T).AssemblyQualifiedName}");
                         }
                     }
 
-                    IEnumerable<T> options = restrictValues.AllowedValues.Cast<T>().ToArray();
+                    IEnumerable<T> options;
+
+                    if (typeof(T) == typeof(string))
+                    {
+                        options = restrictValues.AllowedValues.Select(v => (T)(object)v.ToString()).ToArray();
+                    }
+                    else
+                    {
+                       options = restrictValues.AllowedValues.Cast<T>().ToArray();
+                    }
+
                     pBuilder.AddAttribute(10, "Options", options);
                 }
                 else if (typeof(T) == typeof(bool?))
