@@ -107,7 +107,17 @@ namespace MComponents.ExportData
 
             foreach (var cell in row.OfType<Cell>())
             {
-                int index = ColumnIndex(cell.CellReference);
+                int index = lastIndex + 1;
+
+                if (!addedAny)
+                {
+                    index--;
+                }
+
+                if (cell.CellReference != null)
+                {
+                    index = ColumnIndex(cell.CellReference);
+                }
 
                 int distance = index - lastIndex;
 
