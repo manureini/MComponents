@@ -107,6 +107,10 @@ namespace MComponents.MForm
 
             if (!IsInTableRow)
             {
+                builder.OpenElement(112, "div");
+                builder.AddAttribute(113, "data-form-id", Id.ToString());
+                builder.AddAttribute(113, "class", "m-form-container");
+
                 builder.OpenElement(0, "form");
                 builder.AddAttribute(1, "id", Id.ToString());
                 builder.AddMultipleAttributes(1, AdditionalAttributes);
@@ -178,6 +182,11 @@ namespace MComponents.MForm
             builder.AddAttribute(5, "Value", mEditContext);
             builder.AddAttribute(6, "ChildContent", child(mEditContext));
             builder.CloseComponent();
+
+            if(!IsInTableRow)
+            {
+                builder.CloseComponent(); //div
+            }
 
             builder.CloseRegion();
         }
