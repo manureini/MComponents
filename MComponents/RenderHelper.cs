@@ -61,7 +61,14 @@ namespace MComponents
 
                 if (val != null)
                 {
-                    value = (T)(Convert.ChangeType(val, typeof(T)));
+                    if (typeof(T).IsAssignableFrom(val.GetType()))
+                    {
+                        value = (T)val;
+                    }
+                    else
+                    {
+                        value = (T)(Convert.ChangeType(val, typeof(T)));
+                    }
                 }
 
                 Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
@@ -178,7 +185,7 @@ namespace MComponents
                     }
                     else
                     {
-                       options = restrictValues.AllowedValues.Cast<T>().ToArray();
+                        options = restrictValues.AllowedValues.Cast<T>().ToArray();
                     }
 
                     pBuilder.AddAttribute(10, "Options", options);
