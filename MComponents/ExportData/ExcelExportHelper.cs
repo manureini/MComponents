@@ -163,7 +163,14 @@ namespace MComponents
 
             if (pDate != null)
             {
-                value = pDate.Value.ToOADate().ToString(CultureInfo.InvariantCulture);
+                try
+                {
+                    value = pDate.Value.ToOADate().ToString(CultureInfo.InvariantCulture);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
 
             var cell = new Cell

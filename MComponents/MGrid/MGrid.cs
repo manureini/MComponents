@@ -145,6 +145,21 @@ namespace MComponents.MGrid
 
         protected string mInputFileId = Guid.NewGuid().ToString();
 
+
+        protected DotNetObjectReference<MGrid<T>> mObjReference;
+
+        protected DotNetObjectReference<MGrid<T>> ObjReference
+        {
+            get
+            {
+                if (mObjReference == null)
+                {
+                    mObjReference = DotNetObjectReference.Create(this);
+                }
+                return mObjReference;
+            }
+        }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -236,6 +251,15 @@ namespace MComponents.MGrid
             }
 
             await UpdateDataCacheIfDataAdapter();
+        }
+
+        [JSInvokable]
+        public void JsInvokeKeyDown(string pKey)
+        {
+            if (pKey == "Escape")
+            {
+                InvokeAsync(() => _ = StopEditing(true, true));
+            }
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -1124,10 +1148,10 @@ namespace MComponents.MGrid
         {
             if (pInvokeSubmit && EditForm != null)
             {
-                //Currently not sure if this makes sense. This should move the focus from an open input element which triggers to save the value
-                //right now it's unknown if this workaround is needed or if it works anyway
-                await JsRuntime.InvokeVoidAsync("mcomponents.focusElement", mTableReference);
-                await Task.Delay(10);
+                //We move the current focus away from the input so changed value event is called first and
+                //Mform adds current value to the changedValues list
+                await JsRuntime.InvokeVoidAsync("mcomponents.clearFocus");
+                await Task.Delay(50);
 
                 if (EditForm == null)
                     return false;
@@ -1140,6 +1164,9 @@ namespace MComponents.MGrid
             EditForm = null;
             NewValue = default(T);
             EditRow = default(T);
+
+            if (mObjReference != null)
+                _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", mObjReference);
 
             _ = InvokeAsync(StateHasChanged);
             return true;
@@ -1155,9 +1182,12 @@ namespace MComponents.MGrid
             if (EditRow != null && EditRow.Equals(pRow))
                 return;
 
-            await StopEditing(true, pUserInteracted);
-
             if (!EnableEditing)
+                return;
+
+            bool success = await StopEditing(true, pUserInteracted);
+
+            if (!success)
                 return;
 
             T toSelect = pRow ?? Selected;
@@ -1184,6 +1214,7 @@ namespace MComponents.MGrid
             EditRow = toSelect;
             Selected = EditRow;
 
+            await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", ObjReference);
             StateHasChanged();
         }
 
@@ -1211,7 +1242,10 @@ namespace MComponents.MGrid
 
         public async Task StartAdd(bool pUserInteracted)
         {
-            await StopEditing(true, pUserInteracted);
+            var success = await StopEditing(true, pUserInteracted);
+
+            if (!success)
+                return;
 
             var newv = CreateNewT();
 
@@ -1234,6 +1268,7 @@ namespace MComponents.MGrid
 
             await UpdateColumnsWidth();
 
+            await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", ObjReference);
             StateHasChanged();
         }
 
@@ -1332,6 +1367,9 @@ namespace MComponents.MGrid
             Selected = default(T);
             ClearDataCache();
             await UpdateDataCacheIfDataAdapter();
+
+            if (mObjReference != null)
+                _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", mObjReference);
 
             InvokeStateHasChanged();
         }

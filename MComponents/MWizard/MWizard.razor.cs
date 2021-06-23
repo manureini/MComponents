@@ -56,16 +56,29 @@ namespace MComponents.MWizard
 
         protected bool mEmptyRender = true;
 
+        protected DotNetObjectReference<MWizard> mObjReference;
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", DotNetObjectReference.Create(this));
+            if (firstRender)
+            {
+                mObjReference = DotNetObjectReference.Create(this);
+                await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", mObjReference);
+            }
+        }
+
+        ~MWizard()
+        {
+            _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", mObjReference);
         }
 
         [JSInvokable]
         public void JsInvokeKeyDown(string pKey)
         {
             if (pKey == "Escape")
-                OnPrevClicked();
+            {
+                InvokeAsync(OnPrevClicked);
+            }
         }
 
         public void RegisterStep(MWizardStep pStep)
@@ -83,8 +96,8 @@ namespace MComponents.MWizard
         }
 
         protected override void OnAfterRender(bool firstRender)
-        {            
-            if(mEmptyRender)
+        {
+            if (mEmptyRender)
             {
                 mEmptyRender = false;
                 StateHasChanged();

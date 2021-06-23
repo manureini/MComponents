@@ -7,15 +7,15 @@ namespace MComponents.InputElements
     {
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            builder.OpenElement(0, "span");
-            builder.AddAttribute(3, "class", "m-form-control m-switch m-switch--icon");
+            builder.OpenElement(10, "span");
+            builder.AddAttribute(11, "class", "m-form-control m-switch m-switch--icon");
 
-            builder.OpenElement(0, "label");
+            builder.OpenElement(13, "label");
 
             base.BuildRenderTree(builder);
 
-            builder.OpenElement(4, "span");
-            builder.AddAttribute(4, "class", "fa");
+            builder.OpenElement(17, "span");
+            builder.AddAttribute(18, "class", "fa");
             builder.CloseElement(); //span
 
             builder.CloseElement(); //label

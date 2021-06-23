@@ -2,22 +2,37 @@
 
 var mcomponents = (function () {
 
-    var elementReference = null;
+    var elementReferences = [];
 
     return {
         registerKeyListener: function (element) {
-            elementReference = element;
+            if (element == null) {
+                return;
+            }
+
+            elementReferences.push(element);
             document.addEventListener('keydown', mcomponents.onKeyDownEvent);
+            console.log(elementReferences.length);
         },
 
-        unRegisterKeyListener: function () {
-            document.removeEventListener('keydown', mcomponents.onKeyDownEvent);
-            elementReference = null;
+        unRegisterKeyListener: function (element) {
+            if (element == null) {
+                return;
+            }
+
+            elementReferences = elementReferences.filter(function (value, index, arr) {
+                return value._id != element._id;
+            });
+
+            if (elementReferences.length == 0) {
+                document.removeEventListener('keydown', mcomponents.onKeyDownEvent);
+            }
+            console.log(elementReferences.length);
         },
 
         onKeyDownEvent: function (args) {
-            if (elementReference != null) {
-                elementReference.invokeMethodAsync('JsInvokeKeyDown', args.key);
+            if (elementReferences != null && elementReferences.length > 0) {
+                elementReferences[elementReferences.length-1].invokeMethodAsync('JsInvokeKeyDown', args.key);
             }
         },
 
@@ -39,6 +54,14 @@ var mcomponents = (function () {
             if (element != null) {
                 element.focus();
             }
+        },
+
+        clearFocus: function () {
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+
+            window.focus();
         },
 
         toDataUrl: function (element) {

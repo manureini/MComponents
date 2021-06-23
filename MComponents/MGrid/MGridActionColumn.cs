@@ -222,7 +222,7 @@ namespace MComponents.MGrid
 
                                 if (confirmed)
                                 {
-                                    InvokeAsync(() => _ = Grid.StartDeleteRow(pModel, null));
+                                    _ = InvokeAsync(() => _ = Grid.StartDeleteRow(pModel, null));
                                 }
                                 else
                                 {
