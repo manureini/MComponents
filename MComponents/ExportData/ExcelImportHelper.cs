@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using MComponents.MGrid;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -39,37 +40,68 @@ namespace MComponents.ExportData
             {
                 var rowValues = GetRow(doc, sst, row);
 
+                ProgressRow(propInfo, rowValues, (rowVal, pi) =>
+                {
+                    if (pi.GetCustomAttribute(typeof(RequiredAttribute)) != null && rowVal == null)
+                    {
+                        throw new UserMessageException($"Column {pi.Name} has an empty value!");
+                    }
+                });
+            }
+
+            foreach (var row in rows.Skip(1))
+            {
+                var rowValues = GetRow(doc, sst, row);
+
                 T obj = pGrid.CreateNewT();
 
-                for (int i = 0; i < rowValues.Count; i++)
+                var proceeded = ProgressRow(propInfo, rowValues, (object rowVal, IMPropertyInfo pi) =>
                 {
-                    if (i >= rowValues.Count || i >= propInfo.Count)
-                        break;
-
-                    var rowVal = rowValues[i];
-                    var pi = propInfo[i];
-
-                    if (pi.IsReadOnly)
-                        continue;
-
-                    if (rowVal != null)
-                    {
-                        if (pi.PropertyType.IsEnum)
-                        {
-                            Enum.TryParse(pi.PropertyType, rowVal.ToString(), true, out rowVal);
-                        }
-                        else
-                        {
-                            rowVal = Convert.ChangeType(rowVal, pi.PropertyType);
-                        }
-                    }
-
                     pi.SetValue(obj, rowVal);
+                });
+
+                if (!proceeded)
+                {
+                    continue;
                 }
 
                 pGrid.NewValue = obj;
                 await pGrid.OnFormSubmit(new MFormSubmitArgs(null, new Dictionary<string, object>(), obj, true));
             }
+        }
+
+        private static bool ProgressRow(List<IMPropertyInfo> propInfo, List<object> rowValues, Action<object, IMPropertyInfo> pAction)
+        {
+            if (rowValues == null || rowValues.Count == 0 || rowValues.All(r => r == null))
+                return false;
+
+            for (int i = 0; i < rowValues.Count; i++)
+            {
+                if (i >= rowValues.Count || i >= propInfo.Count)
+                    break;
+
+                var rowVal = rowValues[i];
+                var pi = propInfo[i];
+
+                if (pi.IsReadOnly)
+                    continue;
+
+                if (rowVal != null)
+                {
+                    if (pi.PropertyType.IsEnum)
+                    {
+                        Enum.TryParse(pi.PropertyType, rowVal.ToString(), true, out rowVal);
+                    }
+                    else if (!pi.PropertyType.IsAssignableFrom(rowVal.GetType()))
+                    {
+                        rowVal = Convert.ChangeType(rowVal, pi.PropertyType);
+                    }
+                }
+
+                pAction(rowVal, pi);
+            }
+
+            return true;
         }
 
         private static List<IMPropertyInfo> GetPropertyInfos(Dictionary<IMGridPropertyColumn, IMPropertyInfo> pGridDict, List<object> pValues)

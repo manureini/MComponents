@@ -1664,9 +1664,9 @@ namespace MComponents.MGrid
             {
                 Console.WriteLine(ex);
                 Notificator.InvokeNotification(true, "Error Importing file");
+                Notificator.InvokeNotification(true,  ex.Message);
             }
         }
-
 
         public async Task ImportContent(Stream pStream)
         {
