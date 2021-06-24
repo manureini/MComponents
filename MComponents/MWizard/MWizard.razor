@@ -47,7 +47,7 @@
         <div class="m-wizard-step-container">
             @if (CurrentStep >= 0 && WizardSteps.Count > CurrentStep)
             {
-                <div class="m-wizard-step">
+                <div class="m-wizard-step" @attributes="WizardSteps[CurrentStep].AdditionalAttributes">
                     @if(mEmptyRender)
                     {
                         <span class="m-wizard-empty"></span>

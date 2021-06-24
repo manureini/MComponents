@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
 
 namespace MComponents.MWizard
 {
@@ -37,6 +38,9 @@ namespace MComponents.MWizard
 
         [Parameter]
         public int Position { get; set; } = 0;
+
+        [Parameter(CaptureUnmatchedValues = true)]
+        public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         private IMWizard mWizard;
 
