@@ -1166,7 +1166,7 @@ namespace MComponents.MGrid
             EditRow = default(T);
 
             if (mObjReference != null)
-                _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", mObjReference);
+                _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", Identifier);
 
             _ = InvokeAsync(StateHasChanged);
             return true;
@@ -1214,7 +1214,7 @@ namespace MComponents.MGrid
             EditRow = toSelect;
             Selected = EditRow;
 
-            await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", ObjReference);
+            await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", Identifier, ObjReference);
             StateHasChanged();
         }
 
@@ -1268,7 +1268,7 @@ namespace MComponents.MGrid
 
             await UpdateColumnsWidth();
 
-            await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", ObjReference);
+            await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", Identifier, ObjReference);
             StateHasChanged();
         }
 
@@ -1369,7 +1369,7 @@ namespace MComponents.MGrid
             await UpdateDataCacheIfDataAdapter();
 
             if (mObjReference != null)
-                _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", mObjReference);
+                _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", Identifier);
 
             InvokeStateHasChanged();
         }

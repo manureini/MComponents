@@ -5,23 +5,27 @@ var mcomponents = (function () {
     var elementReferences = [];
 
     return {
-        registerKeyListener: function (element) {
-            if (element == null) {
+        registerKeyListener: function (identifier, element) {
+            if (identifier == null || element == null) {
                 return;
             }
 
-            elementReferences.push(element);
+            elementReferences.push({
+                key: identifier,
+                value: element
+            });
+
             document.addEventListener('keydown', mcomponents.onKeyDownEvent);
             console.log(elementReferences.length);
         },
 
-        unRegisterKeyListener: function (element) {
-            if (element == null) {
+        unRegisterKeyListener: function (identifier) {
+            if (identifier == null) {
                 return;
             }
 
             elementReferences = elementReferences.filter(function (value, index, arr) {
-                return value._id != element._id;
+                return value.key != identifier;
             });
 
             if (elementReferences.length == 0) {
@@ -32,7 +36,7 @@ var mcomponents = (function () {
 
         onKeyDownEvent: function (args) {
             if (elementReferences != null && elementReferences.length > 0) {
-                elementReferences[elementReferences.length-1].invokeMethodAsync('JsInvokeKeyDown', args.key);
+                elementReferences[elementReferences.length-1].value.invokeMethodAsync('JsInvokeKeyDown', args.key);
             }
         },
 

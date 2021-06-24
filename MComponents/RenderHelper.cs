@@ -150,7 +150,7 @@ namespace MComponents
 
                 pBuilder.AddAttribute(23, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
                 {
-                    pParent.OnInputKeyUp(a);
+                    pParent.OnInputKeyUp(a, pPropertyInfo);
                 }));
 
                 var valueExpression = GetValueExpression<T>(pPropertyInfo, pModel);

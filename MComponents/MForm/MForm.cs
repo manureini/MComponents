@@ -538,9 +538,9 @@ namespace MComponents.MForm
             StateHasChanged();
         }
 
-        public void OnInputKeyUp(KeyboardEventArgs pArgs)
+        public void OnInputKeyUp(KeyboardEventArgs pArgs, IMPropertyInfo pPropertyInfo)
         {
-            if (pArgs.Key == "Enter")
+            if (pArgs.Key == "Enter" && pPropertyInfo.GetCustomAttribute(typeof(TextAreaAttribute)) == null)
             {
                 if (ContainerContext == null)
                 {

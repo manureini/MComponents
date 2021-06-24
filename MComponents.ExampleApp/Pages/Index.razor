@@ -9,23 +9,26 @@
 
 
 <CascadingValue Value="mEditContext">
-    <MSelect T="string" @bind-Value="mValue" Options="mValues" />
+	<MSelect T="string" @bind-Value="mValue" Options="mValues" />
 
-    <br />
-    <MSelect T="string" @bind-Value="mValue" Options="mValues" EnableSearch="true" />
+	<br />
+	<MSelect T="string" @bind-Value="mValue" Options="mValues" EnableSearch="true" />
 
 
-    <br />
-    <MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
+	<br />
+	<MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
 
-    <br />
-    <MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
+	<br />
+	<MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" EnableSearch="true" />
 
-    <br />
-    <MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime?" @bind-Value="mDateTime0" />
+	<br />
+	<MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
 
-    <br />
-    <MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime" @bind-Value="mDateTime1" />
+	<br />
+	<MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime?" @bind-Value="mDateTime0" />
+
+	<br />
+	<MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime" @bind-Value="mDateTime1" />
 
 </CascadingValue>
 
@@ -42,21 +45,21 @@
 
 
 
-@code{
+@code {
 
-    protected string mValue;
-    protected string[] mValues;
-    protected ICollection<string> mSelectedValues;
-    protected DateTime? mDateTime0;
-    protected DateTime mDateTime1;
+	protected string mValue;
+	protected string[] mValues;
+	protected ICollection<string> mSelectedValues;
+	protected DateTime? mDateTime0;
+	protected DateTime mDateTime1;
 
-    protected EditContext mEditContext = new EditContext(string.Empty);
+	protected EditContext mEditContext = new EditContext(string.Empty);
 
 
-    override protected void OnInitialized()
-    {
-        mValues = Enumerable.Range(1, 1000).Select(v => "value" + v).ToArray();
-        mSelectedValues = mValues.Take(3).ToList();
-    }
+	override protected void OnInitialized()
+	{
+		mValues = Enumerable.Range(1, 1000).Select(v => "value" + v).ToArray();
+		mSelectedValues = mValues.Take(3).ToList();
+	}
 
 }

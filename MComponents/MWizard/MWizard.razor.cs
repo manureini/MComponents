@@ -63,13 +63,13 @@ namespace MComponents.MWizard
             if (firstRender)
             {
                 mObjReference = DotNetObjectReference.Create(this);
-                await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", mObjReference);
+                await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", GetHashCode(), mObjReference);
             }
         }
 
         ~MWizard()
         {
-            _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", mObjReference);
+            _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", GetHashCode());
         }
 
         [JSInvokable]

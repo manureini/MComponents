@@ -14,7 +14,7 @@ namespace MComponents.MForm
 
         void RegisterField(IMField pField, bool pSkipRendering = false);
 
-        void OnInputKeyUp(KeyboardEventArgs pArgs);
+        void OnInputKeyUp(KeyboardEventArgs pArgs, IMPropertyInfo pPropertyInfo);
 
         Task OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo,  object pNewValue);
 
