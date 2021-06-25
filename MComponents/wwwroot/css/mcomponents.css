@@ -420,21 +420,27 @@
         left: 0;
         background-color: #ebedf2;
         width: 54px;
-        border-radius: 15px; }
+        border-radius: 15px;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #576587; }
     .m-switch label input:empty ~ span:after {
       position: absolute;
       display: block;
       background-color: white;
       height: 24px;
       width: 24px;
-      line-height: 26px;
+      line-height: 23px;
       top: 3px;
       margin-left: 3px;
       font-size: 0.9em;
       text-align: center;
       border-radius: 15px;
       content: '\f00d';
-      transition: all 80ms ease-in; }
+      transition: all 80ms ease-in;
+      border-style: solid;
+      border-width: 1px;
+      border-color: #576587; }
     .m-switch label input:checked ~ span:after {
       color: white;
       background-color: #5867dd;

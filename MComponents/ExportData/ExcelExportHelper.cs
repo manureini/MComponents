@@ -36,9 +36,14 @@ namespace MComponents
                         CellFormats =
                             new CellFormats(
                                 new CellFormat(),
-                                new CellFormat
+                                new CellFormat()
                                 {
                                     NumberFormatId = DATE_NUMBER_FORMAT,
+                                    ApplyNumberFormat = true
+                                },
+                                new CellFormat()
+                                {
+                                    NumberFormatId = 49,
                                     ApplyNumberFormat = true
                                 })
                     };
@@ -59,13 +64,15 @@ namespace MComponents
                     };
                     sheets.AppendChild(sheet);
 
+                    var sst = workbookpart.AddNewPart<SharedStringTablePart>();
+
                     UInt32 rowIdex = 0;
                     var row = new Row { RowIndex = ++rowIdex };
                     sheetData.AppendChild(row);
 
                     foreach (var headerrow in columns.Select(c => c.HeaderText))
                     {
-                        row.AppendChild(CreateTextCell(headerrow ?? string.Empty));
+                        row.AppendChild(CreateTextCell(sst, headerrow ?? string.Empty));
                     }
 
                     foreach (var rowData in pData)
@@ -77,17 +84,17 @@ namespace MComponents
                         {
                             if (column is IMGridComplexExport<T> exporter)
                             {
-                                row.AppendChild(exporter.GenerateExportCell(rowData));
+                                row.AppendChild(exporter.GenerateExportCell(sst, rowData));
                             }
                             else if (column is IMGridPropertyColumn propColumn)
                             {
                                 var iprop = pPropertyInfos[propColumn];
-                                Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop);
+                                Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop, sst);
                                 row.AppendChild(cell);
                             }
                             else
                             {
-                                row.AppendChild(CreateTextCell(string.Empty));
+                                row.AppendChild(CreateGeneralCell(string.Empty));
                             }
                         }
                     }
@@ -102,7 +109,7 @@ namespace MComponents
             }
         }
 
-        private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop)
+        private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop, SharedStringTablePart pSsTable)
         {
             Cell cell;
             if (iprop.PropertyType == typeof(DateTime) || iprop.PropertyType == typeof(DateTime?))
@@ -134,27 +141,75 @@ namespace MComponents
                 string strvalue = value.HasValue ? value.Value.ToString(CultureInfo.InvariantCulture) : string.Empty;
                 cell = CreateNumberCell(strvalue);
             }
+            else if (iprop.PropertyType == typeof(string))
+            {
+                string cellValue = pFormatter.FormatPropertyColumnValue(popcolumn, iprop, rowData);
+                cell = CreateTextCell(pSsTable, cellValue ?? string.Empty);
+            }
             else
             {
                 string cellValue = pFormatter.FormatPropertyColumnValue(popcolumn, iprop, rowData);
-                cell = CreateTextCell(cellValue ?? string.Empty);
+                cell = CreateGeneralCell(cellValue ?? string.Empty);
             }
 
             return cell;
         }
 
-        public static Cell CreateTextCell(string text)
+        public static Cell CreateGeneralCell(string text)
         {
-            var cell = new Cell
-            {
-                DataType = CellValues.InlineString,
-            };
-
             var istring = new InlineString();
             var t = new Text { Text = text };
             istring.AppendChild(t);
-            cell.AppendChild(istring);
+
+            var cell = new Cell
+            {
+                DataType = CellValues.InlineString,
+                InlineString = istring
+            };
+
             return cell;
+        }
+
+        public static Cell CreateTextCell(SharedStringTablePart pSsTable, string text)
+        {
+            int ssIndex = InsertSharedStringItem(pSsTable, text);
+
+            var cell = new Cell
+            {
+                DataType = CellValues.SharedString,
+                CellValue = new CellValue(ssIndex.ToString()),
+                StyleIndex = 2
+            };
+
+            return cell;
+        }
+
+        private static int InsertSharedStringItem(SharedStringTablePart shareStringPart, string text)
+        {
+            // If the part does not contain a SharedStringTable, create one.
+            if (shareStringPart.SharedStringTable == null)
+            {
+                shareStringPart.SharedStringTable = new SharedStringTable();
+            }
+
+            int i = 0;
+
+            // Iterate through all the items in the SharedStringTable. If the text already exists, return its index.
+            foreach (SharedStringItem item in shareStringPart.SharedStringTable.Elements<SharedStringItem>())
+            {
+                if (item.InnerText == text)
+                {
+                    return i;
+                }
+
+                i++;
+            }
+
+            // The text does not exist in the part. Create the SharedStringItem and return its index.
+            shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(new Text(text)));
+            shareStringPart.SharedStringTable.Save();
+
+            return i;
         }
 
         public static Cell CreateDateCell(DateTime? pDate)
@@ -163,6 +218,8 @@ namespace MComponents
 
             if (pDate != null)
             {
+                pDate = new DateTime(pDate.Value.Year, pDate.Value.Month, pDate.Value.Day);
+
                 try
                 {
                     value = pDate.Value.ToOADate().ToString(CultureInfo.InvariantCulture);

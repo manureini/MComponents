@@ -628,6 +628,9 @@ $borderRadius: 0.25rem;
                     background-color: $gray;
                     width: 54px;
                     border-radius: 15px;
+                    border-style: solid;
+                    border-width: 1px;
+                    border-color: darken($gray, 50);
                 }
             }
 
@@ -639,7 +642,7 @@ $borderRadius: 0.25rem;
                         background-color: white;
                         height: 24px;
                         width: 24px;
-                        line-height: 26px;
+                        line-height: 23px;
                         top: 3px;
                         margin-left: 3px;
                         font-size: 0.9em;
@@ -647,6 +650,9 @@ $borderRadius: 0.25rem;
                         border-radius: 15px;
                         content: '\f00d';
                         transition: all 80ms ease-in;
+                        border-style: solid;
+                        border-width: 1px;
+                        border-color: darken($gray, 50);
                     }
                 }
             }

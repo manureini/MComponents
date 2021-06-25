@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -59,12 +60,12 @@ namespace MComponents.MGrid
             return CellTemplate(pModel);
         }
 
-        public Cell GenerateExportCell(T pModel)
+        public Cell GenerateExportCell(SharedStringTablePart pSharedStringTablePart, T pModel)
         {
             if (ExportText != null)
-                return ExcelExportHelper.CreateTextCell(ExportText(pModel));
+                return ExcelExportHelper.CreateTextCell(pSharedStringTablePart, ExportText(pModel));
             else
-                return ExcelExportHelper.CreateTextCell(string.Empty);
+                return ExcelExportHelper.CreateGeneralCell(string.Empty);
         }
     }
 }
