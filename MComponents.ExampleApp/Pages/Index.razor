@@ -9,26 +9,35 @@
 
 
 <CascadingValue Value="mEditContext">
-	<MSelect T="string" @bind-Value="mValue" Options="mValues" />
 
-	<br />
-	<MSelect T="string" @bind-Value="mValue" Options="mValues" EnableSearch="true" />
+	<MTabs>
+
+		<MTab Title="Tab1">
+			<MSelect T="string" @bind-Value="mValue" Options="mValues" />
+
+			<br />
+			<MSelect T="string" @bind-Value="mValue" Options="mValues" EnableSearch="true" />
 
 
-	<br />
-	<MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
+			<br />
+			<MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
+		</MTab>
 
-	<br />
-	<MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" EnableSearch="true" />
+		<MTab Title="Tab2">
+			<br />
+			<MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" EnableSearch="true" />
 
-	<br />
-	<MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
+			<br />
+			<MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
 
-	<br />
-	<MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime?" @bind-Value="mDateTime0" />
+			<br />
+			<MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime?" @bind-Value="mDateTime0" />
 
-	<br />
-	<MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime" @bind-Value="mDateTime1" />
+			<br />
+			<MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime" @bind-Value="mDateTime1" />
+		</MTab>
+
+	</MTabs>
 
 </CascadingValue>
 
