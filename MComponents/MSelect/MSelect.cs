@@ -412,7 +412,7 @@ namespace MComponents.MSelect
             mOptionsVisible = false;
             InvokeAsync(() => StateHasChanged());
 
-            _ = JSRuntime.InvokeVoidAsync("mcomponents.unRegisterMSelect");
+            _ = JSRuntime.InvokeVoidAsync("mcomponents.unRegisterMSelect", mObjReference);
 
             if (pUserInteracted)
             {

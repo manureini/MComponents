@@ -44,12 +44,20 @@ var mcomponents = (function () {
                 return;
             }
 
+            if (mSelectReference != null) {
+                mSelectReference.invokeMethodAsync('JsInvokeMSelectFocusOut');
+            }
+
             mSelectReference = element;
             document.addEventListener('click', mcomponents.onMSelectClickEvent);
         },
 
-        unRegisterMSelect: function () {
-            element = null;
+        unRegisterMSelect: function (element) {
+            if (element._id != mSelectReference._id) {
+                return;
+            }
+
+            mSelectReference = null;
             document.removeEventListener('click', mcomponents.onMSelectClickEvent);
         },
 
@@ -58,8 +66,8 @@ var mcomponents = (function () {
                 return;
             }
 
-            if (!event.target.matches('.m-select-options-container *')) {
-                mSelectReference.invokeMethodAsync('JsInvokeMSelectFocusOut', args.key);
+            if (!args.target.matches('.m-select-options-container *')) {
+                mSelectReference.invokeMethodAsync('JsInvokeMSelectFocusOut');
             }
         },
 
