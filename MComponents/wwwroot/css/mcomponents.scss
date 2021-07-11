@@ -740,10 +740,17 @@ $borderRadius: 0.25rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
         color: darken($gray, 30);
+        display: flex;
+        align-items: flex-end;
 
-        span {
+        .m-wizard-navigation-item-number {
             font-size: 2rem;
-            margin-right: 0.5rem;
+            margin-right: 0.4rem;
+        }
+
+        .m-wizard-navigation-item-title {
+            padding-bottom: 0.4rem;
+            white-space: nowrap;
         }
     }
 

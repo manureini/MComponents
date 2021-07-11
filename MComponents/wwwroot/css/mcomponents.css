@@ -488,10 +488,15 @@
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: #8e9ab6; }
-    .m-wizard .m-wizard-navigation-item-title-contaier span {
+    color: #8e9ab6;
+    display: flex;
+    align-items: flex-end; }
+    .m-wizard .m-wizard-navigation-item-title-contaier .m-wizard-navigation-item-number {
       font-size: 2rem;
-      margin-right: 0.5rem; }
+      margin-right: 0.4rem; }
+    .m-wizard .m-wizard-navigation-item-title-contaier .m-wizard-navigation-item-title {
+      padding-bottom: 0.4rem;
+      white-space: nowrap; }
   .m-wizard .m-wizard-step-container {
     display: flex;
     flex-direction: column;
