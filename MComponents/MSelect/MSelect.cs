@@ -65,9 +65,9 @@ namespace MComponents.MSelect
         protected ElementReference SelectSpan { get; set; }
 
         protected bool mOptionsVisible;
-        protected bool mBlockNextFocus;
+        protected DateTime mBlockFocusUntil;
 
-        protected T[] DisplayValues = new T[0];
+        protected T[] DisplayValues = Array.Empty<T>();
 
         protected T SelectedValue;
 
@@ -80,6 +80,7 @@ namespace MComponents.MSelect
         protected List<MSelectOption> mAdditionalOptions = new List<MSelectOption>();
 
         protected Type mtType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+        protected DotNetObjectReference<MSelect<T>> mObjReference;
 
         protected bool MultipleSelectMode => ValuesExpression != null;
 
@@ -133,6 +134,20 @@ namespace MComponents.MSelect
             }
 
             base.OnInitialized();
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                mObjReference = DotNetObjectReference.Create(this);
+            }
+        }
+
+        [JSInvokable]
+        public void JsInvokeMSelectFocusOut()
+        {
+            HideOptions(false);
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder pBuilder)
@@ -197,11 +212,7 @@ namespace MComponents.MSelect
                 pBuilder.AddEventPreventDefaultAttribute(495, "onkeydown", true);
                 pBuilder.AddEventPreventDefaultAttribute(496, "onkeyup", true);
 
-                //This causes sometimes an error in console
-                //see https://github.com/dotnet/aspnetcore/issues/21241
-                pBuilder.AddAttribute(34, "onfocusout", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusLost));
-
-                pBuilder.AddAttribute(35, "class", "m-select-options-container");
+                pBuilder.AddAttribute(35, "class", "m-select-options-container"); //also used in mcomponents.js
                 pBuilder.AddElementReferenceCapture(36, (__value) =>
                 {
                     OptionsDiv = __value;
@@ -222,9 +233,6 @@ namespace MComponents.MSelect
                     pBuilder.AddEventStopPropagationAttribute(483, "onkeydown", true);
                     pBuilder.AddEventStopPropagationAttribute(484, "onkeyup", true);
                     pBuilder.AddEventStopPropagationAttribute(485, "oninput", true);
-
-                    // pBuilder.AddEventPreventDefaultAttribute(485, "onkeydown", true);
-                    // pBuilder.AddEventPreventDefaultAttribute(486, "onkeyup", true);
 
                     pBuilder.AddAttribute(49, "value", "");
                     pBuilder.AddAttribute(50, "class", "m-form-control m-select-search-input");
@@ -351,18 +359,17 @@ namespace MComponents.MSelect
 
         protected void OnFocusIn(FocusEventArgs args)
         {
-            if (mBlockNextFocus)
-            {
-                mBlockNextFocus = false;
+            if (DateTime.UtcNow.Subtract(mBlockFocusUntil).TotalMilliseconds <= 0)
                 return;
-            }
 
             if (!mOptionsVisible)
-                Task.Delay(150).ContinueWith((a) =>
+            {
+                Task.Delay(100).ContinueWith((a) =>
                 {
                     if (!mOptionsVisible)
-                        InvokeAsync(() => ToggleOptions(false));
+                        ShowOptions();
                 });
+            }
         }
 
         protected void OnOptionSelect(int pIndex)
@@ -371,14 +378,6 @@ namespace MComponents.MSelect
 
             if (!MultipleSelectMode)
                 ToggleOptions(true);
-        }
-
-        protected void OnFocusLost(FocusEventArgs pArgs)
-        {
-            Task.Delay(150).ContinueWith((a) =>
-            {
-                HideOptions(false);
-            });
         }
 
         protected void ToggleOptions(bool pUserInteracted)
@@ -403,7 +402,9 @@ namespace MComponents.MSelect
             SelectedValue = CurrentValue;
 
             mOptionsVisible = true;
-            InvokeAsync(() => StateHasChanged());
+
+            _ = InvokeAsync(() => StateHasChanged());
+            _ = JSRuntime.InvokeVoidAsync("mcomponents.registerMSelect", mObjReference);
         }
 
         public void HideOptions(bool pUserInteracted)
@@ -411,15 +412,16 @@ namespace MComponents.MSelect
             mOptionsVisible = false;
             InvokeAsync(() => StateHasChanged());
 
+            _ = JSRuntime.InvokeVoidAsync("mcomponents.unRegisterMSelect");
+
             if (pUserInteracted)
-                Task.Delay(50).ContinueWith((a) =>
+            {
+                if (SelectSpan.Id != null)
                 {
-                    if (SelectSpan.Id != null)
-                    {
-                        mBlockNextFocus = true;
-                        _ = JSRuntime.InvokeVoidAsync("mcomponents.focusElement", SelectSpan);
-                    }
-                });
+                    mBlockFocusUntil = DateTime.UtcNow.AddMilliseconds(150);
+                    _ = JSRuntime.InvokeVoidAsync("mcomponents.focusElement", SelectSpan);
+                }
+            }
         }
 
         protected void OnSearchInputChanged(ChangeEventArgs args)
@@ -437,7 +439,7 @@ namespace MComponents.MSelect
             }
 
             StateHasChanged();
-            JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
+            _ = JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
         }
 
         protected void InputKeyDown(KeyboardEventArgs args)
@@ -506,7 +508,7 @@ namespace MComponents.MSelect
 
             if (args.Key == " ")
             {
-                if (MultipleSelectMode)
+                if (MultipleSelectMode && !EnableSearch)
                 {
                     int index = Array.IndexOf(DisplayValues, SelectedValue);
                     if (index >= 0)
@@ -555,6 +557,11 @@ namespace MComponents.MSelect
                     return;
 
                 SelectValue(DisplayValues[index]);
+            }
+
+            if (args.Key == "Tab")
+            {
+                HideOptions(false);
             }
         }
 

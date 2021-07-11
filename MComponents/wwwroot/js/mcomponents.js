@@ -3,6 +3,7 @@
 var mcomponents = (function () {
 
     var elementReferences = [];
+    var mSelectReference = null;
 
     return {
         registerKeyListener: function (identifier, element) {
@@ -16,7 +17,6 @@ var mcomponents = (function () {
             });
 
             document.addEventListener('keydown', mcomponents.onKeyDownEvent);
-            console.log(elementReferences.length);
         },
 
         unRegisterKeyListener: function (identifier) {
@@ -31,12 +31,35 @@ var mcomponents = (function () {
             if (elementReferences.length == 0) {
                 document.removeEventListener('keydown', mcomponents.onKeyDownEvent);
             }
-            console.log(elementReferences.length);
         },
 
         onKeyDownEvent: function (args) {
             if (elementReferences != null && elementReferences.length > 0) {
-                elementReferences[elementReferences.length-1].value.invokeMethodAsync('JsInvokeKeyDown', args.key);
+                elementReferences[elementReferences.length - 1].value.invokeMethodAsync('JsInvokeKeyDown', args.key);
+            }
+        },
+
+        registerMSelect: function (element) {
+            if (element == null) {
+                return;
+            }
+
+            mSelectReference = element;
+            document.addEventListener('click', mcomponents.onMSelectClickEvent);
+        },
+
+        unRegisterMSelect: function () {
+            element = null;
+            document.removeEventListener('click', mcomponents.onMSelectClickEvent);
+        },
+
+        onMSelectClickEvent: function (args) {
+            if (mSelectReference == null) {
+                return;
+            }
+
+            if (!event.target.matches('.m-select-options-container *')) {
+                mSelectReference.invokeMethodAsync('JsInvokeMSelectFocusOut', args.key);
             }
         },
 
