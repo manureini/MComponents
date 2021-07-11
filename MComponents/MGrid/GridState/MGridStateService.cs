@@ -27,7 +27,7 @@ namespace MComponents.MGrid
         public void SaveGridState<T>(MGrid<T> pGrid)
         {
             var state = GetGridState(pGrid);
-            mPersistService.SetValueAsync(pGrid, state);
+            _ = mPersistService.SetValueAsync(pGrid, state);
         }
 
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.

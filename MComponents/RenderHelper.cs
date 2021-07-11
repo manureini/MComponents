@@ -18,9 +18,9 @@ namespace MComponents
 {
     public static class RenderHelper
     {
-        private static Type[] mNumberTypes = { typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal) };
+        private static readonly Type[] mNumberTypes = { typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal) };
 
-        private static List<Type> mSupportedTypes = new List<Type>();
+        private static readonly List<Type> mSupportedTypes = new List<Type>();
 
         static RenderHelper()
         {
@@ -52,7 +52,7 @@ namespace MComponents
             {
                 if (!IsTypeSupported(typeof(T)) || IsPropertyHolderNull(pPropertyInfo, pModel))
                 {
-                    ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId, pParent);
+                    ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId);
                     return;
                 }
 
@@ -218,7 +218,7 @@ namespace MComponents
         {
             if (pComplexField.Template == null)
             {
-                ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId, pParent);
+                ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId);
                 return;
             }
 
@@ -226,7 +226,6 @@ namespace MComponents
 
             TProperty value = (TProperty)pPropertyInfo.GetValue(pModel);
 
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             context.Row = pModel;
             context.InputId = pId.ToString();
             context.FormId = pParent.Id.ToString();
@@ -240,8 +239,6 @@ namespace MComponents
             }, value);
 
             context.ValueExpression = GetValueExpression<TProperty>(pPropertyInfo, pModel);
-
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
             pBuilder.AddContent(42, pComplexField.Template?.Invoke(context));
 
@@ -300,7 +297,7 @@ namespace MComponents
         }
 
 
-        public static void ShowNotSupportedType(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent)
+        internal static void ShowNotSupportedType(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId)
         {
             var value = pPropertyInfo.GetValue(pModel);
 

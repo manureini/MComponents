@@ -30,7 +30,7 @@ namespace MComponents.InputElements
             builder.OpenComponent<InputDate<T>>(20);
             builder.AddMultipleAttributes(31, AdditionalAttributes);
             builder.AddAttribute(21, "Value", CurrentDateValue);
-            builder.AddAttribute(22, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(this, async __value =>
+            builder.AddAttribute(22, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(this, __value =>
             {
                 CurrentDateValue = __value;
                 UpdateDateTimeValue();
@@ -43,7 +43,7 @@ namespace MComponents.InputElements
             builder.OpenComponent<InputTime<T>>(30);
             builder.AddMultipleAttributes(44, AdditionalAttributes);
             builder.AddAttribute(31, "Value", CurrentTimeValue);
-            builder.AddAttribute(22, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(this, async __value =>
+            builder.AddAttribute(22, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(this, __value =>
             {
                 CurrentTimeValue = __value;
                 UpdateDateTimeValue();

@@ -167,7 +167,7 @@ namespace MComponents.MGrid
                     builder.OpenElement(1, "button");
                     builder.AddAttribute(2, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
                     builder.AddAttribute(2, "style", "margin-left: 4px;");
-                    builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (a) =>
+                    builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                      {
                          if (Settings.UseDeleteConfirmationWithAlert)
                          {

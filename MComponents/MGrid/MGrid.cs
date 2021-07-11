@@ -406,7 +406,7 @@ namespace MComponents.MGrid
                                }
                            }
 
-                           builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async a => OnColumnHeaderClick(column, a)));
+                           builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, a => OnColumnHeaderClick(column, a)));
                            builder2.AddAttribute(319, "scope", "col");
 
                            builder2.AddContent(321, (MarkupString)column.HeaderText);
@@ -1532,7 +1532,9 @@ namespace MComponents.MGrid
 
                     ColumnsList.Insert(0, new MGridGroupByColumn<T>()
                     {
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
                         Identifier = "groupby_" + pColumn.Identifier + "_" + Guid.NewGuid(),
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
                         GridColumn = pColumn
                     });
                 }
@@ -1643,7 +1645,7 @@ namespace MComponents.MGrid
 
         protected async Task OnFileChange(InputFileChangeEventArgs e)
         {
-            var file = e.GetMultipleFiles(1).FirstOrDefault();
+            var file = e.GetMultipleFiles(1)[0];
 
             if (file == null)
                 return;
@@ -1806,7 +1808,7 @@ namespace MComponents.MGrid
                 }
                 else
                 {
-                    groupedPart = new T[0];
+                    groupedPart = Array.Empty<T>();
                 }
 
                 var part = new MGridGrouping<T>(keyObj, groupedPart);

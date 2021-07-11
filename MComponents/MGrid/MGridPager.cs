@@ -16,9 +16,7 @@ namespace MComponents.MGrid
         [Parameter]
         public int[] SelectablePageSizes { get; set; } = { 10, 20, 30, 50, 100 };
 
-
         private IMRegister mGrid;
-        private long mCurrentPage = 1;
 
         [CascadingParameter]
         public IMRegister Grid

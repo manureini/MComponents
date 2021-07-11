@@ -17,7 +17,7 @@ namespace MComponents.MGrid
 
         public virtual void AppendToTableRow(RenderTreeBuilder pBuilder, ref string pCssClass, T pRow, bool pSelected)
         {
-            if (mRowMetadata.ContainsKey(pRow) && mRowMetadata[pRow] == ROW_DELETE_METADATA)
+            if (mRowMetadata.ContainsKey(pRow) && (string)mRowMetadata[pRow] == ROW_DELETE_METADATA)
             {
                 pCssClass += " m-grid-row--delete";
             }
