@@ -418,7 +418,7 @@ namespace MComponents.MSelect
             {
                 if (SelectSpan.Id != null)
                 {
-                    mBlockFocusUntil = DateTime.UtcNow.AddMilliseconds(150);
+                    mBlockFocusUntil = DateTime.UtcNow.AddMilliseconds(300);
                     _ = JSRuntime.InvokeVoidAsync("mcomponents.focusElement", SelectSpan);
                 }
             }
