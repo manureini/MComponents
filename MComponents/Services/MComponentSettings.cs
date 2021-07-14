@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using MComponents.MGrid;
+using Microsoft.Extensions.Localization;
 using System.Globalization;
 
 namespace MComponents.Services
@@ -16,5 +17,7 @@ namespace MComponents.Services
         public CultureInfo[] SupportedCultures { get; set; } = AllSupportedCultures;
 
         public bool SetRequestLocalizationOptions { get; set; }
+
+        public MGridSettings MGridSettings => MGridSettings.Instance;
     }
 }

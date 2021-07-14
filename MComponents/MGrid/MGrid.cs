@@ -44,37 +44,37 @@ namespace MComponents.MGrid
         public IMGridObjectFormatter<T> Formatter { get; set; }
 
         [Parameter]
-        public bool EnableAdding { get; set; }
+        public bool EnableAdding { get; set; } = MGridSettings.Instance.EnableAdding;
 
         [Parameter]
-        public bool EnableEditing { get; set; }
+        public bool EnableEditing { get; set; } = MGridSettings.Instance.EnableEditing;
 
         [Parameter]
-        public bool EnableDeleting { get; set; }
+        public bool EnableDeleting { get; set; } = MGridSettings.Instance.EnableDeleting;
 
         [Parameter]
-        public bool EnableUserSorting { get; set; }
+        public bool EnableUserSorting { get; set; } = MGridSettings.Instance.EnableUserSorting;
 
         [Parameter]
-        public bool EnableFilterRow { get; set; }
+        public bool EnableFilterRow { get; set; } = MGridSettings.Instance.EnableFilterRow;
 
         [Parameter]
-        public bool EnableExport { get; set; }
+        public bool EnableExport { get; set; } = MGridSettings.Instance.EnableExport;
 
         [Parameter]
-        public bool EnableImport { get; set; }
+        public bool EnableImport { get; set; } = MGridSettings.Instance.EnableImport;
 
         [Parameter]
-        public bool EnableSaveState { get; set; }
+        public bool EnableSaveState { get; set; } = MGridSettings.Instance.EnableSaveState;
 
         [Parameter]
-        public ToolbarItem ToolbarItems { get; set; }
+        public ToolbarItem ToolbarItems { get; set; } = MGridSettings.Instance.ToolbarItems;
 
         [Parameter]
-        public MGridInitialState InitialState { get; set; }
+        public MGridInitialState InitialState { get; set; } = MGridSettings.Instance.InitialState;
 
         [Parameter]
-        public string HtmlTableClass { get; set; }
+        public string HtmlTableClass { get; set; } = MGridSettings.Instance.HtmlTableClass;
 
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
@@ -165,7 +165,16 @@ namespace MComponents.MGrid
             base.OnInitialized();
 
             if (Formatter == null)
-                Formatter = new MGridDefaultObjectFormatter<T>();
+            {
+                if (MGridSettings.Instance.FormatterFactory != null)
+                {
+                    Formatter = MGridSettings.Instance.FormatterFactory.GetFormatter<T>();
+                }
+                else
+                {
+                    Formatter = new MGridDefaultObjectFormatter<T>();
+                }
+            }
 
             Formatter.L = this.L;
         }
@@ -348,21 +357,11 @@ namespace MComponents.MGrid
                            builder2.CloseElement(); //button
                        }
 
-
                        builder2.CloseElement(); // div
 
 
                        builder2.OpenElement(277, "table");
-
-
-                       if (HtmlTableClass != null)
-                       {
-                           builder2.AddAttribute(282, "class", HtmlTableClass + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
-                       }
-                       else
-                       {
-                           builder2.AddAttribute(286, "class", "m-grid m-grid-striped m-grid-bordered m-grid-hover" + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
-                       }
+                       builder2.AddAttribute(286, "class", HtmlTableClass + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
 
                        if (FixedColumns)
                        {
