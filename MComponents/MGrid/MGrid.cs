@@ -192,6 +192,11 @@ namespace MComponents.MGrid
 
             if (pColumn is IMGridPropertyColumn propc)
             {
+                if (string.IsNullOrWhiteSpace(propc.Property))
+                {
+                    throw new ArgumentException($"Provide a {nameof(IMGridPropertyColumn.Property)} for column {propc.Identifier}");
+                }
+
                 var iprop = ReflectionHelper.GetIMPropertyInfo(typeof(T), propc.Property, propc.PropertyType);
 
                 propc.PropertyType = iprop.PropertyType;
@@ -1666,7 +1671,7 @@ namespace MComponents.MGrid
             {
                 Console.WriteLine(ex);
                 Notificator.InvokeNotification(true, "Error Importing file");
-                Notificator.InvokeNotification(true,  ex.Message);
+                Notificator.InvokeNotification(true, ex.Message);
             }
         }
 
