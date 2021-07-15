@@ -86,18 +86,7 @@ namespace MComponents.ExportData
                 if (pi.IsReadOnly)
                     continue;
 
-                if (rowVal != null)
-                {
-                    if (pi.PropertyType.IsEnum)
-                    {
-                        Enum.TryParse(pi.PropertyType, rowVal.ToString(), true, out rowVal);
-                    }
-                    else if (!pi.PropertyType.IsAssignableFrom(rowVal.GetType()))
-                    {
-                        rowVal = Convert.ChangeType(rowVal, pi.PropertyType);
-                    }
-                }
-
+                rowVal = ReflectionHelper.ChangeType(rowVal, pi.PropertyType);
                 pAction(rowVal, pi);
             }
 

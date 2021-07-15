@@ -8,6 +8,6 @@ namespace MComponents.MGrid
 
         public object Value { get; set; }
 
-        public Guid? ReferencedId { get; set; }
+        public string ReferencedId { get; set; }
     }
 }

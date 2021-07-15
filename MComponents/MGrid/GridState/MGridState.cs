@@ -10,7 +10,7 @@ namespace MComponents.MGrid
 
         public bool IsFilterRowVisible { get; set; }
 
-        public Guid? SelectedRow { get; set; }
+        public string SelectedRow { get; set; }
 
         public MGridFilterState[] FilterState { get; set; }
 

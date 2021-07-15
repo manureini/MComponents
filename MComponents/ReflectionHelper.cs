@@ -94,7 +94,7 @@ namespace MComponents
                 var parent = new MPropertyExpandoInfo(properties.First(), null, pParent);
 
                 string childProperties = string.Join(".", properties.Skip(1));
-                
+
                 return GetIMPropertyInfo(pObjectType, childProperties, pPropertyType, parent);
             }
 
@@ -109,6 +109,26 @@ namespace MComponents
             }
 
             return pValue.GetType().GetProperties().Select(v => GetIMPropertyInfo(pValue.GetType(), v.Name, v.PropertyType));
+        }
+
+        public static object ChangeType(object pObject, Type pType)
+        {
+            if (pObject == null)
+                return null;
+
+            if (pType.IsAssignableFrom(pObject.GetType()))
+                return pObject;
+
+            if (pType.IsEnum)
+            {
+                Enum.TryParse(pType, pObject.ToString(), true, out object enumResult);
+                return enumResult;
+            }
+
+            if (pType == typeof(Guid))
+                return Guid.Parse(pObject.ToString());
+
+            return Convert.ChangeType(pObject, pType);
         }
     }
 }

@@ -59,17 +59,7 @@ namespace MComponents
                 T value = default(T);
                 var val = pPropertyInfo.GetValue(pModel);
 
-                if (val != null)
-                {
-                    if (typeof(T).IsAssignableFrom(val.GetType()))
-                    {
-                        value = (T)val;
-                    }
-                    else
-                    {
-                        value = (T)(Convert.ChangeType(val, typeof(T)));
-                    }
-                }
+                value = (T)ReflectionHelper.ChangeType(val, typeof(T));
 
                 Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 

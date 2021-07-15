@@ -43,7 +43,7 @@ namespace MComponents.MGrid
                       if (state == null)
                           return;
 
-                   //   pGrid.Selected = state.SelectedRow;
+                      pGrid.SelectRow(state.SelectedRow);
 
                       if (pGrid.Pager != null)
                       {
@@ -66,7 +66,7 @@ namespace MComponents.MGrid
 
                           if (filterState.ReferencedId != null && column.GetType().Name == typeof(MGridComplexPropertyColumn<object, object>).Name)
                           {
-                              value = GetReferencedValue(column, propc.PropertyType, filterState.ReferencedId.Value);
+                              value = GetReferencedValue(pGrid, column, propc.PropertyType, filterState.ReferencedId);
                           }
                           else
                           {
@@ -124,16 +124,27 @@ namespace MComponents.MGrid
               });
         }
 
-        private static object GetReferencedValue(IMGridColumn column, Type pPropertyType, Guid pReferencedId)
+        protected object GetReferencedValue<T>(MGrid<T> pGrid, IMGridColumn column, Type pPropertyType, string pReferencedId)
         {
             var propInfo = column.GetType().GetProperty(nameof(MGridComplexPropertyColumn<object, object>.ReferencedValues));
 
             var referencedValues = propInfo.GetValue(column) as IEnumerable;
+            var enumerator = referencedValues.GetEnumerator();
+            if (!enumerator.MoveNext())
+                return null;
+
+            var firstValue = enumerator.Current;
+
+            var pi = pGrid.GetIdentifierProperty(firstValue);
+            //no idict support right now
+
+            var refIdValue = ReflectionHelper.ChangeType(pReferencedId, pi.PropertyType);
+
             var queryable = referencedValues.AsQueryable();
 
             var param = Expression.Parameter(pPropertyType, "p");
-            var property = Expression.Property(param, "Id");
-            var exprEqual = Expression.Equal(property, Expression.Constant(pReferencedId));
+            var property = Expression.Property(param, pi.Name);
+            var exprEqual = Expression.Equal(property, Expression.Constant(refIdValue));
 
             var lambda = Expression.Lambda(exprEqual, param);
 
@@ -143,31 +154,27 @@ namespace MComponents.MGrid
         }
 
 
+
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
-        public static MGridState GetGridState<T>(MGrid<T> pGrid)
+        public MGridState GetGridState<T>(MGrid<T> pGrid)
         {
             return new MGridState()
             {
                 IsFilterRowVisible = pGrid.IsFilterRowVisible,
                 Page = pGrid.Pager?.CurrentPage,
                 PageSize = pGrid.Pager?.PageSize,
-              //  SelectedRow = pGrid.Selected,
+                SelectedRow = pGrid.GetIdentifierValue(pGrid.Selected),
 
                 FilterState = pGrid.FilterInstructions.Select(f =>
                 {
                     if (f.GridColumn.GetType().Name == typeof(MGridComplexPropertyColumn<object, object>).Name)
                     {
-                        var id = ReflectionHelper.GetPropertyValue(f.Value, "Id") as Guid?;
-
-                        if (id != null)
+                        return new MGridFilterState()
                         {
-                            return new MGridFilterState()
-                            {
-                                ColumnIdentifier = f.GridColumn.Identifier,
-                                ReferencedId = id.Value
-                            };
-                        }
+                            ColumnIdentifier = f.GridColumn.Identifier,
+                            ReferencedId = pGrid.GetIdentifierValue(f.Value)
+                        };
                     }
 
                     return new MGridFilterState()

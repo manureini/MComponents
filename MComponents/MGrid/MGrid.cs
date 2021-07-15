@@ -100,8 +100,20 @@ namespace MComponents.MGrid
 
         public List<IMGridColumn> ColumnsList { get; set; } = new List<IMGridColumn>();
 
-        public T Selected;
-        public T EditRow;
+        protected string mSelectedRowId;
+
+        private T mSelected;
+        public T Selected
+        {
+            get => mSelected;
+            set
+            {
+                mSelected = value;
+                mSelectedRowId = null;
+            }
+        }
+
+        public T EditRow { get; set; }
 
         public MForm<T> EditForm;
 
@@ -144,7 +156,7 @@ namespace MComponents.MGrid
         public bool UpdateColumnsWidthOnNextRender;
 
         protected string mInputFileId = Guid.NewGuid().ToString();
-
+        protected IMPropertyInfo mIdentifierProperty;
 
         protected DotNetObjectReference<MGrid<T>> mObjReference;
 
@@ -816,6 +828,13 @@ namespace MComponents.MGrid
             }
 
             bool selected = Selected != null && Selected.Equals(pEntry);
+
+            if (mSelectedRowId != null && GetIdentifierValue(pEntry) == mSelectedRowId)
+            {
+                selected = true;
+                Selected = pEntry; //will set mSelectedRowId to null
+            }
+
             if (selected)
                 cssClass += " m-grid-highlight";
 
@@ -1219,6 +1238,7 @@ namespace MComponents.MGrid
             Selected = EditRow;
 
             await JsRuntime.InvokeVoidAsync("mcomponents.registerKeyListener", Identifier, ObjReference);
+            SaveCurrentState();
             StateHasChanged();
         }
 
@@ -1768,6 +1788,36 @@ namespace MComponents.MGrid
         {
             if (EnableSaveState)
                 StateService.SaveGridState(this);
+        }
+
+        public IMPropertyInfo GetIdentifierProperty(object pValue) //supports identifier of table property or other properties
+        {
+            if (pValue == null)
+                return null;
+
+            if (pValue is T && mIdentifierProperty != null)
+                return mIdentifierProperty;
+
+            var prop = ReflectionHelper.GetProperties(pValue)?.FirstOrDefault(p => p.Name.ToLowerInvariant() == "id");
+
+            if (pValue is T)
+                mIdentifierProperty = prop;
+
+            return prop;
+        }
+
+        public string GetIdentifierValue(object pValue)
+        {
+            if (pValue == null)
+                return null;
+
+            return GetIdentifierProperty(pValue)?.GetValue(pValue)?.ToString();
+        }
+
+        public void SelectRow(string pIdentifier)
+        {
+            mSelectedRowId = pIdentifier;
+            InvokeStateHasChanged();
         }
 
         public List<IGrouping<object, T>> FetchGroupByPartsAndUpdateDataCount()
