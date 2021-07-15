@@ -299,7 +299,6 @@ $borderRadius: 0.25rem;
     }
 }
 
-
 //download button
 .m-btn.m-btn-icon i {
     padding: 0;
@@ -307,6 +306,14 @@ $borderRadius: 0.25rem;
     line-height: 0;
 }
 
+.m-grid-footer {
+    display: flex;
+    justify-content: flex-end;
+
+    .m-grid-footer-buttons {
+        padding-left: 5px;
+    }
+}
 
 .m-pagination-container {
     display: flex;
@@ -316,6 +323,7 @@ $borderRadius: 0.25rem;
     margin: 0;
     padding: 0;
     user-select: none;
+    width: 100%;
 
     .m-pagination-entry {
         display: flex;
@@ -921,7 +929,6 @@ $borderRadius: 0.25rem;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: flex-start;
-
     /*
     .form-group {
         padding-left: 3px;

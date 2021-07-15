@@ -511,7 +511,7 @@ namespace MComponents.MGrid
 
                                foreach (var entry in grouped)
                                {
-                                   AddContentRow(builder2, (T)entry, MGridAction.Edit);
+                                   AddContentRow(builder2, entry, MGridAction.Edit);
                                }
                            }
                        }
@@ -526,11 +526,12 @@ namespace MComponents.MGrid
                        if (NewValue != null)
                            AddContentRow(builder2, NewValue, MGridAction.Add);
 
-                       builder2.AddMarkupContent(24, "\r\n");
                        builder2.CloseElement(); //tbody
 
                        builder2.CloseElement(); // table
-                       builder2.AddMarkupContent(391, "\r\n");
+
+                       builder2.OpenElement(534, "div");
+                       builder2.AddAttribute(535, "class", "m-grid-footer");
 
                        if (Pager != null)
                        {
@@ -576,11 +577,8 @@ namespace MComponents.MGrid
                                        builder3.CloseElement();
                                    }
 
-                                   builder3.AddMarkupContent(424, "\r\n");
                                    builder3.CloseElement(); //select
                                }
-
-                               builder3.AddMarkupContent(428, "\r\n");
 
                                var count = DataCache?.Count;
                                if (GroupedDataCache != null)
@@ -588,31 +586,7 @@ namespace MComponents.MGrid
                                    count = GroupedDataCache.Sum(g => g.Count());
                                }
 
-                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], count, TotalDataCountCache)}</span>");
-
-                               if (EnableImport)
-                               {
-                                   builder3.OpenElement(560, "button");
-                                   builder3.AddAttribute(561, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                                   builder3.AddAttribute(562, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnBtnImportClicked));
-                                   builder3.AddContent(563, (MarkupString)"<i class=\"fas fa-upload\"></i>");
-                                   builder3.CloseElement(); // button
-
-                                   builder3.OpenComponent<InputFile>(566);
-                                   builder3.AddAttribute(567, "accept", ".xlsx");
-                                   builder3.AddAttribute(568, "OnChange", EventCallback.Factory.Create<InputFileChangeEventArgs>(this, OnFileChange));
-                                   builder3.AddAttribute(567, "style", "visibility: hidden; position: absolute; top: -1000px;");
-                                   builder3.AddAttribute(567, "id", mInputFileId);
-                                   builder3.CloseElement(); // InputFile
-                               }
-                               if (EnableExport)
-                               {
-                                   builder3.OpenElement(435, "button");
-                                   builder3.AddAttribute(436, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                                   builder3.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => ExportContent()));
-                                   builder3.AddContent(438, (MarkupString)"<i class=\"fas fa-download\"></i>");
-                                   builder3.CloseElement(); // button
-                               }
+                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], count, TotalDataCountCache)}</span>");                           
 
                                builder3.CloseElement(); //div
                            }
@@ -621,8 +595,38 @@ namespace MComponents.MGrid
                            builder2.CloseComponent();
                        }
 
+                       builder2.OpenElement(598, "div");
+                       builder2.AddAttribute(535, "class", "m-grid-footer-buttons");
 
-                       builder2.CloseElement(); //div 
+                       if (EnableImport)
+                       {
+                           builder2.OpenElement(560, "button");
+                           builder2.AddAttribute(561, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
+                           builder2.AddAttribute(562, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnBtnImportClicked));
+                           builder2.AddContent(563, (MarkupString)"<i class=\"fas fa-upload\"></i>");
+                           builder2.CloseElement(); // button
+                                  
+                           builder2.OpenComponent<InputFile>(566);
+                           builder2.AddAttribute(567, "accept", ".xlsx");
+                           builder2.AddAttribute(568, "OnChange", EventCallback.Factory.Create<InputFileChangeEventArgs>(this, OnFileChange));
+                           builder2.AddAttribute(567, "style", "visibility: hidden; position: absolute; top: -1000px;");
+                           builder2.AddAttribute(567, "id", mInputFileId);
+                           builder2.CloseElement(); // InputFile
+                       }
+                       if (EnableExport)
+                       {
+                           builder2.OpenElement(435, "button");
+                           builder2.AddAttribute(436, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
+                           builder2.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => ExportContent()));
+                           builder2.AddContent(438, (MarkupString)"<i class=\"fas fa-download\"></i>");
+                           builder2.CloseElement(); // button
+                       }
+
+                       builder2.CloseElement(); //div
+
+                       builder2.CloseElement(); //div
+
+                       builder2.CloseElement(); //div
                    };
 
             builder.AddContent(453, childMain());
