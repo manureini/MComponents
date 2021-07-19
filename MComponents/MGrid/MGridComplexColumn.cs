@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace MComponents.MGrid
 {
     public class MGridComplexColumn<T> : ComponentBase, IMGridColumn, IMGridColumnGenerator<T>, IMGridComplexExport<T>
-    {     
+    {
         [Parameter]
         public RenderFragment<T> CellTemplate { get; set; }
 
@@ -19,18 +19,12 @@ namespace MComponents.MGrid
 
         [Parameter]
         public Func<T, string> ExportText { get; set; }
-            
+
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
-        protected string mHeaderText;
-
         [Parameter]
-        public string HeaderText
-        {
-            get { return mHeaderText; }
-            set { mHeaderText = value; }
-        }
+        public string HeaderText { get; set; }
 
         protected IMRegister mGrid;
 

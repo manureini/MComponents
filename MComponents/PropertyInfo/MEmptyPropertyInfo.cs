@@ -24,7 +24,7 @@ namespace MComponents
             PropertyType = pPropertyType;
         }
 
-        public Attribute GetCustomAttribute(Type pType)
+        public T GetCustomAttribute<T>() where T : Attribute
         {
             return null;
         }

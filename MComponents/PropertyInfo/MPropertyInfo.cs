@@ -39,14 +39,14 @@ namespace MComponents
             mAttributes = pAttributes;
         }
 
-        public Attribute GetCustomAttribute(Type pType)
+        public T GetCustomAttribute<T>() where T : Attribute
         {
             if (mAttributes != null)
             {
-                return mAttributes.FirstOrDefault(a => a.GetType() == pType);
+                return (T)mAttributes.FirstOrDefault(a => a.GetType() == typeof(T));
             }
 
-            return mPropertyInfo.GetCustomAttribute(pType);
+            return (T)mPropertyInfo.GetCustomAttribute(typeof(T));
         }
 
         public IEnumerable<Attribute> GetAttributes()
@@ -87,7 +87,7 @@ namespace MComponents
             if (pModel == null)
                 throw new InvalidOperationException("Can not set null value");
 
-            if(!mPropertyInfo.CanWrite)
+            if (!mPropertyInfo.CanWrite)
                 throw new InvalidOperationException("Can not write");
 
             mPropertyInfo.SetValue(pModel, value);

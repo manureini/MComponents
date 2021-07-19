@@ -59,13 +59,16 @@ namespace MComponents
                 T value = default(T);
                 var val = pPropertyInfo.GetValue(pModel);
 
-                value = (T)ReflectionHelper.ChangeType(val, typeof(T));
+                if (val != null)
+                {
+                    value = (T)ReflectionHelper.ChangeType(val, typeof(T));
+                }
 
                 Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
-                bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute(typeof(ReadOnlyAttribute)) != null;
+                bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute<ReadOnlyAttribute>() != null;
 
-                var restrictValues = (RestrictValuesAttribute)pPropertyInfo.GetCustomAttribute(typeof(RestrictValuesAttribute));
+                var restrictValues = pPropertyInfo.GetCustomAttribute<RestrictValuesAttribute>();
 
                 if (typeof(T) == typeof(bool?) || tType.IsEnum || restrictValues != null)
                 {
@@ -79,11 +82,11 @@ namespace MComponents
                 }
                 else if (tType == typeof(DateTime) || tType == typeof(DateTimeOffset))
                 {
-                    if (pPropertyInfo.GetCustomAttribute(typeof(TimeAttribute)) != null)
+                    if (pPropertyInfo.GetCustomAttribute<TimeAttribute>() != null)
                     {
                         pBuilder.OpenComponent<InputTime<T>>(0);
                     }
-                    else if (pPropertyInfo.GetCustomAttribute(typeof(DateTimeAttribute)) != null)
+                    else if (pPropertyInfo.GetCustomAttribute<DateTimeAttribute>() != null)
                     {
                         pBuilder.OpenComponent<InputDateTime<T>>(0);
                     }
@@ -106,7 +109,7 @@ namespace MComponents
                 }
                 else
                 {
-                    if (pPropertyInfo.GetCustomAttribute(typeof(TextAreaAttribute)) != null)
+                    if (pPropertyInfo.GetCustomAttribute<TextAreaAttribute>() != null)
                     {
                         pBuilder.OpenComponent<InputTextArea>(0);
                     }
@@ -116,7 +119,7 @@ namespace MComponents
                     }
                 }
 
-                if (pPropertyInfo.GetCustomAttribute(typeof(PasswordAttribute)) != null)
+                if (pPropertyInfo.GetCustomAttribute<PasswordAttribute>() != null)
                 {
                     pBuilder.AddAttribute(33, "type", "password");
                 }

@@ -6,7 +6,7 @@ namespace MComponents.MGrid
     {
         IReadOnlyDictionary<string, object> AdditionalAttributes { get; }
 
-        string HeaderText { get; }
+        string HeaderText { get; set; }
 
         bool EnableFilter { get; }
 

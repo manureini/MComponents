@@ -183,7 +183,7 @@ namespace MComponents.MForm
             builder.AddAttribute(6, "ChildContent", child(mEditContext));
             builder.CloseComponent();
 
-            if(!IsInTableRow)
+            if (!IsInTableRow)
             {
                 builder.CloseComponent(); //div
             }
@@ -218,7 +218,7 @@ namespace MComponents.MForm
         {
             var propInfo = GetPropertyInfo(field);
 
-            if (propInfo.GetCustomAttribute(typeof(RequiredAttribute)) != null)
+            if (propInfo.GetCustomAttribute<RequiredAttribute>() != null)
             {
                 var fieldIdentifier = mEditContext.Field(propInfo.Name);
 
@@ -297,7 +297,7 @@ namespace MComponents.MForm
                 {
                     var propertyInfo = GetPropertyInfo(propField);
 
-                    if (propertyInfo.GetCustomAttribute(typeof(HiddenAttribute)) != null)
+                    if (propertyInfo.GetCustomAttribute<HiddenAttribute>() != null)
                         continue;
 
                     if (field.Attributes != null)
@@ -355,7 +355,7 @@ namespace MComponents.MForm
 
                     builder2.AddMarkupContent(286, GetDisplayName(propertyInfo, true));
 
-                    if (propertyInfo.GetCustomAttribute(typeof(RequiredAttribute)) != null)
+                    if (propertyInfo.GetCustomAttribute<RequiredAttribute>() != null)
                     {
                         builder2.OpenElement(291, "span");
                         builder2.AddAttribute(292, "style", "color: red;");
@@ -495,7 +495,7 @@ namespace MComponents.MForm
 
         protected string GetDisplayName(IMPropertyInfo pPropertyInfo, bool pMarkup)
         {
-            var displayAttribute = pPropertyInfo.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+            var displayAttribute = pPropertyInfo.GetCustomAttribute<DisplayAttribute>();
             if (displayAttribute != null)
             {
                 var display = displayAttribute.GetName();
@@ -540,7 +540,7 @@ namespace MComponents.MForm
 
         public void OnInputKeyUp(KeyboardEventArgs pArgs, IMPropertyInfo pPropertyInfo)
         {
-            if (pArgs.Key == "Enter" && pPropertyInfo.GetCustomAttribute(typeof(TextAreaAttribute)) == null)
+            if (pArgs.Key == "Enter" && pPropertyInfo.GetCustomAttribute<TextAreaAttribute>() == null)
             {
                 if (ContainerContext == null)
                 {

@@ -54,11 +54,11 @@ namespace MComponents.MGrid
 
             if (pType == typeof(DateTime))
             {
-                if (HasAttribute(pColumn, pPropertyInfo, typeof(TimeAttribute)))
-                    return string.Format("{0:t}", ((DateTime)value));
+                if (HasAttribute<TimeAttribute>(pColumn, pPropertyInfo))
+                    return string.Format("{0:t}", (DateTime)value);
 
-                if (HasAttribute(pColumn, pPropertyInfo, typeof(DateTimeAttribute)))
-                    return string.Format("{0:g}", ((DateTime)value));
+                if (HasAttribute<DateTimeAttribute>(pColumn, pPropertyInfo))
+                    return string.Format("{0:g}", (DateTime)value);
 
                 return string.Format("{0:d}", ((DateTime)value));
             }
@@ -66,9 +66,9 @@ namespace MComponents.MGrid
             return value.ToString();
         }
 
-        protected bool HasAttribute(IMGridPropertyColumn pColumn, IMPropertyInfo pPropertyInfo, Type pType)
+        protected bool HasAttribute<T>(IMGridPropertyColumn pColumn, IMPropertyInfo pPropertyInfo) where T : Attribute
         {
-            return pPropertyInfo.GetCustomAttribute(pType) != null || (pColumn.Attributes != null && pColumn.Attributes.Any(a => a.GetType() == pType));
+            return pPropertyInfo.GetCustomAttribute<T>() != null || (pColumn.Attributes != null && pColumn.Attributes.Any(a => a.GetType() == typeof(T)));
         }
 
         public void AddRowMetadata(T pRow, object pValue)

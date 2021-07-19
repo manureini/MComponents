@@ -11,6 +11,7 @@ using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
@@ -225,6 +226,19 @@ namespace MComponents.MGrid
                 if (propc.Attributes != null)
                 {
                     iprop.SetAttributes(propc.Attributes);
+                }
+
+                if (propc.HeaderText == null)
+                {
+                    var displayAttribute = iprop.GetCustomAttribute<DisplayAttribute>();
+                    if (displayAttribute != null)
+                    {
+                        propc.HeaderText = displayAttribute.GetName();
+                    }
+                    else
+                    {
+                        propc.HeaderText = propc.Property;
+                    }
                 }
 
                 PropertyInfos.Add(propc, iprop);
@@ -586,7 +600,7 @@ namespace MComponents.MGrid
                                    count = GroupedDataCache.Sum(g => g.Count());
                                }
 
-                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], count, TotalDataCountCache)}</span>");                           
+                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], count, TotalDataCountCache)}</span>");
 
                                builder3.CloseElement(); //div
                            }
@@ -605,7 +619,7 @@ namespace MComponents.MGrid
                            builder2.AddAttribute(562, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnBtnImportClicked));
                            builder2.AddContent(563, (MarkupString)"<i class=\"fas fa-upload\"></i>");
                            builder2.CloseElement(); // button
-                                  
+
                            builder2.OpenComponent<InputFile>(566);
                            builder2.AddAttribute(567, "accept", ".xlsx");
                            builder2.AddAttribute(568, "OnChange", EventCallback.Factory.Create<InputFileChangeEventArgs>(this, OnFileChange));

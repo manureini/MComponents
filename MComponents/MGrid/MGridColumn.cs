@@ -29,18 +29,12 @@ namespace MComponents.MGrid
 
         [Parameter]
         public bool EnableSorting { get; set; } = true;
-        
+
         [Parameter]
         public bool EnableFilter { get; set; } = true;
 
-        private string mHeaderText;
-
         [Parameter]
-        public string HeaderText
-        {
-            get { return mHeaderText ?? Property; }
-            set { mHeaderText = value; }
-        }
+        public string HeaderText { get; set; }
 
         private IMRegister mGrid;
 

@@ -56,14 +56,8 @@ namespace MComponents.MGrid
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
-        private string mHeaderText;
-
         [Parameter]
-        public string HeaderText
-        {
-            get { return mHeaderText ?? Property; }
-            set { mHeaderText = value; }
-        }
+        public string HeaderText { get; set; }
 
         private IMRegister mGrid;
 

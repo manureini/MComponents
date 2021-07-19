@@ -11,7 +11,7 @@ namespace MComponents
 
         void SetAttributes(Attribute[] pAttributes);
 
-        Attribute GetCustomAttribute(Type pType);
+        T GetCustomAttribute<T>() where T : Attribute;
 
         IEnumerable<Attribute> GetAttributes();
 

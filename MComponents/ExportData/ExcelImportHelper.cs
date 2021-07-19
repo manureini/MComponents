@@ -42,7 +42,7 @@ namespace MComponents.ExportData
 
                 ProgressRow(propInfo, rowValues, (rowVal, pi) =>
                 {
-                    if (pi.GetCustomAttribute(typeof(RequiredAttribute)) != null && rowVal == null)
+                    if (pi.GetCustomAttribute<RequiredAttribute>() != null && rowVal == null)
                     {
                         throw new UserMessageException($"Column {pi.Name} has an empty value!");
                     }

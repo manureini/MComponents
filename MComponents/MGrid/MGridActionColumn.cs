@@ -72,7 +72,7 @@ namespace MComponents.MGrid
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            HeaderText = HeaderText ?? L["Actions"];
+            HeaderText ??= L["Actions"];
         }
 
         private async void MDeleteResetTimer_Elapsed(object sender, ElapsedEventArgs e)

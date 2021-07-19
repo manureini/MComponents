@@ -23,9 +23,9 @@ namespace MComponents
             Parent = pParent;
         }
 
-        public Attribute GetCustomAttribute(Type pType)
+        public T GetCustomAttribute<T>() where T : Attribute
         {
-            return Attributes?.FirstOrDefault(a => a.GetType() == pType);
+            return (T)Attributes?.FirstOrDefault(a => a.GetType() == typeof(T));
         }
 
         public IEnumerable<Attribute> GetAttributes()
