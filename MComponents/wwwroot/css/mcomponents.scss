@@ -311,7 +311,12 @@ $borderRadius: 0.25rem;
     justify-content: flex-end;
 
     .m-grid-footer-buttons {
+        display: flex;
         padding-left: 5px;
+
+        .m-btn {
+            margin-left: 5px;
+        }
     }
 }
 
