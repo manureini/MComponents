@@ -666,14 +666,11 @@ namespace MComponents.MGrid
             if (pUpdateDataCount)
                 DataCountCache = data.LongCount();
 
-            if (GroupByInstructions.Count > 0)
-            {
-                data = mSorter.SortBy(data, GroupByInstructions);
-            }
+            var sortInstructions = GroupByInstructions.Concat(SortInstructions).ToArray();
 
-            if (SortInstructions.Count > 0)
+            if (sortInstructions.Length > 0)
             {
-                data = mSorter.SortBy(data, SortInstructions);
+                data = mSorter.SortBy(data, sortInstructions);
             }
 
             if (Pager != null && GroupByInstructions.Count <= 0)
@@ -1584,6 +1581,7 @@ namespace MComponents.MGrid
                 {
                     GroupByInstructions.Remove(groupByInstr);
                     ColumnsList.RemoveAll(r => r is MGridGroupByColumn<T> gc && gc.GridColumn == pColumn);
+                    HiddenGroupByKeys.RemoveAll(r => r.Item1.ContainsKey(propInfo.Name));
                 }
 
                 await ResetRowsAndCache();
