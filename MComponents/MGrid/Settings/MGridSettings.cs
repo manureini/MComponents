@@ -22,6 +22,8 @@ namespace MComponents.MGrid
 
         public bool EnableFilterRow { get; set; }
 
+        public bool EnableGrouping { get; set; }
+
         public bool EnableExport { get; set; }
 
         public bool EnableImport { get; set; }

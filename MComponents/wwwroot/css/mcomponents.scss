@@ -38,6 +38,7 @@ $borderRadius: 0.25rem;
     transition-delay: 0s, 0s, 0s, 0s, 0s;
     transition-property: color, background-color, border-color, box-shadow;
     outline-style: none;
+    align-items: center;
 }
 
 .m-btn:hover {
@@ -156,10 +157,22 @@ $borderRadius: 0.25rem;
 
 .m-grid-container .m-btn-toolbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
 
-    button:first-child {
-        margin: auto 0 auto auto;
+    .m-grid-crud-button-group {
+        width: 100%;
+    }
+
+    .m-grid-tools {
+        margin: auto 0 0 0;
+
+        .m-grid-tools-button-group {
+            display: flex;
+
+            .m-btn {
+                display: inline-flex;
+            }
+        }
     }
 }
 

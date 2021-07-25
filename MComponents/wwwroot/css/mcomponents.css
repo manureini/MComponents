@@ -21,7 +21,8 @@
   transition-timing-function: ease-in-out, ease-in-out, ease-in-out, ease-in-out, ease-in-out;
   transition-delay: 0s, 0s, 0s, 0s, 0s;
   transition-property: color, background-color, border-color, box-shadow;
-  outline-style: none; }
+  outline-style: none;
+  align-items: center; }
 
 .m-btn:hover {
   color: #212529;
@@ -114,9 +115,15 @@
 /* START Table ----------------------------------------------------------------------------- */
 .m-grid-container .m-btn-toolbar {
   display: flex;
-  justify-content: space-between; }
-  .m-grid-container .m-btn-toolbar button:first-child {
-    margin: auto 0 auto auto; }
+  justify-content: flex-end; }
+  .m-grid-container .m-btn-toolbar .m-grid-crud-button-group {
+    width: 100%; }
+  .m-grid-container .m-btn-toolbar .m-grid-tools {
+    margin: auto 0 0 0; }
+    .m-grid-container .m-btn-toolbar .m-grid-tools .m-grid-tools-button-group {
+      display: flex; }
+      .m-grid-container .m-btn-toolbar .m-grid-tools .m-grid-tools-button-group .m-btn {
+        display: inline-flex; }
 
 .m-grid {
   width: 100%;

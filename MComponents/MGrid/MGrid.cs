@@ -60,6 +60,9 @@ namespace MComponents.MGrid
         public bool EnableFilterRow { get; set; } = MGridSettings.Instance.EnableFilterRow;
 
         [Parameter]
+        public bool EnableGrouping { get; set; } = MGridSettings.Instance.EnableGrouping;
+
+        [Parameter]
         public bool EnableExport { get; set; } = MGridSettings.Instance.EnableExport;
 
         [Parameter]
@@ -119,6 +122,7 @@ namespace MComponents.MGrid
         public MForm<T> EditForm;
 
         public bool IsFilterRowVisible { get; internal set; }
+        public bool IsGroupingVisible { get; internal set; }
 
         protected EditContext EditContext;
 
@@ -338,7 +342,7 @@ namespace MComponents.MGrid
                        if (ToolbarItems != ToolbarItem.None)
                        {
                            builder2.OpenElement(227, "div");
-                           builder2.AddAttribute(228, "class", "m-btn-group mr-2");
+                           builder2.AddAttribute(228, "class", "m-btn-group m-grid-crud-button-group");
                            builder2.AddAttribute(229, "role", "group");
 
                            if (EnableAdding && ToolbarItems.HasFlag(ToolbarItem.Add))
@@ -371,6 +375,25 @@ namespace MComponents.MGrid
                            builder2.CloseElement(); // div
                        }
 
+                       builder2.OpenElement(377, "div");
+                       builder2.AddAttribute(378, "class", "m-btn-group m-grid-tools");
+
+                       builder2.OpenElement(379, "div");
+                       builder2.AddAttribute(380, "class", "m-btn-group m-grid-tools-button-group");
+                       builder2.AddAttribute(381, "role", "group");
+
+                       if (EnableGrouping)
+                       {
+                           builder2.OpenElement(263, "button");
+                           builder2.AddAttribute(264, "class", "m-btn m-btn-primary m-btn-sm");
+                           builder2.AddAttribute(265, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleGrouping));
+                           builder2.OpenElement(266, "i");
+                           builder2.AddAttribute(267, "class", "fas fa-layer-group");
+                           builder2.CloseElement(); //i
+                           builder2.AddContent(269, L["Grouping"]);
+                           builder2.CloseElement(); //button
+                       }
+
                        if (EnableFilterRow)
                        {
                            builder2.OpenElement(263, "button");
@@ -384,7 +407,18 @@ namespace MComponents.MGrid
                        }
 
                        builder2.CloseElement(); // div
+                       builder2.CloseElement(); // div
 
+                       builder2.CloseElement(); // div
+
+                       if (IsGroupingVisible)
+                       {
+                           builder2.OpenElement(377, "div");
+                           builder2.AddAttribute(378, "class", "m-grouping");
+
+                           builder2.AddContent(269, L["Grouping..."]);
+                           builder2.CloseElement(); // div
+                       }
 
                        builder2.OpenElement(277, "table");
                        builder2.AddAttribute(286, "class", HtmlTableClass + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
@@ -1350,6 +1384,12 @@ namespace MComponents.MGrid
             await SetFilterRowVisible(!IsFilterRowVisible);
         }
 
+        protected void OnToggleGrouping()
+        {
+            IsGroupingVisible = !IsGroupingVisible;
+            InvokeStateHasChanged();
+        }
+
         public async Task SetFilterRowVisible(bool pVisible)
         {
             IsFilterRowVisible = pVisible;
@@ -1554,7 +1594,7 @@ namespace MComponents.MGrid
 
             object comparer = pColumn.GetComparer();
 
-            if (pArgs.CtrlKey && pArgs.ShiftKey)
+            if (EnableGrouping && pArgs.CtrlKey && pArgs.ShiftKey)
             {
                 var groupByInstr = GroupByInstructions.FirstOrDefault(s => s.GridColumn == pColumn);
 

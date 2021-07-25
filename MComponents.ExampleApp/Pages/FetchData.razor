@@ -19,7 +19,9 @@ else
            EnableEditing="true"
            EnableExport="true"
            EnableFilterRow="true"
+           EnableGrouping="true"
            EnableUserSorting="true"
+           ToolbarItems="ToolbarItem.Add | ToolbarItem.Delete | ToolbarItem.Edit"
            HtmlTableClass="m-grid m-grid-striped m-grid-bordered m-grid-hover m-grid-sticky">
         <MGridColumns>
             <MGridColumn Property="@nameof(WeatherForecast.Date)" StringFormat="{0:dd.MM.yyyy}" />
