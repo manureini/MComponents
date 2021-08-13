@@ -28,8 +28,6 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="compilerconfig.json" />
-    <_ContentIncludedByDefault Remove="wwwroot\css\mcomponents.css" />
-    <_ContentIncludedByDefault Remove="wwwroot\css\mcomponents.min.css" />
   </ItemGroup>
 
   <ItemGroup>

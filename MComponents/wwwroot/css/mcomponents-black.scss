@@ -1,0 +1,28 @@
+﻿$white: #ffffff;
+$primary: black;
+$success: #28a745;
+$disabled: #f0f1f3;
+
+$text_color: #212529;
+$gray: #ebedf2;
+$dark: #1f1c1c;
+
+$secondary: #595d6e;
+
+$padding: 0.65rem;
+$borderRadius: 0;
+
+.m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next i, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev i {
+    color: $white !important;
+}
+.m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev {
+    background-color: $primary !important;
+}
+
+.m-pagination-container .m-pagination-tools select.m-form-control {
+    color: $white !important;
+    background-color: $primary !important;
+}
+
+
+@import 'mcomponents-main.scss';

@@ -1,4 +1,14 @@
-﻿.m-clickable {
+﻿.m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next i, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev i {
+  color: #ffffff !important; }
+
+.m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev {
+  background-color: black !important; }
+
+.m-pagination-container .m-pagination-tools select.m-form-control {
+  color: #ffffff !important;
+  background-color: black !important; }
+
+.m-clickable {
   cursor: pointer; }
 
 /* Buttons ----------------------------------------------------------------------------- */
@@ -16,7 +26,7 @@
   padding: 0.65rem 1rem;
   font-size: 1rem;
   line-height: 1.5;
-  border-radius: 0.25rem;
+  border-radius: 0;
   transition-duration: 0.15s, 0.15s, 0.15s, 0.15s, 0.15s;
   transition-timing-function: ease-in-out, ease-in-out, ease-in-out, ease-in-out, ease-in-out;
   transition-delay: 0s, 0s, 0s, 0s, 0s;
@@ -34,13 +44,13 @@
 
 .m-btn-primary {
   color: #ffffff;
-  background-color: #5867dd;
-  border-color: #4354d9; }
+  background-color: black;
+  border-color: black; }
 
 .m-btn-primary:hover {
   color: #ffffff;
-  background-color: #eceefb;
-  border-color: #c2c7f3; }
+  background-color: #595959;
+  border-color: #404040; }
 
 .m-btn-success {
   color: #ffffff;
@@ -62,7 +72,7 @@
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   line-height: 1.5;
-  border-radius: 0.25rem; }
+  border-radius: 0; }
 
 .m-btn-tall {
   padding-top: 0.9rem;
@@ -246,24 +256,24 @@
     justify-content: center;
     align-items: center;
     margin-right: 0.5rem;
-    border-radius: 0.25rem; }
+    border-radius: 0; }
     .m-pagination-container .m-pagination-list .m-pagination-entry:not(.m-pagination-entry--disabled):not(.m-pagination-entry--more) > a {
       cursor: pointer; }
     .m-pagination-container .m-pagination-list .m-pagination-entry:not(.m-pagination-entry--disabled):not(.m-pagination-entry--more):not(.m-pagination-entry--prev):not(.m-pagination-entry--next):hover {
-      background-color: #5867dd; }
+      background-color: black; }
     .m-pagination-container .m-pagination-list .m-pagination-entry:not(.m-pagination-entry--disabled):not(.m-pagination-entry--more):not(.m-pagination-entry--prev):not(.m-pagination-entry--next) > a:hover {
       color: white; }
     .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev {
-      background-color: #d7dbf7; }
+      background-color: #4d4d4d; }
       .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next i, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev i {
-        color: #5867dd; }
+        color: black; }
     .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--disabled {
       cursor: default;
-      background-color: #eceefb; }
+      background-color: #595959; }
       .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--disabled i {
-        color: #b9c0f1; }
+        color: #3b3b3b; }
     .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--active {
-      background-color: #5867dd; }
+      background-color: black; }
       .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--active a {
         color: white; }
     .m-pagination-container .m-pagination-list .m-pagination-entry a {
@@ -287,8 +297,8 @@
     margin-right: 10px;
     width: min-content;
     padding: 0 5px;
-    background-color: #d7dbf7;
-    color: #5867dd;
+    background-color: #4d4d4d;
+    color: black;
     font-size: 1.1rem;
     font-weight: 500;
     height: 30px; }
@@ -386,7 +396,7 @@
       height: 18px;
       width: 18px;
       border: 1px solid #d1d7e2;
-      border-radius: 0.25rem; }
+      border-radius: 0; }
   .m-checkbox .checkmark:after {
     content: "";
     position: absolute;
@@ -460,7 +470,7 @@
       border-color: #576587; }
     .m-switch label input:checked ~ span:after {
       color: white;
-      background-color: #5867dd;
+      background-color: black;
       content: '\f00c';
       margin-left: 26px; }
     .m-switch label input:disabled ~ span:after {
@@ -498,9 +508,9 @@
         transition: all 0.3s ease; }
     .m-wizard .m-wizard-navigation-item.m-wizard-navigation-item--current .m-wizard-navigation-item-bar:after {
       width: 100%;
-      background-color: #5867dd; }
+      background-color: black; }
   .m-wizard .m-wizard-navigation-item--current .m-wizard-navigation-item-title-contaier {
-    color: #5867dd; }
+    color: black; }
   .m-wizard .m-wizard-navigation-item-title-contaier {
     font-size: 1.1rem;
     font-weight: 600;
@@ -549,7 +559,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid #ebedf2;
-  border-radius: 0.25rem; }
+  border-radius: 0; }
   .m-accordion .m-accordion-card:first-of-type {
     border-bottom: 0;
     border-bottom-right-radius: 0;
@@ -590,16 +600,16 @@
   padding: 1rem 0.8rem;
   font-size: 1.1rem;
   font-weight: 500;
-  border-radius: 0.25rem; }
+  border-radius: 0; }
   .m-badge.m-badge--primary {
     color: white;
-    background: #5867dd; }
+    background: black; }
 
 .m-paint {
   border: solid;
   border-color: black;
   border-width: 1px;
-  border-radius: 0.25rem;
+  border-radius: 0;
   margin-bottom: 10px; }
 
 .m-form-control {
@@ -612,7 +622,7 @@
   border-width: 1px;
   border-style: solid;
   border-color: #dfe2e9;
-  border-radius: 0.25rem;
+  border-radius: 0;
   padding: 0.65rem;
   transition-duration: 0.15s, 0.15s, 0.15s;
   transition-timing-function: ease-in-out, ease-in-out, ease-in-out;
@@ -623,7 +633,7 @@
     background-color: white;
     border-color: #9aabff;
     outline-width: 0;
-    box-shadow: rgba(88, 103, 221, 0.05) 0 0 0 0.15rem; }
+    box-shadow: rgba(0, 0, 0, 0.05) 0 0 0 0.15rem; }
   .m-form-control:disabled {
     background-color: #f0f1f3; }
 
@@ -658,13 +668,13 @@
   width: 8px; }
 
 .m-scrollbar::-webkit-scrollbar-thumb {
-  border-radius: 0.5rem;
+  border-radius: 0;
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
   background-color: rgba(176, 176, 176, 0.4); }
 
 .m-scrollbar::-webkit-scrollbar-track {
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem; }
+  border-radius: 0; }
 
 .m-scrollbar:hover {
   cursor: pointer; }

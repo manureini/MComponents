@@ -388,7 +388,7 @@ namespace MComponents.MGrid
                            builder2.AddAttribute(264, "class", "m-btn m-btn-primary m-btn-sm");
                            builder2.AddAttribute(265, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleGrouping));
                            builder2.OpenElement(266, "i");
-                           builder2.AddAttribute(267, "class", "fas fa-layer-group");
+                           builder2.AddAttribute(267, "class", "fas fa-window-restore");
                            builder2.CloseElement(); //i
                            builder2.AddContent(269, L["Grouping"]);
                            builder2.CloseElement(); //button

@@ -1,10 +1,10 @@
 ﻿[
   {
-    "outputFile": "wwwroot/css/mcomponent.css",
-    "inputFile": "wwwroot/css/mcomponent.scss"
-  },
-  {
     "outputFile": "wwwroot/css/mcomponents.css",
     "inputFile": "wwwroot/css/mcomponents.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/mcomponents-black.css",
+    "inputFile": "wwwroot/css/mcomponents-black.scss"
   }
 ]
