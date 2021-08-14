@@ -4,7 +4,7 @@
 	@foreach (var tab in Tabs)
 	{
 	 <button type="button"
-			class="btn @GetButtonClass(tab) m-tabs-btn"
+			class="m-btn @GetButtonClass(tab) m-tabs-btn"
 			@onclick=@(() => ActivatePage(tab))>
 	  <span class="m-tabs-btn-title">@tab.Title</span>
 	 </button>

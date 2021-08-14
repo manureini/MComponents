@@ -15,6 +15,7 @@ $borderRadius: 0;
 .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next i, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev i {
     color: $white !important;
 }
+
 .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev {
     background-color: $primary !important;
 }
@@ -24,5 +25,35 @@ $borderRadius: 0;
     background-color: $primary !important;
 }
 
+.m-form-control {
+    border-color: lighten($primary, 75%) !important;
+}
+
+.m-grid thead td, .m-grid thead th {
+    box-shadow: inset 0 -1px 0 lighten($primary, 75%) !important;
+}
+
+.m-switch label input ~ span:before {
+    border-color: lighten($primary, 50%) !important;
+    background-color: $white !important;
+}
+
+.m-switch label input:disabled ~ span:before, .m-switch label input:disabled ~ span:after {
+    cursor: not-allowed;
+}
+
+.m-switch label input ~ span:after {
+    color: lighten($primary, 50%) !important;
+    border-color: lighten($primary, 50%) !important;
+}
+
+button:focus {
+    outline: unset;
+}
+
+button:active {
+    opacity: 0.9;
+    transition: 0.1s;
+}
 
 @import 'mcomponents-main.scss';
