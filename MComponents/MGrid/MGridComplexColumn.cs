@@ -54,10 +54,10 @@ namespace MComponents.MGrid
             return CellTemplate(pModel);
         }
 
-        public Cell GenerateExportCell(SharedStringTablePart pSharedStringTablePart, T pModel)
+        public Cell GenerateExportCell(SharedStringTablePart pSharedStringTablePart, Dictionary<string, int> pSstCache, T pModel)
         {
             if (ExportText != null)
-                return ExcelExportHelper.CreateTextCell(pSharedStringTablePart, ExportText(pModel));
+                return ExcelExportHelper.CreateTextCell(pSharedStringTablePart, pSstCache, ExportText(pModel));
             else
                 return ExcelExportHelper.CreateGeneralCell(string.Empty);
         }

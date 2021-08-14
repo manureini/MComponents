@@ -65,31 +65,34 @@ namespace MComponents
                     sheets.AppendChild(sheet);
 
                     var sst = workbookpart.AddNewPart<SharedStringTablePart>();
+                    sst.SharedStringTable = new SharedStringTable();
+
+                    var sstCache = new Dictionary<string, int>();
 
                     UInt32 rowIdex = 0;
-                    var row = new Row { RowIndex = ++rowIdex };
-                    sheetData.AppendChild(row);
+                    var hrow = new Row { RowIndex = ++rowIdex };
+                    sheetData.AppendChild(hrow);
 
                     foreach (var headerrow in columns.Select(c => c.HeaderText))
                     {
-                        row.AppendChild(CreateTextCell(sst, headerrow ?? string.Empty));
+                        hrow.AppendChild(CreateTextCell(sst, sstCache, headerrow ?? string.Empty));
                     }
 
                     foreach (var rowData in pData)
                     {
-                        row = new Row { RowIndex = ++rowIdex };
+                        var row = new Row { RowIndex = ++rowIdex };
                         sheetData.AppendChild(row);
 
                         foreach (var column in columns)
                         {
                             if (column is IMGridComplexExport<T> exporter)
                             {
-                                row.AppendChild(exporter.GenerateExportCell(sst, rowData));
+                                row.AppendChild(exporter.GenerateExportCell(sst, sstCache, rowData));
                             }
                             else if (column is IMGridPropertyColumn propColumn)
                             {
                                 var iprop = pPropertyInfos[propColumn];
-                                Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop, sst);
+                                Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop, sst, sstCache);
                                 row.AppendChild(cell);
                             }
                             else
@@ -99,6 +102,7 @@ namespace MComponents
                         }
                     }
 
+                    sst.SharedStringTable.Save();
                     workbookpart.Workbook.Save();
 
                     document.Save();
@@ -109,7 +113,7 @@ namespace MComponents
             }
         }
 
-        private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop, SharedStringTablePart pSsTable)
+        private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop, SharedStringTablePart pSsTable, Dictionary<string, int> pSstCache)
         {
             Cell cell;
             if (iprop.PropertyType == typeof(DateTime) || iprop.PropertyType == typeof(DateTime?))
@@ -144,7 +148,7 @@ namespace MComponents
             else if (iprop.PropertyType == typeof(string))
             {
                 string cellValue = pFormatter.FormatPropertyColumnValue(popcolumn, iprop, rowData);
-                cell = CreateTextCell(pSsTable, cellValue ?? string.Empty);
+                cell = CreateTextCell(pSsTable, pSstCache, cellValue ?? string.Empty);
             }
             else
             {
@@ -170,9 +174,9 @@ namespace MComponents
             return cell;
         }
 
-        public static Cell CreateTextCell(SharedStringTablePart pSsTable, string text)
+        public static Cell CreateTextCell(SharedStringTablePart pSsTable, Dictionary<string, int> pCache, string text)
         {
-            int ssIndex = InsertSharedStringItem(pSsTable, text);
+            int ssIndex = InsertSharedStringItem(pSsTable, pCache, text);
 
             var cell = new Cell
             {
@@ -184,32 +188,19 @@ namespace MComponents
             return cell;
         }
 
-        private static int InsertSharedStringItem(SharedStringTablePart shareStringPart, string text)
+        private static int InsertSharedStringItem(SharedStringTablePart pShareStringPart, Dictionary<string, int> pCache, string pText)
         {
-            // If the part does not contain a SharedStringTable, create one.
-            if (shareStringPart.SharedStringTable == null)
+            if (pCache.ContainsKey(pText))
             {
-                shareStringPart.SharedStringTable = new SharedStringTable();
+                return pCache[pText];
             }
 
-            int i = 0;
+            pShareStringPart.SharedStringTable.AppendChild(new SharedStringItem(new Text(pText)));
 
-            // Iterate through all the items in the SharedStringTable. If the text already exists, return its index.
-            foreach (SharedStringItem item in shareStringPart.SharedStringTable.Elements<SharedStringItem>())
-            {
-                if (item.InnerText == text)
-                {
-                    return i;
-                }
+            int index = pCache.Count;
+            pCache.Add(pText, index);
 
-                i++;
-            }
-
-            // The text does not exist in the part. Create the SharedStringItem and return its index.
-            shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(new Text(text)));
-            shareStringPart.SharedStringTable.Save();
-
-            return i;
+            return index;
         }
 
         public static Cell CreateDateCell(DateTime? pDate)
