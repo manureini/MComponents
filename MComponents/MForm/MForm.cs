@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -70,7 +71,7 @@ namespace MComponents.MForm
 
             mEditContext = new EditContext(Model);
 
-            if (EnableValidation && typeof(IDictionary<string, object>).IsAssignableFrom(ModelType))
+            if (EnableValidation)
             {
                 mValidationMessageStore = new ValidationMessageStore(mEditContext);
 
@@ -214,11 +215,18 @@ namespace MComponents.MForm
             mEditContext.NotifyValidationStateChanged();
         }
 
-        private void ValidateField(IMPropertyField field)
+        private void ValidateField(IMPropertyField pField)
         {
-            var propInfo = GetPropertyInfo(field);
+            var propInfo = GetPropertyInfo(pField);
 
-            if (propInfo.GetCustomAttribute<RequiredAttribute>() != null)
+            PropertyInfo oriPropInfo = null;
+
+            if (!typeof(IDictionary<string, object>).IsAssignableFrom(ModelType))
+                oriPropInfo = ModelType.GetProperty(propInfo.Name);
+
+            //if attribute is passed via field and not handled by DataAnnotationsValidator
+            if (propInfo.GetCustomAttribute<RequiredAttribute>() != null &&
+                (typeof(IDictionary<string, object>).IsAssignableFrom(ModelType) || (oriPropInfo != null && oriPropInfo.GetCustomAttribute<RequiredAttribute>() == null)))
             {
                 var fieldIdentifier = mEditContext.Field(propInfo.Name);
 
@@ -229,7 +237,7 @@ namespace MComponents.MForm
                 if (value == null || value is string str && string.IsNullOrWhiteSpace(str))
                 {
                     string displayname = GetDisplayName(propInfo, false);
-                    mValidationMessageStore.Add(fieldIdentifier, $"{displayname} is required"); //Localization
+                    mValidationMessageStore.Add(fieldIdentifier, string.Format(L["{0} is required."], displayname));
                 }
             }
         }
@@ -266,6 +274,9 @@ namespace MComponents.MForm
                 ei.Attributes = pField.Attributes;
             }
 
+            if (pField.Attributes != null)
+                pi.SetAttributes(pField.Attributes);
+
             return pi;
         }
 
@@ -300,17 +311,12 @@ namespace MComponents.MForm
                     if (propertyInfo.GetCustomAttribute<HiddenAttribute>() != null)
                         continue;
 
-                    if (field.Attributes != null)
-                        propertyInfo.SetAttributes(field.Attributes);
-
                     var inpId = Guid.NewGuid();
 
                     if (IsInTableRow)
                     {
                         builder2.OpenElement(16, "td");
                         builder2.AddAttribute(281, "data-is-in-table-row");
-                        //       builder2.AddMultipleAttributes(17, field.AdditionalAttributes);
-                        // update 13.07.2020, add AdditionalAttributes to Input
 
                         if (field.AdditionalAttributes != null && field.AdditionalAttributes.TryGetValue(Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, out object value))
                         {

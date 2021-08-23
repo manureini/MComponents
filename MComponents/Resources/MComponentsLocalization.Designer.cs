@@ -70,6 +70,15 @@ namespace MComponents.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is required..
+        /// </summary>
+        public static string _0__is_required_ {
+            get {
+                return ResourceManager.GetString("{0} is required.", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} items selected.
         /// </summary>
         public static string _0__items_selected {

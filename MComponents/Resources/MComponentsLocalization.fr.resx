@@ -165,4 +165,7 @@
   <data name="{0} items selected" xml:space="preserve">
     <value>{0} éléments sélectionnés</value>
   </data>
+  <data name="{0} is required." xml:space="preserve">
+    <value>{0} est requis.</value>
+  </data>
 </root>
