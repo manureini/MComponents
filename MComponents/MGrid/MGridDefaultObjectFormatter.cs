@@ -66,9 +66,9 @@ namespace MComponents.MGrid
             return value.ToString();
         }
 
-        protected bool HasAttribute<T>(IMGridPropertyColumn pColumn, IMPropertyInfo pPropertyInfo) where T : Attribute
+        protected bool HasAttribute<AT>(IMGridPropertyColumn pColumn, IMPropertyInfo pPropertyInfo) where AT : Attribute
         {
-            return pPropertyInfo.GetCustomAttribute<T>() != null || (pColumn.Attributes != null && pColumn.Attributes.Any(a => a.GetType() == typeof(T)));
+            return pPropertyInfo.GetCustomAttribute<AT>() != null || (pColumn.Attributes != null && pColumn.Attributes.Any(a => a.GetType() == typeof(AT)));
         }
 
         public void AddRowMetadata(T pRow, object pValue)
