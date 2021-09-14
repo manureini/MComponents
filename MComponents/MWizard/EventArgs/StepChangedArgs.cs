@@ -13,5 +13,7 @@
         public bool UserInteract { get; set; }
 
         public bool Cancelled { get; set; }
+
+        public bool DelayStepTransition { get; set; }
     }
 }
