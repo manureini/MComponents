@@ -214,7 +214,7 @@ namespace MComponents.MWizard
                 return;
             }
 
-            _ = InternalSetStep(CurrentStep, true, i => pIndex);
+            _ = InternalSetStep(CurrentStep, pUserInteract, i => pIndex);
         }
 
         protected async Task InternalSetStep(int pOldStep, bool pUserInteract, Func<int, int> pModifier)
