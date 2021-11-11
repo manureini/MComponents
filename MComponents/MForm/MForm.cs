@@ -221,23 +221,34 @@ namespace MComponents.MForm
 
             PropertyInfo oriPropInfo = null;
 
-            if (!typeof(IDictionary<string, object>).IsAssignableFrom(ModelType))
+            var isExpando = typeof(IDictionary<string, object>).IsAssignableFrom(ModelType);
+
+            if (!isExpando)
                 oriPropInfo = ModelType.GetProperty(propInfo.Name);
 
+            var fieldIdentifier = mEditContext.Field(propInfo.Name);
+
+            bool messagesCleared = false;
+
             //if attribute is passed via field and not handled by DataAnnotationsValidator
-            if (propInfo.GetCustomAttribute<RequiredAttribute>() != null &&
-                (typeof(IDictionary<string, object>).IsAssignableFrom(ModelType) || (oriPropInfo != null && oriPropInfo.GetCustomAttribute<RequiredAttribute>() == null)))
+            foreach (ValidationAttribute attribute in propInfo.GetAttributes().Where(a => a is ValidationAttribute))
             {
-                var fieldIdentifier = mEditContext.Field(propInfo.Name);
-
-                mValidationMessageStore.Clear(fieldIdentifier);
-
-                var value = propInfo.GetValue(Model);
-
-                if (value == null || value is string str && string.IsNullOrWhiteSpace(str))
+                if ((oriPropInfo != null && oriPropInfo.GetCustomAttribute(attribute.GetType()) == null) || isExpando)
                 {
-                    string displayname = GetDisplayName(propInfo, false);
-                    mValidationMessageStore.Add(fieldIdentifier, string.Format(L["{0} is required."], displayname));
+                    if (!messagesCleared)
+                    {
+                        mValidationMessageStore.Clear(fieldIdentifier);
+                        messagesCleared = true;
+                    }
+
+                    var value = propInfo.GetValue(Model);
+
+                    if (!attribute.IsValid(value))
+                    {
+                        string displayname = GetDisplayName(propInfo, false);
+                        var msg = attribute.FormatErrorMessage(displayname);
+                        mValidationMessageStore.Add(fieldIdentifier, msg);
+                    }
                 }
             }
         }
