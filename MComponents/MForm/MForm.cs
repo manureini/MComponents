@@ -51,6 +51,9 @@ namespace MComponents.MForm
         [Parameter]
         public bool PreventDefaultRendering { get; set; }
 
+        [Parameter]
+        public bool UpdateOnInput { get; set; }
+
         [Inject]
         public IStringLocalizer L { get; set; }
 
@@ -449,7 +452,7 @@ namespace MComponents.MForm
                 bool isInFilterRow = AdditionalAttributes != null && AdditionalAttributes.ContainsKey("data-is-filterrow");
 
                 var method = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
-                method.Invoke(null, new object[] { builder2, propertyInfo, Model, inpId, this, isInFilterRow, field });
+                method.Invoke(null, new object[] { builder2, propertyInfo, Model, inpId, this, isInFilterRow, field, UpdateOnInput });
             }
         }
 

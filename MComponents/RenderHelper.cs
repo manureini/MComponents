@@ -46,7 +46,7 @@ namespace MComponents
             return mSupportedTypes.Contains(pType);
         }
 
-        public static void AppendInput<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, bool pIsInFilterRow, IMField pField)
+        public static void AppendInput<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, bool pIsInFilterRow, IMField pField, bool pUpdateOnInput)
         {
             try
             {
@@ -140,6 +140,15 @@ namespace MComponents
                     pPropertyInfo.SetValue(pModel, __value);
                     await pParent.OnInputValueChanged(pField, pPropertyInfo, __value);
                 }, value));
+
+                if (pUpdateOnInput)
+                {
+                    pBuilder.AddAttribute(23, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(pParent, async a =>
+                    {
+                        pPropertyInfo.SetValue(pModel, a.Value);
+                        await pParent.OnInputValueChanged(pField, pPropertyInfo, a.Value);
+                    }));
+                }
 
                 pBuilder.AddAttribute(23, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
                 {
