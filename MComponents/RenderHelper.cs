@@ -168,6 +168,7 @@ namespace MComponents
                 }
 
                 pBuilder.AddAttribute(10, "class", cssClass);
+                // pBuilder.SetUpdatesAttributeName(pPropertyInfo.Name); <- new code generator will add this, but I don't know why
 
                 if (restrictValues != null)
                 {
