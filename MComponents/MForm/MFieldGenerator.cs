@@ -15,6 +15,9 @@ namespace MComponents.MForm
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
+        [CascadingParameter]
+        public MFieldRow FieldRow { get; set; }
+
         private IMForm mForm;
 
         [CascadingParameter]

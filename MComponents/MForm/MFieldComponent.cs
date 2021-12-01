@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,8 @@ namespace MComponents.MForm
         public virtual IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         public Type CompnentType { get; set; }
+
+        [CascadingParameter]
+        public MFieldRow FieldRow { get; set; }
     }
 }

@@ -86,7 +86,7 @@ namespace MComponents.MSelect
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
-            //Workaround for bypass check is ValueExpression is set
+            //Workaround for bypass check if ValueExpression is set
 
             parameters.SetParameterProperties(this);
 

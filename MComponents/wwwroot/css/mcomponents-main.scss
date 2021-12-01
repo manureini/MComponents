@@ -872,6 +872,22 @@
 /* END Accordion -------------------------------------------------------------------------- */
 
 
+/* START Cards --------------------------------------------------------------------------  */
+
+.m-cards-container {
+    display: grid;
+    grid-auto-flow: row;
+    grid-gap: 1rem;
+}
+
+.m-card {
+    background: $gray;
+    padding: 1rem;
+}
+
+/* END Cards --------------------------------------------------------------------------  */
+
+
 .m-badge {
     display: inline-flex;
     justify-content: center;

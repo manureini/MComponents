@@ -64,6 +64,7 @@ namespace MComponents.MForm
         protected ValidationMessageStore mValidationMessageStore;
 
         public List<IMField> FieldList = new List<IMField>();
+        public List<MFieldRow> RowList = new List<MFieldRow>();
 
         [Parameter]
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -260,6 +261,11 @@ namespace MComponents.MForm
         {
             return pFields.GroupBy(p =>
             {
+                if (p.FieldRow != null)
+                {
+                    return RowList.IndexOf(p.FieldRow);
+                }
+
                 var rowAttr = p.Attributes?.FirstOrDefault(a => a.GetType() == typeof(RowAttribute)) as RowAttribute;
 
                 if (rowAttr == null)
@@ -318,6 +324,17 @@ namespace MComponents.MForm
 
             foreach (var field in groupResult)
             {
+                string cssClass = "form-group col-"; //TODO we use bootstrap here - good idea or bad?
+
+                if (groupResult.Key == 0)
+                {
+                    cssClass += "12";
+                }
+                else
+                {
+                    cssClass += 12 / groupResult.Count();
+                }
+
                 if (field is IMPropertyField propField)
                 {
                     var propertyInfo = GetPropertyInfo(propField);
@@ -354,18 +371,6 @@ namespace MComponents.MForm
 
                     //  <div class="form-group">
                     builder2.OpenElement(10, "div");
-
-                    string cssClass = "form-group col-"; //TODO we use bootstrap here - good idea or bad?
-
-                    if (groupResult.Key == 0)
-                    {
-                        cssClass += "12";
-                    }
-                    else
-                    {
-                        cssClass += 12 / groupResult.Count();
-                    }
-
                     builder2.AddAttribute(272, "class", cssClass);
 
                     //  <label for="@inpId">@property.Name</label>
@@ -412,7 +417,13 @@ namespace MComponents.MForm
                         builder2.OpenElement(16, "td");
                     }
 
+                    //  <div class="form-group">
+                    builder2.OpenElement(10, "div");
+                    builder2.AddAttribute(272, "class", cssClass);
+
                     builder2.AddContent(42, fieldGenerator.Template?.Invoke(context));
+
+                    builder2.CloseElement();
 
                     if (IsInTableRow)
                     {
@@ -590,6 +601,12 @@ namespace MComponents.MForm
 
         public void InvokeStateHasChanged()
         {
+            StateHasChanged();
+        }
+
+        public void RegisterRow(MFieldRow pRow)
+        {
+            RowList.Add(pRow);
             StateHasChanged();
         }
     }
