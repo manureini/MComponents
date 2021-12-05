@@ -52,6 +52,7 @@ button:active {
   font-weight: normal;
   color: #212529;
   text-align: center;
+  text-decoration: none;
   vertical-align: middle;
   user-select: none;
   background-color: transparent;
