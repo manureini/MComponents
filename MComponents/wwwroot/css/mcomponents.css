@@ -724,6 +724,9 @@
 
 .m-card {
   background: #ebedf2;
+}
+
+.m-card > *:only-child {
   padding: 1rem;
 }
 

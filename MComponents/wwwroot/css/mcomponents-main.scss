@@ -883,6 +883,9 @@
 
 .m-card {
     background: $gray;
+}
+
+.m-card > *:only-child {
     padding: 1rem;
 }
 
