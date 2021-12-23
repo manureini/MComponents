@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MComponents
 {
@@ -137,16 +138,14 @@ namespace MComponents
 
                 pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, async __value =>
                 {
-                    pPropertyInfo.SetValue(pModel, __value);
-                    await pParent.OnInputValueChanged(pField, pPropertyInfo, __value);
+                    await InvokeValueChanged<T>(pParent, pPropertyInfo, pField, pModel, __value);
                 }, value));
 
                 if (pUpdateOnInput)
                 {
                     pBuilder.AddAttribute(23, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(pParent, async a =>
                     {
-                        pPropertyInfo.SetValue(pModel, a.Value);
-                        await pParent.OnInputValueChanged(pField, pPropertyInfo, a.Value);
+                        await InvokeValueChanged<T>(pParent, pPropertyInfo, pField, pModel, a.Value);
                     }));
                 }
 
@@ -214,6 +213,22 @@ namespace MComponents
                 Console.WriteLine(e.ToString());
                 throw;
             }
+        }
+
+        private static async Task InvokeValueChanged<T>(IMForm pParent, IMPropertyInfo pPropertyInfo, IMField pField, object pModel, object pNewValue)
+        {
+            if (pPropertyInfo.GetCustomAttribute<DateAttribute>() != null)
+            {
+                var dateTime = pNewValue as DateTime?;
+
+                if (dateTime != null && dateTime.Value.Kind == DateTimeKind.Unspecified)
+                {
+                    pNewValue = (T)((object)DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc));
+                }
+            }
+
+            pPropertyInfo.SetValue(pModel, pNewValue);
+            await pParent.OnInputValueChanged(pField, pPropertyInfo, pNewValue);
         }
 
         public static void AppendComplexType<T, TProperty>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, T pModel, Guid pId, IMForm pParent, MComplexPropertyField<TProperty> pComplexField,
