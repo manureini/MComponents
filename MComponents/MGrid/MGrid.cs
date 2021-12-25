@@ -17,6 +17,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MComponents.MGrid
@@ -1293,7 +1294,12 @@ namespace MComponents.MGrid
 
         private async Task UpdateColumnsWidth()
         {
-            var values = await JsRuntime.InvokeAsync<string[]>("mcomponents.getColumnSizes", new object[] { mTableReference, ColumnsList.Select(c => c.Identifier).ToArray() });
+            var json = await JsRuntime.InvokeAsync<string>("mcomponents.getColumnSizes", new object[] { mTableReference, ColumnsList.Select(c => c.Identifier).ToArray() });
+
+            if (string.IsNullOrWhiteSpace(json))
+                return;
+
+            var values = JsonSerializer.Deserialize<string[]>(json);
 
             if (values == null || values.Length <= 0)
                 return;

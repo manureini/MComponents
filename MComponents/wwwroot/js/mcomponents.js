@@ -192,7 +192,7 @@ var mcomponents = (function () {
                 }
             }
 
-            return ret;
+            return JSON.stringify(ret);
         },
 
         scrollToSelectedEntry: function () {
