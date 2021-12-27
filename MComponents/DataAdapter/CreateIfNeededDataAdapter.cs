@@ -46,27 +46,25 @@ namespace MComponents.DataAdapter
             return count;
         }
 
-        public async Task Add(T pNewValue)
+        public async Task<T> Add(T pNewValue)
         {
             if (!ShouldValueBeCreated(pNewValue))
-                return;
+                return pNewValue;
 
-            await mDataAdapter.Add(pNewValue);
+            var newValue = await mDataAdapter.Add(pNewValue);
 
-            if (mNotCreatedData.Contains(pNewValue))
-            {
-                mCreatedValues.Add(pNewValue);
-            }
+            mNotCreatedData.Remove(pNewValue);
+            mCreatedValues.Add(newValue);
+
+            return newValue;
         }
 
         public async Task Remove(T pValue)
         {
             await mDataAdapter.Remove(pValue);
 
-            if (mCreatedValues.Contains(pValue))
-            {
-                mCreatedValues.Remove(pValue);
-            }
+            mCreatedValues.Remove(pValue);
+            mNotCreatedData.Add(pValue);
         }
 
         public async Task Update(T pValue)

@@ -12,7 +12,7 @@ namespace MComponents.MGrid
 
         Task<long> GetTotalDataCount();
 
-        Task Add(T pNewValue);
+        Task<T> Add(T pNewValue);
 
         Task Remove(T pValue);
 
