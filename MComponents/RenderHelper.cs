@@ -225,7 +225,7 @@ namespace MComponents
                 {
                     pNewValue = (T)((object)DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc));
                 }
-            }
+            } 
 
             pPropertyInfo.SetValue(pModel, pNewValue);
             await pParent.OnInputValueChanged(pField, pPropertyInfo, pNewValue);

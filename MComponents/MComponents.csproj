@@ -1,73 +1,83 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <RazorLangVersion>3.0</RazorLangVersion>
-    <Product>MComponents</Product>
-    <Authors>manureini</Authors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Another blazor component library</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/manureini/MComponents/</PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
-    <PackageTags>Blazor Components</PackageTags>
-    <AssemblyVersion>1.4.2.1</AssemblyVersion>
-    <FileVersion>1.4.2.1</FileVersion>
-    <Company>MComponents</Company>
-    <Version>1.4.2.1</Version>
-    <LangVersion>8</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+		<RazorLangVersion>3.0</RazorLangVersion>
+		<Product>MComponents</Product>
+		<Authors>manureini</Authors>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Description>Another blazor component library</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/manureini/MComponents/</PackageProjectUrl>
+		<RepositoryUrl></RepositoryUrl>
+		<PackageTags>Blazor Components</PackageTags>
+		<AssemblyVersion>1.4.3</AssemblyVersion>
+		<FileVersion>1.4.3</FileVersion>
+		<Company>MComponents</Company>
+		<Version>1.4.3</Version>
+		<LangVersion>8</LangVersion>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="compilerconfig.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Remove="compilerconfig.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="compilerconfig.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="compilerconfig.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Blazor.Extensions.Canvas" Version="1.0.0" />
-    <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.11.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="5.0.0" />
-    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.0" />
-  </ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+		<PackageReference Include="System.Text.Json" Version="5.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="5.0.0" />
+	</ItemGroup>
 
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<PackageReference Include="System.Text.Json" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MComponents.Shared\MComponents.Shared.csproj" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <None Include="compilerconfig.json" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Compile Update="Resources\MComponentsLocalization.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MComponentsLocalization.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Blazor.Extensions.Canvas" Version="1.0.0" />
+		<PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
+		<PackageReference Include="DocumentFormat.OpenXml" Version="2.11.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+	</ItemGroup>
 
 
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\MComponentsLocalization.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>MComponentsLocalization.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MComponents.Shared\MComponents.Shared.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<None Include="compilerconfig.json" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Compile Update="Resources\MComponentsLocalization.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>MComponentsLocalization.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\MComponentsLocalization.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>MComponentsLocalization.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>

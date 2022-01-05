@@ -16,9 +16,9 @@ namespace MComponents.ExampleApp.Data
             mWeatherForecastService = pWeatherForecastService;
         }
 
-        public Task Add(WeatherForecast pNewValue)
+        public Task<WeatherForecast> Add(WeatherForecast pNewValue)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(pNewValue);
         }
 
         public Task<IEnumerable<WeatherForecast>> GetData(IQueryable<WeatherForecast> pQueryable)
