@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace MComponents
 {
@@ -34,6 +36,26 @@ namespace MComponents
 #else
             mNavigationManager.NavigateTo(url, forceLoad);
 #endif
+        }
+
+        public void NavigateTo<T>(bool forceLoad = false, bool replace = false)
+        {
+            var routeAttribute = typeof(T).GetCustomAttribute<RouteAttribute>();
+
+            if (routeAttribute == null)
+                throw new ArgumentException($"{typeof(T).FullName} does not have {nameof(RouteAttribute)}");
+
+            NavigateTo(routeAttribute.Template, forceLoad, replace);
+        }
+
+        public void NavigateTo<T>(Guid pId, bool forceLoad = false, bool replace = false)
+        {
+            var routeAttribute = typeof(T).GetCustomAttributes<RouteAttribute>().FirstOrDefault(r => r.Template.Contains("{Id:guid}", StringComparison.InvariantCultureIgnoreCase));
+
+            if (routeAttribute == null)
+                throw new ArgumentException($"{typeof(T).FullName} does not have {nameof(RouteAttribute)} with template contains {{Id:guid}}");
+
+            NavigateTo(routeAttribute.Template.Replace("{Id:guid}", pId.ToString(), StringComparison.InvariantCultureIgnoreCase), forceLoad, replace);
         }
 
         public bool CanNavigateBack => mHistory.Count >= 2;
