@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MComponents.MForm
 {
-    public interface IMField
+    public interface IMField : IDisposable
     {
         Attribute[] Attributes { get; set; }
 
