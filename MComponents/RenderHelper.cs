@@ -145,7 +145,9 @@ namespace MComponents
                 {
                     pBuilder.AddAttribute(23, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(pParent, async a =>
                     {
-                        await InvokeValueChanged<T>(pParent, pPropertyInfo, pField, pModel, a.Value);
+                        object value = a.Value;
+                        value = ReflectionHelper.ChangeType(value, typeof(T));
+                        await InvokeValueChanged<T>(pParent, pPropertyInfo, pField, pModel, value);
                     }));
                 }
 
@@ -225,7 +227,7 @@ namespace MComponents
                 {
                     pNewValue = (T)((object)DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc));
                 }
-            } 
+            }
 
             pPropertyInfo.SetValue(pModel, pNewValue);
             await pParent.OnInputValueChanged(pField, pPropertyInfo, pNewValue);
