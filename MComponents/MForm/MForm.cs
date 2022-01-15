@@ -114,7 +114,20 @@ namespace MComponents.MForm
             {
                 builder.OpenElement(112, "div");
                 builder.AddAttribute(113, "data-form-id", Id.ToString());
-                builder.AddAttribute(113, "class", "m-form-container");
+
+                string defaultCssClass = "m-form-container";
+
+                if (EnableValidation)
+                {
+                    defaultCssClass += " m-form-validation";
+                }
+
+                builder.AddAttribute(11, "class", RenderHelper.GetCssClass(AdditionalAttributes, defaultCssClass));
+
+                if (AdditionalAttributes != null)
+                {
+                    builder.AddMultipleAttributes(1, AdditionalAttributes.Where(a => a.Key != "class"));
+                }
 
                 builder.OpenElement(0, "form");
                 builder.AddAttribute(1, "id", Id.ToString());

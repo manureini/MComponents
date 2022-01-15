@@ -146,7 +146,7 @@ namespace MComponents
                     pBuilder.AddAttribute(23, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(pParent, async a =>
                     {
                         object value = a.Value;
-                        value = ReflectionHelper.ChangeType(value, typeof(T));
+                        value = ReflectionHelper.ChangeType(value, typeof(T)); //maybe the TryParseValueFromString method of the input is better?
                         await InvokeValueChanged<T>(pParent, pPropertyInfo, pField, pModel, value);
                     }));
                 }
@@ -327,6 +327,16 @@ namespace MComponents
             pBuilder.AddAttribute(33, "disabled", string.Empty);
             pBuilder.AddAttribute(33, "class", "m-form-control");
             pBuilder.CloseElement();
+        }
+
+        public static string GetCssClass(IReadOnlyDictionary<string, object> pAdditionalAttributes, string pDefaultCssClass)
+        {
+            if (pAdditionalAttributes != null && pAdditionalAttributes.TryGetValue("class", out object additionalCssClass))
+            {
+                return additionalCssClass.ToString() + " " + pDefaultCssClass;
+            }
+
+            return pDefaultCssClass;
         }
     }
 }
