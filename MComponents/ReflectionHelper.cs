@@ -128,7 +128,25 @@ namespace MComponents
             if (pType == typeof(Guid))
                 return Guid.Parse(pObject.ToString());
 
+            if (IsNullable(pType))
+            {
+                var innerType = Nullable.GetUnderlyingType(pType);
+                var innerValue = ChangeType(pObject, innerType);
+                return innerValue;
+            }
+
             return Convert.ChangeType(pObject, pType);
+        }
+
+        public static bool IsNullable(Type pType)
+        {
+            if (!pType.IsValueType)
+                return true;
+
+            if (Nullable.GetUnderlyingType(pType) != null)
+                return true;
+
+            return false;
         }
     }
 }
