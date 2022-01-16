@@ -1,12 +1,13 @@
-﻿
-@if (Wizard != null && !Wizard.FreezeCurrentStep)
+﻿@if (Wizard != null && !Wizard.FreezeCurrentStep)
 {
     <button class="m-wizard-btn m-btn m-btn-success m-btn-md m-btn-tall m-btn-wide" data-action="submit" @attributes="AdditionalAttributes" @onclick="Wizard.OnFinishClicked">
-        @L["Save"]
+        @L[Caption]
     </button>
 }
 
-@code  {
+@code {
+    [Parameter]
+    public string Caption { get; set; } = "Save";
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; }

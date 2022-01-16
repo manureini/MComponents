@@ -83,6 +83,21 @@ namespace MComponents.MForm
             return mFormContext.NotifySubmit(L);
         }
 
+        public bool AllFormsValid
+        {
+            get
+            {
+                bool valid = true;
+
+                foreach (var form in mFormContext.Forms) // invoke Validate on all forms
+                {
+                    valid &= form.Validate();
+                }
+
+                return valid;
+            }
+        }
+
         public bool HasUnsavedChanges
         {
             get { return mFormContext.Forms.Any(f => f.HasUnsavedChanges); }

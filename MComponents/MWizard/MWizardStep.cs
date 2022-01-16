@@ -5,8 +5,19 @@ namespace MComponents.MWizard
 {
     public class MWizardStep : ComponentBase
     {
+        private string mIdentifier;
         [Parameter]
-        public string Identifier { get; set; }
+        public string Identifier
+        {
+            get
+            {
+                if (mIdentifier == null)
+                    return Title;
+                return mIdentifier;
+            }
+
+            set => mIdentifier = value;
+        }
 
         [Parameter]
         public string Title { get; set; }
@@ -43,6 +54,7 @@ namespace MComponents.MWizard
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         private IMWizard mWizard;
+       
 
         [CascadingParameter]
         public IMWizard Wizard

@@ -19,7 +19,10 @@ namespace MComponents.MForm
         void OnInputKeyUp(KeyboardEventArgs pArgs, IMPropertyInfo pPropertyInfo);
 
         Task OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo,  object pNewValue);
+        
         void UnregisterField(IMField pField);
+
+        bool Validate();
 
         bool IsInTableRow { get; }
 

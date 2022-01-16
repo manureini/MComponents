@@ -16,6 +16,9 @@ namespace MComponents.MForm
         [Parameter]
         public Attribute[] Attributes { get; set; }
 
+        [Parameter]
+        public bool ExtendAttributes { get; set; }
+
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
@@ -45,10 +48,18 @@ namespace MComponents.MForm
         {
             base.OnParametersSet();
 
-            if (Attributes == null && Property != null)
+            if (Property != null)
             {
-                var pi = ReflectionHelper.GetIMPropertyInfo(Form.ModelType, Property, PropertyType);
-                Attributes = pi.GetAttributes().ToArray();
+                if (ExtendAttributes && Attributes != null)
+                {
+                    var pi = ReflectionHelper.GetIMPropertyInfo(Form.ModelType, Property, PropertyType);
+                    Attributes = Attributes.Concat(pi.GetAttributes()).ToArray();
+                }
+                else if (Attributes == null)
+                {
+                    var pi = ReflectionHelper.GetIMPropertyInfo(Form.ModelType, Property, PropertyType);
+                    Attributes = pi.GetAttributes().ToArray();
+                }
             }
         }
 
