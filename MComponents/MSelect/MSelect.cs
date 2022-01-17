@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Components.Rendering;
 using System.Linq.Expressions;
 using Microsoft.Extensions.Localization;
+using System.Reflection;
 
 namespace MComponents.MSelect
 {
@@ -82,7 +83,8 @@ namespace MComponents.MSelect
         protected Type mtType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
         protected DotNetObjectReference<MSelect<T>> mObjReference;
 
-        protected bool MultipleSelectMode => ValuesExpression != null;
+        protected bool mMultipleSelectMode;
+        protected bool mEnumFlags;
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
@@ -90,14 +92,18 @@ namespace MComponents.MSelect
 
             parameters.SetParameterProperties(this);
 
-            if (MultipleSelectMode)
+            mEnumFlags = mtType.IsEnum && mtType.GetCustomAttribute<FlagsAttribute>() != null;
+
+            mMultipleSelectMode = ValuesExpression != null || mEnumFlags;
+
+            if (mMultipleSelectMode && !mEnumFlags)
             {
                 EditContext = CascadedEditContext2;
             }
 
             await base.SetParametersAsync(parameters);
 
-            if (MultipleSelectMode)
+            if (mMultipleSelectMode && !mEnumFlags)
             {
                 FieldIdentifier = FieldIdentifier.Create(ValuesExpression);
             }
@@ -110,8 +116,11 @@ namespace MComponents.MSelect
             if (Values != null && Value != null)
                 throw new ArgumentException($"use {nameof(Values)} or {nameof(Value)} through bind-value, but not both");
 
-            if (MultipleSelectMode && Values == null)
+            if (mMultipleSelectMode && Values == null && !mEnumFlags)
                 throw new ArgumentException($"{nameof(Values)} must be != null");
+
+            if (mEnumFlags && Value == null)
+                throw new ArgumentException($"{nameof(Value)} must be != null");
 
             if (Options == null && mtType.IsEnum)
             {
@@ -128,7 +137,7 @@ namespace MComponents.MSelect
                 DisplayValues = Options.ToArray();
             }
 
-            if (MultipleSelectMode)
+            if (mMultipleSelectMode)
             {
                 UpdateDescription();
             }
@@ -284,7 +293,7 @@ namespace MComponents.MSelect
                     pBuilder.AddAttribute(80, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOptionSelect(index)));
                     pBuilder.AddAttribute(78, "role", "option");
 
-                    if (MultipleSelectMode)
+                    if (mMultipleSelectMode)
                     {
                         pBuilder.OpenElement(76, "label");
                         pBuilder.AddAttribute(78, "class", "m-checkbox m-select-checkbox m-clickable");
@@ -296,7 +305,8 @@ namespace MComponents.MSelect
                         pBuilder.AddAttribute(80, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, () => OnOptionSelect(index)));
                         pBuilder.AddEventStopPropagationClicksAttribute(81);
 
-                        if (Values.Contains(entry))
+                        if ((mEnumFlags && ValueEnumHasFlag(entry)) ||
+                               (!mEnumFlags && Values.Contains(entry)))
                         {
                             pBuilder.AddAttribute(78, "checked", "checked");
                         }
@@ -376,7 +386,7 @@ namespace MComponents.MSelect
         {
             UpdateSelection(DisplayValues.ElementAt(pIndex));
 
-            if (!MultipleSelectMode)
+            if (!mMultipleSelectMode)
                 ToggleOptions(true);
         }
 
@@ -467,7 +477,7 @@ namespace MComponents.MSelect
                     return;
                 }
 
-                if (!MultipleSelectMode)
+                if (!mMultipleSelectMode)
                     UpdateSelection(SelectedValue);
 
                 HideOptions(true);
@@ -508,7 +518,7 @@ namespace MComponents.MSelect
 
             if (args.Key == " ")
             {
-                if (MultipleSelectMode && !EnableSearch)
+                if (mMultipleSelectMode && !EnableSearch)
                 {
                     int index = Array.IndexOf(DisplayValues, SelectedValue);
                     if (index >= 0)
@@ -591,7 +601,7 @@ namespace MComponents.MSelect
 
         private void UpdateSelection(T pSelectedValue)
         {
-            if (MultipleSelectMode)
+            if (mMultipleSelectMode && !mEnumFlags)
             {
                 if (Values.Contains(pSelectedValue))
                 {
@@ -606,30 +616,48 @@ namespace MComponents.MSelect
 
                 ValuesChanged.InvokeAsync(Values);
                 EditContext.NotifyFieldChanged(FieldIdentifier);
-                StateHasChanged();
             }
             else
             {
-                if ((pSelectedValue == null && CurrentValue != null) || (CurrentValue == null && pSelectedValue != null) || (pSelectedValue != null && !pSelectedValue.Equals(CurrentValue)))
+                if ((pSelectedValue == null && CurrentValue != null) || (CurrentValue == null && pSelectedValue != null) || (pSelectedValue != null && !pSelectedValue.Equals(CurrentValue)) || mEnumFlags)
                 {
                     var oldValue = CurrentValue;
-                    CurrentValue = pSelectedValue;
+
+                    if (mEnumFlags)
+                    {
+                        if (ValueEnumHasFlag(pSelectedValue))
+                        {
+                            CurrentValue = (T)(object)((int)(object)CurrentValue & ~(int)(object)pSelectedValue);
+                        }
+                        else
+                        {
+                            CurrentValue = (T)(object)((int)(object)CurrentValue | (int)(object)pSelectedValue);
+                        }
+                    }
+                    else
+                    {
+                        CurrentValue = pSelectedValue;
+                    }
 
                     SelectionChangedArgs<T> args = new SelectionChangedArgs<T>()
                     {
-                        NewValue = pSelectedValue,
+                        NewValue = CurrentValue,
                         OldValue = oldValue
                     };
 
                     OnSelectionChanged.InvokeAsync(args);
                 }
             }
+
+            StateHasChanged();
         }
 
         protected void UpdateDescription()
         {
             if (Values == null)
+            {
                 mNullValueOverride = null;
+            }
             else
             {
                 if (Values.Count >= 3)
@@ -644,6 +672,11 @@ namespace MComponents.MSelect
 
             if (mNullValueOverride == string.Empty)
                 mNullValueOverride = null;
+        }
+
+        protected bool ValueEnumHasFlag(object pFlag)
+        {
+            return ((Enum)(object)Value).HasFlag((Enum)(object)pFlag);
         }
 
         public void SelectValue(T pValue)
