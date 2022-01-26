@@ -1,0 +1,46 @@
+﻿@using System.IO
+
+
+
+<InputFile OnChange="@LoadFiles" />
+
+@if (mLocalImageUrl != null)
+{
+    <img src="@mLocalImageUrl" />
+}
+
+
+@code {
+
+
+    protected const long MAX_FILE_SIZE = 1024 * 1024 * 512;
+
+    protected byte[] mImageData;
+    protected string mLocalImageUrl;
+
+    protected IBrowserFile mBrowserFile;
+
+    protected async void LoadFiles(InputFileChangeEventArgs e)
+    {
+        if (e.FileCount <= 0)
+            return;
+
+        mBrowserFile = await e.File.RequestImageFileAsync("image/jpg", 1000, 1000);
+
+        var stream = mBrowserFile.OpenReadStream(MAX_FILE_SIZE);
+
+        using MemoryStream ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+
+        mImageData = ms.ToArray();
+
+        mLocalImageUrl = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(mImageData));
+        StateHasChanged();
+    }
+
+    public IBrowserFile GetImageAsBrowserFile()
+    {
+        return mBrowserFile;
+    }
+
+}
