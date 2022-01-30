@@ -1,46 +1,61 @@
 ﻿@using System.IO
 
-
-
 <InputFile OnChange="@LoadFiles" />
+
+<br />
 
 @if (mLocalImageUrl != null)
 {
     <img src="@mLocalImageUrl" />
 }
 
-
 @code {
-
 
     protected const long MAX_FILE_SIZE = 1024 * 1024 * 512;
 
     protected byte[] mImageData;
     protected string mLocalImageUrl;
 
-    protected IBrowserFile mBrowserFile;
+    [Parameter]
+    public IBrowserFile Image { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        await ShowBrowserFile();
+    }
 
     protected async void LoadFiles(InputFileChangeEventArgs e)
     {
         if (e.FileCount <= 0)
             return;
 
-        mBrowserFile = await e.File.RequestImageFileAsync("image/jpg", 1000, 1000);
+        Image = await e.File.RequestImageFileAsync("image/jpg", 1000, 1000);
 
-        var stream = mBrowserFile.OpenReadStream(MAX_FILE_SIZE);
+        await ShowBrowserFile();
+        StateHasChanged();
+    }
 
+    protected async Task ShowBrowserFile()
+    {
+        if (Image == null)
+        {
+            mImageData = null;
+            mLocalImageUrl = null;
+            return;
+        }
+
+        using var stream = Image.OpenReadStream(MAX_FILE_SIZE);
         using MemoryStream ms = new MemoryStream();
         await stream.CopyToAsync(ms);
 
         mImageData = ms.ToArray();
-
-        mLocalImageUrl = string.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(mImageData));
-        StateHasChanged();
+        mLocalImageUrl = string.Format($"data:{Image.ContentType};base64, {Convert.ToBase64String(mImageData)}");
     }
 
     public IBrowserFile GetImageAsBrowserFile()
     {
-        return mBrowserFile;
+        return Image;
     }
 
 }
