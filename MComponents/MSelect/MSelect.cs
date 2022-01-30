@@ -125,6 +125,13 @@ namespace MComponents.MSelect
             if (Options == null && mtType.IsEnum)
             {
                 Options = Enum.GetValues(mtType).Cast<T>();
+
+                if (mEnumFlags)
+                {
+                    Options = Options.Where(v => (int)((object)v) != 0);
+                }
+
+                Options = Options.ToArray();
             }
 
             if (Property != null)
@@ -588,6 +595,13 @@ namespace MComponents.MSelect
             if (mtType.IsEnum)
             {
                 var evalue = value as Enum;
+
+                if (mEnumFlags && ((int)(object)evalue) != 0)
+                {
+                    var values = Options.Cast<Enum>().Where(v => evalue.HasFlag(v)).Select(v => v.ToName());
+                    return string.Join(", ", values);
+                }
+
                 return evalue.ToName();
             }
 
