@@ -17,6 +17,8 @@ namespace MComponents
         private readonly NavigationManager mNavigationManager;
         private readonly List<string> mHistory;
 
+        private int mSkipAddingHistory = 0;
+
         public string BaseUri => mNavigationManager.BaseUri;
         public string Uri => mNavigationManager.Uri;
 
@@ -32,6 +34,12 @@ namespace MComponents
         public void NavigateTo(string url, bool forceLoad = false, bool replace = false)
         {
 #if NET6_0_OR_GREATER
+
+            if (replace)
+            {
+                mSkipAddingHistory++;
+            }
+
             mNavigationManager.NavigateTo(url, forceLoad, replace);
 #else
             mNavigationManager.NavigateTo(url, forceLoad);
@@ -75,6 +83,12 @@ namespace MComponents
             if (e.Location != null && e.Location.EndsWith(SPECIAL_RELOAD_PAGE))
                 return;
 
+            if (mSkipAddingHistory > 0)
+            {
+                mSkipAddingHistory--;
+                return;
+            }
+
             EnsureSize();
             mHistory.Add(e.Location);
         }
@@ -98,7 +112,7 @@ namespace MComponents
 
 #if NET6_0_OR_GREATER
             mNavigationManager.NavigateTo("/" + SPECIAL_RELOAD_PAGE, false, true);
-            mNavigationManager.NavigateTo(url, false, true);
+            NavigateTo(url, false, true);
 #else
             mNavigationManager.NavigateTo("/" + SPECIAL_RELOAD_PAGE, false);
             mNavigationManager.NavigateTo(url, false);
