@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using System;
 using System.Collections.Generic;
 
-namespace MComponents.MTabs
+namespace MComponents.Tabs
 {
     public class MTab : ComponentBase
     {
