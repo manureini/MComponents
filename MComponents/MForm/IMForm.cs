@@ -24,6 +24,8 @@ namespace MComponents.MForm
 
         bool Validate();
 
+        void InvokeStateHasChanged();
+
         bool IsInTableRow { get; }
 
         bool EnableValidation { get; }

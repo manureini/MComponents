@@ -18,6 +18,8 @@ namespace MComponents.MForm
 
         public string FormId { get; set; }
 
+        public IMForm Form { get; set; }
+
         public MFormGridContext MFormGridContext { get; set; }
     }
 }

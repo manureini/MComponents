@@ -241,25 +241,27 @@ namespace MComponents
                 return;
             }
 
-            MComplexPropertyFieldContext<TProperty> context = new MComplexPropertyFieldContext<TProperty>();
-
             TProperty value = (TProperty)pPropertyInfo.GetValue(pModel);
 
-            context.Row = pModel;
-            context.InputId = pId.ToString();
-            context.FormId = pParent.Id.ToString();
-            context.Value = value;
-            context.MFormGridContext = pGridContext;
-
-            context.ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(pParent, async __value =>
+            var context = new MComplexPropertyFieldContext<TProperty>
             {
-                pPropertyInfo.SetValue(pModel, __value);
-                await pParent.OnInputValueChanged(pComplexField, pPropertyInfo, __value);
-            }, value);
+                Row = pModel,
+                InputId = pId.ToString(),
+                FormId = pParent.Id.ToString(),
+                Form = pParent,
+                Value = value,
+                MFormGridContext = pGridContext,
 
-            context.ValueExpression = GetValueExpression<TProperty>(pPropertyInfo, pModel);
+                ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(pParent, async __value =>
+                {
+                    pPropertyInfo.SetValue(pModel, __value);
+                    await pParent.OnInputValueChanged(pComplexField, pPropertyInfo, __value);
+                }, value),
 
-            pBuilder.AddContent(42, pComplexField.Template?.Invoke(context));
+                ValueExpression = GetValueExpression<TProperty>(pPropertyInfo, pModel)
+            };
+
+            pBuilder.AddContent(263, pComplexField.Template?.Invoke(context));
 
             if (pParent.EnableValidation)
             {
