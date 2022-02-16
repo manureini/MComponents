@@ -138,7 +138,7 @@ namespace MComponents
 
                 pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, async __value =>
                 {
-                    await InvokeValueChanged<T>(pParent, pPropertyInfo, pField, pModel, __value);
+                    await InvokeValueChanged(pParent, pPropertyInfo, pField, pModel, __value);
                 }, value));
 
                 if (pUpdateOnInput)
@@ -147,7 +147,7 @@ namespace MComponents
                     {
                         object value = a.Value;
                         value = ReflectionHelper.ChangeType(value, typeof(T)); //maybe the TryParseValueFromString method of the input is better?
-                        await InvokeValueChanged<T>(pParent, pPropertyInfo, pField, pModel, value);
+                        await InvokeValueChanged(pParent, pPropertyInfo, pField, pModel, value);
                     }));
                 }
 
@@ -200,7 +200,6 @@ namespace MComponents
                     pBuilder.AddAttribute(10, "Options", options);
                 }
 
-
                 pBuilder.CloseComponent();
 
                 if (pParent.EnableValidation)
@@ -217,7 +216,7 @@ namespace MComponents
             }
         }
 
-        private static async Task InvokeValueChanged<T>(IMForm pParent, IMPropertyInfo pPropertyInfo, IMField pField, object pModel, object pNewValue)
+        private static async Task InvokeValueChanged(IMForm pParent, IMPropertyInfo pPropertyInfo, IMField pField, object pModel, object pNewValue)
         {
             if (pPropertyInfo.GetCustomAttribute<DateAttribute>() != null)
             {
@@ -225,7 +224,7 @@ namespace MComponents
 
                 if (dateTime != null && dateTime.Value.Kind == DateTimeKind.Unspecified)
                 {
-                    pNewValue = (T)((object)DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc));
+                    pNewValue = DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
                 }
             }
 

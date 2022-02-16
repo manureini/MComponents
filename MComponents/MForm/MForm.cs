@@ -139,26 +139,27 @@ namespace MComponents.MForm
 
                 builder.CloseElement();
             }
-
-            if (Fields != null)
-            {
-                RenderFragment child3() =>
-                        (builder2) =>
-                        {
-                            builder2.AddMarkupContent(1, "\r\n");
-                            builder2.AddContent(2, this.Fields);
-                            builder2.AddMarkupContent(3, "\r\n");
-                        };
-
-                builder.OpenComponent<CascadingValue<MForm<T>>>(4);
-                builder.AddAttribute(5, "Value", this);
-                builder.AddAttribute(6, "ChildContent", child3());
-                builder.CloseComponent();
-            }
+ 
 
             RenderFragment child(EditContext context) =>
                     (builder2) =>
                     {
+                        if (Fields != null)
+                        {
+                            RenderFragment child3() =>
+                                    (builder3) =>
+                                    {
+                                        builder3.AddMarkupContent(1, "\r\n");
+                                        builder3.AddContent(2, this.Fields);
+                                        builder3.AddMarkupContent(3, "\r\n");
+                                    };
+
+                            builder2.OpenComponent<CascadingValue<MForm<T>>>(4);
+                            builder2.AddAttribute(5, "Value", this);
+                            builder2.AddAttribute(6, "ChildContent", child3());
+                            builder2.CloseComponent();
+                        }
+
                         if (EnableValidation)
                         {
                             builder2.OpenComponent<DataAnnotationsValidator>(0);

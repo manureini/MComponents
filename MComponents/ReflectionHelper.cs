@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace MComponents
 {
-    internal static class ReflectionHelper
+    public static class ReflectionHelper
     {
         public static object GetPropertyValue(object pObject, string pProperty)
         {

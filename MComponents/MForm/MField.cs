@@ -48,6 +48,9 @@ namespace MComponents.MForm
         {
             base.OnParametersSet();
 
+            if (Form == null)
+                throw new ArgumentNullException(nameof(Form), $"No cascading {nameof(Form)} value found. Please ensure field is inside a form.");
+
             if (Property != null)
             {
                 if (ExtendAttributes && Attributes != null)
