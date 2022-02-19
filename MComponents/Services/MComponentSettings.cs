@@ -1,6 +1,8 @@
 ﻿using MComponents.MGrid;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace MComponents.Services
 {
@@ -19,5 +21,7 @@ namespace MComponents.Services
         public bool SetRequestLocalizationOptions { get; set; }
 
         public MGridSettings MGridSettings => MGridSettings.Instance;
+
+        public Func<string, Task> EnsureAssemblyIsLoaded { get; set; }
     }
 }

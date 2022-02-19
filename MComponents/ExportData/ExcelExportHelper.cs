@@ -73,9 +73,14 @@ namespace MComponents
                     var hrow = new Row { RowIndex = ++rowIdex };
                     sheetData.AppendChild(hrow);
 
+                    var sstWrapper = new SharedStringTableWrapper()
+                    {
+                        SharedStringTable = sst
+                    };
+
                     foreach (var headerrow in columns.Select(c => c.HeaderText))
                     {
-                        hrow.AppendChild(CreateTextCell(sst, sstCache, headerrow ?? string.Empty));
+                        hrow.AppendChild((Cell)CreateTextCell(sstWrapper, sstCache, headerrow ?? string.Empty));
                     }
 
                     foreach (var rowData in pData)
@@ -87,12 +92,12 @@ namespace MComponents
                         {
                             if (column is IMGridComplexExport<T> exporter)
                             {
-                                row.AppendChild(exporter.GenerateExportCell(sst, sstCache, rowData));
+                                row.AppendChild((Cell)exporter.GenerateExportCell(sstWrapper, sstCache, rowData));
                             }
                             else if (column is IMGridPropertyColumn propColumn)
                             {
                                 var iprop = pPropertyInfos[propColumn];
-                                Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop, sst, sstCache);
+                                Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop, sstWrapper, sstCache);
                                 row.AppendChild(cell);
                             }
                             else
@@ -113,7 +118,7 @@ namespace MComponents
             }
         }
 
-        private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop, SharedStringTablePart pSsTable, Dictionary<string, int> pSstCache)
+        private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop, SharedStringTableWrapper pSsTable, Dictionary<string, int> pSstCache)
         {
             Cell cell;
             if (iprop.PropertyType == typeof(DateTime) || iprop.PropertyType == typeof(DateTime?))
@@ -148,7 +153,7 @@ namespace MComponents
             else if (iprop.PropertyType == typeof(string))
             {
                 string cellValue = pFormatter.FormatPropertyColumnValue(popcolumn, iprop, rowData);
-                cell = CreateTextCell(pSsTable, pSstCache, cellValue ?? string.Empty);
+                cell = (Cell)CreateTextCell(pSsTable, pSstCache, cellValue ?? string.Empty);
             }
             else
             {
@@ -174,9 +179,11 @@ namespace MComponents
             return cell;
         }
 
-        public static Cell CreateTextCell(SharedStringTablePart pSsTable, Dictionary<string, int> pCache, string text)
+        public static object CreateTextCell(SharedStringTableWrapper pSsTable, Dictionary<string, int> pCache, string text)
         {
-            int ssIndex = InsertSharedStringItem(pSsTable, pCache, text);
+            var ssTable = pSsTable.SharedStringTable as SharedStringTablePart;
+
+            int ssIndex = InsertSharedStringItem(ssTable, pCache, text);
 
             var cell = new Cell
             {

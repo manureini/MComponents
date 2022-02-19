@@ -1,6 +1,6 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
-using MComponents.ExportData;
+﻿using MComponents.ExportData;
 using MComponents.MForm;
+using MComponents.Services;
 using MComponents.Shared.Attributes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -89,6 +89,9 @@ namespace MComponents.MGrid
 
         [Inject]
         public IStringLocalizer L { get; set; }
+
+        [Inject]
+        public MComponentSettings MComponentSettings { get; set; }
 
         internal List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
         internal List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
@@ -666,7 +669,7 @@ namespace MComponents.MGrid
                        {
                            builder2.OpenElement(435, "button");
                            builder2.AddAttribute(436, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                           builder2.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => ExportContent()));
+                           builder2.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async () => await ExportContent()));
                            builder2.AddContent(438, (MarkupString)"<i class=\"fas fa-download\"></i>");
                            builder2.CloseElement(); // button
                        }
@@ -1711,13 +1714,18 @@ namespace MComponents.MGrid
             StateHasChanged();
         }
 
-        public async void ExportContent(string pFileName = "Export.xlsx")
+        public async Task ExportContent(string pFileName = "Export.xlsx")
         {
             IEnumerable<T> dataForExport = DataSource;
 
             if (dataForExport == null && DataAdapter != null)
             {
                 dataForExport = await DataAdapter.GetData(Enumerable.Empty<T>().AsQueryable());
+            }
+
+            if (MComponentSettings.EnsureAssemblyIsLoaded != null)
+            {
+                await MComponentSettings.EnsureAssemblyIsLoaded("DocumentFormat.OpenXml.dll");
             }
 
             var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, PropertyInfos, dataForExport, Formatter);

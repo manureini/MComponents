@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
+﻿using MComponents.ExportData;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -54,7 +53,7 @@ namespace MComponents.MGrid
             return CellTemplate(pModel);
         }
 
-        public Cell GenerateExportCell(SharedStringTablePart pSharedStringTablePart, Dictionary<string, int> pSstCache, T pModel)
+        public object GenerateExportCell(SharedStringTableWrapper pSharedStringTablePart, Dictionary<string, int> pSstCache, T pModel)
         {
             if (ExportText != null)
                 return ExcelExportHelper.CreateTextCell(pSharedStringTablePart, pSstCache, ExportText(pModel));
