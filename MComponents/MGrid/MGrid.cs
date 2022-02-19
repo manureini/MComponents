@@ -93,6 +93,9 @@ namespace MComponents.MGrid
         [Inject]
         public MComponentSettings MComponentSettings { get; set; }
 
+        [Inject]
+        public IServiceProvider ServiceProvider { get; set; }
+
         internal List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
         internal List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
         internal List<SortInstruction> GroupByInstructions { get; set; } = new List<SortInstruction>();
@@ -1725,7 +1728,7 @@ namespace MComponents.MGrid
 
             if (MComponentSettings.EnsureAssemblyIsLoaded != null)
             {
-                await MComponentSettings.EnsureAssemblyIsLoaded("DocumentFormat.OpenXml.dll");
+                await MComponentSettings.EnsureAssemblyIsLoaded(ServiceProvider, "DocumentFormat.OpenXml.dll");
             }
 
             var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, PropertyInfos, dataForExport, Formatter);

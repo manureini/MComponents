@@ -22,6 +22,6 @@ namespace MComponents.Services
 
         public MGridSettings MGridSettings => MGridSettings.Instance;
 
-        public Func<string, Task> EnsureAssemblyIsLoaded { get; set; }
+        public Func<IServiceProvider, string, Task> EnsureAssemblyIsLoaded { get; set; }
     }
 }
