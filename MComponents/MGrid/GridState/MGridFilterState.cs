@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MComponents.MGrid
+﻿namespace MComponents.MGrid
 {
     public class MGridFilterState
     {

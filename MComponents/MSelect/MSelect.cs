@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Components.Web;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.AspNetCore.Components.Rendering;
-using System.Linq.Expressions;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MComponents.MSelect
 {

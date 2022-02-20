@@ -6,7 +6,7 @@ namespace MComponents.MGrid
     {
         [Parameter]
         public long CurrentPage { get; set; } = 1;
-            
+
         [Parameter]
         public long PageCount { get; set; }
 

@@ -1,5 +1,4 @@
 ﻿using MComponents.MGrid;
-using Microsoft.Extensions.Localization;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;

@@ -54,7 +54,7 @@ namespace MComponents.MWizard
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         private IMWizard mWizard;
-       
+
 
         [CascadingParameter]
         public IMWizard Wizard

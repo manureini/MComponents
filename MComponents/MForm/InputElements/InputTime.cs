@@ -17,7 +17,7 @@ namespace MComponents.InputElements
             builder.AddAttribute(16, "value", FormatValueAsString(CurrentValue)); //custom format
             builder.AddAttribute(17, "onchange", EventCallback.Factory.CreateBinder<string>(this, pValue => CurrentValueAsString = pValue, CurrentValueAsString));
             builder.AddAttribute(18, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, _ => SetDefaultTimeIfNull()));
-            builder.CloseElement();         
+            builder.CloseElement();
         }
 
         protected override bool TryParseValueFromString(string value, out T result, out string validationErrorMessage)
@@ -30,7 +30,7 @@ namespace MComponents.InputElements
                 return false;
             }
 
-            if(DateTime.TryParse(value, out var datetime))
+            if (DateTime.TryParse(value, out var datetime))
             {
                 result = (T)((object)datetime);
                 return true;
