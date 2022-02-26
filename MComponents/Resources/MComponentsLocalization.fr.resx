@@ -168,4 +168,7 @@
   <data name="{0} is required." xml:space="preserve">
     <value>{0} est requis.</value>
   </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
 </root>

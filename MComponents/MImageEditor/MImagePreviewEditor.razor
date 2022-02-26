@@ -1,0 +1,65 @@
+﻿@using MComponents.MImageEditor
+@using MComponents.Resources
+
+@inject IStringLocalizer L
+
+@inject HttpClient HttpClient
+
+@if (BrowserFile != null || ImageUrl != null)
+{
+    @if (BrowserFile != null || mEditImage)
+    {
+        <MImageEditor @ref="mImageEditor" Image=BrowserFile />
+
+        <br />
+        <br />
+
+        <div class="edit-person-buttons">
+            <button class="m-btn m-btn-primary" @onclick=OnBtnSave>@L[nameof(MComponentsLocalization.Submit)]</button>
+            <button class="m-btn m-btn-primary" @onclick=OnBtnBack>@L[nameof(MComponentsLocalization.Back)]</button>
+            <button class="m-btn m-btn-primary" @onclick=DeleteImage><i class="fas fa-trash-alt"></i></button>
+        </div>
+    }
+    else
+    {
+        <img src="@ImageUrl" sstyle="max-width: 30vw;" />
+        <br />
+        <br />
+        <button class="m-btn m-btn-primary" @onclick=OnBtnEdit>@L[nameof(MComponentsLocalization.Edit)]</button>
+    }
+}
+
+@code {
+    protected bool mEditImage;
+    protected MImageEditor mImageEditor;
+
+    [Parameter]
+    public IBrowserFile BrowserFile { get; set; }
+
+    [Parameter]
+    public string ImageUrl { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+    }
+
+    protected void OnBtnEdit()
+    {
+        mEditImage = true;
+    }
+
+    protected async Task OnBtnSave()
+    {
+    }
+
+    protected async Task OnBtnBack()
+    {
+    }
+
+    protected async Task DeleteImage()
+    {
+    }
+}
