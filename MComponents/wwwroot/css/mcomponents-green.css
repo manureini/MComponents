@@ -374,11 +374,6 @@
   align-items: center;
   justify-content: space-between;
 }
-.m-select span {
-  padding: 0.65rem;
-  line-height: 1.5;
-  display: inline-block;
-}
 .m-select.m-form-control {
   padding: 0;
 }
@@ -504,6 +499,7 @@
 .m-switch.m-form-control {
   padding: 0;
   border: 0;
+  background-color: transparent;
 }
 .m-switch label input {
   position: absolute;
@@ -565,8 +561,12 @@
   content: "\f00c";
   margin-left: 26px;
 }
+.m-switch label input:disabled ~ span::before {
+  cursor: not-allowed;
+}
 .m-switch label input:disabled ~ span:after {
   background-color: #d8dce6;
+  cursor: not-allowed;
 }
 
 /* END Select ----------------------------------------------------------------------------- */
@@ -756,6 +756,10 @@
   margin-bottom: 10px;
 }
 
+.m-image-editor {
+  padding-bottom: 0.5rem;
+}
+
 .m-form-control {
   display: block;
   width: 100%;
@@ -800,6 +804,10 @@
       }
   }
       */
+}
+
+.m-form-row-actions {
+  padding-top: 1rem;
 }
 
 .m-combined-input-container {
