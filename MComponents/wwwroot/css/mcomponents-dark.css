@@ -1,44 +1,4 @@
-﻿.m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next i, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev i {
-  color: #ffffff !important;
-}
-
-.m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev {
-  background-color: black !important;
-}
-
-.m-pagination-container .m-pagination-tools select.m-form-control {
-  color: #ffffff !important;
-  background-color: black !important;
-}
-
-.m-form-control {
-  border-color: #bfbfbf !important;
-}
-
-.m-grid thead td, .m-grid thead th {
-  box-shadow: inset 0 -1px 0 #bfbfbf !important;
-}
-
-.m-switch label input ~ span:before {
-  border-color: gray !important;
-  background-color: #ffffff !important;
-}
-
-.m-switch label input ~ span:after {
-  color: gray !important;
-  border-color: gray !important;
-}
-
-button:focus {
-  outline: unset;
-}
-
-button:active {
-  opacity: 0.9;
-  transition: 0.1s;
-}
-
-.m-clickable {
+﻿.m-clickable {
   cursor: pointer;
 }
 
@@ -879,4 +839,92 @@ button:active {
 
 .m-scrollbar:hover {
   cursor: pointer;
+}
+
+.m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next i, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev i {
+  color: #ffffff !important;
+}
+
+.m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev {
+  background-color: black !important;
+}
+
+.m-pagination-container .m-pagination-tools select.m-form-control {
+  color: #ffffff !important;
+  background-color: black !important;
+}
+
+.m-form-control {
+  border: none;
+  border-bottom: 1px solid #ffffff;
+  background-color: #151515;
+  color: #ffffff;
+  transition: background-color 0.1s;
+}
+.m-form-control:disabled {
+  background-color: #151515;
+}
+.m-form-control:focus {
+  color: #ffffff;
+  background-color: #3b3b3b;
+  border-color: #ffffff;
+}
+
+.m-grid thead td, .m-grid thead th {
+  box-shadow: inset 0 -1px 0 #bfbfbf !important;
+}
+
+.m-grid-edit-row .m-form-control, .m-grid-edit-row .m-action-column-cell {
+  background: #727272;
+}
+
+.m-grid thead tr {
+  background-color: #ffffff;
+}
+.m-grid tbody tr {
+  background-color: #151515;
+  color: #ffffff;
+}
+.m-grid .m-grid-highlight {
+  background-color: #3b3b3b;
+}
+.m-grid.m-grid-hover tbody tr:not(.m-grid-highlight):nth-of-type(2n+1) {
+  background-color: #151515 !important;
+  color: white;
+}
+.m-grid.m-grid-hover tbody tr:not(.m-grid-highlight):hover {
+  background-color: #151515 !important;
+  color: white;
+}
+
+.m-switch label input ~ span:before {
+  color: #ffffff;
+  background-color: #ffffff !important;
+}
+
+.m-switch label input ~ span:after {
+  color: black;
+  border-color: gray !important;
+}
+
+.m-btn {
+  color: black;
+  background-color: #ffffff;
+}
+
+.m-btn-secondary:hover {
+  background-color: #ffffff;
+}
+
+button:focus {
+  outline: unset;
+}
+
+button:active {
+  opacity: 0.9;
+  transition: 0.1s;
+}
+
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }

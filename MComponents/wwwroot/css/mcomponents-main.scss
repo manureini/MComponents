@@ -597,6 +597,7 @@
     &.m-form-control {
         padding: 0;
         border: 0;
+        background-color: transparent;
     }
 
     label {
@@ -677,8 +678,13 @@
 
             &:disabled {
                 ~ span {
+                    &::before {
+                        cursor: not-allowed;
+                    }
+
                     &:after {
                         background-color: darken($gray, 6);
+                        cursor: not-allowed;
                     }
                 }
             }

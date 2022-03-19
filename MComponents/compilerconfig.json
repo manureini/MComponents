@@ -10,5 +10,9 @@
   {
     "outputFile": "wwwroot/css/mcomponents-green.css",
     "inputFile": "wwwroot/css/mcomponents-green.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/mcomponents-dark.css",
+    "inputFile": "wwwroot/css/mcomponents-dark.scss"
   }
 ]

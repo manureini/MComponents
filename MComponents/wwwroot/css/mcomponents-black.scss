@@ -38,10 +38,6 @@ $borderRadius: 0;
     background-color: $white !important;
 }
 
-.m-switch label input:disabled ~ span:before, .m-switch label input:disabled ~ span:after {
-    cursor: not-allowed;
-}
-
 .m-switch label input ~ span:after {
     color: lighten($primary, 50%) !important;
     border-color: lighten($primary, 50%) !important;
