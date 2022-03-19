@@ -404,6 +404,11 @@ namespace MComponents.MForm
 
                     builder2.CloseElement();
 
+                    if(propField.TemplateAfterLabel != null)
+                    {
+                        builder2.AddContent(294, propField.TemplateAfterLabel);
+                    }
+
                     builder2.OpenElement(296, "div");
                     builder2.AddAttribute(297, "class", "col-sm-12");  //TODO we use bootstrap here - good idea or bad?
 

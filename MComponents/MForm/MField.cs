@@ -19,6 +19,9 @@ namespace MComponents.MForm
         [Parameter]
         public bool ExtendAttributes { get; set; }
 
+        [Parameter]
+        public RenderFragment TemplateAfterLabel { get; set; }
+
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 

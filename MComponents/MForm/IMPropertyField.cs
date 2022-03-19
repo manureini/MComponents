@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 
 namespace MComponents.MForm
 {
@@ -7,5 +8,7 @@ namespace MComponents.MForm
         string Property { get; set; }
 
         Type PropertyType { get; set; }
+
+        RenderFragment TemplateAfterLabel { get; set; }
     }
 }
