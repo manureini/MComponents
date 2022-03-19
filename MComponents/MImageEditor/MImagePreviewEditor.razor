@@ -3,27 +3,28 @@
 
 @inject IStringLocalizer L
 
-@if (mBrowserFile != null || mEditImage || mImageUrl == null)
-{
-    <MImageEditor @ref="mImageEditor" Image=mBrowserFile />
+<div class="m-image-preview-editor">
+    @if (mBrowserFile != null || mEditImage || mImageUrl == null)
+    {
+        <MImageEditor @ref="mImageEditor" Image=mBrowserFile />
 
-    <br />
-    <br />
+        <br />
+        <br />
 
-    <div class="edit-person-buttons">
-        <button class="m-btn m-btn-primary" @onclick=OnBtnSave>@L[nameof(MComponentsLocalization.Submit)]</button>
-        <button class="m-btn m-btn-primary" @onclick=OnBtnBack>@L[nameof(MComponentsLocalization.Back)]</button>
-        <button class="m-btn m-btn-primary" @onclick=DeleteImage><i class="fas fa-trash-alt"></i></button>
-    </div>
-}
-else
-{
-    <img src="@mImageUrl" style="max-width: 90vw;" />
-    <br />
-    <br />
-    <button class="m-btn m-btn-primary" @onclick=OnBtnEdit>@L[nameof(MComponentsLocalization.Edit)]</button>
-}
-
+        <div class="edit-person-buttons">
+            <button class="m-btn m-btn-primary" @onclick=OnBtnSave>@L[nameof(MComponentsLocalization.Submit)]</button>
+            <button class="m-btn m-btn-primary" @onclick=OnBtnBack>@L[nameof(MComponentsLocalization.Back)]</button>
+            <button class="m-btn m-btn-primary" @onclick=DeleteImage><i class="fas fa-trash-alt"></i></button>
+        </div>
+    }
+    else
+    {
+        <img src="@mImageUrl" style="max-width: 90vw;" />
+        <br />
+        <br />
+        <button class="m-btn m-btn-primary" @onclick=OnBtnEdit>@L[nameof(MComponentsLocalization.Edit)]</button>
+    }
+</div>
 
 @code {
     protected bool mEditImage;

@@ -6,5 +6,9 @@
   {
     "outputFile": "wwwroot/css/mcomponents-black.css",
     "inputFile": "wwwroot/css/mcomponents-black.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/mcomponents-green.css",
+    "inputFile": "wwwroot/css/mcomponents-green.scss"
   }
 ]

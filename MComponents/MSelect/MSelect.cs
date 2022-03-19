@@ -182,7 +182,10 @@ namespace MComponents.MSelect
                 pBuilder.CloseComponent();
             }
 
-            pBuilder.OpenElement(0, "span");
+            pBuilder.OpenElement(150, "div");
+            pBuilder.AddAttribute(151, "class", "m-select");
+
+            pBuilder.OpenElement(156, "span");
 
             if (!IsDisabled)
             {
@@ -195,7 +198,7 @@ namespace MComponents.MSelect
                 pBuilder.AddAttribute(161, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
             }
 
-            pBuilder.AddAttribute(12, "class", "m-select m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
+            pBuilder.AddAttribute(12, "class", "m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
 
             if (AdditionalAttributes != null)
                 pBuilder.AddMultipleAttributes(4, AdditionalAttributes.Where(a => a.Key.ToLower() != "class" && a.Key.ToLower() != "onkeydown" && a.Key.ToLower() != "onkeyup"));
@@ -215,7 +218,7 @@ namespace MComponents.MSelect
 
             pBuilder.AddMarkupContent(27, "<span class=\"m-select-dropdown-icon fa fa-angle-down\" role =\"presentation\"></span>");
 
-            pBuilder.CloseElement();
+            pBuilder.CloseElement(); //span
 
             if (mOptionsVisible)
             {
@@ -358,6 +361,8 @@ namespace MComponents.MSelect
 
                 JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
             }
+
+            pBuilder.CloseElement(); //span
         }
 
         public void RegisterOption(MSelectOption pOption)

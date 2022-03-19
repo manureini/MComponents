@@ -1,13 +1,15 @@
 ﻿@using System.IO
 
-<InputFile OnChange="@LoadFiles" />
+<div class="m-image-editor">
 
-<br />
+    <InputFile OnChange="@LoadFiles" />
 
-@if (mLocalImageUrl != null)
-{
-    <img src="@mLocalImageUrl" style="max-width: 90vw;" />
-}
+    @if (mLocalImageUrl != null)
+    {
+        <img src="@mLocalImageUrl" style="max-width: 90vw; max-height: 65vh;" />
+    }
+
+</div>
 
 @code {
 
