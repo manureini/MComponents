@@ -38,32 +38,32 @@
 }
 
 .m-btn-primary {
-  color: #000000;
-  background-color: #a5cc1d;
-  border-color: #93b61a;
+  color: white;
+  background-color: #0e7027;
+  border-color: #0b591f;
 }
 
 .m-btn-primary:hover {
-  color: #000000;
-  background-color: #e2f3a9;
-  border-color: #d3ec7c;
+  color: white;
+  background-color: #48e871;
+  border-color: #1ce14e;
 }
 
 .m-btn-success {
-  color: #000000;
-  background-color: #a5cc1d;
-  border-color: #819f17;
+  color: white;
+  background-color: #0e7027;
+  border-color: #084317;
 }
 
 .m-btn-success:hover {
-  color: #000000;
-  background-color: #93b61a;
-  border-color: #819f17;
+  color: white;
+  background-color: #0b591f;
+  border-color: #084317;
 }
 
 .m-btn-primary.disabled,
 .m-btn-primary:disabled {
-  color: #000000;
+  color: white;
   background-color: #f0f1f3;
   border-color: #f0f1f3;
 }
@@ -307,26 +307,26 @@
   cursor: pointer;
 }
 .m-pagination-container .m-pagination-list .m-pagination-entry:not(.m-pagination-entry--disabled):not(.m-pagination-entry--more):not(.m-pagination-entry--prev):not(.m-pagination-entry--next):hover {
-  background-color: #a5cc1d;
+  background-color: #0e7027;
 }
 .m-pagination-container .m-pagination-list .m-pagination-entry:not(.m-pagination-entry--disabled):not(.m-pagination-entry--more):not(.m-pagination-entry--prev):not(.m-pagination-entry--next) > a:hover {
   color: white;
 }
 .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev {
-  background-color: #dbf092;
+  background-color: #32e560;
 }
 .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--next i, .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--prev i {
-  color: #a5cc1d;
+  color: #0e7027;
 }
 .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--disabled {
   cursor: default;
-  background-color: #e2f3a9;
+  background-color: #48e871;
 }
 .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--disabled i {
-  color: #d0eb73;
+  color: #1bd84b;
 }
 .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--active {
-  background-color: #a5cc1d;
+  background-color: #0e7027;
 }
 .m-pagination-container .m-pagination-list .m-pagination-entry.m-pagination-entry--active a {
   color: white;
@@ -354,8 +354,8 @@
   margin-right: 10px;
   width: min-content;
   padding: 0 5px;
-  background-color: #dbf092;
-  color: #a5cc1d;
+  background-color: #32e560;
+  color: #0e7027;
   font-size: 1.1rem;
   font-weight: 500;
   height: 30px;
@@ -557,7 +557,7 @@
 }
 .m-switch label input:checked ~ span:after {
   color: white;
-  background-color: #a5cc1d;
+  background-color: #0e7027;
   content: "\f00c";
   margin-left: 26px;
 }
@@ -610,10 +610,10 @@
 }
 .m-wizard .m-wizard-navigation-item.m-wizard-navigation-item--current .m-wizard-navigation-item-bar:after {
   width: 100%;
-  background-color: #a5cc1d;
+  background-color: #0e7027;
 }
 .m-wizard .m-wizard-navigation-item--current .m-wizard-navigation-item-title-contaier {
-  color: #a5cc1d;
+  color: #0e7027;
 }
 .m-wizard .m-wizard-navigation-item-title-contaier {
   font-size: 1.1rem;
@@ -745,7 +745,7 @@
 }
 .m-badge.m-badge--primary {
   color: white;
-  background: #a5cc1d;
+  background: #0e7027;
 }
 
 .m-paint {
@@ -782,7 +782,7 @@
   background-color: white;
   border-color: #9aabff;
   outline-width: 0;
-  box-shadow: rgba(165, 204, 29, 0.05) 0 0 0 0.15rem;
+  box-shadow: rgba(14, 112, 39, 0.05) 0 0 0 0.15rem;
 }
 .m-form-control:disabled {
   background-color: #f0f1f3;
