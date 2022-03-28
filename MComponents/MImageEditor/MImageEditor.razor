@@ -21,6 +21,9 @@
     [Parameter]
     public IBrowserFile Image { get; set; }
 
+    [Parameter]
+    public EventCallback<IBrowserFile> ImageChanged { get; set; }
+
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
@@ -33,6 +36,7 @@
             return;
 
         Image = await e.File.RequestImageFileAsync("image/jpg", 1000, 1000);
+        await ImageChanged.InvokeAsync(Image);
 
         await ShowBrowserFile();
         StateHasChanged();

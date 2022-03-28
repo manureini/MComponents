@@ -6,7 +6,7 @@
 <div class="m-image-preview-editor">
     @if (mBrowserFile != null || mEditImage || mImageUrl == null)
     {
-        <MImageEditor @ref="mImageEditor" Image=mBrowserFile />
+        <MImageEditor @ref="mImageEditor" @bind-Image=mBrowserFile />
 
         <br />
         <br />
