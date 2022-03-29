@@ -131,6 +131,12 @@ namespace MComponents
             if (IsNullable(pType))
             {
                 var innerType = Nullable.GetUnderlyingType(pType);
+
+                if (pObject is string str && string.IsNullOrWhiteSpace(str) && (innerType == typeof(double) || innerType == typeof(int) || innerType == typeof(decimal) || innerType == typeof(float)))
+                {
+                    return null;
+                }
+
                 var innerValue = ChangeType(pObject, innerType);
                 return innerValue;
             }
