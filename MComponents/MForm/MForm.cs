@@ -404,7 +404,7 @@ namespace MComponents.MForm
 
                     builder2.CloseElement();
 
-                    if(propField.TemplateAfterLabel != null)
+                    if (propField.TemplateAfterLabel != null)
                     {
                         builder2.AddContent(294, propField.TemplateAfterLabel);
                     }
@@ -610,6 +610,11 @@ namespace MComponents.MForm
             if (OnValueChanged.HasDelegate)
             {
                 await OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pPropertyInfo, pNewValue, Model));
+            }
+
+            if (mEditContext != null && pField is IMPropertyField propertyField)
+            {
+                mEditContext.NotifyFieldChanged(mEditContext.Field(propertyField.Property));
             }
         }
 
