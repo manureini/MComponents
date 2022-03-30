@@ -16,11 +16,20 @@
 		<Company>MComponents</Company>
 		<Version>1.4.3</Version>
 		<LangVersion>8</LangVersion>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>_Generated</CompilerGeneratedFilesOutputPath>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<WarningLevel>4</WarningLevel>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="_Generated\**" />
+	  <Content Remove="_Generated\**" />
+	  <EmbeddedResource Remove="_Generated\**" />
+	  <None Remove="_Generated\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Remove="compilerconfig.json" />

@@ -79,7 +79,14 @@ namespace MComponents
                 }
                 else if (mNumberTypes.Contains(tType))
                 {
-                    pBuilder.OpenComponent<InputNumber<T>>(0);
+                    if (pUpdateOnInput)
+                    {
+                        pBuilder.OpenComponent<InputNumberOnInput<T>>(0);
+                    }
+                    else
+                    {                       
+                        pBuilder.OpenComponent<InputNumber<T>>(0);
+                    }
                 }
                 else if (tType == typeof(DateTime) || tType == typeof(DateTimeOffset))
                 {
@@ -131,6 +138,8 @@ namespace MComponents
                         .Where(a => a.Key != nameof(IMGridColumn))
                         .ToDictionary(a => a.Key, a => a.Value));
 
+          //      pBuilder.SetUpdatesAttributeName(pPropertyInfo.Name);
+
                 pBuilder.AddAttribute(1, "id", pId);
                 pBuilder.AddAttribute(2, "Value", value);
 
@@ -141,7 +150,7 @@ namespace MComponents
                     await InvokeValueChanged(pParent, pPropertyInfo, pField, pModel, __value);
                 }, value));
 
-                if (pUpdateOnInput)
+                if (pUpdateOnInput && !mNumberTypes.Contains(tType))
                 {
                     pBuilder.AddAttribute(23, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(pParent, async a =>
                     {

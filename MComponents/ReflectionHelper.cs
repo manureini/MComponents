@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -121,22 +122,58 @@ namespace MComponents
 
             if (pType.IsEnum)
             {
-                Enum.TryParse(pType, pObject.ToString(), true, out object enumResult);
-                return enumResult;
+                if (Enum.TryParse(pType, pObject.ToString(), true, out object enumResult))
+                    return enumResult;
+
+                return null;
             }
 
             if (pType == typeof(Guid))
-                return Guid.Parse(pObject.ToString());
+            {
+                if (Guid.TryParse(pObject.ToString(), out Guid result))
+                    return result;
+
+                return null;
+            }
+
+            if (pType == typeof(int))
+            {
+                if (int.TryParse(pObject.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out int result))
+                    return result;
+                return null;
+            }
+
+            if (pType == typeof(long))
+            {
+                if (long.TryParse(pObject.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out long result))
+                    return result;
+                return null;
+            }
+
+            if (pType == typeof(float))
+            {
+                if (float.TryParse(pObject.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out float result))
+                    return result;
+                return null;
+            }
+
+            if (pType == typeof(double))
+            {
+                if (double.TryParse(pObject.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out double result))
+                    return result;
+                return null;
+            }
+
+            if (pType == typeof(decimal))
+            {
+                if (decimal.TryParse(pObject.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal result))
+                    return result;
+                return null;
+            }
 
             if (IsNullable(pType))
             {
                 var innerType = Nullable.GetUnderlyingType(pType);
-
-                if (pObject is string str && string.IsNullOrWhiteSpace(str) && (innerType == typeof(double) || innerType == typeof(int) || innerType == typeof(decimal) || innerType == typeof(float)))
-                {
-                    return null;
-                }
-
                 var innerValue = ChangeType(pObject, innerType);
                 return innerValue;
             }
