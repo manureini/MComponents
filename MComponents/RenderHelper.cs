@@ -84,7 +84,7 @@ namespace MComponents
                         pBuilder.OpenComponent<InputNumberOnInput<T>>(0);
                     }
                     else
-                    {                       
+                    {
                         pBuilder.OpenComponent<InputNumber<T>>(0);
                     }
                 }
@@ -138,7 +138,7 @@ namespace MComponents
                         .Where(a => a.Key != nameof(IMGridColumn))
                         .ToDictionary(a => a.Key, a => a.Value));
 
-          //      pBuilder.SetUpdatesAttributeName(pPropertyInfo.Name);
+                //      pBuilder.SetUpdatesAttributeName(pPropertyInfo.Name);
 
                 pBuilder.AddAttribute(1, "id", pId);
                 pBuilder.AddAttribute(2, "Value", value);
@@ -227,17 +227,22 @@ namespace MComponents
 
         private static async Task InvokeValueChanged(IMForm pParent, IMPropertyInfo pPropertyInfo, IMField pField, object pModel, object pNewValue)
         {
-            if (pPropertyInfo.GetCustomAttribute<DateAttribute>() != null)
+            lock (pModel)
             {
-                var dateTime = pNewValue as DateTime?;
-
-                if (dateTime != null && dateTime.Value.Kind == DateTimeKind.Unspecified)
+                if (pPropertyInfo.GetCustomAttribute<DateAttribute>() != null)
                 {
-                    pNewValue = DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+                    var dateTime = pNewValue as DateTime?;
+
+                    if (dateTime != null && dateTime.Value.Kind == DateTimeKind.Unspecified)
+                    {
+                        pNewValue = DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+                    }
                 }
+
+                Console.WriteLine(pNewValue);
+                pPropertyInfo.SetValue(pModel, pNewValue);
             }
 
-            pPropertyInfo.SetValue(pModel, pNewValue);
             await pParent.OnInputValueChanged(pField, pPropertyInfo, pNewValue);
         }
 

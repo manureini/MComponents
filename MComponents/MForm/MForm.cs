@@ -605,7 +605,8 @@ namespace MComponents.MForm
 
         public async Task OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo, object pNewValue)
         {
-            ChangedValues.Add(pPropertyInfo);
+            if (!ChangedValues.Contains(pPropertyInfo))
+                ChangedValues.Add(pPropertyInfo);
 
             if (OnValueChanged.HasDelegate)
             {
