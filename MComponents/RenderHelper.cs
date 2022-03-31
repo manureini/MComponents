@@ -239,7 +239,6 @@ namespace MComponents
                     }
                 }
 
-                Console.WriteLine(pNewValue);
                 pPropertyInfo.SetValue(pModel, pNewValue);
             }
 
