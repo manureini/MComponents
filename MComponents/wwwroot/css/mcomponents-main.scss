@@ -918,6 +918,26 @@
     margin-bottom: 10px;
 }
 
+.m-popup {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .m-popup-content {
+        position: absolute;
+        border-width: 1px;
+        border-style: solid;
+        border-color: rgb(223, 226, 233);
+        border-radius: $borderRadius;
+        padding: $padding;
+        background-color: $dark;
+        margin-top: 0.5rem;
+        transform: translateX(-50%);
+    }
+}
+
 .m-image-editor {
     padding-bottom: 0.5rem;
 }

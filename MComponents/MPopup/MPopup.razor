@@ -1,0 +1,46 @@
+﻿
+
+<div class="m-popup" tabindex="-1" @onfocusout=Hide>
+
+    <div class="m-popup-target" @onclick="Toggle" @onclick:preventDefault @onclick:stopPropagation>
+        @Target
+    </div>
+
+    @if(mPopupVisible)
+    {    
+        <div class="m-popup-align">
+            <diV class="m-popup-content">
+                @PopupContent
+            </div>
+        </div>
+    }
+    
+</div>
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment Target { get; set; }
+
+    [Parameter]
+    public RenderFragment PopupContent { get; set; }
+
+    protected bool mPopupVisible;
+
+    public void Toggle()
+    {
+       mPopupVisible = !mPopupVisible;
+    }
+
+    public void Show()
+    {
+        mPopupVisible = true;
+    }
+
+    public void Hide()
+    {
+       mPopupVisible = false;
+    }
+
+}
