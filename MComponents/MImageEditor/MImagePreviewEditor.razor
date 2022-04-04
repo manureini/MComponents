@@ -8,10 +8,7 @@
     {
         <MImageEditor @ref="mImageEditor" @bind-Image=mBrowserFile />
 
-        <br />
-        <br />
-
-        <div class="edit-person-buttons">
+        <div class="m-image-preview-editor-buttons">
             <button class="m-btn m-btn-primary" @onclick=OnBtnSave>@L[nameof(MComponentsLocalization.Submit)]</button>
             <button class="m-btn m-btn-primary" @onclick=OnBtnBack>@L[nameof(MComponentsLocalization.Back)]</button>
             <button class="m-btn m-btn-primary" @onclick=DeleteImage><i class="fas fa-trash-alt"></i></button>
@@ -19,10 +16,12 @@
     }
     else
     {
-        <img src="@mImageUrl" style="max-width: 90vw;" />
-        <br />
-        <br />
-        <button class="m-btn m-btn-primary" @onclick=OnBtnEdit>@L[nameof(MComponentsLocalization.Edit)]</button>
+        @*
+            <img src="@mImageUrl" style="max-width: 90vw;" />
+            <br />
+            <br />
+            <button class="m-btn m-btn-primary" @onclick=OnBtnEdit>@L[nameof(MComponentsLocalization.Edit)]</button>
+        *@
     }
 </div>
 

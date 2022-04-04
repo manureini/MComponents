@@ -775,8 +775,29 @@
   transform: translateX(-50%);
 }
 
+.m-image-preview-editor {
+  display: flex;
+  flex-direction: column;
+}
+.m-image-preview-editor .m-image-editor {
+  max-height: calc(99% - 3.5rem);
+}
+.m-image-preview-editor .m-image-preview-editor-buttons {
+  display: flex;
+}
+
 .m-image-editor {
+  max-height: 90%;
   padding-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.m-image-editor img {
+  object-fit: contain;
+  flex-grow: 1000;
+  align-self: flex-start;
+  height: 80%;
+  width: 100%;
 }
 
 .m-form-control {
