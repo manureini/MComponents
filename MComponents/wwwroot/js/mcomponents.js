@@ -202,6 +202,7 @@ var mcomponents = (function () {
                 var elements = document.getElementsByClassName("m-select-options-entry--highlighted");
 
                 if (elements.length == 0) {
+                    document.getElementsByClassName("m-select-options-list-container")[0].style.visibility = 'visible';
                     return;
                 }
 
@@ -212,7 +213,10 @@ var mcomponents = (function () {
                 offset -= selected.clientHeight * 4;
 
                 document.getElementsByClassName("m-select-options-list")[0].scrollTop = offset;
-            }, 150);
+
+                document.getElementsByClassName("m-select-options-list-container")[0].style.visibility = 'visible';
+
+            }, 20);
         },
 
         invokeClick: function (id) {

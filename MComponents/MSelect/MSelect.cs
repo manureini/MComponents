@@ -232,13 +232,15 @@ namespace MComponents.MSelect
                 pBuilder.AddEventPreventDefaultAttribute(496, "onkeyup", true);
 
                 pBuilder.AddAttribute(35, "class", "m-select-options-container"); //also used in mcomponents.js
-                pBuilder.AddElementReferenceCapture(36, (__value) =>
+             
+                pBuilder.AddElementReferenceCapture(37, (__value) =>
                 {
                     OptionsDiv = __value;
                 });
 
                 pBuilder.OpenElement(38, "div");
                 pBuilder.AddAttribute(39, "class", "m-select-options-list-container");
+                pBuilder.AddAttribute(40, "style", "visibility: hidden;"); //also used in mcomponents.js
 
                 if (EnableSearch)
                 {
@@ -359,7 +361,7 @@ namespace MComponents.MSelect
                 pBuilder.CloseElement();
                 pBuilder.CloseElement();
 
-                JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
+                _ = JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
             }
 
             pBuilder.CloseElement(); //span

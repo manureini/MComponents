@@ -423,7 +423,7 @@
   min-width: min-content;
 }
 .m-select-options-container .m-select-options-list-container .m-select-options-list {
-  max-height: 230px;
+  max-height: 40vh;
   height: auto;
   overflow-y: auto;
   list-style: none;
