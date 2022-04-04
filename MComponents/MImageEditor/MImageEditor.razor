@@ -51,12 +51,21 @@
             return;
         }
 
-        using var stream = Image.OpenReadStream(MAX_FILE_SIZE);
-        using MemoryStream ms = new MemoryStream();
-        await stream.CopyToAsync(ms);
+        try
+        {
+            using var stream = Image.OpenReadStream(MAX_FILE_SIZE);
+            using MemoryStream ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
 
-        mImageData = ms.ToArray();
-        mLocalImageUrl = string.Format($"data:{Image.ContentType};base64, {Convert.ToBase64String(mImageData)}");
+            mImageData = ms.ToArray();
+            mLocalImageUrl = string.Format($"data:{Image.ContentType};base64, {Convert.ToBase64String(mImageData)}");
+        }
+        catch
+        {
+            //log error somewhere, appears if upload failed on server side?!?
+            mImageData = null;
+            mLocalImageUrl = null;
+        }
     }
 
     public IBrowserFile GetImageAsBrowserFile()
