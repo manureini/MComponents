@@ -735,20 +735,24 @@ namespace MComponents.MGrid
             }
         }
 
+        //does this really work for complrex nested structures?
         private void GetNestedExpandoValue(string[] pProperties, object pValue, ref Dictionary<string, object> pParent)
         {
+            var property = pProperties[0];
+
             if (pProperties.Length > 1)
             {
-                var property = pProperties[0];
-
                 var dict = new Dictionary<string, object>();
-                pParent.Add(property, dict);
+
+                if (!pParent.ContainsKey(property))
+                    pParent.Add(property, dict);
 
                 GetNestedExpandoValue(pProperties.Skip(1).ToArray(), pValue, ref dict);
                 return;
             }
 
-            pParent.Add(pProperties[0], pValue);
+            if (!pParent.ContainsKey(property))
+                pParent.Add(property, pValue);
         }
 
         private void AddFilterRow(RenderTreeBuilder pBuilder)
@@ -775,9 +779,21 @@ namespace MComponents.MGrid
                         else
                         {
                             var properties = pc.Property.Split('.');
+                            var firstProp = properties.First();
+
                             var dict = new Dictionary<string, object>();
+
+                            if (fmodel.ContainsKey(firstProp))
+                            {
+                                dict = (Dictionary<string, object>)fmodel[firstProp];
+                            }
+
                             GetNestedExpandoValue(properties.Skip(1).ToArray(), value, ref dict);
-                            fmodel.Add(properties.First(), dict);
+
+                            if (!fmodel.ContainsKey(firstProp))
+                            {
+                                fmodel.Add(firstProp, dict);
+                            }
                         }
                     }
                 }
