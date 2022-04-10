@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MComponents.MGrid
@@ -155,6 +156,8 @@ namespace MComponents.MGrid
 
         protected SorterBuilder<T> mSorter = new SorterBuilder<T>();
         protected FilterBuilder<T> mFilter = new FilterBuilder<T>();
+
+        protected SemaphoreSlim mDataAdapterSemaphore = new SemaphoreSlim(1, 1);
         //  protected GroupByBuilder<T> mGrouper = new GroupByBuilder<T>();
 
         protected bool mHasActionColumn;
@@ -290,7 +293,11 @@ namespace MComponents.MGrid
                 await UpdateColumnsWidth();
 
                 if (EnableSaveState)
-                    StateService.RestoreGridState(this);
+                {
+                    await StateService.RestoreGridState(this);
+                }
+
+                await UpdateDataCacheIfDataAdapter();
             }
 
             if (UpdateColumnsWidthOnNextRender)
@@ -301,7 +308,10 @@ namespace MComponents.MGrid
                 StateHasChanged();
             }
 
-            await UpdateDataCacheIfDataAdapter();
+            //if (firstRender && EnableSaveState)
+            //     return;
+
+            //_ = UpdateDataCacheIfDataAdapter(true);
         }
 
         [JSInvokable]
@@ -1806,34 +1816,50 @@ namespace MComponents.MGrid
             GroupedDataCache = null;
         }
 
-        protected async Task UpdateDataCacheIfDataAdapter()
+        protected async Task UpdateDataCacheIfDataAdapter(bool pSkipIfDataCacheIsNotNull = false)
         {
-            if (DataCache == null && DataAdapter != null)
+            bool semaphoreAcquired = false;
+
+            try
             {
-                var queryable = GetIQueryable(Enumerable.Empty<T>(), false);
-
-                await Task.Run(async () => await DataAdapter.GetData(queryable)).ContinueWith(async a =>
+                if (DataCache == null && DataAdapter != null)
                 {
-                    DataCache = a.Result.ToArray();
+                    await mDataAdapterSemaphore.WaitAsync();
+                    semaphoreAcquired = true;
 
-                    await Task.Run(async () => await DataAdapter.GetDataCount(queryable)).ContinueWith(async a =>
+                    if (pSkipIfDataCacheIsNotNull && DataCache != null)
+                        return;
+
+                    var queryable = GetIQueryable(Enumerable.Empty<T>(), false);
+
+                    await Task.Run(async () => await DataAdapter.GetData(queryable)).ContinueWith(async a =>
                     {
-                        DataCountCache = a.Result;
+                        DataCache = a.Result.ToArray();
 
-                        await Task.Run(async () => await DataAdapter.GetTotalDataCount()).ContinueWith(a =>
+                        await Task.Run(async () => await DataAdapter.GetDataCount(queryable)).ContinueWith(async a =>
                         {
-                            TotalDataCountCache = a.Result;
-                            InvokeAsync(() => StateHasChanged());
+                            DataCountCache = a.Result;
+
+                            await Task.Run(async () => await DataAdapter.GetTotalDataCount()).ContinueWith(a =>
+                            {
+                                TotalDataCountCache = a.Result;
+                                InvokeAsync(() => StateHasChanged());
+                            });
                         });
                     });
-                });
+                }
+            }
+            finally
+            {
+                if (semaphoreAcquired)
+                    mDataAdapterSemaphore.Release();
             }
         }
 
         public void Refresh()
         {
             ClearDataCache();
-            InvokeStateHasChanged();
+            _ = UpdateDataCacheIfDataAdapter();
         }
 
         public void ClearColumns()
@@ -1866,11 +1892,20 @@ namespace MComponents.MGrid
 
         public void ClearFilterValues()
         {
-            FilterInstructions.Clear();
+            bool refresh = false;
+
+            if (FilterInstructions.Count > 0)
+            {
+                refresh = true;
+                FilterInstructions.Clear();
+            }
+
             mFilterModel = null;
 
             SaveCurrentState();
-            Refresh();
+
+            if (refresh)
+                Refresh();
         }
 
         public void SaveCurrentState()

@@ -31,97 +31,90 @@ namespace MComponents.MGrid
         }
 
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-        public void RestoreGridState<T>(MGrid<T> pGrid)
+        public async Task RestoreGridState<T>(MGrid<T> pGrid)
         {
-            _ = Task.Run(() => mPersistService.GetValueAsync<MGridState>(pGrid))
-                .ContinueWith(s =>
-              {
-                  try
-                  {
-                      var state = s.Result.Result;
+            try
+            {
+                var state = await mPersistService.GetValueAsync<MGridState>(pGrid);
 
-                      if (state == null)
-                          return;
+                if (state == null)
+                    return;
 
-                      pGrid.SelectRow(state.SelectedRow);
+                pGrid.SelectRow(state.SelectedRow);
 
-                      if (pGrid.Pager != null)
-                      {
-                          if (state.Page != null)
-                              pGrid.Pager.CurrentPage = Math.Max(1, state.Page.Value);
-                          if (state.PageSize != null)
-                              pGrid.Pager.PageSize = Math.Max(1, state.PageSize.Value);
-                      }
+                if (pGrid.Pager != null)
+                {
+                    if (state.Page != null)
+                        pGrid.Pager.CurrentPage = Math.Max(1, state.Page.Value);
+                    if (state.PageSize != null)
+                        pGrid.Pager.PageSize = Math.Max(1, state.PageSize.Value);
+                }
 
-                      pGrid.FilterInstructions = state.FilterState.Select(filterState =>
-                      {
-                          var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == filterState.ColumnIdentifier);
+                pGrid.FilterInstructions = state.FilterState.Select(filterState =>
+                {
+                    var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == filterState.ColumnIdentifier);
 
-                          if (column == null || !(column is IMGridPropertyColumn propc))
-                              return null;
+                    if (column == null || !(column is IMGridPropertyColumn propc))
+                        return null;
 
-                          IMPropertyInfo pi = pGrid.PropertyInfos[propc];
+                    IMPropertyInfo pi = pGrid.PropertyInfos[propc];
 
-                          object value = null;
+                    object value = null;
 
-                          if (filterState.ReferencedId != null && column.GetType().Name == typeof(MGridComplexPropertyColumn<object, object>).Name)
-                          {
-                              value = GetReferencedValue(pGrid, column, propc.PropertyType, filterState.ReferencedId);
-                          }
-                          else
-                          {
-                              var jsone = filterState.Value as JsonElement?;
+                    if (filterState.ReferencedId != null && column.GetType().Name == typeof(MGridComplexPropertyColumn<object, object>).Name)
+                    {
+                        value = GetReferencedValue(pGrid, column, propc.PropertyType, filterState.ReferencedId);
+                    }
+                    else
+                    {
+                        var jsone = filterState.Value as JsonElement?;
 
-                              try
-                              {
-                                  value = jsone?.ToObject(pi.PropertyType);
-                              }
-                              catch (Exception e)
-                              {
-                                  Console.WriteLine(e.ToString());
-                              }
-                          }
-
-                          if (value == null)
-                              return null;
-
-                          return new FilterInstruction()
-                          {
-                              Value = value,
-                              GridColumn = column,
-                              PropertyInfo = pi
-                          };
-                      }).Where(f => f != null).ToList();
-
-                      pGrid.SortInstructions = state.SorterState.Select(s =>
-                      {
-                          var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == s.ColumnIdentifier);
-
-                          if (column == null || !(column is IMGridPropertyColumn propc))
-                              return null;
-
-                          IMPropertyInfo pi = pGrid.PropertyInfos[propc];
-
-                          return new SortInstruction()
-                          {
-                              GridColumn = propc,
-                              Direction = s.Direction,
-                              Index = s.Index,
-                              PropertyInfo = pi,
-                              Comparer = column.GetComparer()
-                          };
-                      }).Where(s => s != null).ToList();
-
-                      _ = pGrid.SetFilterRowVisible(state.IsFilterRowVisible).ContinueWith(t =>
+                        try
                         {
-                            pGrid.Refresh();
-                        });
-                  }
-                  catch (Exception e)
-                  {
-                      Console.Write(e);
-                  }
-              });
+                            value = jsone?.ToObject(pi.PropertyType);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                        }
+                    }
+
+                    if (value == null)
+                        return null;
+
+                    return new FilterInstruction()
+                    {
+                        Value = value,
+                        GridColumn = column,
+                        PropertyInfo = pi
+                    };
+                }).Where(f => f != null).ToList();
+
+                pGrid.SortInstructions = state.SorterState.Select(s =>
+                {
+                    var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == s.ColumnIdentifier);
+
+                    if (column == null || !(column is IMGridPropertyColumn propc))
+                        return null;
+
+                    IMPropertyInfo pi = pGrid.PropertyInfos[propc];
+
+                    return new SortInstruction()
+                    {
+                        GridColumn = propc,
+                        Direction = s.Direction,
+                        Index = s.Index,
+                        PropertyInfo = pi,
+                        Comparer = column.GetComparer()
+                    };
+                }).Where(s => s != null).ToList();
+
+                await pGrid.SetFilterRowVisible(state.IsFilterRowVisible);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+            }
         }
 
         protected object GetReferencedValue<T>(MGrid<T> pGrid, IMGridColumn column, Type pPropertyType, string pReferencedId)
