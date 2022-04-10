@@ -44,18 +44,19 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="5.0.0" />
+		<PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
 		<PackageReference Include="System.Text.Json" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.3" />
+		<PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Blazor.Extensions.Canvas" Version="1.0.0" />
-		<PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
+		<PackageReference Include="Blazor.Extensions.Canvas" Version="1.0.0" />	
 		<PackageReference Include="DocumentFormat.OpenXml" Version="2.11.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.2.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
