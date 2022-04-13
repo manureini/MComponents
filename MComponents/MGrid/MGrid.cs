@@ -214,6 +214,7 @@ namespace MComponents.MGrid
                 throw new ArgumentException($"{DataSource} can not be an array. It must be a source which supports adding and deleting");
 
             ClearDataCache();
+            _ = UpdateDataCacheIfDataAdapter();
         }
 
         public void RegisterColumn(IMGridColumn pColumn)
@@ -1816,7 +1817,7 @@ namespace MComponents.MGrid
             GroupedDataCache = null;
         }
 
-        protected async Task UpdateDataCacheIfDataAdapter(bool pSkipIfDataCacheIsNotNull = false)
+        protected async Task UpdateDataCacheIfDataAdapter()
         {
             bool semaphoreAcquired = false;
 
@@ -1826,9 +1827,6 @@ namespace MComponents.MGrid
                 {
                     await mDataAdapterSemaphore.WaitAsync();
                     semaphoreAcquired = true;
-
-                    if (pSkipIfDataCacheIsNotNull && DataCache != null)
-                        return;
 
                     var queryable = GetIQueryable(Enumerable.Empty<T>(), false);
 
