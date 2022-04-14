@@ -168,7 +168,9 @@ namespace MComponents.MGrid
 
         public IMGridColumn[] VisibleColumns => ColumnsList.Where(c => c.ShouldRenderColumn).ToArray();
 
-        public bool UpdateColumnsWidthOnNextRender;
+        public bool UpdateColumnsWidthOnNextRender { get; set; }
+
+        protected bool mUpdateDataCacheOnNextRender;
 
         protected string mInputFileId = Guid.NewGuid().ToString();
         protected IMPropertyInfo mIdentifierProperty;
@@ -213,8 +215,7 @@ namespace MComponents.MGrid
             if ((EnableAdding || EnableDeleting) && DataSource != null && DataSource is T[])
                 throw new ArgumentException($"{DataSource} can not be an array. It must be a source which supports adding and deleting");
 
-            ClearDataCache();
-            _ = UpdateDataCacheIfDataAdapter();
+            mUpdateDataCacheOnNextRender = true;
         }
 
         public void RegisterColumn(IMGridColumn pColumn)
@@ -312,7 +313,12 @@ namespace MComponents.MGrid
             //if (firstRender && EnableSaveState)
             //     return;
 
-            //_ = UpdateDataCacheIfDataAdapter(true);
+            if (mUpdateDataCacheOnNextRender)
+            {
+                ClearDataCache();
+                _ = UpdateDataCacheIfDataAdapter();
+                mUpdateDataCacheOnNextRender = false;
+            }
         }
 
         [JSInvokable]
