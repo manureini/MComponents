@@ -263,7 +263,7 @@ namespace MComponents.MForm
 
                     if (!attribute.IsValid(value))
                     {
-                        string displayname = GetDisplayName(propInfo, false);
+                        string displayname = propInfo.GetDisplayName(L, false);
                         var msg = attribute.FormatErrorMessage(displayname);
                         mValidationMessageStore.Add(fieldIdentifier, msg);
                     }
@@ -392,7 +392,7 @@ namespace MComponents.MForm
                     builder2.AddAttribute(276, "for", inpId);
                     builder2.AddAttribute(277, "class", "col-sm-12 col-form-label"); //TODO we use bootstrap here - good idea or bad?
 
-                    builder2.AddMarkupContent(286, GetDisplayName(propertyInfo, true));
+                    builder2.AddMarkupContent(286, propertyInfo.GetDisplayName(L, true));
 
                     if (propertyInfo.GetCustomAttribute<RequiredAttribute>() != null)
                     {
@@ -541,29 +541,6 @@ namespace MComponents.MForm
             };
 
             return CascadedFormContext_OnFormSubmit(this, args);
-        }
-
-        protected string GetDisplayName(IMPropertyInfo pPropertyInfo, bool pMarkup)
-        {
-            var displayAttribute = pPropertyInfo.GetCustomAttribute<DisplayAttribute>();
-            if (displayAttribute != null)
-            {
-                var display = displayAttribute.GetName();
-
-                if (displayAttribute.ResourceType == null)
-                {
-                    display = L[displayAttribute.Name];
-                }
-
-                display ??= string.Empty;
-
-                if (pMarkup)
-                    return HttpUtility.HtmlEncode(display).Replace("\n", "<br>");
-
-                return display;
-            }
-
-            return pPropertyInfo.Name;
         }
 
         public void RegisterField(IMField pField, bool pSkipRendering = false)

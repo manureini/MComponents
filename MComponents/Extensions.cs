@@ -9,9 +9,11 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using System.Web;
 
 namespace MComponents
 {
@@ -30,11 +32,11 @@ namespace MComponents
             if (pBoundingBox == null)
                 return;
 
-            string width = $"{Convert.ToString(pBoundingBox.Width, CultureInfo.InvariantCulture) }px";
-            string height = $"{Convert.ToString(pBoundingBox.Height, CultureInfo.InvariantCulture) }px";
+            string width = $"{Convert.ToString(pBoundingBox.Width, CultureInfo.InvariantCulture)}px";
+            string height = $"{Convert.ToString(pBoundingBox.Height, CultureInfo.InvariantCulture)}px";
 
-            string top = $"{Convert.ToString(pBoundingBox.BorderTop, CultureInfo.InvariantCulture) }px";
-            string left = $"{Convert.ToString(pLeftOffset, CultureInfo.InvariantCulture) }px";
+            string top = $"{Convert.ToString(pBoundingBox.BorderTop, CultureInfo.InvariantCulture)}px";
+            string left = $"{Convert.ToString(pLeftOffset, CultureInfo.InvariantCulture)}px";
 
             builder.AddAttribute(sequence, pAttributeName, $"width: {width}; height: {height}; top: {top}; left: {left}");
         }
@@ -107,6 +109,29 @@ namespace MComponents
             using (var writer = new Utf8JsonWriter(bufferWriter))
                 element.WriteTo(writer);
             return JsonSerializer.Deserialize(bufferWriter.WrittenSpan, pType, options);
+        }
+
+        public static string GetDisplayName(this IMPropertyInfo pPropertyInfo, IStringLocalizer L, bool pMarkup = false)
+        {
+            var displayAttribute = pPropertyInfo.GetCustomAttribute<DisplayAttribute>();
+            if (displayAttribute != null)
+            {
+                var display = displayAttribute.GetName();
+
+                if (displayAttribute.ResourceType == null)
+                {
+                    display = L[displayAttribute.Name];
+                }
+
+                display ??= string.Empty;
+
+                if (pMarkup)
+                    return HttpUtility.HtmlEncode(display).Replace("\n", "<br>");
+
+                return display;
+            }
+
+            return pPropertyInfo.Name;
         }
 
         public static void AddMComponents(this IServiceCollection pServices, Action<MComponentSettings> pOptions = null)
