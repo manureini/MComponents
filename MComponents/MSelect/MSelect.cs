@@ -173,99 +173,99 @@ namespace MComponents.MSelect
                 RenderFragment child() =>
                         (builder2) =>
                         {
-                            builder2.AddContent(56, this.ChildContent);
+                            builder2.AddContent(176, this.ChildContent);
                         };
 
                 pBuilder.OpenComponent<CascadingValue<MSelect<T>>>(4);
-                pBuilder.AddAttribute(5, "Value", this);
-                pBuilder.AddAttribute(6, "ChildContent", child());
+                pBuilder.AddAttribute(180, "Value", this);
+                pBuilder.AddAttribute(181, "ChildContent", child());
                 pBuilder.CloseComponent();
             }
 
-            pBuilder.OpenElement(150, "div");
-            pBuilder.AddAttribute(151, "class", "m-select");
+            pBuilder.OpenElement(185, "div");
+            pBuilder.AddAttribute(186, "class", "m-select");
 
-            pBuilder.OpenElement(156, "span");
+            pBuilder.OpenElement(188, "span");
 
             if (!IsDisabled)
             {
-                pBuilder.AddAttribute(157, "tabindex", "0");
-                pBuilder.AddAttribute(158, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
-                pBuilder.AddEventStopPropagationAttribute(159, "onkeydown", true);
-                pBuilder.AddEventStopPropagationAttribute(4345, "onkeyup", true);
+                pBuilder.AddAttribute(192, "tabindex", "0");
+                pBuilder.AddAttribute(193, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
+                pBuilder.AddEventStopPropagationAttribute(194, "onkeydown", true);
+                pBuilder.AddEventStopPropagationAttribute(195, "onkeyup", true);
 
-                pBuilder.AddAttribute(160, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusIn));
-                pBuilder.AddAttribute(161, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
+                pBuilder.AddAttribute(197, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusIn));
+                pBuilder.AddAttribute(198, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
             }
 
-            pBuilder.AddAttribute(12, "class", "m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
+            pBuilder.AddAttribute(201, "class", "m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
 
             if (AdditionalAttributes != null)
-                pBuilder.AddMultipleAttributes(4, AdditionalAttributes.Where(a => a.Key.ToLower() != "class" && a.Key.ToLower() != "onkeydown" && a.Key.ToLower() != "onkeyup"));
+                pBuilder.AddMultipleAttributes(204, AdditionalAttributes.Where(a => a.Key.ToLower() != "class" && a.Key.ToLower() != "onkeydown" && a.Key.ToLower() != "onkeyup"));
 
-            pBuilder.AddElementReferenceCapture(163, (__value) =>
+            pBuilder.AddElementReferenceCapture(206, (__value) =>
             {
                 SelectSpan = __value;
             });
 
-            pBuilder.OpenElement(19, "span");
-            pBuilder.AddAttribute(20, "class", "m-select-content");
-            pBuilder.AddAttribute(21, "role", "textbox");
+            pBuilder.OpenElement(211, "span");
+            pBuilder.AddAttribute(212, "class", "m-select-content");
+            pBuilder.AddAttribute(213, "role", "textbox");
 
-            pBuilder.AddContent(24, CurrentValueAsString);
+            pBuilder.AddContent(215, CurrentValueAsString);
 
             pBuilder.CloseElement();
 
-            pBuilder.AddMarkupContent(27, "<span class=\"m-select-dropdown-icon fa fa-angle-down\" role =\"presentation\"></span>");
+            pBuilder.AddMarkupContent(219, "<span class=\"m-select-dropdown-icon fa fa-angle-down\" role =\"presentation\"></span>");
 
             pBuilder.CloseElement(); //span
 
             if (mOptionsVisible)
             {
-                pBuilder.OpenElement(32, "div");
-                pBuilder.AddAttribute(33, "tabindex", "0");
+                pBuilder.OpenElement(225, "div");
+                pBuilder.AddAttribute(226, "tabindex", "0");
 
-                pBuilder.AddAttribute(11, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
-                pBuilder.AddEventStopPropagationAttribute(12, "onkeydown", true);
-                pBuilder.AddEventStopPropagationAttribute(12, "onkeyup", true);
-                pBuilder.AddEventPreventDefaultAttribute(495, "onkeydown", true);
-                pBuilder.AddEventPreventDefaultAttribute(496, "onkeyup", true);
+                pBuilder.AddAttribute(228, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
+                pBuilder.AddEventStopPropagationAttribute(229, "onkeydown", true);
+                pBuilder.AddEventStopPropagationAttribute(230, "onkeyup", true);
+                pBuilder.AddEventPreventDefaultAttribute(231, "onkeydown", true);
+                pBuilder.AddEventPreventDefaultAttribute(232, "onkeyup", true);
 
                 pBuilder.AddAttribute(35, "class", "m-select-options-container"); //also used in mcomponents.js
              
-                pBuilder.AddElementReferenceCapture(37, (__value) =>
+                pBuilder.AddElementReferenceCapture(236, (__value) =>
                 {
                     OptionsDiv = __value;
                 });
 
-                pBuilder.OpenElement(38, "div");
-                pBuilder.AddAttribute(39, "class", "m-select-options-list-container");
-                pBuilder.AddAttribute(40, "style", "visibility: hidden;"); //also used in mcomponents.js
+                pBuilder.OpenElement(241, "div");
+                pBuilder.AddAttribute(242, "class", "m-select-options-list-container");
+                pBuilder.AddAttribute(243, "style", "visibility: hidden;"); //also used in mcomponents.js
 
                 if (EnableSearch)
                 {
-                    pBuilder.OpenElement(43, "span");
-                    pBuilder.AddAttribute(44, "class", "m-select-search-container");
+                    pBuilder.OpenElement(247, "span");
+                    pBuilder.AddAttribute(248, "class", "m-select-search-container");
 
-                    pBuilder.OpenElement(46, "input");
-                    pBuilder.AddAttribute(47, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(this, OnSearchInputChanged));
-                    pBuilder.AddAttribute(48, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
+                    pBuilder.OpenElement(250, "input");
+                    pBuilder.AddAttribute(251, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(this, OnSearchInputChanged));
+                    pBuilder.AddAttribute(252, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, InputKeyDown));
 
-                    pBuilder.AddEventStopPropagationAttribute(483, "onkeydown", true);
-                    pBuilder.AddEventStopPropagationAttribute(484, "onkeyup", true);
-                    pBuilder.AddEventStopPropagationAttribute(485, "oninput", true);
+                    pBuilder.AddEventStopPropagationAttribute(254, "onkeydown", true);
+                    pBuilder.AddEventStopPropagationAttribute(255, "onkeyup", true);
+                    pBuilder.AddEventStopPropagationAttribute(256, "oninput", true);
 
-                    pBuilder.AddAttribute(49, "value", "");
-                    pBuilder.AddAttribute(50, "class", "m-form-control m-select-search-input");
-                    pBuilder.AddAttribute(51, "type", "search");
-                    pBuilder.AddAttribute(52, "tabindex", "0");
-                    pBuilder.AddAttribute(53, "autocomplete", "off");
-                    pBuilder.AddAttribute(54, "autocorrect", "off");
-                    pBuilder.AddAttribute(55, "autocapitalize", "none");
-                    pBuilder.AddAttribute(56, "spellcheck", "false");
-                    pBuilder.AddAttribute(57, "role", "search");
+                    pBuilder.AddAttribute(258, "value", "");
+                    pBuilder.AddAttribute(259, "class", "m-form-control m-select-search-input");
+                    pBuilder.AddAttribute(260, "type", "search");
+                    pBuilder.AddAttribute(261, "tabindex", "0");
+                    pBuilder.AddAttribute(262, "autocomplete", "off");
+                    pBuilder.AddAttribute(263, "autocorrect", "off");
+                    pBuilder.AddAttribute(264, "autocapitalize", "none");
+                    pBuilder.AddAttribute(265, "spellcheck", "false");
+                    pBuilder.AddAttribute(266, "role", "search");
 
-                    pBuilder.AddElementReferenceCapture(61, (__value) =>
+                    pBuilder.AddElementReferenceCapture(267, (__value) =>
                     {
                         SearchInput = __value;
                     });
@@ -288,9 +288,9 @@ namespace MComponents.MSelect
                     });
                 }
 
-                pBuilder.OpenElement(68, "ul");
-                pBuilder.AddAttribute(69, "class", "m-select-options-list m-scrollbar");
-                pBuilder.AddAttribute(70, "role", "listbox");
+                pBuilder.OpenElement(291, "ul");
+                pBuilder.AddAttribute(292, "class", "m-select-options-list m-scrollbar");
+                pBuilder.AddAttribute(293, "role", "listbox");
 
                 int i = 0;
 
@@ -300,42 +300,42 @@ namespace MComponents.MSelect
 
                     bool isSelected = entry != null && entry.Equals(SelectedValue);
 
-                    pBuilder.OpenElement(76, "li");
-                    pBuilder.AddAttribute(77, "class", "m-select-options-entry m-clickable" + (isSelected ? " m-select-options-entry--highlighted" : string.Empty));
-                    pBuilder.AddAttribute(80, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOptionSelect(index)));
-                    pBuilder.AddAttribute(78, "role", "option");
+                    pBuilder.OpenElement(303, "li");
+                    pBuilder.AddAttribute(304, "class", "m-select-options-entry m-clickable" + (isSelected ? " m-select-options-entry--highlighted" : string.Empty));
+                    pBuilder.AddAttribute(305, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOptionSelect(index)));
+                    pBuilder.AddAttribute(306, "role", "option");
 
                     if (mMultipleSelectMode)
                     {
-                        pBuilder.OpenElement(76, "label");
-                        pBuilder.AddAttribute(78, "class", "m-checkbox m-select-checkbox m-clickable");
+                        pBuilder.OpenElement(310, "label");
+                        pBuilder.AddAttribute(311, "class", "m-checkbox m-select-checkbox m-clickable");
                         pBuilder.AddEventStopPropagationClicksAttribute(81);
 
-                        pBuilder.OpenElement(76, "input");
-                        pBuilder.AddAttribute(78, "type", "checkbox");
+                        pBuilder.OpenElement(314, "input");
+                        pBuilder.AddAttribute(315, "type", "checkbox");
 
-                        pBuilder.AddAttribute(80, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, () => OnOptionSelect(index)));
+                        pBuilder.AddAttribute(317, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, () => OnOptionSelect(index)));
                         pBuilder.AddEventStopPropagationClicksAttribute(81);
 
                         if ((mEnumFlags && ValueEnumHasFlag(entry)) ||
                                (!mEnumFlags && Values.Contains(entry)))
                         {
-                            pBuilder.AddAttribute(78, "checked", "checked");
+                            pBuilder.AddAttribute(323, "checked", "checked");
                         }
 
                         pBuilder.CloseElement(); //input
 
-                        pBuilder.OpenElement(81, "span"); //this is required for design magic
+                        pBuilder.OpenElement(328, "span"); //this is required for design magic
                         pBuilder.CloseElement();
 
-                        pBuilder.AddContent(81, FormatValueAsString(entry));
+                        pBuilder.AddContent(331, FormatValueAsString(entry));
 
                         pBuilder.CloseElement(); //label
                     }
                     else
                     {
-                        pBuilder.AddAttribute(80, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOptionSelect(index)));
-                        pBuilder.AddContent(81, FormatValueAsString(entry));
+                        pBuilder.AddAttribute(337, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => OnOptionSelect(index)));
+                        pBuilder.AddContent(338, FormatValueAsString(entry));
                     }
 
                     pBuilder.CloseElement(); //li
@@ -346,14 +346,14 @@ namespace MComponents.MSelect
                 {
                     bool isSelected = entry != null && entry.Equals(SelectedValue);
 
-                    pBuilder.OpenElement(76, "li");
-                    pBuilder.AddAttribute(77, "class", "m-select-options-entry m-clickable" + (isSelected ? " m-select-options-entry--highlighted" : string.Empty));
-                    pBuilder.AddAttribute(78, "role", "option");
+                    pBuilder.OpenElement(349, "li");
+                    pBuilder.AddAttribute(350, "class", "m-select-options-entry m-clickable" + (isSelected ? " m-select-options-entry--highlighted" : string.Empty));
+                    pBuilder.AddAttribute(351, "role", "option");
                     //        pBuilder.AddAttribute(79, "aria-selected", "false");
 
-                    pBuilder.AddMultipleAttributes(80, entry.AdditionalAttributes);
+                    pBuilder.AddMultipleAttributes(354, entry.AdditionalAttributes);
 
-                    pBuilder.AddContent(81, entry.Value.ToString());
+                    pBuilder.AddContent(356, entry.Value.ToString());
                     pBuilder.CloseElement();
                 }
 
