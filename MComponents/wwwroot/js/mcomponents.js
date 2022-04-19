@@ -2,7 +2,9 @@
 
 var mcomponents = (function () {
 
-    var elementReferences = [];
+    var elementReferencesKeyDown = [];
+    var elementReferencesKeyUp = [];
+
     var mSelectReference = null;
 
     return {
@@ -11,7 +13,7 @@ var mcomponents = (function () {
                 return;
             }
 
-            elementReferences.push({
+            elementReferencesKeyDown.push({
                 key: identifier,
                 value: element
             });
@@ -24,20 +26,58 @@ var mcomponents = (function () {
                 return;
             }
 
-            elementReferences = elementReferences.filter(function (value, index, arr) {
+            elementReferencesKeyDown = elementReferencesKeyDown.filter(function (value, index, arr) {
                 return value.key != identifier;
             });
 
-            if (elementReferences.length == 0) {
+            if (elementReferencesKeyDown.length == 0) {
                 document.removeEventListener('keydown', mcomponents.onKeyDownEvent);
             }
         },
 
         onKeyDownEvent: function (args) {
-            if (elementReferences != null && elementReferences.length > 0) {
-                elementReferences[elementReferences.length - 1].value.invokeMethodAsync('JsInvokeKeyDown', args.key);
+            if (elementReferencesKeyDown != null && elementReferencesKeyDown.length > 0) {
+                elementReferencesKeyDown[elementReferencesKeyDown.length - 1].value.invokeMethodAsync('JsInvokeKeyDown', args.key);
             }
         },
+
+        ///////////////////////////////////////
+
+        registerKeyUpListener: function (identifier, element) {
+            if (identifier == null || element == null) {
+                return;
+            }
+
+            elementReferencesKeyUp.push({
+                key: identifier,
+                value: element
+            });
+
+            document.addEventListener('keyup', mcomponents.onKeyUpEvent);
+        },
+
+        unRegisterKeyUpListener: function (identifier) {
+            if (identifier == null) {
+                return;
+            }
+
+            elementReferencesKeyUp = elementReferencesKeyUp.filter(function (value, index, arr) {
+                return value.key != identifier;
+            });
+
+            if (elementReferencesKeyUp.length == 0) {
+                document.removeEventListener('keyup', mcomponents.onKeyUpEvent);
+            }
+        },
+
+        onKeyUpEvent: function (args) {
+            if (elementReferencesKeyUp != null && elementReferencesKeyUp.length > 0) {
+                elementReferencesKeyUp[elementReferencesKeyUp.length - 1].value.invokeMethodAsync('JsInvokeKeyUp', args.key);
+            }
+        },
+
+
+        ///////////////////////////////////////
 
         registerMSelect: function (element) {
             if (element == null) {
