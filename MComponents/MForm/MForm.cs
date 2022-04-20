@@ -545,6 +545,9 @@ namespace MComponents.MForm
 
         public void RegisterField(IMField pField, bool pSkipRendering = false)
         {
+            if (pField == null)
+                return;
+
             FieldList.Add(pField);
 
             if (pSkipRendering)
