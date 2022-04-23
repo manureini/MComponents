@@ -86,13 +86,14 @@ else
         mProgress = -1;
 
         mShowUploadFile = false;
-        StateHasChanged();
+
+        _ = InvokeAsync(StateHasChanged);
     }
 
     protected void OnProgressChanged(IBrowserFile pFile, float pProgress)
     {
         mProgress = pProgress;
-        StateHasChanged();
+        _ = InvokeAsync(StateHasChanged);
     }
 
     protected void OnBtnUploadNewFile()
