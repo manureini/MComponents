@@ -6,7 +6,7 @@
 @inject IJSRuntime JSRuntime
 
 <div class="m-paint-container">
-    <div class="m-paint"
+    <div class="m-paint @(CssClass)"
          @onmousedown="OnMouseDown"
          @onmousemove="OnMouseMove"
          @onmouseup="OnMouseUp"
@@ -28,6 +28,11 @@
     [Parameter]
     public int Height { get; set; } = 200;
 
+    [Parameter]
+    public string PenColor { get; set; }
+    
+    [Parameter]
+    public string CssClass { get; set; }
 
     protected BECanvasComponent mCanvasRef;
 
@@ -169,7 +174,7 @@
         mPaint = false;
         Redraw(true);
     }
- 
+
     protected void OnTouchMove(double mouseX, double mouseY)
     {
         AddClick(mouseX, mouseY, true);
@@ -228,6 +233,12 @@
 
             await mContext.LineToAsync(mX[i], mY[i]);
             await mContext.ClosePathAsync();
+
+            if (PenColor != null)
+            {
+                await mContext.SetStrokeStyleAsync(PenColor);
+            }
+
             await mContext.StrokeAsync();
         }
 

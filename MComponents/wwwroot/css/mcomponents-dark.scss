@@ -112,6 +112,10 @@ button:active {
     transition: 0.1s;
 }
 
+.m-paint {
+    border-color: $white;
+}
+
 ::-webkit-calendar-picker-indicator {
     filter: invert(1);
 }

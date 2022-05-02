@@ -756,6 +756,13 @@
   margin-bottom: 10px;
 }
 
+.m-signature {
+  background-color: white;
+  background-image: url("../images/sign_background.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
 .m-popup {
   cursor: pointer;
   user-select: none;
@@ -963,6 +970,10 @@ button:focus {
 button:active {
   opacity: 0.9;
   transition: 0.1s;
+}
+
+.m-paint {
+  border-color: #ffffff;
 }
 
 ::-webkit-calendar-picker-indicator {
