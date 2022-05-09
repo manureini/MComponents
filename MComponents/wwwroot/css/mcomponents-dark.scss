@@ -5,9 +5,12 @@ $disabled: #f0f1f3;
 
 $main_bg: #151515;
 
+$input_bg: #202020;
+
 $text_color: #212529;
 $gray: #ebedf2;
 $dark: #1f1c1c;
+$lightgray: #707070;
 
 $secondary: #595d6e;
 
@@ -31,18 +34,19 @@ $borderRadius: 0;
 
 .m-form-control {
     border: none;
-    border-bottom: 1px solid $white;
-    background-color: $main_bg;
+    border-bottom: 1px solid $lightgray;
+    background-color: $input_bg;
     color: $white;
     transition: background-color 0.1s;
 
     &:disabled {
-        background-color: $main_bg;
+        background-color: $input_bg;
+        cursor: not-allowed;
     }
 
     &:focus {
         color: $white;
-        background-color: lighten($main_bg, 15%);
+        background-color: lighten($input_bg, 5%);
         border-color: $white;
     }
 }
