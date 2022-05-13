@@ -250,7 +250,7 @@ var mcomponents = (function () {
                     var containers = document.getElementsByClassName("m-select-options-list-container");
 
                     if (containers.length == 0) {
-                        setTimeout(scrollToSelectedEntry, 10);
+                        setTimeout(scrollToSelectedEntry, 50);
                         return;
                     }
 
@@ -268,7 +268,7 @@ var mcomponents = (function () {
 
                 document.getElementsByClassName("m-select-options-list-container")[0].style.visibility = 'visible';
 
-            }, 20);
+            }, 30);
         },
 
         invokeClick: function (id) {
