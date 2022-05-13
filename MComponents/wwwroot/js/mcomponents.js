@@ -250,6 +250,7 @@ var mcomponents = (function () {
                     var containers = document.getElementsByClassName("m-select-options-list-container");
 
                     if (containers.length == 0) {
+                        setTimeout(scrollToSelectedEntry, 10);
                         return;
                     }
 
