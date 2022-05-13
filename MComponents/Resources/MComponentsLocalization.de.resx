@@ -171,4 +171,7 @@
   <data name="Submit" xml:space="preserve">
     <value>Absenden</value>
   </data>
+  <data name="Select all entries" xml:space="preserve">
+    <value>Alle Einträge auswählen</value>
+  </data>
 </root>

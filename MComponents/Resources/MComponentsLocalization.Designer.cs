@@ -205,6 +205,15 @@ namespace MComponents.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select all entries.
+        /// </summary>
+        public static string Select_all_entries {
+            get {
+                return ResourceManager.GetString("Select all entries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Submit.
         /// </summary>
         public static string Submit {

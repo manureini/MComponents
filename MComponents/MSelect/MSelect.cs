@@ -54,6 +54,9 @@ namespace MComponents.MSelect
         }
 
         [Parameter]
+        public bool EnableSelectAll { get; set; }
+
+        [Parameter]
         public ICollection<T> Values { get; set; }
 
         [Parameter]
@@ -85,6 +88,7 @@ namespace MComponents.MSelect
 
         protected bool mMultipleSelectMode;
         protected bool mEnumFlags;
+        protected bool mAllEntriesSelected;
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
@@ -295,6 +299,40 @@ namespace MComponents.MSelect
 
                 int i = 0;
 
+                if (EnableSelectAll && mMultipleSelectMode)
+                {
+                    pBuilder.OpenElement(303, "li");
+                    pBuilder.AddAttribute(304, "class", "m-select-options-entry m-clickable");
+                    pBuilder.AddAttribute(305, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => ToggleSelectAll()));
+                    pBuilder.AddAttribute(306, "role", "option");
+
+                    pBuilder.OpenElement(310, "label");
+                    pBuilder.AddAttribute(311, "class", "m-checkbox m-select-checkbox m-clickable");
+                    pBuilder.AddEventStopPropagationClicksAttribute(312);
+
+                    pBuilder.OpenElement(314, "input");
+                    pBuilder.AddAttribute(315, "type", "checkbox");
+
+                    pBuilder.AddAttribute(317, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, () => ToggleSelectAll()));
+                    pBuilder.AddEventStopPropagationClicksAttribute(318);
+
+                    if (mAllEntriesSelected)
+                    {
+                        pBuilder.AddAttribute(323, "checked", "checked");
+                    }
+
+                    pBuilder.CloseElement(); //input
+
+                    pBuilder.OpenElement(328, "span"); //this is required for design magic
+                    pBuilder.CloseElement();
+
+                    pBuilder.AddContent(331, L["Select all entries"]);
+
+                    pBuilder.CloseElement(); //label
+
+                    pBuilder.CloseElement(); //li
+                }
+
                 foreach (var entry in DisplayValues)
                 {
                     int index = i;
@@ -318,8 +356,7 @@ namespace MComponents.MSelect
                         pBuilder.AddAttribute(317, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, () => OnOptionSelect(index)));
                         pBuilder.AddEventStopPropagationClicksAttribute(318);
 
-                        if ((mEnumFlags && ValueEnumHasFlag(entry)) ||
-                               (!mEnumFlags && Values.Contains(entry)))
+                        if ((mEnumFlags && ValueEnumHasFlag(entry)) || (!mEnumFlags && Values.Contains(entry)))
                         {
                             pBuilder.AddAttribute(323, "checked", "checked");
                         }
@@ -590,6 +627,34 @@ namespace MComponents.MSelect
             }
         }
 
+        protected void ToggleSelectAll()
+        {
+            if (mAllEntriesSelected)
+            {
+                foreach (var val in DisplayValues)
+                {
+                    if (Values.Contains(val))
+                    {
+                        Values.Remove(val);
+                    }
+                }
+
+                mAllEntriesSelected = false;
+            }
+            else
+            {
+                foreach (var val in DisplayValues)
+                {
+                    if (!Values.Contains(val))
+                    {
+                        Values.Add(val);
+                    }
+                }
+
+                mAllEntriesSelected = true;
+            }
+        }
+
         override protected string FormatValueAsString(T value)
         {
             if (value == null)
@@ -628,10 +693,16 @@ namespace MComponents.MSelect
                 if (Values.Contains(pSelectedValue))
                 {
                     Values.Remove(pSelectedValue);
+                    mAllEntriesSelected = false;
                 }
                 else
                 {
                     Values.Add(pSelectedValue);
+
+                    if (DisplayValues.Length == Values.Count)
+                    {
+                        mAllEntriesSelected = true;
+                    }
                 }
 
                 UpdateDescription();
