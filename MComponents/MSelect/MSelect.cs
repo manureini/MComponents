@@ -196,6 +196,7 @@ namespace MComponents.MSelect
 
                 pBuilder.AddAttribute(197, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusIn));
                 pBuilder.AddAttribute(198, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnComboboxClicked));
+                pBuilder.AddEventStopPropagationClicksAttribute(199);
             }
 
             pBuilder.AddAttribute(201, "class", "m-form-control m-clickable " + CssClass + (IsDisabled ? " m-select--disabled" : string.Empty) + (mOptionsVisible ? " m-select--open" : string.Empty));
@@ -232,7 +233,7 @@ namespace MComponents.MSelect
                 pBuilder.AddEventPreventDefaultAttribute(232, "onkeyup", true);
 
                 pBuilder.AddAttribute(35, "class", "m-select-options-container"); //also used in mcomponents.js
-             
+
                 pBuilder.AddElementReferenceCapture(236, (__value) =>
                 {
                     OptionsDiv = __value;
@@ -309,13 +310,13 @@ namespace MComponents.MSelect
                     {
                         pBuilder.OpenElement(310, "label");
                         pBuilder.AddAttribute(311, "class", "m-checkbox m-select-checkbox m-clickable");
-                        pBuilder.AddEventStopPropagationClicksAttribute(81);
+                        pBuilder.AddEventStopPropagationClicksAttribute(312);
 
                         pBuilder.OpenElement(314, "input");
                         pBuilder.AddAttribute(315, "type", "checkbox");
 
                         pBuilder.AddAttribute(317, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, () => OnOptionSelect(index)));
-                        pBuilder.AddEventStopPropagationClicksAttribute(81);
+                        pBuilder.AddEventStopPropagationClicksAttribute(318);
 
                         if ((mEnumFlags && ValueEnumHasFlag(entry)) ||
                                (!mEnumFlags && Values.Contains(entry)))
@@ -378,7 +379,7 @@ namespace MComponents.MSelect
 
         protected void OnComboboxClicked(MouseEventArgs args)
         {
-            ToggleOptions(true);
+            _ = ToggleOptions(true);
         }
 
         protected void OnFocusIn(FocusEventArgs args)
@@ -388,10 +389,10 @@ namespace MComponents.MSelect
 
             if (!mOptionsVisible)
             {
-                Task.Delay(100).ContinueWith((a) =>
+                Task.Delay(100).ContinueWith(a =>
                 {
                     if (!mOptionsVisible)
-                        ShowOptions();
+                        _ = ShowOptions();
                 });
             }
         }
@@ -401,10 +402,10 @@ namespace MComponents.MSelect
             UpdateSelection(DisplayValues.ElementAt(pIndex));
 
             if (!mMultipleSelectMode)
-                ToggleOptions(true);
+                _ = ToggleOptions(true);
         }
 
-        protected void ToggleOptions(bool pUserInteracted)
+        protected async Task ToggleOptions(bool pUserInteracted)
         {
             if (mOptionsVisible)
             {
@@ -412,13 +413,13 @@ namespace MComponents.MSelect
             }
             else
             {
-                ShowOptions();
+                await ShowOptions();
             }
         }
 
-        public void ShowOptions()
+        public async Task ShowOptions()
         {
-            if (IsDisabled)
+            if (mOptionsVisible || IsDisabled)
                 return;
 
             if (Options != null)
@@ -427,8 +428,8 @@ namespace MComponents.MSelect
 
             mOptionsVisible = true;
 
+            await JSRuntime.InvokeVoidAsync("mcomponents.registerMSelect", mObjReference);
             _ = InvokeAsync(() => StateHasChanged());
-            _ = JSRuntime.InvokeVoidAsync("mcomponents.registerMSelect", mObjReference);
         }
 
         public void HideOptions(bool pUserInteracted)
@@ -471,7 +472,7 @@ namespace MComponents.MSelect
             if (!mOptionsVisible)
             {
                 if (args.Key == "Enter" || args.Key == " ")
-                    ShowOptions();
+                    _ = ShowOptions();
 
                 return;
             }

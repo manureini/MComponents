@@ -84,6 +84,10 @@ var mcomponents = (function () {
                 return;
             }
 
+            if (mSelectReference == element) {
+                return;
+            }
+
             if (mSelectReference != null) {
                 mSelectReference.invokeMethodAsync('JsInvokeMSelectFocusOut');
             }
@@ -93,7 +97,7 @@ var mcomponents = (function () {
         },
 
         unRegisterMSelect: function (element) {
-            if (element._id != mSelectReference._id) {
+            if (mSelectReference == null || element == null || element._id != mSelectReference._id) {
                 return;
             }
 
