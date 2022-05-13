@@ -246,7 +246,14 @@ var mcomponents = (function () {
                 var elements = document.getElementsByClassName("m-select-options-entry--highlighted");
 
                 if (elements.length == 0) {
-                    document.getElementsByClassName("m-select-options-list-container")[0].style.visibility = 'visible';
+
+                    var containers = document.getElementsByClassName("m-select-options-list-container");
+
+                    if (containers.length == 0) {
+                        return;
+                    }
+
+                    containers[0].style.visibility = 'visible';
                     return;
                 }
 
