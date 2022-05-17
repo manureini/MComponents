@@ -67,6 +67,23 @@ namespace MComponents.MWizard
             }
         }
 
+        protected override async Task OnParametersSetAsync()
+        {
+            if (CurrentStep < 0 || CurrentStep > WizardSteps.Count - 1)
+                return;
+
+            var currentStep = WizardSteps[CurrentStep];
+
+            if (!currentStep.IsVisible)
+            {
+                int? nextVisible = FindNextVisible(CurrentStep, i => i + 1);
+                if (nextVisible != null)
+                {
+                    await InternalSetStep(CurrentStep, true, i => nextVisible.Value);
+                }
+            }
+        }
+
         ~MWizard()
         {
             _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", GetHashCode());
@@ -104,7 +121,7 @@ namespace MComponents.MWizard
             }
         }
 
-        internal async void OnNextClicked()
+        internal async Task OnNextClicked()
         {
             if (FreezeCurrentStep)
                 return;
@@ -112,7 +129,7 @@ namespace MComponents.MWizard
             await InternalSetStep(CurrentStep, true, i => i + 1);
         }
 
-        internal async void OnPrevClicked()
+        internal async Task OnPrevClicked()
         {
             if (FreezeCurrentStep)
                 return;
@@ -120,7 +137,7 @@ namespace MComponents.MWizard
             await InternalSetStep(CurrentStep, true, i => i - 1);
         }
 
-        protected void OnJumpToClicked(int pIndex)
+        protected async Task OnJumpToClicked(int pIndex)
         {
             if (FreezeCurrentStep)
                 return;
@@ -128,10 +145,10 @@ namespace MComponents.MWizard
             if (!CanJumpTo(pIndex))
                 return;
 
-            SetCurrentStep(pIndex, true);
+            await SetCurrentStep(pIndex, true);
         }
 
-        public async void OnFinishClicked()
+        public async Task OnFinishClicked()
         {
             if (FreezeCurrentStep)
                 return;
@@ -193,7 +210,7 @@ namespace MComponents.MWizard
             }
         }
 
-        public void SetCurrentStep(int pIndex, bool pUserInteract)
+        public async Task SetCurrentStep(int pIndex, bool pUserInteract)
         {
             if (FreezeCurrentStep)
                 return;
@@ -204,28 +221,28 @@ namespace MComponents.MWizard
             //pIndex could be invisible after delay, so it's better to use prev or next
             if (FindNextVisible(CurrentStep, i => i - 1) == pIndex)
             {
-                OnPrevClicked();
+                await OnPrevClicked();
                 return;
             }
 
             if (FindNextVisible(CurrentStep, i => i + 1) == pIndex)
             {
-                OnNextClicked();
+                await OnNextClicked();
                 return;
             }
 
-            _ = InternalSetStep(CurrentStep, pUserInteract, i => pIndex);
+            await InternalSetStep(CurrentStep, pUserInteract, i => pIndex);
         }
 
         protected async Task InternalSetStep(int pOldStep, bool pUserInteract, Func<int, int> pModifier)
         {
+            var result = await mLocker.WaitAsync(1000);
+
+            if (!result)
+                return;
+
             try
             {
-                var result = await mLocker.WaitAsync(1000);
-
-                if (!result)
-                    return;
-
                 int? next = FindNextVisible(pOldStep, pModifier);
                 if (!next.HasValue)
                     return;

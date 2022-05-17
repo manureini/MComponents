@@ -31,7 +31,7 @@
 
                     bool canJump = CanJumpTo(i);
 
-                    <div class="m-wizard-navigation-item m-wizard-navigation-item--@state" style="flex: 0 0 calc(100%/@visibleCount); @(!FreezeCurrentStep && canJump ? "cursor: pointer;": "cursor: default;")" @onclick="() => OnJumpToClicked(index)">
+                    <div class="m-wizard-navigation-item m-wizard-navigation-item--@state" style="flex: 0 0 calc(100%/@visibleCount); @(!FreezeCurrentStep && canJump ? "cursor: pointer;": "cursor: default;")" @onclick="async () => await OnJumpToClicked(index)">
                         <div class="m-wizard-navigation-item-title-contaier">
                             <span class="m-wizard-navigation-item-number">@(visible).</span>
                             <span class="m-wizard-navigation-item-title">@entry.Title</span>
