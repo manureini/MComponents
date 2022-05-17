@@ -1,5 +1,6 @@
 ﻿using MComponents.ExportData;
 using MComponents.MForm;
+using MComponents.Notifications;
 using MComponents.Services;
 using MComponents.Shared.Attributes;
 using Microsoft.AspNetCore.Components;
@@ -1795,8 +1796,7 @@ namespace MComponents.MGrid
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                Notificator.InvokeNotification(true, "Error Importing file");
-                Notificator.InvokeNotification(true, ex.Message);
+                Notificator.InvokeNotification(ServiceProvider, true, ex.Message);
             }
         }
 

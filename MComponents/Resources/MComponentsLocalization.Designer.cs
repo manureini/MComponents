@@ -61,6 +61,15 @@ namespace MComponents.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} could not be converted to {1}.
+        /// </summary>
+        public static string _0__could_not_be_converted_to__1_ {
+            get {
+                return ResourceManager.GetString("{0} could not be converted to {1}", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} entries of {1}.
         /// </summary>
         public static string _0__entries_of__1_ {

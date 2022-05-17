@@ -174,4 +174,7 @@
   <data name="Select all entries" xml:space="preserve">
     <value>Sélectionner toutes les entrées</value>
   </data>
+  <data name="{0} could not be converted to {1}" xml:space="preserve">
+    <value>{0} n'a pas pu être converti en {1}</value>
+  </data>
 </root>

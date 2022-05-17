@@ -1,4 +1,4 @@
-﻿namespace MComponents
+﻿namespace MComponents.Notifications
 {
     public class Notification
     {

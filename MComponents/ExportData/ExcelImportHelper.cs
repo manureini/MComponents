@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using MComponents.MGrid;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -40,7 +41,7 @@ namespace MComponents.ExportData
             {
                 var rowValues = GetRow(doc, sst, row);
 
-                ProgressRow(propInfo, rowValues, (rowVal, pi) =>
+                ProgressRow(pGrid.L, propInfo, rowValues, (rowVal, pi) =>
                 {
                     if (pi.GetCustomAttribute<RequiredAttribute>() != null && rowVal == null)
                     {
@@ -55,7 +56,7 @@ namespace MComponents.ExportData
 
                 T obj = pGrid.CreateNewT();
 
-                var proceeded = ProgressRow(propInfo, rowValues, (object rowVal, IMPropertyInfo pi) =>
+                var proceeded = ProgressRow(pGrid.L, propInfo, rowValues, (object rowVal, IMPropertyInfo pi) =>
                 {
                     pi.SetValue(obj, rowVal);
                 });
@@ -70,7 +71,7 @@ namespace MComponents.ExportData
             }
         }
 
-        private static bool ProgressRow(List<IMPropertyInfo> propInfo, List<object> rowValues, Action<object, IMPropertyInfo> pAction)
+        private static bool ProgressRow(IStringLocalizer L, List<IMPropertyInfo> propInfo, List<object> rowValues, Action<object, IMPropertyInfo> pAction)
         {
             if (rowValues == null || rowValues.Count == 0 || rowValues.All(r => r == null))
                 return false;
@@ -86,7 +87,16 @@ namespace MComponents.ExportData
                 if (pi.IsReadOnly)
                     continue;
 
-                rowVal = ReflectionHelper.ChangeType(rowVal, pi.PropertyType);
+                try
+                {
+                    rowVal = ReflectionHelper.ChangeType(rowVal, pi.PropertyType);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw new UserMessageException(L["{0} could not be converted to {1}", rowVal, pi.Name]);
+                }
+
                 pAction(rowVal, pi);
             }
 

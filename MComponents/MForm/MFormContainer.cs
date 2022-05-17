@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,12 +29,15 @@ namespace MComponents.MForm
         [Inject]
         public IStringLocalizer L { get; set; }
 
+        [Inject]
+        public IServiceProvider ServiceProvider { get; set; }
+
         protected MFormContainerContext mFormContext;
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            mFormContext = new MFormContainerContext(this);
+            mFormContext = new MFormContainerContext(ServiceProvider, this);
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)

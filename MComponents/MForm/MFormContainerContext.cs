@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using MComponents.Notifications;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -21,8 +22,11 @@ namespace MComponents.MForm
 
         public MFormContainer FormContainer { get; protected set; }
 
-        internal MFormContainerContext(MFormContainer pFormContainer)
+        public IServiceProvider ServiceProvider { get; protected set; }
+
+        internal MFormContainerContext(IServiceProvider pServiceProvider, MFormContainer pFormContainer)
         {
+            ServiceProvider = pServiceProvider;
             FormContainer = pFormContainer;
         }
 
@@ -67,7 +71,7 @@ namespace MComponents.MForm
                                 msg = ue.Message;
                         }
 
-                        Notificator.InvokeNotification(true, msg);
+                        Notificator.InvokeNotification(ServiceProvider, true, msg);
                         submitSuccessful = false;
                     }
                 }
@@ -80,7 +84,7 @@ namespace MComponents.MForm
                     });
                 }
 
-                Notificator.InvokeNotification(false, pLocalizer["Gespeichert!"]);
+                Notificator.InvokeNotification(ServiceProvider, false, pLocalizer["Gespeichert!"]);
             }
             finally
             {

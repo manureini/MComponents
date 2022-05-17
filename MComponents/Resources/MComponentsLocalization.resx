@@ -154,4 +154,7 @@
   <data name="Select all entries" xml:space="preserve">
     <value>Select all entries</value>
   </data>
+  <data name="{0} could not be converted to {1}" xml:space="preserve">
+    <value>{0} could not be converted to {1}</value>
+  </data>
 </root>
