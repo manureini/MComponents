@@ -653,6 +653,10 @@ namespace MComponents.MSelect
 
                 mAllEntriesSelected = true;
             }
+
+            UpdateDescription();
+            ValuesChanged.InvokeAsync(Values);
+            EditContext.NotifyFieldChanged(FieldIdentifier);
         }
 
         override protected string FormatValueAsString(T value)
@@ -706,7 +710,6 @@ namespace MComponents.MSelect
                 }
 
                 UpdateDescription();
-
                 ValuesChanged.InvokeAsync(Values);
                 EditContext.NotifyFieldChanged(FieldIdentifier);
             }
