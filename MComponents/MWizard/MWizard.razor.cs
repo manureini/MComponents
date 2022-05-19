@@ -79,7 +79,7 @@ namespace MComponents.MWizard
                 int? nextVisible = FindNextVisible(CurrentStep, i => i + 1);
                 if (nextVisible != null)
                 {
-                    await InternalSetStep(CurrentStep, true, i => nextVisible.Value);
+                    await InternalSetStep(CurrentStep, false, i => nextVisible.Value);
                 }
             }
         }
