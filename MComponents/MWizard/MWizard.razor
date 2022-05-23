@@ -1,5 +1,4 @@
-﻿
-@implements IMWizard
+﻿@implements IMWizard
 
 @using System.Threading;
 @using System.Threading.Tasks;
@@ -48,12 +47,18 @@
         <div class="m-wizard-step-container">
             @if (CurrentStep >= 0 && WizardSteps.Count > CurrentStep)
             {
-                <div class="m-wizard-step" @attributes="WizardSteps[CurrentStep].AdditionalAttributes">
-                    @if(mEmptyRender)
+                var currentStep = WizardSteps[CurrentStep];
+                <div class="m-wizard-step" @attributes="currentStep.AdditionalAttributes">
+                    @if (mEmptyRender)
                     {
                         <span class="m-wizard-empty"></span>
-                    } else {
-                        @WizardSteps[CurrentStep].Content.Invoke(WizardSteps[CurrentStep].StepContext)
+                    }
+                    else
+                    {
+                        if (@currentStep.IsVisible)
+                        {
+                            @currentStep.Content.Invoke(currentStep.StepContext)
+                        }
                     }
                 </div>
             }
