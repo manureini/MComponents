@@ -177,4 +177,7 @@
   <data name="{0} could not be converted to {1}" xml:space="preserve">
     <value>{0} konnte nicht zu {1} konvertiert werden</value>
   </data>
+  <data name="Upload new file" xml:space="preserve">
+    <value>Neue Datei hochladen</value>
+  </data>
 </root>

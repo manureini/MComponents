@@ -3,6 +3,7 @@
 @using System.Net.Http.Json
 
 @inject IFileUploadService FileUploader
+@inject IStringLocalizer L
 
 @inherits InputBase<IFile>
 
@@ -36,7 +37,7 @@ else
             {
                 <span>@Value?.FileName</span>
                 <a class="m-btn m-btn-primary m-btn-icon m-btn-sm" href="@Value.Url" target="_blank"><i class="fas fa-download"></i></a>
-                <button type="button" class="m-wizard-btn m-btn m-btn-primary m-btn-sm" @onclick="OnBtnUploadNewFile">Upload new file</button>
+                <button type="button" class="m-wizard-btn m-btn m-btn-primary m-btn-sm" @onclick="OnBtnUploadNewFile">@L["Upload new file"]</button>
             }
         </div>
 

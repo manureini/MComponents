@@ -239,5 +239,14 @@ namespace MComponents.Resources {
                 return ResourceManager.GetString("True", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload new file.
+        /// </summary>
+        public static string Upload_new_file {
+            get {
+                return ResourceManager.GetString("Upload new file", resourceCulture);
+            }
+        }
     }
 }
