@@ -115,6 +115,11 @@ namespace MComponents.MSelect
             mNullValueDescription = mNullValueDescription ?? L["Please select..."];
         }
 
+        protected override void OnParametersSet()
+        {
+            UpdateDescription();
+        }
+
         protected override void OnInitialized()
         {
             if (Values != null && Value != null)
