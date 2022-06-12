@@ -117,6 +117,24 @@ namespace MComponents.MSelect
 
         protected override void OnParametersSet()
         {
+            if (Property != null)
+            {
+                mPropertyInfo = ReflectionHelper.GetIMPropertyInfo(typeof(T), Property, PropertyType);
+            }
+            else
+            {
+                mPropertyInfo = null;
+            }
+
+            if (Options == null)
+            {
+                DisplayValues = Array.Empty<T>();
+            }
+            else
+            {
+                DisplayValues = Options.ToArray();
+            }
+
             UpdateDescription();
         }
 
@@ -142,23 +160,6 @@ namespace MComponents.MSelect
 
                 Options = Options.ToArray();
             }
-
-            if (Property != null)
-            {
-                mPropertyInfo = ReflectionHelper.GetIMPropertyInfo(typeof(T), Property, PropertyType);
-            }
-
-            if (Options != null)
-            {
-                DisplayValues = Options.ToArray();
-            }
-
-            if (mMultipleSelectMode)
-            {
-                UpdateDescription();
-            }
-
-            base.OnInitialized();
         }
 
         protected override void OnAfterRender(bool firstRender)
