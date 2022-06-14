@@ -107,6 +107,8 @@ namespace MComponents.ExportData
         {
             var ret = new List<IMPropertyInfo>();
 
+            var multiplePropNamesIndex = new Dictionary<string, int>();
+
             foreach (string propname in pValues)
             {
                 var entry = pGridDict.FirstOrDefault(p => p.Key.Property == propname);
@@ -117,13 +119,34 @@ namespace MComponents.ExportData
                     continue;
                 }
 
-                entry = pGridDict.FirstOrDefault(p => p.Key.HeaderText == propname);
+                var entries = pGridDict.Where(p => p.Key.HeaderText == propname);
 
-                if (entry.Value != null)
+                if (!entries.Any())
+                    continue;
+
+                if (entries.Count() == 1)
                 {
-                    ret.Add(entry.Value);
+                    entry = entries.First();
+
+                    if (entry.Value != null)
+                        ret.Add(entry.Value);
                     continue;
                 }
+
+                int skip = -1;
+
+                if (multiplePropNamesIndex.ContainsKey(propname))
+                    skip = multiplePropNamesIndex[propname];
+
+                skip++;
+
+                entry = entries.Skip(skip).FirstOrDefault();
+
+                if (entry.Value != null)
+                    ret.Add(entry.Value);
+
+                multiplePropNamesIndex.Remove(propname);
+                multiplePropNamesIndex.Add(propname, skip);
             }
 
             return ret;
