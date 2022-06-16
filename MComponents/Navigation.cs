@@ -1,10 +1,12 @@
 ﻿
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MComponents
 {
@@ -15,6 +17,7 @@ namespace MComponents
         private const string SPECIAL_RELOAD_PAGE = "__reload_page__";
 
         private readonly NavigationManager mNavigationManager;
+        private readonly IJSRuntime mJsRuntime;
         private readonly List<string> mHistory;
 
         private int mSkipAddingHistory = 0;
@@ -22,10 +25,12 @@ namespace MComponents
         public string BaseUri => mNavigationManager.BaseUri;
         public string Uri => mNavigationManager.Uri;
 
-        public Navigation(NavigationManager navigationManager)
+        public Navigation(NavigationManager pNavigationManager, IJSRuntime pJsRuntime)
         {
-            mNavigationManager = navigationManager;
+            mNavigationManager = pNavigationManager;
             mNavigationManager.LocationChanged += OnLocationChanged;
+
+            mJsRuntime = pJsRuntime;
 
             mHistory = new List<string>(MIN_HISTORY_SIZE + ADDITION_HISTORY_SIZE);
             mHistory.Add(mNavigationManager.Uri);
@@ -46,24 +51,29 @@ namespace MComponents
 #endif
         }
 
-        public void NavigateTo<T>(bool forceLoad = false, bool replace = false)
+        public void NavigateTo<T>(bool pForceLoad = false, bool pReplace = false)
         {
-            var routeAttribute = typeof(T).GetCustomAttribute<RouteAttribute>();
-
-            if (routeAttribute == null)
-                throw new ArgumentException($"{typeof(T).FullName} does not have {nameof(RouteAttribute)}");
-
-            NavigateTo(routeAttribute.Template, forceLoad, replace);
+            NavigateTo(GetUrlFromType<T>(), pForceLoad, pReplace);
         }
 
-        public void NavigateTo<T>(Guid pId, bool forceLoad = false, bool replace = false)
+        public void NavigateTo<T>(Guid pId, bool pForceLoad = false, bool pReplace = false)
         {
-            var routeAttribute = typeof(T).GetCustomAttributes<RouteAttribute>().FirstOrDefault(r => r.Template.Contains("{Id:guid}", StringComparison.InvariantCultureIgnoreCase));
+            NavigateTo(GetUrlFromType<T>(pId), pForceLoad, pReplace);
+        }
 
-            if (routeAttribute == null)
-                throw new ArgumentException($"{typeof(T).FullName} does not have {nameof(RouteAttribute)} with template contains {{Id:guid}}");
+        public void OpenNewTab(string pUrl)
+        {
+            _ = mJsRuntime.InvokeAsync<object>("open", pUrl, "_blank");
+        }
 
-            NavigateTo(routeAttribute.Template.Replace("{Id:guid}", pId.ToString(), StringComparison.InvariantCultureIgnoreCase), forceLoad, replace);
+        public void OpenNewTab<T>()
+        {
+            OpenNewTab(GetUrlFromType<T>());
+        }
+
+        public void OpenNewTab<T>(Guid pId)
+        {
+            OpenNewTab(GetUrlFromType<T>(pId));
         }
 
         public bool CanNavigateBack => mHistory.Count >= 2;
@@ -118,9 +128,32 @@ namespace MComponents
             mNavigationManager.NavigateTo(url, false);
 #endif
         }
+
         public void Dispose()
         {
             mNavigationManager.LocationChanged -= OnLocationChanged;
+        }
+
+        private static string GetUrlFromType<T>(Guid pId)
+        {
+            var routeAttribute = typeof(T).GetCustomAttributes<RouteAttribute>().FirstOrDefault(r => r.Template.Contains("{Id:guid}", StringComparison.InvariantCultureIgnoreCase));
+
+            if (routeAttribute == null)
+                throw new ArgumentException($"{typeof(T).FullName} does not have {nameof(RouteAttribute)} with template contains {{Id:guid}}");
+
+            var url = routeAttribute.Template.Replace("{Id:guid}", pId.ToString(), StringComparison.InvariantCultureIgnoreCase);
+            return url;
+        }
+
+        private static string GetUrlFromType<T>()
+        {
+            var routeAttribute = typeof(T).GetCustomAttribute<RouteAttribute>();
+
+            if (routeAttribute == null)
+                throw new ArgumentException($"{typeof(T).FullName} does not have {nameof(RouteAttribute)}");
+
+            var url = routeAttribute.Template;
+            return url;
         }
     }
 }
