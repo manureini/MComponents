@@ -465,7 +465,7 @@
 }
 .m-checkbox > input ~ span {
   position: absolute;
-  top: 1px;
+  top: 3px;
   left: 0;
   height: 18px;
   width: 18px;
