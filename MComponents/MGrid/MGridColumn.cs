@@ -16,6 +16,9 @@ namespace MComponents.MGrid
         public Attribute[] Attributes { get; set; }
 
         [Parameter]
+        public bool ExtendAttributes { get; set; }
+
+        [Parameter]
         public string StringFormat { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]

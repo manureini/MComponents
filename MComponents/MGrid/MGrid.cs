@@ -243,7 +243,14 @@ namespace MComponents.MGrid
 
                 if (propc.Attributes != null)
                 {
-                    iprop.SetAttributes(propc.Attributes);
+                    if (propc.ExtendAttributes)
+                    {
+                        iprop.SetAttributes(iprop.GetAttributes().Concat(propc.Attributes).ToArray());
+                    }
+                    else
+                    {
+                        iprop.SetAttributes(propc.Attributes);
+                    }
                 }
 
                 if (propc.HeaderText == null)

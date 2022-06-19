@@ -10,6 +10,8 @@ namespace MComponents.MGrid
 
         Attribute[] Attributes { get; set; }
 
+        bool ExtendAttributes { get; set; }
+
         string StringFormat { get; set; }
     }
 }
