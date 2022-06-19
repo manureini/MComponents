@@ -180,4 +180,13 @@
   <data name="Upload new file" xml:space="preserve">
     <value>Neue Datei hochladen</value>
   </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>Wert konnte nicht aktualisiert werden</value>
+  </data>
+  <data name="CreateFailed" xml:space="preserve">
+    <value>Wert konnte nicht erstellt werden</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Wert konnte nicht gelöscht werden</value>
+  </data>
 </root>

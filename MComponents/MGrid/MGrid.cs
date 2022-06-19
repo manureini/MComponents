@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using MComponents.Resources;
 
 namespace MComponents.MGrid
 {
@@ -1477,7 +1478,16 @@ namespace MComponents.MGrid
 
             if (DataAdapter != null)
             {
-                await DataAdapter.Remove(value);
+                try
+                {
+                    await DataAdapter.Remove(value);
+                }
+                catch
+                {
+                    Notificator.InvokeNotification(ServiceProvider, true, L[nameof(MComponentsLocalization.DeleteFailed)]);
+                    await ResetRowsAndCache();
+                    return;
+                }
             }
 
             if (Events?.OnAfterDelete != null)
@@ -1525,6 +1535,13 @@ namespace MComponents.MGrid
                         // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
                         _ = DataAdapter.Update(value).ContinueWith(async t =>
                         {
+                            if (t.Exception != null)
+                            {
+                                Notificator.InvokeNotification(ServiceProvider, true, L[nameof(MComponentsLocalization.UpdateFailed)]);
+                                await ResetRowsAndCache();
+                                return;
+                            }
+
                             if (Events?.OnAfterEdit != null)
                             {
                                 await Events.OnAfterEdit.InvokeAsync(new AfterEditArgs<T>()
@@ -1557,6 +1574,13 @@ namespace MComponents.MGrid
                         // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
                         _ = DataAdapter.Add(NewValue).ContinueWith(async t =>
                         {
+                            if (t.Exception != null)
+                            {
+                                Notificator.InvokeNotification(ServiceProvider, true, L[nameof(MComponentsLocalization.CreateFailed)]);
+                                await ResetRowsAndCache();
+                                return;
+                            }
+
                             if (Events?.OnAfterAdd != null)
                             {
                                 await Events.OnAfterAdd.InvokeAsync(new AfterAddArgs<T>()
