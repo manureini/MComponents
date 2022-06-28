@@ -24,6 +24,8 @@
 
         public bool EnableSaveState { get; set; }
 
+        public bool UseDeleteDoubleClick { get; set; }
+
         public ToolbarItem ToolbarItems { get; set; }
 
         public MGridInitialState InitialState { get; set; } = MGridInitialState.Default;

@@ -18,9 +18,6 @@ namespace MComponents.MGrid
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
-        [Inject]
-        public MComponentSettings Settings { get; set; }
-
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
@@ -29,6 +26,9 @@ namespace MComponents.MGrid
 
         [Parameter]
         public string Identifier { get; set; } = "Actions";
+
+        [Parameter]
+        public bool UseDeleteDoubleClick { get; set; } = MGridSettings.Instance.UseDeleteDoubleClick;
 
         [Parameter]
         public RenderFragment<T> AdditionalContent { get; set; }
@@ -79,6 +79,9 @@ namespace MComponents.MGrid
 
         private async void MDeleteResetTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (!UseDeleteDoubleClick)
+                return;
+
             mDeleteResetTimer.Stop();
             RowDeleteEnabled = null;
 
@@ -174,37 +177,30 @@ namespace MComponents.MGrid
                     builder.AddAttribute(173, "style", "margin-left: 4px;");
                     builder.AddAttribute(174, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                      {
-                         if (Settings.UseDeleteConfirmationWithAlert)
+                         if (UseDeleteDoubleClick)
                          {
-                             RowDeleteEnabled = pModel;
-                             Grid.Formatter.ClearRowMetadata();
-                             Grid.Formatter.AddRowMetadata(pModel, MGridDefaultObjectFormatter<T>.ROW_DELETE_METADATA);
-                             StateHasChanged();
-                             Grid.InvokeStateHasChanged();
-                             return;
-                         }
+                             if (RowDeleteEnabled == null || !RowDeleteEnabled.Equals(pModel))
+                             {
+                                 RowDeleteEnabled = pModel;
+                                 Grid.Formatter.ClearRowMetadata();
+                                 Grid.Formatter.AddRowMetadata(pModel, MGridDefaultObjectFormatter<T>.ROW_DELETE_METADATA);
 
-                         if (RowDeleteEnabled == null || !RowDeleteEnabled.Equals(pModel))
-                         {
-                             RowDeleteEnabled = pModel;
-                             Grid.Formatter.ClearRowMetadata();
-                             Grid.Formatter.AddRowMetadata(pModel, MGridDefaultObjectFormatter<T>.ROW_DELETE_METADATA);
+                                 RowDeleteEnabled = pModel;
+                                 mDeleteResetTimer.Stop();
 
-                             RowDeleteEnabled = pModel;
+                                 RowDeleteClicked = DateTime.UtcNow;
+                                 mDeleteResetTimer.Start();
+                                 StateHasChanged();
+                                 Grid.InvokeStateHasChanged();
+                                 return;
+                             }
+
+                             if (DateTime.UtcNow.Subtract(RowDeleteClicked).TotalMilliseconds < 500)
+                                 return;
+
                              mDeleteResetTimer.Stop();
-
-                             RowDeleteClicked = DateTime.UtcNow;
                              mDeleteResetTimer.Start();
-                             StateHasChanged();
-                             Grid.InvokeStateHasChanged();
-                             return;
                          }
-
-                         if (DateTime.UtcNow.Subtract(RowDeleteClicked).TotalMilliseconds < 500)
-                             return;
-
-                         mDeleteResetTimer.Stop();
-                         mDeleteResetTimer.Start();
 
                          _ = Grid.StartDeleteRow(pModel, a);
                      }));
@@ -214,27 +210,7 @@ namespace MComponents.MGrid
 
                     if (RowDeleteEnabled != null && RowDeleteEnabled.Equals(pModel))
                     {
-                        builder.AddAttribute(216, "class", "fas fa-trash-alt m-grid-action-icon");
-
-                        if (Settings.UseDeleteConfirmationWithAlert)
-                        {
-                            Task.Delay(150).ContinueWith(async t =>
-                            {
-                                bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", L["Are you sure?"].ToString());
-
-                                RowDeleteEnabled = null;
-                                Grid.Formatter.ClearRowMetadata();
-
-                                if (confirmed)
-                                {
-                                    _ = InvokeAsync(() => _ = Grid.StartDeleteRow(pModel, null));
-                                }
-                                else
-                                {
-                                    Grid.InvokeStateHasChanged();
-                                }
-                            });
-                        }
+                        builder.AddAttribute(240, "class", "fas fa-trash-alt m-grid-action-icon");
                     }
                     else
                     {

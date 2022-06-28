@@ -1466,17 +1466,39 @@ namespace MComponents.MGrid
             if (!EnableDeleting)
                 return;
 
+            var useConfirmAlert = MComponentSettings.UseDeleteConfirmationWithAlert;
+
             if (Events?.OnBeginDelete != null)
             {
                 var args = new BeginDeleteArgs<T>()
                 {
                     Row = value,
-                    MouseEventArgs = pMouseEventArgs
+                    MouseEventArgs = pMouseEventArgs,
+                    UseDeleteConfirmationWithAlert = useConfirmAlert
                 };
 
                 await Events.OnBeginDelete.InvokeAsync(args);
 
                 if (args.Cancelled)
+                    return;
+
+                useConfirmAlert = args.UseDeleteConfirmationWithAlert;
+            }
+
+            if (useConfirmAlert)
+            {
+                Formatter.ClearRowMetadata();
+                Formatter.AddRowMetadata(value, MGridDefaultObjectFormatter<T>.ROW_DELETE_METADATA);
+
+                InvokeStateHasChanged();
+                await Task.Delay(150);
+
+                bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", L["Are you sure?"].ToString());
+
+                Formatter.ClearRowMetadata();
+                InvokeStateHasChanged();
+
+                if (!confirmed)
                     return;
             }
 

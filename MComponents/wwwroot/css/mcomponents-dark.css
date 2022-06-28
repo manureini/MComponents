@@ -936,11 +936,11 @@
 .m-grid .m-grid-highlight {
   background-color: #3b3b3b;
 }
-.m-grid.m-grid-hover tbody tr:not(.m-grid-highlight):nth-of-type(2n+1) {
+.m-grid.m-grid-hover tbody tr:not(.m-grid-highlight):not(.m-grid-row--delete):nth-of-type(2n+1) {
   background-color: #151515 !important;
   color: white;
 }
-.m-grid.m-grid-hover tbody tr:not(.m-grid-highlight):hover {
+.m-grid.m-grid-hover tbody tr:not(.m-grid-highlight):not(.m-grid-row--delete):hover {
   background-color: #151515 !important;
   color: white;
 }
