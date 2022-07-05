@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using MComponents.MLoading
 
 
 <MComponents.MBadge.MBadge>MBadge</MComponents.MBadge.MBadge>
@@ -10,7 +11,7 @@
 
 <CascadingValue Value="mEditContext">
 
-	<MTabs>
+    <MTabs>
 
         <MTab Title="Tab1">
             <br />
@@ -24,21 +25,21 @@
             <MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
         </MTab>
 
-		<MTab Title="Tab2">
-			<br />
-			<MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" EnableSearch="true" />
+        <MTab Title="Tab2">
+            <br />
+            <MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" EnableSearch="true" />
 
-			<br />
-			<MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
+            <br />
+            <MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
 
-			<br />
-			<MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime?" @bind-Value="mDateTime0" />
+            <br />
+            <MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime?" @bind-Value="mDateTime0" />
 
-			<br />
-			<MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime" @bind-Value="mDateTime1" />
-		</MTab>
+            <br />
+            <MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime" @bind-Value="mDateTime1" />
+        </MTab>
 
-	</MTabs>
+    </MTabs>
 
 </CascadingValue>
 
@@ -53,23 +54,28 @@
 
 <MComponents.MPaint.MPaint />
 
-
+<br />
+<br />
+<br />
+<br />
+ 
+<MSpinner />
 
 @code {
 
-	protected string mValue;
-	protected string[] mValues;
-	protected ICollection<string> mSelectedValues;
-	protected DateTime? mDateTime0;
-	protected DateTime mDateTime1;
+    protected string mValue;
+    protected string[] mValues;
+    protected ICollection<string> mSelectedValues;
+    protected DateTime? mDateTime0;
+    protected DateTime mDateTime1;
 
-	protected EditContext mEditContext = new EditContext(string.Empty);
+    protected EditContext mEditContext = new EditContext(string.Empty);
 
 
-	override protected void OnInitialized()
-	{
-		mValues = Enumerable.Range(1, 1000).Select(v => "value" + v).ToArray();
-		mSelectedValues = mValues.Take(3).ToList();
-	}
+    override protected void OnInitialized()
+    {
+        mValues = Enumerable.Range(1, 1000).Select(v => "value" + v).ToArray();
+        mSelectedValues = mValues.Take(3).ToList();
+    }
 
 }
