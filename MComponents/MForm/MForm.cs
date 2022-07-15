@@ -237,6 +237,9 @@ namespace MComponents.MForm
         {
             var propInfo = GetPropertyInfo(pField);
 
+            if (propInfo.IsReadOnly)
+                return;
+
             PropertyInfo oriPropInfo = null;
 
             var isExpando = typeof(IDictionary<string, object>).IsAssignableFrom(ModelType);
