@@ -495,7 +495,17 @@ namespace MComponents.MForm
         {
             // Console.WriteLine("FormContextSubmit: " + typeof(T));
 
-            var isValid = mEditContext.Validate(); // This will likely become ValidateAsync later
+            var isValid = false;
+
+            try
+            {
+                isValid = mEditContext.Validate(); // This will likely become ValidateAsync later
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
 
             if (!isValid)
             {
@@ -575,10 +585,10 @@ namespace MComponents.MForm
                 if (ContainerContext == null)
                 {
                     //value may not be updated
-                    Task.Delay(10).ContinueWith((a) =>
-                    {
-                        _ = CallLocalSubmit(true);
-                    });
+                    _ = Task.Delay(10).ContinueWith((a) =>
+                     {
+                         InvokeAsync(() => _ = CallLocalSubmit(true));
+                     });
                 }
             }
         }
