@@ -218,6 +218,7 @@ namespace MComponents.MGrid
                 throw new ArgumentException($"{DataSource} can not be an array. It must be a source which supports adding and deleting");
 
             mUpdateDataCacheOnNextRender = true;
+            StateHasChanged();
         }
 
         public void RegisterColumn(IMGridColumn pColumn)
@@ -325,7 +326,7 @@ namespace MComponents.MGrid
             if (mUpdateDataCacheOnNextRender)
             {
                 ClearDataCache();
-                _ = UpdateDataCacheIfDataAdapter();
+                await UpdateDataCacheIfDataAdapter();
                 mUpdateDataCacheOnNextRender = false;
             }
         }
