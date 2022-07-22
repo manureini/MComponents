@@ -86,6 +86,11 @@ $borderRadius: 0;
             color: $white;
         }
     }
+
+    .m-grid-td-loading {
+        visibility: visible;
+        color: darken($white, 35%);
+    }
 }
 
 .m-switch label input ~ span:before {

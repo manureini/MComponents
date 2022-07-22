@@ -232,6 +232,10 @@
     .m-grid-row--delete {
         background-color: rgba(204, 25, 25, 0.42) !important;
     }
+
+    .m-grid-td-loading {
+        visibility: hidden;
+    }
 }
 
 

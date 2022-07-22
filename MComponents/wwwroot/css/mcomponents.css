@@ -205,6 +205,9 @@
 .m-grid .m-grid-row--delete {
   background-color: rgba(204, 25, 25, 0.42) !important;
 }
+.m-grid .m-grid-td-loading {
+  visibility: hidden;
+}
 
 .m-grid-bordered {
   border-width: 1px;

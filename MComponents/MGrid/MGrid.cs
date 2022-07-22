@@ -173,6 +173,7 @@ namespace MComponents.MGrid
         public bool UpdateColumnsWidthOnNextRender { get; set; }
 
         protected bool mUpdateDataCacheOnNextRender;
+        protected bool mIsLoading;
 
         protected string mInputFileId = Guid.NewGuid().ToString();
         protected IMPropertyInfo mIdentifierProperty;
@@ -217,7 +218,16 @@ namespace MComponents.MGrid
             if ((EnableAdding || EnableDeleting) && DataSource != null && DataSource is T[])
                 throw new ArgumentException($"{DataSource} can not be an array. It must be a source which supports adding and deleting");
 
-            mUpdateDataCacheOnNextRender = true;
+            if (DataSource != null)
+            {
+                ClearDataCache();
+            }
+
+            if (DataAdapter != null)
+            {
+                mUpdateDataCacheOnNextRender = true;
+            }
+
             StateHasChanged();
         }
 
@@ -325,9 +335,8 @@ namespace MComponents.MGrid
 
             if (mUpdateDataCacheOnNextRender)
             {
-                ClearDataCache();
-                await UpdateDataCacheIfDataAdapter();
                 mUpdateDataCacheOnNextRender = false;
+                await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
             }
         }
 
@@ -355,8 +364,9 @@ namespace MComponents.MGrid
                         };
 
                 builder.OpenComponent<CascadingValue<MGrid<T>>>(4);
-                builder.AddAttribute(207, "Value", this);
-                builder.AddAttribute(208, "ChildContent", child());
+                builder.AddAttribute(207, nameof(CascadingValue<object>.Value), this);
+                builder.AddAttribute(208, nameof(CascadingValue<object>.ChildContent), child());
+                builder.AddAttribute(209, nameof(CascadingValue<object>.IsFixed), true);
                 builder.CloseComponent();
             }
 
@@ -970,7 +980,19 @@ namespace MComponents.MGrid
                         continue;
 
                     pBuilder.OpenElement(550, "td");
+
+                    if (mIsLoading)
+                    {
+                        pBuilder.OpenElement(986, "div");
+                        pBuilder.AddAttribute(987, "class", "m-grid-td-loading");
+                    }
+
                     RenderValueTdContent(pBuilder, pEntry, column);
+
+                    if (mIsLoading)
+                    {
+                        pBuilder.CloseElement(); //div
+                    }
 
                     pBuilder.CloseElement(); //td
                 }
@@ -1530,8 +1552,7 @@ namespace MComponents.MGrid
             }
 
             Selected = default(T);
-            ClearDataCache();
-            await UpdateDataCacheIfDataAdapter();
+            await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
 
             if (mObjReference != null)
                 _ = JsRuntime.InvokeVoidAsync("mcomponents.unRegisterKeyListener", Identifier);
@@ -1580,8 +1601,7 @@ namespace MComponents.MGrid
                                 });
                             }
 
-                            ClearDataCache();
-                            await UpdateDataCacheIfDataAdapter();
+                            await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
                         });
                         return;
                     }
@@ -1619,8 +1639,7 @@ namespace MComponents.MGrid
                                 });
                             }
 
-                            ClearDataCache();
-                            await UpdateDataCacheIfDataAdapter();
+                            await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
                             await StopEditing(false, false);
                         });
                         return;
@@ -1654,9 +1673,7 @@ namespace MComponents.MGrid
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
             await StopEditing(false, false);
-
-            ClearDataCache();
-            await UpdateDataCacheIfDataAdapter();
+            await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
 
             SaveCurrentState();
             StateHasChanged();
@@ -1669,9 +1686,7 @@ namespace MComponents.MGrid
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
             await StopEditing(false, false);
-
-            ClearDataCache();
-            await UpdateDataCacheIfDataAdapter();
+            await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
 
             SaveCurrentState();
             StateHasChanged();
@@ -1754,9 +1769,7 @@ namespace MComponents.MGrid
                 }
 
                 await StopEditing(false, false);
-
-                ClearDataCache();
-                await UpdateDataCacheIfDataAdapter();
+                await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
 
                 SaveCurrentState();
                 StateHasChanged();
@@ -1795,9 +1808,7 @@ namespace MComponents.MGrid
         public async Task ResetRowsAndCache()
         {
             await StopEditing(false, false);
-
-            ClearDataCache();
-            await UpdateDataCacheIfDataAdapter();
+            await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
 
             UpdateColumnsWidthOnNextRender = true;
 
@@ -1877,34 +1888,38 @@ namespace MComponents.MGrid
             GroupedDataCache = null;
         }
 
-        protected async Task UpdateDataCacheIfDataAdapter()
+        protected async Task UpdateDataCacheIfDataAdapter(bool pForce = false)
         {
             bool semaphoreAcquired = false;
 
             try
             {
-                if (DataCache == null && DataAdapter != null)
+                if ((pForce || DataCache == null) && DataAdapter != null)
                 {
                     await mDataAdapterSemaphore.WaitAsync();
                     semaphoreAcquired = true;
 
+                    mIsLoading = true;
+                    StateHasChanged();
+
                     var queryable = GetIQueryable(Enumerable.Empty<T>(), false);
 
-                    await Task.Run(async () => await DataAdapter.GetData(queryable)).ContinueWith(async a =>
+                    var totalDataCount = await DataAdapter.GetTotalDataCount();
+                    var dataCount = await DataAdapter.GetDataCount(queryable);
+                    var dataCache = (await DataAdapter.GetData(queryable)).ToArray();
+
+                    TotalDataCountCache = totalDataCount;
+                    DataCountCache = dataCount;
+                    DataCache = dataCache;
+
+                    if (pForce)
                     {
-                        DataCache = a.Result.ToArray();
+                        GroupedDataCache = null; //if force act like ClearDataCache()
+                    }
 
-                        await Task.Run(async () => await DataAdapter.GetDataCount(queryable)).ContinueWith(async a =>
-                        {
-                            DataCountCache = a.Result;
+                    mIsLoading = false;
 
-                            await Task.Run(async () => await DataAdapter.GetTotalDataCount()).ContinueWith(a =>
-                            {
-                                TotalDataCountCache = a.Result;
-                                InvokeAsync(() => StateHasChanged());
-                            });
-                        });
-                    });
+                    _ = InvokeAsync(() => StateHasChanged());
                 }
             }
             finally
@@ -1914,10 +1929,21 @@ namespace MComponents.MGrid
             }
         }
 
+        protected async Task ClearDataCacheIfDataSourceOrUpdateIfDataAdapter()
+        {
+            if (DataSource != null)
+            {
+                ClearDataCache();
+                StateHasChanged();
+                return;
+            }
+
+            await UpdateDataCacheIfDataAdapter(true);
+        }
+
         public void Refresh()
         {
-            ClearDataCache();
-            _ = UpdateDataCacheIfDataAdapter();
+            _ = ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
         }
 
         public void ClearColumns()
