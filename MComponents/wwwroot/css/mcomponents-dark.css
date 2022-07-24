@@ -699,6 +699,10 @@
   padding: 0;
   border-bottom: 0;
   background-color: #f7f8fa;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 102;
 }
 .m-accordion .m-accordion-card .m-accordion-card-header.m-readonly {
   cursor: default;
@@ -1012,11 +1016,15 @@ button:active {
 }
 
 .m-accordion .m-accordion-card {
-  border: 1px solid #707070;
+  border: unset;
 }
 .m-accordion .m-accordion-card .m-accordion-card-header {
   background-color: #202020;
+  border: 1px solid #707070;
 }
 .m-accordion .m-accordion-card .m-accordion-card-header .m-accordion-card-title {
   color: #ffffff;
+}
+.m-accordion .m-accordion-card .m-accordion-card-body {
+  border: 1px solid #707070;
 }

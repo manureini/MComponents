@@ -739,6 +739,10 @@ button:active {
   padding: 0;
   border-bottom: 0;
   background-color: #f7f8fa;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 102;
 }
 .m-accordion .m-accordion-card .m-accordion-card-header.m-readonly {
   cursor: default;

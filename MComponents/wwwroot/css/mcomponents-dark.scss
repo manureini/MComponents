@@ -131,14 +131,19 @@ button:active {
 
 .m-accordion {
     .m-accordion-card {
-        border: 1px solid $lightgray;
+        border: unset;
 
         .m-accordion-card-header {
             background-color: $input_bg;
+            border: 1px solid $lightgray;
 
             .m-accordion-card-title {
                 color: $white;
             }
+        }
+
+        .m-accordion-card-body {
+            border: 1px solid $lightgray;
         }
     }
 }
