@@ -870,6 +870,11 @@
             padding: 1.25rem;
             font-size: 1rem;
             flex: 1 1 auto;
+            display: none;
+
+            &.m-show {
+                display: inherit;
+            }
         }
     }
 }

@@ -755,6 +755,10 @@ button:active {
   padding: 1.25rem;
   font-size: 1rem;
   flex: 1 1 auto;
+  display: none;
+}
+.m-accordion .m-accordion-card .m-accordion-card-body.m-show {
+  display: inherit;
 }
 
 /* END Accordion -------------------------------------------------------------------------- */

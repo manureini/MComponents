@@ -11,10 +11,13 @@ namespace MComponents.MAccordion
         public RenderFragment Cards { get; set; }
 
         [Parameter]
-        public bool AllowMultipleOpenCards { get; set; } = false;
+        public bool AllowMultipleOpenCards { get; set; }
 
         [Parameter]
-        public bool IsReadOnly { get; set; } = false;
+        public bool IsReadOnly { get; set; }
+
+        [Parameter]
+        public bool RenderHiddenCards { get; set; }
 
         protected List<int> mOpenIndexes = new List<int>();
 
@@ -29,19 +32,19 @@ namespace MComponents.MAccordion
                 RenderFragment child3() =>
                         (builder2) =>
                         {
-                            builder2.AddMarkupContent(1, "\r\n");
-                            builder2.AddContent(2, this.Cards);
-                            builder2.AddMarkupContent(3, "\r\n");
+                            builder2.AddMarkupContent(35, "\r\n");
+                            builder2.AddContent(36, this.Cards);
+                            builder2.AddMarkupContent(37, "\r\n");
                         };
 
                 builder.OpenComponent<CascadingValue<MAccordion>>(4);
-                builder.AddAttribute(5, "Value", this);
-                builder.AddAttribute(6, "ChildContent", child3());
+                builder.AddAttribute(41, "Value", this);
+                builder.AddAttribute(42, "ChildContent", child3());
                 builder.CloseComponent();
             }
 
-            builder.OpenElement(0, "div");
-            builder.AddAttribute(1, "class", "m-accordion");
+            builder.OpenElement(46, "div");
+            builder.AddAttribute(47, "class", "m-accordion");
 
 
             for (int i = 0; i < CardsList.Count; i++)
@@ -51,30 +54,30 @@ namespace MComponents.MAccordion
 
                 bool isVisible = mOpenIndexes.Contains(i);
 
-                builder.OpenElement(4, "div");
-                builder.AddAttribute(5, "class", "m-accordion-card");
+                builder.OpenElement(57, "div");
+                builder.AddAttribute(58, "class", "m-accordion-card");
 
-                builder.OpenElement(7, "div");
-                builder.AddAttribute(8, "class", "m-accordion-card-header" + (IsReadOnly ? " m-readonly" : string.Empty));
+                builder.OpenElement(60, "div");
+                builder.AddAttribute(61, "class", "m-accordion-card-header" + (IsReadOnly ? " m-readonly" : string.Empty));
 
-                builder.OpenElement(10, "div");
-                builder.AddAttribute(11, "class", "m-accordion-card-title");
-                builder.AddAttribute(11, "style", "display: block;");
+                builder.OpenElement(63, "div");
+                builder.AddAttribute(64, "class", "m-accordion-card-title");
+                builder.AddAttribute(65, "style", "display: block;");
 
-                builder.AddAttribute(12, "data-toggle", "collapse");
-                builder.AddAttribute(21, "onclick", EventCallback.Factory.Create(this, () => OnClicked(index)));
+                builder.AddAttribute(67, "data-toggle", "collapse");
+                builder.AddAttribute(68, "onclick", EventCallback.Factory.Create(this, () => OnClicked(index)));
 
-                builder.AddContent(14, (MarkupString)card.Title);
+                builder.AddContent(70, (MarkupString)card.Title);
 
                 if (!IsReadOnly)
                 {
                     if (isVisible)
                     {
-                        builder.AddContent(15, (MarkupString)"<i class=\"fas fa-chevron-down\" style=\"float: right;\"></i>");
+                        builder.AddContent(76, (MarkupString)"<i class=\"fas fa-chevron-down\" style=\"float: right;\"></i>");
                     }
                     else
                     {
-                        builder.AddContent(15, (MarkupString)"<i class=\"fas fa-chevron-right\" style=\"float: right;\"></i>");
+                        builder.AddContent(80, (MarkupString)"<i class=\"fas fa-chevron-right\" style=\"float: right;\"></i>");
                     }
                 }
 
@@ -82,29 +85,26 @@ namespace MComponents.MAccordion
 
                 builder.CloseElement();
 
-                builder.OpenElement(18, "div");
+                if (isVisible || RenderHiddenCards)
+                {
+                    builder.OpenElement(90, "div");
 
+                    string cssClass = "m-accordion-card-body";
 
-                string cssClass = string.Empty;
+                    if (isVisible)
+                        cssClass += " m-show";
 
-                if (isVisible)
-                    cssClass += " m-show";
+                    builder.AddAttribute(97, "class", cssClass);
 
-                builder.AddAttribute(19, "class", cssClass);
+                    builder.OpenComponent<CascadingValue<object>>(99);
+                    builder.AddAttribute(100, "Value", string.Empty);
+                    builder.AddAttribute(101, "ChildContent", card.ChildContent);
+                    builder.CloseComponent();
 
-                builder.OpenElement(23, "div");
-                builder.AddAttribute(24, "class", "m-accordion-card-body");
+                    builder.CloseElement(); //div m-accordion-card-body
+                }
 
-                builder.OpenComponent<CascadingValue<object>>(4);
-                builder.AddAttribute(5, "Value", string.Empty);
-                builder.AddAttribute(6, "ChildContent", card.ChildContent);
-                builder.CloseComponent();
-
-                builder.CloseElement();
-
-                builder.CloseElement();
-
-                builder.CloseElement();
+                builder.CloseElement(); //div accordion-card
             }
 
             builder.CloseElement();
