@@ -1010,3 +1010,13 @@ button:active {
 ::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
+
+.m-accordion .m-accordion-card {
+  border: 1px solid #707070;
+}
+.m-accordion .m-accordion-card .m-accordion-card-header {
+  background-color: #202020;
+}
+.m-accordion .m-accordion-card .m-accordion-card-header .m-accordion-card-title {
+  color: #ffffff;
+}

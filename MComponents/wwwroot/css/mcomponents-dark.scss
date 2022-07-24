@@ -128,3 +128,17 @@ button:active {
 ::-webkit-calendar-picker-indicator {
     filter: invert(1);
 }
+
+.m-accordion {
+    .m-accordion-card {
+        border: 1px solid $lightgray;
+
+        .m-accordion-card-header {
+            background-color: $input_bg;
+
+            .m-accordion-card-title {
+                color: $white;
+            }
+        }
+    }
+}
