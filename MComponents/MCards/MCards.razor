@@ -9,6 +9,11 @@
                 @Template?.Invoke(value)
             </div>
         }
+
+        @if (!Values.Any() && TemplateEmpty != null)
+        {
+            @TemplateEmpty
+        }
     }
 </div>
 
@@ -25,6 +30,9 @@
     public RenderFragment<T> Template { get; set; }
 
     [Parameter]
+    public RenderFragment TemplateEmpty { get; set; }
+
+    [Parameter]
     public EventCallback<T> OnClick { get; set; }
 
     protected override void OnParametersSet()
@@ -35,7 +43,7 @@
 
         for (int i = 0; i < Columns; i++)
         {
-            mTemplateColumnsStyle += $"{(int)(100.0/Columns)}% ";
+            mTemplateColumnsStyle += $"{(int)(100.0 / Columns)}% ";
         }
 
         mTemplateColumnsStyle = mTemplateColumnsStyle.Trim();
