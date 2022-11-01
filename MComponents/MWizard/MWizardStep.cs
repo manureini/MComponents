@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 
 namespace MComponents.MWizard
@@ -28,24 +29,8 @@ namespace MComponents.MWizard
         [Parameter]
         public MWizardStepContext StepContext { get; set; }
 
-        protected bool mIsVisible = true;
-
         [Parameter]
-        public bool IsVisible
-        {
-            get
-            {
-                return mIsVisible;
-            }
-            set
-            {
-                bool newValue = value;
-                bool oldValue = mIsVisible;
-                mIsVisible = value;
-                if (newValue != oldValue)
-                    mWizard?.InvokeStateHasChanged();
-            }
-        }
+        public Func<bool> IsVisible { get; set; }
 
         [Parameter]
         public int Position { get; set; } = 0;
@@ -71,6 +56,11 @@ namespace MComponents.MWizard
                     mWizard.RegisterStep(this);
                 }
             }
+        }
+
+        public bool GetIsVisible()
+        {
+            return IsVisible?.Invoke() ?? true;
         }
 
         protected override void OnParametersSet()

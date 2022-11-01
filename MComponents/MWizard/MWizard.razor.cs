@@ -74,7 +74,7 @@ namespace MComponents.MWizard
 
             var currentStep = WizardSteps[CurrentStep];
 
-            if (!currentStep.IsVisible)
+            if (!currentStep.GetIsVisible())
             {
                 int? nextVisible = FindNextVisible(CurrentStep, i => i + 1);
                 if (nextVisible != null)
@@ -94,7 +94,7 @@ namespace MComponents.MWizard
         {
             if (pKey == "Escape")
             {
-                InvokeAsync(OnPrevClicked);
+                InvokeAsync(() => OnPrevClicked(true));
             }
         }
 
@@ -106,7 +106,7 @@ namespace MComponents.MWizard
             WizardSteps.Add(pStep);
             WizardSteps = WizardSteps.OrderBy(s => s.Position).ToList();
 
-            if (CurrentStep == -1 && pStep.IsVisible)
+            if (CurrentStep == -1 && pStep.GetIsVisible())
                 CurrentStep = WizardSteps.Count - 1;
 
             StateHasChanged();
@@ -121,20 +121,20 @@ namespace MComponents.MWizard
             }
         }
 
-        internal async Task OnNextClicked()
+        internal async Task OnNextClicked(bool pUserInteract)
         {
             if (FreezeCurrentStep)
                 return;
 
-            await InternalSetStep(CurrentStep, true, i => i + 1);
+            await InternalSetStep(CurrentStep, pUserInteract, i => i + 1);
         }
 
-        internal async Task OnPrevClicked()
+        internal async Task OnPrevClicked(bool pUserInteract)
         {
             if (FreezeCurrentStep)
                 return;
 
-            await InternalSetStep(CurrentStep, true, i => i - 1);
+            await InternalSetStep(CurrentStep, pUserInteract, i => i - 1);
         }
 
         protected async Task OnJumpToClicked(int pIndex)
@@ -200,7 +200,7 @@ namespace MComponents.MWizard
                 if (index < 0 || index >= WizardSteps.Count)
                     return null;
 
-                if (WizardSteps[index].IsVisible)
+                if (WizardSteps[index].GetIsVisible())
                     return index;
 
                 if (lastIndex == index)
@@ -221,13 +221,13 @@ namespace MComponents.MWizard
             //pIndex could be invisible after delay, so it's better to use prev or next
             if (FindNextVisible(CurrentStep, i => i - 1) == pIndex)
             {
-                await OnPrevClicked();
+                await OnPrevClicked(pUserInteract);
                 return;
             }
 
             if (FindNextVisible(CurrentStep, i => i + 1) == pIndex)
             {
-                await OnNextClicked();
+                await OnNextClicked(pUserInteract);
                 return;
             }
 
@@ -236,63 +236,51 @@ namespace MComponents.MWizard
 
         protected async Task InternalSetStep(int pOldStep, bool pUserInteract, Func<int, int> pModifier)
         {
-            var result = await mLocker.WaitAsync(1000);
-
-            if (!result)
+            int? next = FindNextVisible(pOldStep, pModifier);
+            if (!next.HasValue)
                 return;
 
-            try
+            var newStep = next.Value;
+
+            var args = new StepChangedArgs()
             {
-                int? next = FindNextVisible(pOldStep, pModifier);
-                if (!next.HasValue)
-                    return;
+                OldStepIndex = pOldStep,
+                NewStepIndex = newStep,
+                OldStep = WizardSteps[pOldStep],
+                NewStep = WizardSteps[newStep],
+                UserInteract = pUserInteract
+            };
 
-                var newStep = next.Value;
+            await InvokeAsync(async () =>
+            {
+                await OnStepChanged.InvokeAsync(args);
+            });
 
-                var args = new StepChangedArgs()
+            if (args.Cancelled)
+                return;
+
+            if (args.DelayStepTransition)
+            {
+                int step = CurrentStep;
+                _ = Task.Delay(50).ContinueWith(async t =>
                 {
-                    OldStepIndex = pOldStep,
-                    NewStepIndex = newStep,
-                    OldStep = WizardSteps[pOldStep],
-                    NewStep = WizardSteps[newStep],
-                    UserInteract = pUserInteract
-                };
+                    await mLocker.WaitAsync();
 
-                await InvokeAsync(async () =>
-                {
-                    await OnStepChanged.InvokeAsync(args);
-                });
+                    CurrentStep = FindNextVisible(step, pModifier) ?? step;
+                    mEmptyRender = true;
 
-                if (args.Cancelled)
-                    return;
+                    mLocker.Release();
 
-                if (args.DelayStepTransition)
-                {
-                    int step = CurrentStep;
-                    _ = Task.Delay(50).ContinueWith(async t =>
-                    {
-                        await mLocker.WaitAsync();
-
-                        CurrentStep = FindNextVisible(step, pModifier) ?? step;
-                        mEmptyRender = true;
-
-                        mLocker.Release();
-
-                        _ = InvokeAsync(StateHasChanged);
-                    });
                     _ = InvokeAsync(StateHasChanged);
-                    return;
-                }
-
-                CurrentStep = newStep;
-                mEmptyRender = true;
-
+                });
                 _ = InvokeAsync(StateHasChanged);
+                return;
             }
-            finally
-            {
-                mLocker.Release();
-            }
+
+            CurrentStep = newStep;
+            mEmptyRender = true;
+
+            _ = InvokeAsync(StateHasChanged);
         }
     }
 }

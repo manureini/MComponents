@@ -14,12 +14,12 @@
             @{
                 int i = 0;
                 int visible = 1;
-                int visibleCount = WizardSteps.Count(s => s.IsVisible);
+                int visibleCount = WizardSteps.Count(s => s.GetIsVisible());
             }
 
             @foreach (var entry in WizardSteps)
             {
-                if (entry.IsVisible)
+                if (entry.GetIsVisible())
                 {
                     string state = "pending";
 
@@ -55,7 +55,7 @@
                     }
                     else
                     {
-                        if (@currentStep.IsVisible)
+                        if (currentStep.GetIsVisible())
                         {
                             @currentStep.Content.Invoke(currentStep.StepContext)
                         }
