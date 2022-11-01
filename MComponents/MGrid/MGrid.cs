@@ -2003,12 +2003,12 @@ namespace MComponents.MGrid
             if (pValue == null)
                 return null;
 
-            if (pValue is T && mIdentifierProperty != null)
+            if (pValue.GetType() == typeof(T) && mIdentifierProperty != null)
                 return mIdentifierProperty;
 
             var prop = ReflectionHelper.GetProperties(pValue)?.FirstOrDefault(p => p.Name.ToLowerInvariant() == "id");
 
-            if (pValue is T)
+            if (pValue.GetType() == typeof(T))
                 mIdentifierProperty = prop;
 
             return prop;
