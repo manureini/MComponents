@@ -110,6 +110,9 @@ namespace MComponents.MGrid
                 }).Where(s => s != null).ToList();
 
                 await pGrid.SetFilterRowVisible(state.IsFilterRowVisible);
+
+                pGrid.ClearDataCache();
+                pGrid.InvokeStateHasChanged();
             }
             catch (Exception e)
             {

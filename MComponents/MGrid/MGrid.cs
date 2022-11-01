@@ -330,9 +330,6 @@ namespace MComponents.MGrid
                 StateHasChanged();
             }
 
-            //if (firstRender && EnableSaveState)
-            //     return;
-
             if (mUpdateDataCacheOnNextRender)
             {
                 mUpdateDataCacheOnNextRender = false;
@@ -1880,7 +1877,7 @@ namespace MComponents.MGrid
             return (T)Activator.CreateInstance(typeof(T));
         }
 
-        protected void ClearDataCache()
+        internal void ClearDataCache()
         {
             DataCache = null;
             DataCountCache = -1;
