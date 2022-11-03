@@ -88,6 +88,14 @@ namespace MComponents
             mNavigationManager.NavigateTo(backPageUrl);
         }
 
+        public string GetPreviousUrl()
+        {
+            if (!CanNavigateBack)
+                return null;
+
+            return mHistory[^2];
+        }
+
         private void OnLocationChanged(object sender, LocationChangedEventArgs e)
         {
             if (e.Location != null && e.Location.EndsWith(SPECIAL_RELOAD_PAGE))
