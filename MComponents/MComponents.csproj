@@ -11,10 +11,10 @@
 		<PackageProjectUrl>https://github.com/manureini/MComponents/</PackageProjectUrl>
 		<RepositoryUrl></RepositoryUrl>
 		<PackageTags>Blazor Components</PackageTags>
-		<AssemblyVersion>1.4.6</AssemblyVersion>
-		<FileVersion>1.4.6</FileVersion>
+		<AssemblyVersion>1.4.7</AssemblyVersion>
+		<FileVersion>1.4.7</FileVersion>
 		<Company>MComponents</Company>
-		<Version>1.4.6</Version>
+		<Version>1.4.7</Version>
 		<LangVersion>8</LangVersion>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<CompilerGeneratedFilesOutputPath>_Generated</CompilerGeneratedFilesOutputPath>
