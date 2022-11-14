@@ -84,6 +84,8 @@ namespace MComponents.MSelect
         protected List<MSelectOption> mAdditionalOptions = new List<MSelectOption>();
 
         protected Type mtType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+        protected bool mIsNullableType = typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(Nullable<>);
+
         protected DotNetObjectReference<MSelect<T>> mObjReference;
 
         protected bool mMultipleSelectMode;
@@ -146,7 +148,7 @@ namespace MComponents.MSelect
             if (mMultipleSelectMode && Values == null && !mEnumFlags)
                 throw new ArgumentException($"{nameof(Values)} must be != null");
 
-            if (mEnumFlags && Value == null)
+            if (mEnumFlags && Value == null && !mIsNullableType)
                 throw new ArgumentException($"{nameof(Value)} must be != null");
 
             if (Options == null && mtType.IsEnum)
@@ -729,11 +731,25 @@ namespace MComponents.MSelect
                     {
                         if (ValueEnumHasFlag(pSelectedValue))
                         {
-                            CurrentValue = (T)(object)((int)(object)CurrentValue & ~(int)(object)pSelectedValue);
+                            if (mIsNullableType)
+                            {
+                                CurrentValue = (T)ReflectionHelper.ChangeType((int)(object)CurrentValue & ~(int)(object)pSelectedValue, mtType);
+                            }
+                            else
+                            {
+                                CurrentValue = (T)(object)((int)(object)CurrentValue & ~(int)(object)pSelectedValue);
+                            }
                         }
                         else
                         {
-                            CurrentValue = (T)(object)((int)(object)CurrentValue | (int)(object)pSelectedValue);
+                            if (mIsNullableType)
+                            {
+                                CurrentValue = (T)ReflectionHelper.ChangeType((int)(object)CurrentValue | (int)(object)pSelectedValue, mtType);
+                            }
+                            else
+                            {
+                                CurrentValue = (T)(object)((int)(object)CurrentValue | (int)(object)pSelectedValue);
+                            }
                         }
                     }
                     else
@@ -741,7 +757,7 @@ namespace MComponents.MSelect
                         CurrentValue = pSelectedValue;
                     }
 
-                    SelectionChangedArgs<T> args = new SelectionChangedArgs<T>()
+                    var args = new SelectionChangedArgs<T>()
                     {
                         NewValue = CurrentValue,
                         OldValue = oldValue
@@ -778,7 +794,10 @@ namespace MComponents.MSelect
 
         protected bool ValueEnumHasFlag(object pFlag)
         {
-            return ((Enum)(object)Value).HasFlag((Enum)(object)pFlag);
+            if (Value == null)
+                return false;
+
+            return ((Enum)(object)Value).HasFlag((Enum)pFlag);
         }
 
         public void SelectValue(T pValue)
