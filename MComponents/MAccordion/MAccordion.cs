@@ -19,9 +19,22 @@ namespace MComponents.MAccordion
         [Parameter]
         public bool RenderHiddenCards { get; set; }
 
+        [Parameter]
+        public bool CacheCards { get; set; }
+
         protected List<int> mOpenIndexes = new List<int>();
 
         protected List<MAccordionCard> CardsList { get; set; } = new List<MAccordionCard>();
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (CacheCards)
+                return;
+
+            CardsList.Clear();
+        }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
@@ -45,7 +58,6 @@ namespace MComponents.MAccordion
 
             builder.OpenElement(46, "div");
             builder.AddAttribute(47, "class", "m-accordion");
-
 
             for (int i = 0; i < CardsList.Count; i++)
             {

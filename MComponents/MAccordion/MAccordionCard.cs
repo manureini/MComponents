@@ -27,13 +27,15 @@ namespace MComponents.MAccordion
             }
             set
             {
-                if (value != mAccordion)
-                {
-                    mAccordion = value;
-                    mAccordion.RegisterCard(this);
-                }
+                if (mAccordion != null && value == mAccordion && mAccordion.CacheCards)
+                    return;
+
+                if (mAccordion == value)
+                    InitialOpen = false;
+
+                mAccordion = value;
+                mAccordion.RegisterCard(this);
             }
         }
-
     }
 }
