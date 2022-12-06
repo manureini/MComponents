@@ -514,7 +514,7 @@ namespace MComponents.MGrid
                            builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, a => OnColumnHeaderClick(column, a)));
                            builder2.AddAttribute(319, "scope", "col");
 
-                           builder2.AddContent(321, (MarkupString)column.HeaderText);
+                           builder2.AddContent(321, (MarkupString)column.HeaderText.Replace("\n", "<br />"));
 
                            if (EnableUserSorting)
                            {
@@ -911,7 +911,7 @@ namespace MComponents.MGrid
 
             var pi = pInstruction.PropertyInfo;
 
-            pBuilder.AddContent(625, pInstruction.GridColumn.HeaderText + ": ");
+            pBuilder.AddContent(625, (MarkupString)pInstruction.GridColumn.HeaderText.Replace("\n", " ") + ": ");
             RenderValueTdContent(pBuilder, value, pInstruction.GridColumn);
 
             pBuilder.CloseElement(); //td
