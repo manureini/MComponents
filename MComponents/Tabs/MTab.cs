@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Web;
 
 namespace MComponents.Tabs
 {
@@ -19,12 +20,18 @@ namespace MComponents.Tabs
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
+        [Parameter]
+        public string FragmentIdentifier { get; set; }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
             if (Tabs == null)
                 throw new Exception($"{nameof(MTab)} can only be placed in a {nameof(MTabs)} element");
+
+            if (Tabs.SyncTabsWithFragmentIdentifierInUrl && FragmentIdentifier == null && Title != null)
+                FragmentIdentifier = "#" + HttpUtility.UrlEncode(Title.Trim().ToLowerInvariant().Replace(" ", "_"));
 
             Tabs.RegisterTab(this);
         }

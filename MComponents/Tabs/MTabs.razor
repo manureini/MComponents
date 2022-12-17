@@ -1,49 +1,75 @@
-﻿
+﻿@inject Navigation Navigation
 
 <div class="btn-group m-tabs-buttons" role="group">
-	@foreach (var tab in Tabs)
-	{
-	 <button type="button"
-			class="m-btn @GetButtonClass(tab) m-tabs-btn"
-			@onclick=@(() => ActivatePage(tab))>
-	  <span class="m-tabs-btn-title">@tab.Title</span>
-	 </button>
-	}
+    @foreach (var tab in Tabs)
+    {
+        <button type="button"
+            class="m-btn @GetButtonClass(tab) m-tabs-btn"
+            @onclick=@(() => ActivatePage(tab))>
+            <span class="m-tabs-btn-title">@tab.Title</span>
+        </button>
+    }
 </div>
 
 <CascadingValue Value="this">
- <div class="m-tab">
-		@ChildContent
- </div>
+    <div class="m-tab">
+        @ChildContent
+    </div>
 </CascadingValue>
 
 @code {
 
-	[Parameter]
-	public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
 
-	List<MTab> Tabs = new List<MTab>();
-	public MTab CurrentTab { get; set; }
+    [Parameter]
+    public bool SyncTabsWithFragmentIdentifierInUrl { get; set; }
 
-	internal void RegisterTab(MTab pTab)
-	{
-		Tabs.Add(pTab);
+    List<MTab> Tabs = new List<MTab>();
+    public MTab CurrentTab { get; set; }
 
-		if (Tabs.Count == 1)
-		{
-			CurrentTab = pTab;
-		}
+    internal void RegisterTab(MTab pTab)
+    {
+        if (Tabs.Contains(pTab))
+            return;
 
-		StateHasChanged();
-	}
+        Tabs.Add(pTab);
 
-	protected string GetButtonClass(MTab pTab)
-	{
-		return pTab == CurrentTab ? "m-tabs-btn m-tabs-btn-active m-btn-primary" : "m-tabs-btn m-btn-secondary";
-	}
+        if (Tabs.Count == 1)
+        {
+            CurrentTab = pTab;
+        }
 
-	public void ActivatePage(MTab pTab)
-	{
-		CurrentTab = pTab;
-	}
+        if (SyncTabsWithFragmentIdentifierInUrl)
+        {
+            var fragment = new Uri(Navigation.Uri).Fragment;
+
+            if (fragment == pTab.FragmentIdentifier)
+                ActivatePage(pTab);
+        }
+
+        StateHasChanged();
+    }
+
+    protected string GetButtonClass(MTab pTab)
+    {
+        return pTab == CurrentTab ? "m-tabs-btn m-tabs-btn-active m-btn-primary" : "m-tabs-btn m-btn-secondary";
+    }
+
+    public void ActivatePage(MTab pTab)
+    {
+        CurrentTab = pTab;
+
+        if (SyncTabsWithFragmentIdentifierInUrl)
+        {
+            var uriBuilder = new UriBuilder(Navigation.Uri);
+
+            if (uriBuilder.Fragment == pTab.FragmentIdentifier)
+                return;
+
+            uriBuilder.Fragment = pTab.FragmentIdentifier;
+
+            Navigation.NavigateTo(uriBuilder.Uri.ToString(), false, true);
+        }
+    }
 }
