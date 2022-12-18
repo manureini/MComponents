@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -132,13 +133,18 @@ namespace MComponents
                     pBuilder.AddAttribute(33, "type", "password");
                 }
 
+                if (pPropertyInfo.GetCustomAttribute<EmailAddressAttribute>() != null)
+                {
+                    pBuilder.AddAttribute(33, "type", "email");
+                }
+
                 if (pField.AdditionalAttributes != null)
+                {
                     pBuilder.AddMultipleAttributes(17, pField.AdditionalAttributes
                         .Where(a => a.Key != Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE)
                         .Where(a => a.Key != nameof(IMGridColumn))
                         .ToDictionary(a => a.Key, a => a.Value));
-
-                //      pBuilder.SetUpdatesAttributeName(pPropertyInfo.Name);
+                }
 
                 pBuilder.AddAttribute(1, "id", pId);
                 pBuilder.AddAttribute(2, "Value", value);
