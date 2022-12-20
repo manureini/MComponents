@@ -127,14 +127,14 @@ namespace MComponents
         public void ReloadCurrentPage()
         {
             string url = mNavigationManager.Uri;
-
-#if NET6_0_OR_GREATER
             mNavigationManager.NavigateTo("/" + SPECIAL_RELOAD_PAGE, false, true);
             NavigateTo(url, false, true);
-#else
-            mNavigationManager.NavigateTo("/" + SPECIAL_RELOAD_PAGE, false);
-            mNavigationManager.NavigateTo(url, false);
-#endif
+        }
+
+        public void NavigateToAndReload(string pUrl)
+        {
+            mNavigationManager.NavigateTo("/" + SPECIAL_RELOAD_PAGE, false, true);
+            NavigateTo(pUrl, false, true);
         }
 
         public void Dispose()
