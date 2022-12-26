@@ -702,7 +702,7 @@
   position: sticky;
   top: 0;
   left: 0;
-  z-index: 102;
+  z-index: 45;
 }
 .m-accordion .m-accordion-card .m-accordion-card-header.m-readonly {
   cursor: default;
@@ -785,7 +785,7 @@
   position: absolute;
   border-width: 1px;
   border-style: solid;
-  border-color: #dfe2e9;
+  border-color: rgb(223, 226, 233);
   border-radius: 0.25rem;
   padding: 0.65rem;
   background-color: #1f1c1c;
@@ -846,7 +846,7 @@
   background-clip: padding-box;
   border-width: 1px;
   border-style: solid;
-  border-color: #dfe2e9;
+  border-color: rgb(223, 226, 233);
   border-radius: 0.25rem;
   padding: 0.65rem;
   transition-duration: 0.15s, 0.15s, 0.15s;
