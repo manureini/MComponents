@@ -30,7 +30,7 @@
 
     [Parameter]
     public string PenColor { get; set; }
-    
+
     [Parameter]
     public string CssClass { get; set; }
 
@@ -59,22 +59,15 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if (mFirstRender)
         {
-            if (mFirstRender)
-            {
-                mContext = await mCanvasRef.CreateCanvas2DAsync();
-                await mContext.SetFillStyleAsync("black");
+            mContext = await mCanvasRef.CreateCanvas2DAsync();
+            await mContext.SetFillStyleAsync("black");
 
-                await JSRuntime.InvokeVoidAsync("mcomponents.registerMPaintOnTouchMove", DotNetObjectReference.Create(this), mContext.Canvas);
-                mFirstRender = false;
+            await JSRuntime.InvokeVoidAsync("mcomponents.registerMPaintOnTouchMove", DotNetObjectReference.Create(this), mContext.Canvas);
+            mFirstRender = false;
 
-                Redraw(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
+            Redraw(false);
         }
     }
 
@@ -251,6 +244,9 @@
 
     public async void OnResetClick()
     {
+        if (mContext == null)
+            return;
+
         mX.Clear();
         mY.Clear();
         mDragging.Clear();
