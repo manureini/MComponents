@@ -85,11 +85,11 @@ namespace MComponents.MAccordion
                 {
                     if (isVisible)
                     {
-                        builder.AddContent(76, (MarkupString)"<i class=\"fas fa-chevron-down\" style=\"float: right;\"></i>");
+                        builder.AddContent(76, (MarkupString)"<i class=\"fas fa-chevron-up\" style=\"float: right;\"></i>");
                     }
                     else
                     {
-                        builder.AddContent(80, (MarkupString)"<i class=\"fas fa-chevron-right\" style=\"float: right;\"></i>");
+                        builder.AddContent(80, (MarkupString)"<i class=\"fas fa-chevron-down\" style=\"float: right;\"></i>");
                     }
                 }
 
