@@ -66,14 +66,11 @@ button:active {
   outline-style: none;
   align-items: center;
 }
-
 .m-btn:hover {
   color: #212529;
   text-decoration-line: none;
 }
-
-.m-btn.disabled,
-.m-btn:disabled {
+.m-btn.disabled, .m-btn:disabled {
   opacity: 0.65;
 }
 

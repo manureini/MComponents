@@ -26,47 +26,46 @@
     transition-property: color, background-color, border-color, box-shadow;
     outline-style: none;
     align-items: center;
-}
 
-.m-btn:hover {
-    color: $text_color;
-    text-decoration-line: none;
-}
+    &:hover {
+        color: $text_color;
+        text-decoration-line: none;
+    }
 
-.m-btn.disabled,
-.m-btn:disabled {
-    opacity: 0.65;
+    &.disabled, &:disabled {
+        opacity: 0.65;
+    }
 }
 
 .m-btn-primary {
     color: $white;
     background-color: $primary;
     border-color: darken($primary, 5%);
-}
 
-.m-btn-primary:hover {
-    color: $white;
-    background-color: lighten($primary, 35%);
-    border-color: lighten($primary, 25%);
+    &:hover {
+        color: $white;
+        background-color: lighten($primary, 35%);
+        border-color: lighten($primary, 25%);
+    }
+
+    &.disabled, &:disabled {
+        color: $white;
+        background-color: $disabled;
+        border-color: $disabled;
+        cursor: not-allowed;
+    }
 }
 
 .m-btn-success {
     color: $white;
     background-color: $success;
     border-color: darken($success, 10%);
-}
 
-.m-btn-success:hover {
-    color: $white;
-    background-color: darken($success, 5%);
-    border-color: darken($success, 10%);
-}
-
-.m-btn-primary.disabled,
-.m-btn-primary:disabled {
-    color: $white;
-    background-color: $disabled;
-    border-color: $disabled;
+    &:hover {
+        color: $white;
+        background-color: darken($success, 5%);
+        border-color: darken($success, 10%);
+    }
 }
 
 .m-btn-sm {
@@ -687,7 +686,7 @@
                     }
 
                     &:after {
-                        background-color: darken($gray, 6);
+                        background-color: $disabled;
                         cursor: not-allowed;
                     }
                 }
