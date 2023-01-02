@@ -35,6 +35,7 @@ namespace MComponents.ExampleApp
                 options.RegisterResourceLocalizer = true;
                 options.SetRequestLocalizationOptions = true;
                 options.RegisterStringLocalizer = true;
+                options.RegisterNavigation = true;
             });
         }
 

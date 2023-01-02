@@ -15,6 +15,8 @@ namespace MComponents.Services
 
         public bool RegisterStringLocalizer { get; set; }
 
+        public bool RegisterNavigation { get; set; }
+
         public CultureInfo[] SupportedCultures { get; set; } = AllSupportedCultures;
 
         public bool SetRequestLocalizationOptions { get; set; }

@@ -157,6 +157,10 @@ namespace MComponents
             {
                 pServices.AddSingleton<IStringLocalizer, StringLocalizer>();
             }
+            if (settings.RegisterNavigation)
+            {
+                pServices.AddScoped<Navigation>();
+            }
 
             pServices.AddBlazoredLocalStorage();
 
