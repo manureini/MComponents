@@ -86,16 +86,15 @@
     border-color: lighten($secondary,40%);
     border-width: 1px;
     border-style: solid;
-}
 
-.m-btn-secondary:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-color: lighten($secondary,30%);
-}
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-color: lighten($secondary,30%);
+    }
 
-.m-btn-secondary.disabled,
-.m-btn-secondary:disabled {
-    color: darken($secondary,10%);
+    &.disabled, &:disabled {
+        color: darken($secondary,10%);
+    }
 }
 
 .m-btn.m-btn-icon {

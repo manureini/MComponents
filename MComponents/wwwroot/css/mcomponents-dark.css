@@ -81,14 +81,11 @@
   border-width: 1px;
   border-style: solid;
 }
-
 .m-btn-secondary:hover {
   background-color: rgba(0, 0, 0, 0.1);
   border-color: #a8abb8;
 }
-
-.m-btn-secondary.disabled,
-.m-btn-secondary:disabled {
+.m-btn-secondary.disabled, .m-btn-secondary:disabled {
   color: #424552;
 }
 
