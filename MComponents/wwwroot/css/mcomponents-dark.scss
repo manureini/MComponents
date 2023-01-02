@@ -147,3 +147,24 @@ button:active {
         }
     }
 }
+
+.m-wizard {
+    .m-wizard-navigation-item-title-contaier {
+        color: $lightgray;
+    }
+
+    .m-wizard-navigation-item--current .m-wizard-navigation-item-title-contaier {
+        color: $gray;
+    }
+
+    .m-wizard-navigation .m-wizard-navigation-item-bar {
+        background-color: $lightgray;
+    }
+
+    .m-wizard-navigation-item.m-wizard-navigation-item--current .m-wizard-navigation-item-bar {
+
+        &:after {
+            background-color: $gray;
+        }
+    }
+}

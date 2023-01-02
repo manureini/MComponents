@@ -599,7 +599,7 @@
 .m-wizard .m-wizard-navigation-item .m-wizard-navigation-item-bar {
   height: 4px;
   position: relative;
-  background-color: #dee1eb;
+  background-color: #ccd1de;
 }
 .m-wizard .m-wizard-navigation-item .m-wizard-navigation-item-bar:after {
   content: " ";
@@ -622,7 +622,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #8e9ab6;
+  color: #ccd1de;
   display: flex;
   align-items: flex-end;
 }
@@ -1027,4 +1027,17 @@ button:active {
 }
 .m-accordion .m-accordion-card .m-accordion-card-body {
   border: 1px solid #707070;
+}
+
+.m-wizard .m-wizard-navigation-item-title-contaier {
+  color: #707070;
+}
+.m-wizard .m-wizard-navigation-item--current .m-wizard-navigation-item-title-contaier {
+  color: #ebedf2;
+}
+.m-wizard .m-wizard-navigation .m-wizard-navigation-item-bar {
+  background-color: #707070;
+}
+.m-wizard .m-wizard-navigation-item.m-wizard-navigation-item--current .m-wizard-navigation-item-bar:after {
+  background-color: #ebedf2;
 }

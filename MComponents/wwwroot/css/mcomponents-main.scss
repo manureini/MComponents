@@ -725,7 +725,7 @@
         .m-wizard-navigation-item-bar {
             height: 4px;
             position: relative;
-            background-color: #dee1eb;
+            background-color: darken($gray, 10);
 
             &:after {
                 content: ' ';
@@ -756,7 +756,7 @@
         font-size: 1.1rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
-        color: darken($gray, 30);
+        color: darken($gray, 10);
         display: flex;
         align-items: flex-end;
 
