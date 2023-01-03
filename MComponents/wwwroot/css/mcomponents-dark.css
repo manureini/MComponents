@@ -75,18 +75,18 @@
 }
 
 .m-btn-secondary {
-  color: #424552;
+  color: #272727;
   background-color: transparent;
-  border-color: #c4c6cf;
+  border-color: #a6a6a6;
   border-width: 1px;
   border-style: solid;
 }
 .m-btn-secondary:hover {
   background-color: rgba(0, 0, 0, 0.1);
-  border-color: #a8abb8;
+  border-color: #8d8d8d;
 }
 .m-btn-secondary.disabled, .m-btn-secondary:disabled {
-  color: #424552;
+  color: #272727;
 }
 
 .m-btn.m-btn-icon {
@@ -252,7 +252,7 @@
   font-size: 19px;
 }
 .m-action-column-cell .m-grid-action-icon--disabled {
-  color: #a8abb8;
+  color: #8d8d8d;
 }
 
 .m-btn.m-btn-icon i {
@@ -453,7 +453,7 @@
   top: 2px;
   width: 5px;
   height: 10px;
-  border: solid #595d6e;
+  border: solid #404040;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
@@ -779,11 +779,68 @@
   border-color: rgb(223, 226, 233);
   border-radius: 0;
   padding: 0.65rem;
-  background-color: #1f1c1c;
+  background-color: #404040;
   margin-top: 0.5rem;
   transform: translateX(-50%);
 }
 
+.m-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+.m-tooltip .m-tooltip-content {
+  display: none;
+  position: absolute;
+  padding: 0.25rem 1rem;
+  bottom: 100%;
+  left: 50%;
+  background-color: #404040;
+  text-align: center;
+  border-radius: 0;
+  z-index: 55;
+  transform: translateX(-50%) translateY(-0.5rem);
+  color: #ffffff;
+}
+.m-tooltip .m-tooltip-content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #404040 transparent transparent transparent;
+}
+.m-tooltip .m-tooltip-spacer {
+  position: absolute;
+  padding: 0.25rem 1rem;
+  bottom: 100%;
+  left: 50%;
+  z-index: 54;
+  transform: translateX(-50%);
+  height: 1rem;
+  width: 100%;
+  display: none;
+}
+.m-tooltip:hover .m-tooltip-content {
+  display: block;
+  animation: fade_in_show 0.25s;
+}
+.m-tooltip:hover .m-tooltip-spacer {
+  display: block;
+}
+
+@keyframes fade_in_show {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-0.5rem) scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-0.5rem) scale(1);
+  }
+}
 .m-image-preview-editor {
   display: flex;
   flex-direction: column;

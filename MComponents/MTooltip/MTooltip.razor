@@ -1,0 +1,29 @@
+﻿
+
+<div class="m-tooltip" tabindex="-1">
+
+    <div class="m-tooltip-spacer">
+    </div>
+
+    <div class="m-tooltip-content">
+        @Text
+        @TooltipContent
+    </div>
+
+    @ChildContent
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public RenderFragment TooltipContent { get; set; }
+
+}
