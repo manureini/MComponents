@@ -276,7 +276,10 @@ button:active {
   border: 0;
   height: 100%;
 }
-.m-grid-edit-row .m-select-content {
+.m-grid-edit-row .m-select {
+  display: inline;
+}
+.m-grid-edit-row .m-select .m-select-content {
   padding-right: 0;
   overflow: hidden;
 }
@@ -838,7 +841,7 @@ button:active {
   text-align: center;
   border-radius: 0;
   z-index: 55;
-  transform: translateX(-50%) translateY(-0.5rem);
+  transform: translateX(-50%) translateY(-0.6rem);
   color: #ffffff;
 }
 .m-tooltip .m-tooltip-content::after {
@@ -873,11 +876,11 @@ button:active {
 @keyframes fade_in_show {
   0% {
     opacity: 0;
-    transform: translateX(-50%) translateY(-0.5rem) scale(0);
+    transform: translateX(-50%) translateY(-0.6rem) scale(0);
   }
   100% {
     opacity: 1;
-    transform: translateX(-50%) translateY(-0.5rem) scale(1);
+    transform: translateX(-50%) translateY(-0.6rem) scale(1);
   }
 }
 .m-image-preview-editor {
