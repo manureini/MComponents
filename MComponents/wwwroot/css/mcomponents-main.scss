@@ -440,22 +440,24 @@
 .m-select {
     user-select: none;
 
-    &.m-form-control {
+    .m-form-control {
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
 
+    /*
     &.m-form-control {
         padding: 0;
     }
+    */
 
-    &.m-select--open {
+    .m-select--open {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
     }
 
-    &.m-select--disabled {
+    .m-select--disabled {
         cursor: default;
         background: $disabled;
 
@@ -463,12 +465,7 @@
             color: darken($gray,25);
         }
     }
-
-    .m-select-dropdown-icon {
-        float: right;
-    }
 }
-
 
 .m-select-options-container {
     display: block;

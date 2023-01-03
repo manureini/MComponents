@@ -362,28 +362,27 @@
 /* START Select ----------------------------------------------------------------------------- */
 .m-select {
   user-select: none;
+  /*
+  &.m-form-control {
+      padding: 0;
+  }
+  */
 }
-.m-select.m-form-control {
+.m-select .m-form-control {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.m-select.m-form-control {
-  padding: 0;
-}
-.m-select.m-select--open {
+.m-select .m-select--open {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-.m-select.m-select--disabled {
+.m-select .m-select--disabled {
   cursor: default;
   background: #f0f1f3;
 }
-.m-select.m-select--disabled .m-select-dropdown-icon {
+.m-select .m-select--disabled .m-select-dropdown-icon {
   color: #9ea7c0;
-}
-.m-select .m-select-dropdown-icon {
-  float: right;
 }
 
 .m-select-options-container {
