@@ -1,0 +1,128 @@
+﻿@using System.IO;
+
+@if (FileName != null)
+{
+    <div class="m-file-thumbnail @(ProgressPercent != null ? "in-progress" : null) @(IsDisabled ? "disabled" : null)">
+
+        @if (ProgressPercent != null)
+        {
+            @ProgressPercent <span>%</span>
+        }
+
+        <br />
+
+        <i class="fas fa-3x @mFileIcon" style="@mFileIconStyle"></i>
+        <br />
+        <span class="m-file-thumbnail-file-name">@FileName</span>
+    </div>
+}
+
+@code {
+
+    protected IFile mFile;
+
+    [Parameter]
+    public IFile File
+    {
+        get
+        {
+            return mFile;
+        }
+        set
+        {
+            mFile = value;
+            mFileName = mFile.FileName;
+            mFileIcon = GetFileIcon(mFile?.FileName);
+        }
+    }
+
+    protected string mFileName;
+    [Parameter]
+    public string FileName
+    {
+        get
+        {
+            return mFileName;
+        }
+        set
+        {
+            mFileName = value;
+            mFileIcon = GetFileIcon(mFileName);
+        }
+    }
+
+    [Parameter]
+    public int? ProgressPercent { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    protected string mFileIcon;
+    protected string mFileIconStyle => ProgressPercent > 0 ? $"background: linear-gradient(0deg, green {ProgressPercent}%, #000000e6 {ProgressPercent}%)" : null;
+
+    protected virtual string GetFileIcon(string pFileName)
+    {
+        if (pFileName == null)
+            return "fa-file";
+
+        var extensions = Path.GetExtension(pFileName);
+
+        @switch (extensions)
+        {
+            case ".pdf":
+                return "fa-file-pdf";
+
+            case ".ppt":
+            case ".pptx":
+                return "fa-file-powerpoint";
+
+            case ".doc":
+            case ".docx":
+                return "fa-file-word";
+
+            case ".xls":
+            case ".xlsx":
+                return "fa-file-excel";
+
+            case ".jpg":
+            case ".jpeg":
+            case ".png":
+            case ".tif":
+            case ".gif":
+            case ".psd":
+                return "fa-file-image";
+
+            case ".mp4":
+            case ".mpeg":
+            case ".mkv":
+            case ".mov":
+            case ".avi":
+                return "fa-file-video";
+
+            case ".mp3":
+            case ".wav":
+            case ".flac":
+            case ".ogg":
+                return "fa-file-music";
+
+            case ".zip":
+            case ".rar":
+            case ".7z":
+                return "fa-file-archive";
+
+            case ".txt":
+            case ".md":
+                return "fa-file-alt";
+
+            case ".cs":
+            case ".razor.cs":
+            case ".razor":
+            case ".java":
+            case ".py":
+                return "fa-file-code";
+
+            default:
+                return "fa-file";
+        }
+    }
+}

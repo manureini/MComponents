@@ -15,15 +15,15 @@ namespace MComponents.Files
         {
             Template = (context) => (builder) =>
             {
-                builder.OpenComponent<FileInputComponent>(0);
-                builder.AddAttribute(1, nameof(FileInputComponent.FileInputName), FileInputName);
-                builder.AddAttribute(2, nameof(FileInputComponent.AdditionalHeaders), AdditionalHeaders);
-                builder.AddAttribute(3, nameof(FileInputComponent.Value), context.Value);
-                builder.AddAttribute(4, nameof(FileInputComponent.ValueChanged), context.ValueChanged);
-                builder.AddAttribute(5, nameof(FileInputComponent.ValueExpression), context.ValueExpression);
-                builder.AddAttribute(5, nameof(FileInputComponent.Title), Property);
-                builder.AddAttribute(5, nameof(FileInputComponent.Attributes), Attributes);
-                builder.AddAttribute(5, nameof(FileInputComponent.Accept), Accept);
+                builder.OpenComponent<MInputFile>(0);
+                builder.AddAttribute(1, nameof(MInputFile.FileInputName), FileInputName);
+                builder.AddAttribute(2, nameof(MInputFile.AdditionalHeaders), AdditionalHeaders);
+                builder.AddAttribute(3, nameof(MInputFile.Value), context.Value);
+                builder.AddAttribute(4, nameof(MInputFile.ValueChanged), context.ValueChanged);
+                builder.AddAttribute(5, nameof(MInputFile.ValueExpression), context.ValueExpression);
+                builder.AddAttribute(5, nameof(MInputFile.Title), Property);
+                builder.AddAttribute(5, nameof(MInputFile.Attributes), Attributes);
+                builder.AddAttribute(5, nameof(MInputFile.Accept), Accept);
                 builder.CloseComponent();
             };
         }

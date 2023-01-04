@@ -1,0 +1,225 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using System.Linq.Expressions
+@using System.Net.Http.Json
+
+@inject IFileUploadService FileUploader
+@inject IStringLocalizer L
+
+@inherits InputBase<IFile>
+
+@if (MaxAllowedFiles > 1)
+{
+    <div class="m-input-file-container">
+
+        <div class="m-input-file-dropzone @mDropClass">
+            <label>
+                <i class="fas fa-cloud-upload-alt fa-3x"></i><br />
+                Datei auswählen oder hierher ziehen.
+            </label>
+            <InputFile OnChange="LoadFiles"
+                   @ondragenter="HandleDragEnter"
+                   @ondragleave="HandleDragLeave"
+                   title=""
+                   multiple />
+        </div>
+
+        <div class="m-input-file-list">
+
+            @if (Values != null)
+            {
+                @foreach (var file in Values)
+                {
+                    <MFileThumbnail File="file" />
+                }
+            }
+
+            @foreach (var fileInProgress in mFileProgress)
+            {
+                <MFileThumbnail FileName="@fileInProgress.BrowserFile.Name" ProgressPercent="fileInProgress.Progress" IsDisabled="fileInProgress.Progress <= 0" />
+            }
+
+        </div>
+
+
+    </div>
+
+}
+else
+{
+    <div class="m-input-file-container">
+
+        <div class="col-sm-12">
+            @if (mShowUploadFile || Value == null)
+            {
+                <div class="m-input-file">
+                    <InputFile id="@mInputId" OnChange="@LoadFiles" accept="@Accept" />
+                    @if (mProgress > -1)
+                    {
+                        <div class="m-input-file-progress-container">
+                            <div class="m-input-file-progress-bar" style="width:@(Math.Round(mProgress))%"></div>
+                        </div>
+                    }
+
+                    @if (Value != null)
+                    {
+                        <button type="button" class="m-btn m-btn-primary m-btn-sm" @onclick="OnBtnUploadNewFile">X</button>
+                    }
+                </div>
+            }
+            else
+            {
+                <span>@Value?.FileName</span>
+                <a class="m-btn m-btn-primary m-btn-icon m-btn-sm" href="@Value.Url" target="_blank"><i class="fas fa-download"></i></a>
+                <button type="button" class="m-wizard-btn m-btn m-btn-primary m-btn-sm" @onclick="OnBtnUploadNewFile">@L["Upload new file"]</button>
+            }
+        </div>
+
+    </div>
+}
+
+@code {
+
+    protected bool isLoading;
+
+    [Parameter]
+    public int MaxAllowedFiles { get; set; } = 1;
+
+    [Parameter]
+    public string FileInputName { get; set; }
+
+    [Parameter]
+    public IDictionary<string, string> AdditionalHeaders { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Accept { get; set; }
+
+    [Parameter]
+    public Attribute[] Attributes { get; set; }
+
+    [Parameter]
+    public ICollection<IFile> Values { get; set; }
+
+    [Parameter]
+    public EventCallback<ICollection<IFile>> ValuesChanged { get; set; }
+
+    [Parameter]
+    public Expression<Func<ICollection<IFile>>> ValuesExpression { get; set; }
+
+
+    [CascadingParameter]
+    protected EditContext CascadedEditContext2 { get; set; }
+
+    protected Guid mInputId = Guid.NewGuid();
+    protected bool mShowUploadFile = false;
+    protected float mProgress = -1;
+    protected string mDropClass = string.Empty;
+    protected List<FileProgressInfo> mFileProgress = new List<FileProgressInfo>();
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        //Workaround for bypass check if ValueExpression is set
+        parameters.SetParameterProperties(this);
+
+        if (MaxAllowedFiles > 1)
+        {
+            EditContext = CascadedEditContext2;
+        }
+
+        await base.SetParametersAsync(parameters);
+
+        if (MaxAllowedFiles > 1)
+        {
+            FieldIdentifier = FieldIdentifier.Create(ValuesExpression);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+    }
+
+    protected async void LoadFiles(InputFileChangeEventArgs e)
+    {
+        if (e.FileCount <= 0) //should we set the Document to null?
+            return;
+
+        if (AdditionalHeaders == null)
+            AdditionalHeaders = new Dictionary<string, string>();
+
+        if (!AdditionalHeaders.ContainsKey(nameof(FileInputName)))
+            AdditionalHeaders.Add(nameof(FileInputName), FileInputName);
+
+        var files = e.GetMultipleFiles(int.MaxValue).Take(MaxAllowedFiles).ToArray();
+
+        foreach (var file in files)
+        {
+            mFileProgress.Add(new FileProgressInfo(file, 0));
+        }
+
+        await InvokeAsync(StateHasChanged);
+
+        var createdFiles = new List<IFile>();
+
+        foreach (var file in files)
+        {
+            var createdFile = await FileUploader.UploadFile(file, AdditionalHeaders, OnProgressChanged);
+            createdFiles.Add(createdFile);
+
+            mFileProgress.RemoveAll(f => f.BrowserFile == file);
+
+            if (MaxAllowedFiles > 1)
+            {
+                Values.Add(createdFile);
+                await ValuesChanged.InvokeAsync(Values);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+        if (MaxAllowedFiles <= 1)
+        {
+            CurrentValue = createdFiles.FirstOrDefault();
+            mProgress = -1;
+            mShowUploadFile = false;
+        }
+
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    protected async Task OnProgressChanged(IBrowserFile pFile, long pBytesProcessed)
+    {
+        var percent = (float)pBytesProcessed / pFile.Size * 100;
+
+        mProgress = percent;
+
+        var progressPercent = mFileProgress.First(f => f.BrowserFile == pFile);
+        progressPercent.Progress = (int)percent;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected void OnBtnUploadNewFile()
+    {
+        mShowUploadFile = !mShowUploadFile;
+    }
+
+    void HandleDragEnter()
+    {
+        mDropClass = "active";
+    }
+
+    void HandleDragLeave()
+    {
+        mDropClass = string.Empty;
+    }
+
+    protected override bool TryParseValueFromString(string value, out IFile result, out string validationErrorMessage)
+    {
+        result = null;
+        validationErrorMessage = null;
+        return false;
+    }
+
+}

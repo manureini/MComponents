@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MComponents.ExampleApp.Data;
 using System.Globalization;
+using MComponents.ExampleApp.Service;
+using MComponents.Files;
 
 namespace MComponents.ExampleApp
 {
@@ -29,6 +31,7 @@ namespace MComponents.ExampleApp
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<IFileUploadService, FileUploadService>();
 
             services.AddMComponents(options =>
             {

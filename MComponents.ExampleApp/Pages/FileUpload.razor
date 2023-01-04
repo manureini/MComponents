@@ -1,0 +1,27 @@
+﻿@page "/fileupload"
+@using MComponents.Files
+
+
+<h3>FileUpload</h3>
+
+
+<CascadingValue Value="mEditContext">
+
+    <h5>Single</h5>
+
+    <MInputFile @bind-Value=SingleFile />
+
+    <h5>Multi</h5>
+
+    <MInputFile MaxAllowedFiles="10" @bind-Values=MultipleFiles />
+</CascadingValue>
+
+@code {
+
+    protected EditContext mEditContext = new EditContext(string.Empty);
+
+
+    public IFile SingleFile { get; set; }
+    public ICollection<IFile> MultipleFiles { get; set; } = new List<IFile>();
+
+}

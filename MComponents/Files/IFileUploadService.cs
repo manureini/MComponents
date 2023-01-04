@@ -7,6 +7,6 @@ namespace MComponents.Files
 {
     public interface IFileUploadService
     {
-        public Task<IList<IFile>> UploadFiles(IReadOnlyList<IBrowserFile> pFiles, IDictionary<string, string> pAdditionalHeaders, Action<IBrowserFile, float> pOnProgressChanged);
+        public Task<IFile> UploadFile(IBrowserFile pFile, IDictionary<string, string> pAdditionalHeaders, Func<IBrowserFile, long, Task> pOnProgressChanged);
     }
 }
