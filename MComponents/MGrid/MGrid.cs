@@ -1897,7 +1897,7 @@ namespace MComponents.MGrid
                     semaphoreAcquired = true;
 
                     mIsLoading = true;
-                    StateHasChanged();
+                    InvokeStateHasChanged();
 
                     var queryable = GetIQueryable(Enumerable.Empty<T>(), false);
 
@@ -1916,7 +1916,7 @@ namespace MComponents.MGrid
 
                     mIsLoading = false;
 
-                    _ = InvokeAsync(() => StateHasChanged());
+                    InvokeStateHasChanged();
                 }
             }
             finally

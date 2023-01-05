@@ -20,18 +20,24 @@ namespace MComponents.ExampleApp.Data
                 },
             };
 
+        protected WeatherForecast[] mValues;
 
-        public Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
+        public WeatherForecastService()
         {
             var rng = new Random();
-            return Task.FromResult(Enumerable.Range(1, 500).Select(index => new WeatherForecast
+            mValues = Enumerable.Range(1, 500).Select(index => new WeatherForecast
             {
-                Date = startDate.AddDays(index),
+                Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)],
                 WeatherStation = AllWeatherStations[rng.Next(0, 2)],
                 IsGoodWeather = rng.Next(0, 2) == 0
-            }).ToArray());
+            }).ToArray();
+        }
+
+        public Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
+        {
+            return Task.FromResult(mValues);
         }
     }
 }
