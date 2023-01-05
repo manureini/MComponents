@@ -229,7 +229,7 @@ namespace MComponents.MSelect
 
             pBuilder.CloseElement();
 
-            pBuilder.AddMarkupContent(219, "<span class=\"m-select-dropdown-icon fa fa-angle-down\" role =\"presentation\"></span>");
+            pBuilder.AddMarkupContent(219, "<span class=\"m-select-dropdown-icon fa-solid fa-angle-down\" role =\"presentation\"></span>");
 
             pBuilder.CloseElement(); //span
 

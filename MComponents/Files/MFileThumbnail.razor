@@ -11,7 +11,7 @@
 
         <br />
 
-        <i class="fas fa-3x @mFileIcon" style="@mFileIconStyle"></i>
+        <i class="fa-solid fa-3x @mFileIcon" style="@mFileIconStyle"></i>
         <br />
         <span class="m-file-thumbnail-file-name">@FileName</span>
     </div>
@@ -84,6 +84,9 @@
             case ".xlsx":
                 return "fa-file-excel";
 
+            case ".csv":
+                return "fa-file-csv";
+
             case ".jpg":
             case ".jpeg":
             case ".png":
@@ -103,16 +106,16 @@
             case ".wav":
             case ".flac":
             case ".ogg":
-                return "fa-file-music";
+                return "fa-file-audio";
 
             case ".zip":
             case ".rar":
             case ".7z":
-                return "fa-file-archive";
+                return "fa-file-zipper";
 
             case ".txt":
             case ".md":
-                return "fa-file-alt";
+                return "fa-file-lines";
 
             case ".cs":
             case ".razor.cs":

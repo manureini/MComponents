@@ -112,7 +112,7 @@ namespace MComponents.MGrid
                     builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(111, "i");
-                    builder.AddAttribute(112, "class", "fas fa-eraser m-grid-action-icon");
+                    builder.AddAttribute(112, "class", "fa-solid fa-eraser m-grid-action-icon");
                     builder.CloseElement(); //i
 
                     builder.CloseElement(); //button
@@ -129,7 +129,7 @@ namespace MComponents.MGrid
                     builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(128, "i");
-                    builder.AddAttribute(129, "class", "fas fa-save m-grid-action-icon");
+                    builder.AddAttribute(129, "class", "fa-solid fa-floppy-disk m-grid-action-icon");
                     builder.CloseElement(); //i
 
                     builder.CloseElement(); //button
@@ -163,7 +163,7 @@ namespace MComponents.MGrid
                     builder.AddEventStopPropagationClicksAttribute(22);
 
                     builder.OpenElement(161, "i");
-                    builder.AddAttribute(162, "class", "fas fa-edit m-grid-action-icon");
+                    builder.AddAttribute(162, "class", "fa-solid fa-pen-to-square m-grid-action-icon");
 
                     builder.CloseElement(); //i
 
@@ -210,11 +210,11 @@ namespace MComponents.MGrid
 
                     if (RowDeleteEnabled != null && RowDeleteEnabled.Equals(pModel))
                     {
-                        builder.AddAttribute(240, "class", "fas fa-trash-alt m-grid-action-icon");
+                        builder.AddAttribute(240, "class", "fa-solid fa-trash-can m-grid-action-icon");
                     }
                     else
                     {
-                        builder.AddAttribute(240, "class", "fas fa-trash-alt m-grid-action-icon m-grid-action-icon--disabled");
+                        builder.AddAttribute(240, "class", "fa-solid fa-trash-can m-grid-action-icon m-grid-action-icon--disabled");
                     }
 
                     builder.CloseElement(); //i

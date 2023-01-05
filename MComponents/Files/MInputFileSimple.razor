@@ -33,7 +33,7 @@
             <span class="m-input-file-simple-filename">@Value?.FileName</span>
             @if (!string.IsNullOrWhiteSpace(Value.Url))
             {
-                <a class="m-btn m-btn-primary m-btn-icon m-btn-sm" href="@Value.Url" target="_blank"><i class="fas fa-download"></i></a>
+                <a class="m-btn m-btn-primary m-btn-icon m-btn-sm" href="@Value.Url" target="_blank"><i class="fa-solid fa-download"></i></a>
             }
             <button type="button" class="m-wizard-btn m-btn m-btn-primary m-btn-sm" @onclick="OnBtnUploadNewFile">@L["Upload new file"]</button>
         </div>

@@ -391,7 +391,7 @@ namespace MComponents.MGrid
                                builder2.OpenElement(233, "button");
                                builder2.AddAttribute(234, "class", "m-btn m-btn-primary");
                                builder2.AddAttribute(235, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarAdd));
-                               builder2.AddContent(236, (MarkupString)$"<i class=\"fa fa-plus\"></i> {L["Add"]}");
+                               builder2.AddContent(236, (MarkupString)$"<i class=\"fa-solid fa-plus\"></i> {L["Add"]}");
                                builder2.CloseElement(); // button
                            }
 
@@ -400,7 +400,7 @@ namespace MComponents.MGrid
                                builder2.OpenElement(242, "button");
                                builder2.AddAttribute(243, "class", "m-btn m-btn-primary");
                                builder2.AddAttribute(244, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarEdit));
-                               builder2.AddContent(245, (MarkupString)$"<i class=\"fa fa-edit\"></i> {L["Edit"]}");
+                               builder2.AddContent(245, (MarkupString)$"<i class=\"fa-solid fa-pen-to-square\"></i> {L["Edit"]}");
                                builder2.CloseElement(); // button
                            }
 
@@ -409,7 +409,7 @@ namespace MComponents.MGrid
                                builder2.OpenElement(251, "button");
                                builder2.AddAttribute(252, "class", "m-btn m-btn-primary");
                                builder2.AddAttribute(253, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarRemove));
-                               builder2.AddContent(254, (MarkupString)$"<i class=\"fa fa-trash-alt\"></i> {L["Delete"]}");
+                               builder2.AddContent(254, (MarkupString)$"<i class=\"fa-solid fa-trash-can\"></i> {L["Delete"]}");
                                builder2.CloseElement(); // button
                            }
 
@@ -429,7 +429,7 @@ namespace MComponents.MGrid
                            builder2.AddAttribute(264, "class", "m-btn m-btn-primary m-btn-sm");
                            builder2.AddAttribute(265, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleGrouping));
                            builder2.OpenElement(266, "i");
-                           builder2.AddAttribute(267, "class", "fas fa-window-restore");
+                           builder2.AddAttribute(267, "class", "fa-solid fa-window-restore");
                            builder2.CloseElement(); //i
                            builder2.AddContent(269, L["Grouping"]);
                            builder2.CloseElement(); //button
@@ -441,7 +441,7 @@ namespace MComponents.MGrid
                            builder2.AddAttribute(264, "class", "m-btn m-btn-primary m-btn-sm");
                            builder2.AddAttribute(265, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleFilter));
                            builder2.OpenElement(266, "i");
-                           builder2.AddAttribute(267, "class", "fas fa-filter");
+                           builder2.AddAttribute(267, "class", "fa-solid fa-filter");
                            builder2.CloseElement(); //i
                            builder2.AddContent(269, L["Filter"]);
                            builder2.CloseElement(); //button
@@ -522,10 +522,10 @@ namespace MComponents.MGrid
                                if (sortInstr != null)
                                {
                                    if (sortInstr.Direction == MSortDirection.Ascending)
-                                       builder2.AddContent(329, (MarkupString)"<i class=\"fa fa-arrow-down m-grid-header-icon\"></i>");
+                                       builder2.AddContent(329, (MarkupString)"<i class=\"fa-solid fa-arrow-down m-grid-header-icon\"></i>");
 
                                    if (sortInstr.Direction == MSortDirection.Descending)
-                                       builder2.AddContent(332, (MarkupString)"<i class=\"fa fa-arrow-up m-grid-header-icon\"></i>");
+                                       builder2.AddContent(332, (MarkupString)"<i class=\"fa-solid fa-arrow-up m-grid-header-icon\"></i>");
                                }
                            }
 
@@ -692,7 +692,7 @@ namespace MComponents.MGrid
                            builder2.OpenElement(560, "button");
                            builder2.AddAttribute(561, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
                            builder2.AddAttribute(562, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnBtnImportClicked));
-                           builder2.AddContent(563, (MarkupString)"<i class=\"fas fa-upload\"></i>");
+                           builder2.AddContent(563, (MarkupString)"<i class=\"fa-solid fa-upload\"></i>");
                            builder2.CloseElement(); // button
 
                            builder2.OpenComponent<InputFile>(566);
@@ -707,7 +707,7 @@ namespace MComponents.MGrid
                            builder2.OpenElement(435, "button");
                            builder2.AddAttribute(436, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
                            builder2.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async () => await ExportContent()));
-                           builder2.AddContent(438, (MarkupString)"<i class=\"fas fa-download\"></i>");
+                           builder2.AddContent(438, (MarkupString)"<i class=\"fa-solid fa-download\"></i>");
                            builder2.CloseElement(); // button
                        }
 
@@ -887,11 +887,11 @@ namespace MComponents.MGrid
             if (hidden.Item1 != null)
             {
                 value = hidden.Item2;
-                pBuilder.AddMarkupContent(697, "<i class=\"fas fa-arrow-right\"></i>");
+                pBuilder.AddMarkupContent(697, "<i class=\"fa-solid fa-arrow-right\"></i>");
             }
             else
             {
-                pBuilder.AddMarkupContent(697, "<i class=\"fas fa-arrow-down\"></i>");
+                pBuilder.AddMarkupContent(697, "<i class=\"fa-solid fa-arrow-down\"></i>");
             }
 
             if (value == null)
