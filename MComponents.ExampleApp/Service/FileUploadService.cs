@@ -8,14 +8,14 @@ namespace MComponents.ExampleApp.Service
 {
     public class FileUploadService : IFileUploadService
     {
-        public async Task<IFile> UploadFile(IBrowserFile pFile, IDictionary<string, string> pAdditionalHeaders, Func<IBrowserFile, long, Task> pOnProgressChanged)
+        public async Task<IFile> UploadFile(IBrowserFile pFile, IDictionary<string, string> pAdditionalHeaders, Action<IBrowserFile, long> pOnProgressChanged)
         {
             long size = 0;
 
             while (size < pFile.Size)
             {
-                _ = pOnProgressChanged(pFile, size);
-                await Task.Delay(300);
+                pOnProgressChanged(pFile, size);
+                await Task.Delay(500);
 
                 size += pFile.Size / 10 + 100;
             }

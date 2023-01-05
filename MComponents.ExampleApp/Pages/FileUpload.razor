@@ -1,11 +1,13 @@
 ﻿@page "/fileupload"
 @using MComponents.Files
 
-
 <h3>FileUpload</h3>
 
-
 <CascadingValue Value="mEditContext">
+
+    <h5>Simple</h5>
+
+    <MInputFileSimple @bind-Value=SingleFile />
 
     <h5>Single</h5>
 

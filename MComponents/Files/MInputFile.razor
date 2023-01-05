@@ -7,75 +7,43 @@
 
 @inherits InputBase<IFile>
 
-@if (MaxAllowedFiles > 1)
-{
-    <div class="m-input-file-container">
+<div class="m-input-file-container">
 
-        <div class="m-input-file-dropzone @mDropClass">
-            <label>
-                <i class="fas fa-cloud-upload-alt fa-3x"></i><br />
-                Datei auswählen oder hierher ziehen.
-            </label>
-            <InputFile OnChange="LoadFiles"
+    <div class="m-input-file-dropzone @mDropClass">
+        <label>
+            <i class="fas fa-cloud-upload-alt fa-3x"></i><br />
+            Datei auswählen oder hierher ziehen.
+        </label>
+        <InputFile OnChange="LoadFiles"
                    @ondragenter="HandleDragEnter"
                    @ondragleave="HandleDragLeave"
                    title=""
                    multiple />
-        </div>
-
-        <div class="m-input-file-list">
-
-            @if (Values != null)
-            {
-                @foreach (var file in Values)
-                {
-                    <MFileThumbnail File="file" />
-                }
-            }
-
-            @foreach (var fileInProgress in mFileProgress)
-            {
-                <MFileThumbnail FileName="@fileInProgress.BrowserFile.Name" ProgressPercent="fileInProgress.Progress" IsDisabled="fileInProgress.Progress <= 0" />
-            }
-
-        </div>
-
-
     </div>
 
-}
-else
-{
-    <div class="m-input-file-container">
+    <div class="m-input-file-list">
 
-        <div class="col-sm-12">
-            @if (mShowUploadFile || Value == null)
-            {
-                <div class="m-input-file">
-                    <InputFile id="@mInputId" OnChange="@LoadFiles" accept="@Accept" />
-                    @if (mProgress > -1)
-                    {
-                        <div class="m-input-file-progress-container">
-                            <div class="m-input-file-progress-bar" style="width:@(Math.Round(mProgress))%"></div>
-                        </div>
-                    }
+        @if (CurrentValue != null && mFileProgress.Count == 0)
+        {
+            <MFileThumbnail File="CurrentValue" />
+        }
 
-                    @if (Value != null)
-                    {
-                        <button type="button" class="m-btn m-btn-primary m-btn-sm" @onclick="OnBtnUploadNewFile">X</button>
-                    }
-                </div>
-            }
-            else
+        @if (Values != null)
+        {
+            @foreach (var file in Values)
             {
-                <span>@Value?.FileName</span>
-                <a class="m-btn m-btn-primary m-btn-icon m-btn-sm" href="@Value.Url" target="_blank"><i class="fas fa-download"></i></a>
-                <button type="button" class="m-wizard-btn m-btn m-btn-primary m-btn-sm" @onclick="OnBtnUploadNewFile">@L["Upload new file"]</button>
+                <MFileThumbnail File="file" />
             }
-        </div>
+        }
+
+        @foreach (var fileInProgress in mFileProgress)
+        {
+            <MFileThumbnail FileName="@fileInProgress.BrowserFile.Name" ProgressPercent="fileInProgress.Progress" IsDisabled="fileInProgress.Progress <= 0" />
+        }
 
     </div>
-}
+</div>
+
 
 @code {
 
@@ -108,13 +76,9 @@ else
     [Parameter]
     public Expression<Func<ICollection<IFile>>> ValuesExpression { get; set; }
 
-
     [CascadingParameter]
     protected EditContext CascadedEditContext2 { get; set; }
 
-    protected Guid mInputId = Guid.NewGuid();
-    protected bool mShowUploadFile = false;
-    protected float mProgress = -1;
     protected string mDropClass = string.Empty;
     protected List<FileProgressInfo> mFileProgress = new List<FileProgressInfo>();
 
@@ -134,10 +98,6 @@ else
         {
             FieldIdentifier = FieldIdentifier.Create(ValuesExpression);
         }
-    }
-
-    protected override void OnParametersSet()
-    {
     }
 
     protected async void LoadFiles(InputFileChangeEventArgs e)
@@ -181,33 +141,23 @@ else
         if (MaxAllowedFiles <= 1)
         {
             CurrentValue = createdFiles.FirstOrDefault();
-            mProgress = -1;
-            mShowUploadFile = false;
         }
-
-        _ = InvokeAsync(StateHasChanged);
-    }
-
-    protected async Task OnProgressChanged(IBrowserFile pFile, long pBytesProcessed)
-    {
-        var percent = (float)pBytesProcessed / pFile.Size * 100;
-
-        mProgress = percent;
-
-        var progressPercent = mFileProgress.First(f => f.BrowserFile == pFile);
-        progressPercent.Progress = (int)percent;
 
         await InvokeAsync(StateHasChanged);
     }
 
-    protected void OnBtnUploadNewFile()
+    protected void OnProgressChanged(IBrowserFile pFile, long pBytesProcessed)
     {
-        mShowUploadFile = !mShowUploadFile;
+        var progressPercent = mFileProgress.First(f => f.BrowserFile == pFile);
+        progressPercent.Progress = (int)((float)pBytesProcessed / pFile.Size * 100);
+
+        _ = InvokeAsync(StateHasChanged);
     }
 
     void HandleDragEnter()
     {
         mDropClass = "active";
+        StateHasChanged();
     }
 
     void HandleDragLeave()
@@ -221,5 +171,4 @@ else
         validationErrorMessage = null;
         return false;
     }
-
 }

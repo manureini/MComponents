@@ -938,6 +938,28 @@
   outline: 0;
 }
 
+.m-input-file-simple-container .m-input-file-simple {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  word-break: break-word;
+  overflow: hidden;
+}
+.m-input-file-simple-container .m-input-file-simple-filename {
+  padding-right: 5px;
+}
+.m-input-file-simple-container input {
+  overflow: hidden;
+}
+.m-input-file-simple-container .m-input-file-simple-progress-container {
+  border: 1px solid #212529;
+  margin-top: 2px;
+}
+.m-input-file-simple-container .m-input-file-simple-progress-container .m-input-file-simple-progress-bar {
+  height: 24px;
+  background-color: #595d6e;
+}
+
 .m-input-file-container .m-input-file-dropzone {
   position: relative;
   overflow: hidden;
@@ -953,8 +975,8 @@
   opacity: 0;
   cursor: pointer;
 }
-.m-input-file-container.active {
-  background-color: #999;
+.m-input-file-container .m-input-file-dropzone.active {
+  background-color: #dcdfe8;
 }
 .m-input-file-container label {
   position: absolute;
