@@ -219,6 +219,7 @@ var mcomponents = (function () {
                 ret.push(borderSpacing);
                 ret.push(borderCollapse);
                 ret.push(rowheight.toString());
+                ret.push(element.parentElement.getBoundingClientRect().width.toString());
 
                 var children = Array.from(element.children[0].children[0].children);
 

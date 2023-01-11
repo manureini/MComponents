@@ -149,8 +149,8 @@ namespace MComponents.MGrid
 
         protected ElementReference mTableReference;
 
-
         protected double[] mColumnsWidth;
+        protected double mTableContainerWidth;
 
         protected BoundingBox mFieldBoundingBox;
         protected double mTableBorderLeft;
@@ -461,6 +461,9 @@ namespace MComponents.MGrid
                            builder2.CloseElement(); // div
                        }
 
+                       builder2.OpenElement(270, "div");
+                       builder2.AddAttribute(371, "class", "m-table-container");
+
                        builder2.OpenElement(277, "table");
                        builder2.AddAttribute(286, "class", HtmlTableClass + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
 
@@ -618,6 +621,7 @@ namespace MComponents.MGrid
                        builder2.CloseElement(); //tbody
 
                        builder2.CloseElement(); // table
+                       builder2.CloseElement(); // div table container
 
                        builder2.OpenElement(534, "div");
                        builder2.AddAttribute(535, "class", "m-grid-footer");
@@ -634,11 +638,12 @@ namespace MComponents.MGrid
                            }
 
                            builder2.OpenComponent<MPager>(11);
-                           builder2.AddAttribute(398, "CurrentPage", Pager.CurrentPage);
-                           builder2.AddAttribute(399, "PageCount", pagecount);
-                           builder2.AddAttribute(400, "OnPageChanged", EventCallback.Factory.Create<long>(this, OnPagerPageChanged));
+                           builder2.AddAttribute(395, nameof(MPager.CurrentPage), Pager.CurrentPage);
+                           builder2.AddAttribute(396, nameof(MPager.PageCount), pagecount);
+                           builder2.AddAttribute(397, nameof(MPager.DisplayCount), mTableContainerWidth < 100 || mTableContainerWidth > 670 ? 9 : 5);
+                           builder2.AddAttribute(498, nameof(MPager.OnPageChanged), EventCallback.Factory.Create<long>(this, OnPagerPageChanged));
 
-                           builder2.AddAttribute(402, "ChildContent", (RenderFragment)((builder3) =>
+                           builder2.AddAttribute(402, nameof(MPager.ChildContent), (RenderFragment)((builder3) =>
                            {
                                builder3.AddMarkupContent(404, "\r\n\r\n    ");
                                builder3.OpenElement(405, "div");
@@ -1384,7 +1389,10 @@ namespace MComponents.MGrid
                 Height = values[6].FromPixelToDouble(),
             };
 
-            mColumnsWidth = values.Skip(7).Select(v => v.FromPixelToDouble()).ToArray();
+            mTableContainerWidth = values[7].FromPixelToDouble();
+            mColumnsWidth = values.Skip(8).Select(v => v.FromPixelToDouble()).ToArray();
+
+            InvokeStateHasChanged();
         }
 
         public async Task StartAdd(bool pUserInteracted)
