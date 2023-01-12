@@ -164,12 +164,12 @@
 
     .m-table-container {
         overflow-x: auto;
+        margin: 1rem 0;
     }
 }
 
 .m-grid {
     width: 100%;
-    margin: 1rem 0;
     color: $text_color;
     background-color: transparent;
     border-spacing: 0px;
