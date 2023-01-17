@@ -26,6 +26,8 @@
 
         public bool UseDeleteDoubleClick { get; set; }
 
+        public bool UseStaticLayoutMode { get; set; }
+
         public ToolbarItem ToolbarItems { get; set; }
 
         public MGridInitialState InitialState { get; set; } = MGridInitialState.Default;

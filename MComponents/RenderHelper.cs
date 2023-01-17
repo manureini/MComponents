@@ -260,7 +260,9 @@ namespace MComponents
                 return;
             }
 
-            TProperty value = (TProperty)pPropertyInfo.GetValue(pModel);
+            bool isEmptyProperty = pPropertyInfo is MEmptyPropertyInfo;
+
+            TProperty value = isEmptyProperty ? default : (TProperty)pPropertyInfo.GetValue(pModel);
 
             var context = new MComplexPropertyFieldContext<TProperty>
             {
@@ -271,18 +273,18 @@ namespace MComponents
                 Value = value,
                 MFormGridContext = pGridContext,
 
-                ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(pParent, async __value =>
+                ValueChanged = isEmptyProperty ? default : RuntimeHelpers.CreateInferredEventCallback<TProperty>(pParent, async __value =>
                 {
                     pPropertyInfo.SetValue(pModel, __value);
                     await pParent.OnInputValueChanged(pComplexField, pPropertyInfo, __value);
                 }, value),
 
-                ValueExpression = GetValueExpression<TProperty>(pPropertyInfo, pModel)
+                ValueExpression = isEmptyProperty ? default : GetValueExpression<TProperty>(pPropertyInfo, pModel)
             };
 
             pBuilder.AddContent(263, pComplexField.Template?.Invoke(context));
 
-            if (pParent.EnableValidation)
+            if (pParent.EnableValidation && !isEmptyProperty)
             {
                 pBuilder.OpenComponent<ValidationMessage<TProperty>>(236);
                 pBuilder.AddAttribute(237, "For", context.ValueExpression);

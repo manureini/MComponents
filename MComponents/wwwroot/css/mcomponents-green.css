@@ -143,7 +143,11 @@
 }
 .m-grid-container .m-table-container {
   overflow-x: auto;
+  overflow-y: clip;
   margin: 1rem 0;
+}
+.m-grid-container .m-table-container .m-select-options-list-container {
+  position: sticky;
 }
 
 .m-grid {
@@ -176,6 +180,18 @@
 .m-grid.m-grid-hover tbody tr:not(.m-grid-highlight):hover {
   color: #212529;
   background-color: #eaebeb;
+}
+.m-grid.m-static-layout .m-grid-edit-row table td {
+  position: absolute;
+}
+.m-grid.m-static-layout .m-grid-edit-row > td {
+  position: relative;
+}
+.m-grid.m-static-layout .m-grid-edit-row .m-form-control, .m-grid.m-static-layout .m-grid-edit-row .m-action-column-cell {
+  height: 100%;
+}
+.m-grid.m-static-layout .m-action-column-cell {
+  height: 100%;
 }
 .m-grid td, .m-grid th {
   padding: 0.65rem;
@@ -222,12 +238,10 @@
 }
 .m-grid-edit-row table td {
   padding: 0;
-  position: absolute;
   top: 0;
   border-width: 0;
 }
 .m-grid-edit-row > td {
-  position: relative;
   padding: 0;
 }
 .m-grid-edit-row .m-action-column-cell {
@@ -237,7 +251,8 @@
   background: #d4def5;
   border-radius: initial;
   border: 0;
-  height: 100%;
+  display: flex;
+  justify-content: center;
 }
 .m-grid-edit-row .m-select {
   display: inline;
@@ -251,7 +266,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
   margin: -0.5rem;
 }
 .m-action-column-cell .m-grid-action-icon {
@@ -490,11 +504,6 @@
 }
 .m-checkbox .container input:checked ~ .checkmark:after {
   display: block;
-}
-.m-grid-row .m-switch {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
 }
 .m-grid-row .m-switch label {
   display: flex;

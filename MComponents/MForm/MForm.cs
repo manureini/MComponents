@@ -278,6 +278,9 @@ namespace MComponents.MForm
         {
             return pFields.GroupBy(p =>
             {
+                if (IsInTableRow)
+                    return 0;
+
                 if (p.FieldRow != null)
                 {
                     return RowList.IndexOf(p.FieldRow);
@@ -294,9 +297,12 @@ namespace MComponents.MForm
 
         protected IMPropertyInfo GetPropertyInfo(IMPropertyField pField)
         {
-            if (pField.Property == null && pField.PropertyType == null)
+            if (pField.Property == null)
             {
-                return new MEmptyPropertyInfo();
+                return new MEmptyPropertyInfo()
+                {
+                    PropertyType = pField.PropertyType
+                };
             }
 
             var pi = ReflectionHelper.GetIMPropertyInfo(Model.GetType(), pField.Property, pField.PropertyType);

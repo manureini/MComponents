@@ -90,12 +90,12 @@ namespace MComponents.MGrid
             Grid.InvokeStateHasChanged();
         }
 
-        public RenderFragment EditFieldTemplate(double pLeftOffset, BoundingBox pBoundingBox, bool pIsFilterRow)
+        public RenderFragment EditFieldTemplate(bool pIsFilterRow)
         {
             return (builder) =>
             {
                 builder.OpenElement(94, "div");
-                builder.AddAttribute(95, "class", "m-action-column-cell");
+                builder.AddAttribute(95, "class", "m-action-column-cell m-form-control"); //m-form-control will set correct height
 
                 builder.OpenElement(97, "div");
                 builder.AddAttribute(98, "class", "m-action-column-btn-group");
@@ -107,7 +107,7 @@ namespace MComponents.MGrid
 
                     builder.AddAttribute(105, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
-                        mGrid.ClearFilterValues();
+                        mGrid?.ClearFilterValues();
                     }));
                     builder.AddEventStopPropagationClicksAttribute(22);
 
@@ -124,7 +124,7 @@ namespace MComponents.MGrid
 
                     builder.AddAttribute(122, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, (a) =>
                     {
-                        mGrid.SavePendingChanges(true);
+                        mGrid?.SavePendingChanges(true);
                     }));
                     builder.AddEventStopPropagationClicksAttribute(22);
 

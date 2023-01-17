@@ -84,6 +84,9 @@ namespace MComponents.MGrid
         [Parameter]
         public string HtmlTableClass { get; set; } = MGridSettings.Instance.HtmlTableClass;
 
+        [Parameter]
+        public bool UseStaticLayoutMode { get; set; } = MGridSettings.Instance.UseStaticLayoutMode;
+
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
@@ -162,8 +165,6 @@ namespace MComponents.MGrid
         protected SemaphoreSlim mDataAdapterSemaphore = new SemaphoreSlim(1, 1);
         //  protected GroupByBuilder<T> mGrouper = new GroupByBuilder<T>();
 
-        protected bool mHasActionColumn;
-
         public bool IsEditingRow => EditRow != null;
 
         public bool FixedColumns => (IsEditingRow || IsFilterRowVisible) && !UpdateColumnsWidthOnNextRender;
@@ -237,9 +238,6 @@ namespace MComponents.MGrid
                 throw new ArgumentException($"A column with {nameof(IMGridColumn.Identifier)} {pColumn.Identifier} already exists. Please specify a custom value");
 
             ColumnsList.Add(pColumn);
-
-            if (pColumn is MGridActionColumn<T>)
-                mHasActionColumn = true;
 
             if (pColumn is IMGridPropertyColumn propc)
             {
@@ -465,9 +463,9 @@ namespace MComponents.MGrid
                        builder2.AddAttribute(371, "class", "m-table-container");
 
                        builder2.OpenElement(277, "table");
-                       builder2.AddAttribute(286, "class", HtmlTableClass + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
+                       builder2.AddAttribute(286, "class", HtmlTableClass + (UseStaticLayoutMode ? " m-static-layout" : string.Empty) + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
 
-                       if (FixedColumns)
+                       if (UseStaticLayoutMode && FixedColumns)
                        {
                            builder2.AddAttribute(291, "style", "table-layout: fixed;");
                        }
@@ -493,7 +491,7 @@ namespace MComponents.MGrid
                            if (column.AdditionalAttributes != null)
                                builder2.AddMultipleAttributes(312, column.AdditionalAttributes.Where(k => k.Key != "style"));
 
-                           if (FixedColumns)
+                           if (UseStaticLayoutMode && FixedColumns)
                            {
                                var width = GetColumnWidth(i);
 
@@ -1022,12 +1020,15 @@ namespace MComponents.MGrid
         {
             AddInlineTrHeight(pBuilder);
 
-            pBuilder.OpenElement(577, "td");
-            pBuilder.AddAttribute(578, "colspan", VisibleColumns.Length);
+            if (UseStaticLayoutMode)
+            {
+                pBuilder.OpenElement(577, "td");
+                pBuilder.AddAttribute(578, "colspan", VisibleColumns.Length);
 
-            pBuilder.OpenElement(580, "table");
-            pBuilder.OpenElement(581, "tbody");
-            pBuilder.OpenElement(582, "tr");
+                pBuilder.OpenElement(580, "table");
+                pBuilder.OpenElement(581, "tbody");
+                pBuilder.OpenElement(582, "tr");
+            }
 
             {
 
@@ -1072,23 +1073,29 @@ namespace MComponents.MGrid
                 pBuilder.CloseComponent();
             }
 
-            pBuilder.CloseElement(); //tr
-            pBuilder.CloseElement(); //tbody
-            pBuilder.CloseElement(); //table
+            if (UseStaticLayoutMode)
+            {
+                pBuilder.CloseElement(); //tr
+                pBuilder.CloseElement(); //tbody
+                pBuilder.CloseElement(); //table
 
-            pBuilder.CloseElement(); //td  
+                pBuilder.CloseElement(); //td  
+            }
         }
 
         private void AddInlineTrHeight(RenderTreeBuilder pBuilder)
         {
-            var inlineTrHeight = mFieldBoundingBox.Height;
-
-            if (mFieldBoundingBox.BorderCollapse == "collapse")
+            if (UseStaticLayoutMode)
             {
-                inlineTrHeight += mFieldBoundingBox.BorderTop / 2 - mTableBorderTop / 2;
-            }
+                var inlineTrHeight = mFieldBoundingBox.Height;
 
-            pBuilder.AddAttribute(643, "style", $"height: {(inlineTrHeight).ToString(CultureInfo.InvariantCulture)}px");
+                if (mFieldBoundingBox.BorderCollapse == "collapse")
+                {
+                    inlineTrHeight += mFieldBoundingBox.BorderTop / 2 - mTableBorderTop / 2;
+                }
+
+                pBuilder.AddAttribute(643, "style", $"height: {(inlineTrHeight).ToString(CultureInfo.InvariantCulture)}px");
+            }
         }
 
         private void AddInlineFormFields(RenderTreeBuilder pBuilder, IMGridColumn[] pVisibleColumns, bool pIsFilterRow)
@@ -1173,7 +1180,7 @@ namespace MComponents.MGrid
             }
             else if (pColumn is IMGridEditFieldGenerator<T> fieldGenerator)
             {
-                AddFieldGenerator(pBuilder, fieldGenerator, pIsInFilterRow, pLeftOffset, pBoundingBox);
+                AddFieldGenerator(pBuilder, pColumn, fieldGenerator, pIsInFilterRow, pLeftOffset, pBoundingBox);
             }
             else
             {
@@ -1219,7 +1226,8 @@ namespace MComponents.MGrid
                 if (complex.FormTemplate != null && !pIsInFilterRow || (pIsInFilterRow && pColumn.EnableFilter))
                     pBuilder.AddAttribute(781, nameof(MComplexPropertyField<TProperty>.Template), complex.FormTemplate);
 
-                pBuilder.AddStyleWithAttribute(784, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
+                if (UseStaticLayoutMode)
+                    pBuilder.AddStyleWithAttribute(784, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
 
                 pBuilder.CloseComponent();
             }
@@ -1232,18 +1240,44 @@ namespace MComponents.MGrid
                 pBuilder.AddAttribute(794, nameof(MField.Attributes), attributes.ToArray());
                 pBuilder.AddAttribute(795, nameof(IMGridColumn), pColumn);
 
-                pBuilder.AddStyleWithAttribute(976, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
+                if (UseStaticLayoutMode)
+                    pBuilder.AddStyleWithAttribute(976, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
 
                 pBuilder.CloseComponent();
             }
         }
 
-        private void AddFieldGenerator(RenderTreeBuilder pBuilder, IMGridEditFieldGenerator<T> pFieldGenerator, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
+        private void AddFieldGenerator(RenderTreeBuilder pBuilder, IMGridColumn pColumn, IMGridEditFieldGenerator<T> pFieldGenerator, bool pIsInFilterRow, double pLeftOffset, BoundingBox pBoundingBox)
         {
-            pBuilder.OpenElement(804, "td");
-            pBuilder.AddStyleWithAttribute(805, "style", pLeftOffset, pBoundingBox);
-            pBuilder.AddContent(807, pFieldGenerator.EditFieldTemplate(pLeftOffset, pBoundingBox, pIsInFilterRow));
-            pBuilder.CloseElement();
+            pBuilder.OpenComponent<MComplexPropertyField<int>>(5);
+            pBuilder.AddAttribute(1138, nameof(MField.Property), (string)null);
+            pBuilder.AddAttribute(1139, nameof(MField.PropertyType), typeof(int));
+
+            pBuilder.AddAttribute(1141, nameof(IMGridColumn), pColumn);
+
+            var fieldGenerator = pFieldGenerator;
+
+            RenderFragment<MComplexPropertyFieldContext<int>> template = context =>
+            {
+                return b =>
+                {
+                    try
+                    {
+                        b.AddContent(1147, fieldGenerator.EditFieldTemplate(pIsInFilterRow));
+                    }
+                    catch (Exception e)
+                    {
+                        throw;
+                    }
+                };
+            };
+
+            pBuilder.AddAttribute(1151, nameof(MComplexPropertyField<int>.Template), template);
+
+            if (UseStaticLayoutMode)
+                pBuilder.AddStyleWithAttribute(1152, Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE, pLeftOffset, pBoundingBox);
+
+            pBuilder.CloseComponent();
         }
 
         protected async void OnRowClick(T pValue, MouseEventArgs pMouseArgs)
