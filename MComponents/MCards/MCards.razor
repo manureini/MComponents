@@ -24,7 +24,7 @@
     public IEnumerable<T> Values { get; set; }
 
     [Parameter]
-    public int Columns { get; set; }
+    public int Columns { get; set; } = 1;
 
     [Parameter]
     public RenderFragment<T> Template { get; set; }
