@@ -50,66 +50,72 @@ namespace MComponents.MGrid
                         pGrid.Pager.PageSize = Math.Max(1, state.PageSize.Value);
                 }
 
-                pGrid.FilterInstructions = state.FilterState.Select(filterState =>
+                if (pGrid.EnableUserSorting)
                 {
-                    var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == filterState.ColumnIdentifier);
-
-                    if (column == null || !(column is IMGridPropertyColumn propc))
-                        return null;
-
-                    IMPropertyInfo pi = pGrid.PropertyInfos[propc];
-
-                    object value = null;
-
-                    if (filterState.ReferencedId != null && column.GetType().Name == typeof(MGridComplexPropertyColumn<object, object>).Name)
+                    pGrid.SortInstructions = state.SorterState.Select(s =>
                     {
-                        value = GetReferencedValue(pGrid, column, propc.PropertyType, filterState.ReferencedId);
-                    }
-                    else
-                    {
-                        var jsone = filterState.Value as JsonElement?;
+                        var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == s.ColumnIdentifier);
 
-                        try
+                        if (column == null || !(column is IMGridPropertyColumn propc))
+                            return null;
+
+                        IMPropertyInfo pi = pGrid.PropertyInfos[propc];
+
+                        return new SortInstruction()
                         {
-                            value = jsone?.ToObject(pi.PropertyType);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.ToString());
-                        }
-                    }
+                            GridColumn = propc,
+                            Direction = s.Direction,
+                            Index = s.Index,
+                            PropertyInfo = pi,
+                            Comparer = column.GetComparer()
+                        };
+                    }).Where(s => s != null).ToList();
+                }
 
-                    if (value == null)
-                        return null;
-
-                    return new FilterInstruction()
-                    {
-                        Value = value,
-                        GridColumn = column,
-                        PropertyInfo = pi
-                    };
-                }).Where(f => f != null).ToList();
-
-                pGrid.SortInstructions = state.SorterState.Select(s =>
+                if (pGrid.EnableFilterRow)
                 {
-                    var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == s.ColumnIdentifier);
-
-                    if (column == null || !(column is IMGridPropertyColumn propc))
-                        return null;
-
-                    IMPropertyInfo pi = pGrid.PropertyInfos[propc];
-
-                    return new SortInstruction()
+                    pGrid.FilterInstructions = state.FilterState.Select(filterState =>
                     {
-                        GridColumn = propc,
-                        Direction = s.Direction,
-                        Index = s.Index,
-                        PropertyInfo = pi,
-                        Comparer = column.GetComparer()
-                    };
-                }).Where(s => s != null).ToList();
+                        var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == filterState.ColumnIdentifier);
 
-                await pGrid.SetFilterRowVisible(state.IsFilterRowVisible);
+                        if (column == null || !(column is IMGridPropertyColumn propc))
+                            return null;
+
+                        IMPropertyInfo pi = pGrid.PropertyInfos[propc];
+
+                        object value = null;
+
+                        if (filterState.ReferencedId != null && column.GetType().Name == typeof(MGridComplexPropertyColumn<object, object>).Name)
+                        {
+                            value = GetReferencedValue(pGrid, column, propc.PropertyType, filterState.ReferencedId);
+                        }
+                        else
+                        {
+                            var jsone = filterState.Value as JsonElement?;
+
+                            try
+                            {
+                                value = jsone?.ToObject(pi.PropertyType);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.ToString());
+                            }
+                        }
+
+                        if (value == null)
+                            return null;
+
+                        return new FilterInstruction()
+                        {
+                            Value = value,
+                            GridColumn = column,
+                            PropertyInfo = pi
+                        };
+                    }).Where(f => f != null).ToList();
+
+                    await pGrid.SetFilterRowVisible(state.IsFilterRowVisible);
+                }
 
                 pGrid.ClearDataCache();
                 pGrid.InvokeStateHasChanged();

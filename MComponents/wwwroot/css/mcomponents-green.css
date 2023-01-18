@@ -1008,6 +1008,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
+  color: #212529;
 }
 .m-input-file-container .m-input-file-list {
   display: flex;
