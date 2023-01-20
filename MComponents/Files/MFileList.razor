@@ -29,7 +29,7 @@
                     </div>
 
                     <div class="m-filelist-icon-container">
-                        <i class="fa-solid fa-xmark fa-2x flex-end-center"></i>
+                        <i class="fa-solid fa-xmark fa-2x flex-end-center" @onclick="() => _ = OnCancelUploadClicked.InvokeAsync(file)"></i>
                     </div>
                 </div>
 
@@ -52,13 +52,13 @@
                     </div>
 
                     <div class="m-filelist-filename-row-bottom">
-                        <span>1 mb</span>
+                        <span>@FileHelper.GetFormattedBytes(file.Size)</span>
                     </div>
 
                 </div>
 
                 <div class="m-filelist-icon-container">
-                    <i class="fa-solid fa-trash-can fa-2x flex-end-center"></i>
+                    <i class="fa-solid fa-trash-can fa-2x flex-end-center" @onclick="() => _ = OnDeleteFileClicked.InvokeAsync(file)"></i>
                 </div>
             </div>
 
@@ -72,6 +72,12 @@
 
     [Parameter]
     public IEnumerable<IFile> Files { get; set; } = Array.Empty<IFile>();
+
+    [Parameter]
+    public EventCallback<IBrowserFile> OnCancelUploadClicked { get; set; }
+
+    [Parameter]
+    public EventCallback<IFile> OnDeleteFileClicked { get; set; }
 
     protected Dictionary<IBrowserFile, int> mFilesProgress = new Dictionary<IBrowserFile, int>();
 

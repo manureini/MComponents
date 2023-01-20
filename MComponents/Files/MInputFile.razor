@@ -22,7 +22,16 @@
     </div>
 
     <div class="m-input-file-list-container">
-        <MFileList @ref="mFileList" Files="Values" />
+
+        @if (MaxAllowedFiles == 1 && Value != null)
+        {
+            <MFileList @ref="mFileList" Files="new[] { Value }" OnDeleteFileClicked="OnFileDeleteClicked" />
+        }
+        else
+        {
+            <MFileList @ref="mFileList" Files="Values" OnDeleteFileClicked="OnFileDeleteClicked" />
+        }
+
     </div>
 </div>
 
@@ -134,15 +143,29 @@
         mFileList.SetProgressbar(pFile, (int)((float)pBytesProcessed / pFile.Size * 100));
     }
 
-    void HandleDragEnter()
+    protected void HandleDragEnter()
     {
         mDropClass = "active";
         StateHasChanged();
     }
 
-    void HandleDragLeave()
+    protected void HandleDragLeave()
     {
         mDropClass = string.Empty;
+    }
+
+    protected void OnFileDeleteClicked(IFile pFile)
+    {
+        Value = null;
+        ValueChanged.InvokeAsync(null);
+
+        if (Values != null)
+        {
+            Values.Remove(pFile);
+            ValuesChanged.InvokeAsync(Values);
+        }
+
+        StateHasChanged();
     }
 
     protected override bool TryParseValueFromString(string value, out IFile result, out string validationErrorMessage)

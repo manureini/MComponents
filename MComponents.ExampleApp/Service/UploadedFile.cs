@@ -7,5 +7,7 @@ namespace MComponents.ExampleApp.Service
         public string FileName { get; set; }
 
         public string Url { get; set; }
+
+        public long Size { get; set; }
     }
 }

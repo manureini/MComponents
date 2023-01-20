@@ -5,5 +5,7 @@
         public string FileName { get; }
 
         public string Url { get; }
+
+        public long Size { get; }
     }
 }

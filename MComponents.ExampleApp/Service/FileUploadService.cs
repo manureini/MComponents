@@ -23,6 +23,7 @@ namespace MComponents.ExampleApp.Service
             var file = new UploadedFile()
             {
                 FileName = pFile.Name,
+                Size = pFile.Size,
             };
 
             return file;
