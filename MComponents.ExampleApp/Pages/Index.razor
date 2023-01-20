@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using MComponents.MLoading
+@using MComponents.MProgressbar
 
 
 <MComponents.MBadge.MBadge>MBadge</MComponents.MBadge.MBadge>
@@ -102,6 +103,16 @@
         </ul>
     </PopupContent>
 </MPopup>
+
+
+<br />
+<br />
+<br />
+
+<MProgressbar />
+<MProgressbar Percentage="50" />
+<MProgressbar Percentage="99" />
+<MProgressbar Percentage="100" />
 
 
 @code {

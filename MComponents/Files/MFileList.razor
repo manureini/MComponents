@@ -1,0 +1,112 @@
+﻿@using MComponents.MCards
+@using MComponents.MProgressbar
+
+<div class="m-filelist">
+
+    @if (mFilesProgress.Any())
+    {
+        <MCards T="IBrowserFile" Values="mFilesProgress.Keys">
+            <Template Context="file">
+                <div class="m-filelist-entry">
+
+                    <div class="m-filelist-icon">
+                        <MFileThumbnail FileName="@file.Name" />
+                    </div>
+
+                    <div class="m-filelist-rows">
+
+                        <div class="m-filelist-filename-row-top">
+                            <span>@file.Name</span>
+
+                            <div class="m-filelist-progress">
+                                <span>@(mFilesProgress[file])%</span>
+                            </div>
+                        </div>
+
+                        <div class="m-filelist-filename-row-bottom">
+                            <MProgressbar Percentage="mFilesProgress[file]" />
+                        </div>
+                    </div>
+
+                    <div class="m-filelist-icon-container">
+                        <i class="fa-solid fa-xmark fa-2x flex-end-center"></i>
+                    </div>
+                </div>
+
+            </Template>
+        </MCards>
+    }
+
+    <MCards T="IFile" Values="Files" OnClick="OnFileClicked">
+        <Template Context="file">
+            <div class="m-filelist-entry">
+
+                <div class="m-filelist-icon">
+                    <MFileThumbnail FileName="@file.FileName" />
+                </div>
+
+                <div class="m-filelist-rows">
+
+                    <div class="m-filelist-filename-row-top">
+                        <span>@file.FileName</span>
+                    </div>
+
+                    <div class="m-filelist-filename-row-bottom">
+                        <span>1 mb</span>
+                    </div>
+
+                </div>
+
+                <div class="m-filelist-icon-container">
+                    <i class="fa-solid fa-trash-can fa-2x flex-end-center"></i>
+                </div>
+            </div>
+
+        </Template>
+
+    </MCards>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<IFile> Files { get; set; } = Array.Empty<IFile>();
+
+    protected Dictionary<IBrowserFile, int> mFilesProgress = new Dictionary<IBrowserFile, int>();
+
+    //  protected HashSet<IFile> mFilesUploadDone = new HashSet<IFile>();
+
+    public void SetProgressbar(IBrowserFile pFile, int pPercent)
+    {
+        mFilesProgress.Remove(pFile);
+        mFilesProgress.Add(pFile, pPercent);
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void SetUploadDone(IBrowserFile pFile)
+    {
+        mFilesProgress.Remove(pFile);
+
+
+        //mFilesUploadDone.Add(pFile);
+
+        _ = InvokeAsync(StateHasChanged);
+
+        /*
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(2000);
+            mFilesUploadDone.Remove(pFile);
+            _ = InvokeAsync(StateHasChanged);
+        }); */
+    }
+
+    protected void OnFileClicked(IFile pFile)
+    {
+
+
+
+    }
+
+}

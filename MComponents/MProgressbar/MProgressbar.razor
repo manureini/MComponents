@@ -1,0 +1,20 @@
+﻿<div class="m-progressbar">
+    <span class="m-progressbar-slider" style="width:@(mPpercentage)%"></span>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Percentage { get; set; } = 0;
+
+    [Parameter]
+    public string CssClass { get; set; }
+
+    private int mPpercentage = 50;
+
+    protected override void OnParametersSet()
+    {
+        mPpercentage = Percentage > 100 ? 100 : Percentage < 0 ? 0 : Percentage;
+    }
+
+}

@@ -1,6 +1,6 @@
 ﻿@typeparam T
 
-<div class="m-cards-container" style="grid-template-columns: @mTemplateColumnsStyle">
+<div class="m-cards-container @CssClass" style="grid-template-columns: @mTemplateColumnsStyle">
     @if (Values != null)
     {
         @foreach (var value in Values)
@@ -34,6 +34,9 @@
 
     [Parameter]
     public EventCallback<T> OnClick { get; set; }
+
+    [Parameter]
+    public string CssClass { get; set; }
 
     protected override void OnParametersSet()
     {

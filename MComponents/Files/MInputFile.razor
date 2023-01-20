@@ -15,32 +15,14 @@
             Datei auswählen oder hierher ziehen.
         </label>
         <InputFile OnChange="LoadFiles"
-                   @ondragenter="HandleDragEnter"
-                   @ondragleave="HandleDragLeave"
+        @ondragenter="HandleDragEnter"
+        @ondragleave="HandleDragLeave"
                    title=""
                    multiple />
     </div>
 
-    <div class="m-input-file-list">
-
-        @if (CurrentValue != null && mFileProgress.Count == 0)
-        {
-            <MFileThumbnail File="CurrentValue" />
-        }
-
-        @if (Values != null)
-        {
-            @foreach (var file in Values)
-            {
-                <MFileThumbnail File="file" />
-            }
-        }
-
-        @foreach (var fileInProgress in mFileProgress)
-        {
-            <MFileThumbnail FileName="@fileInProgress.BrowserFile.Name" ProgressPercent="fileInProgress.Progress" IsDisabled="fileInProgress.Progress <= 0" />
-        }
-
+    <div class="m-input-file-list-container">
+        <MFileList @ref="mFileList" Files="Values" />
     </div>
 </div>
 
@@ -80,7 +62,8 @@
     protected EditContext CascadedEditContext2 { get; set; }
 
     protected string mDropClass = string.Empty;
-    protected List<FileProgressInfo> mFileProgress = new List<FileProgressInfo>();
+
+    protected MFileList mFileList;
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -115,7 +98,7 @@
 
         foreach (var file in files)
         {
-            mFileProgress.Add(new FileProgressInfo(file, 0));
+            mFileList.SetProgressbar(file, 0);
         }
 
         await InvokeAsync(StateHasChanged);
@@ -127,7 +110,7 @@
             var createdFile = await FileUploader.UploadFile(file, AdditionalHeaders, OnProgressChanged);
             createdFiles.Add(createdFile);
 
-            mFileProgress.RemoveAll(f => f.BrowserFile == file);
+            mFileList.SetUploadDone(file);
 
             if (MaxAllowedFiles > 1)
             {
@@ -148,10 +131,7 @@
 
     protected void OnProgressChanged(IBrowserFile pFile, long pBytesProcessed)
     {
-        var progressPercent = mFileProgress.First(f => f.BrowserFile == pFile);
-        progressPercent.Progress = (int)((float)pBytesProcessed / pFile.Size * 100);
-
-        _ = InvokeAsync(StateHasChanged);
+        mFileList.SetProgressbar(pFile, (int)((float)pBytesProcessed / pFile.Size * 100));
     }
 
     void HandleDragEnter()

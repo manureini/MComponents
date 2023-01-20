@@ -1050,16 +1050,27 @@ button:active {
   text-align: center;
   color: #212529;
 }
-.m-input-file-container .m-input-file-list {
+.m-input-file-container .m-input-file-list-container {
+  padding-top: 1rem;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+}
+.m-input-file-container .m-input-file-list-container .m-filelist {
+  width: 66%;
+}
+@media (max-width: 1024px) {
+  .m-input-file-container .m-input-file-list-container .m-filelist {
+    width: 100%;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1300px) {
+  .m-input-file-container .m-input-file-list-container .m-filelist {
+    width: 75%;
+  }
 }
 
 .m-file-thumbnail {
   text-align: center;
-  width: 15rem;
-  height: 10rem;
   padding: 0.5rem;
 }
 .m-file-thumbnail.disabled i {
@@ -1077,6 +1088,35 @@ button:active {
   overflow: hidden;
   word-break: break-word;
   font-size: smaller;
+}
+
+.m-progressbar {
+  display: flex;
+  border: 1px solid #212529;
+  margin-top: 2px;
+}
+.m-progressbar .m-progressbar-slider {
+  height: 18px;
+  background-color: #595d6e;
+}
+
+.m-filelist .m-cards-container:nth-of-type(2) {
+  padding-top: 1rem;
+}
+.m-filelist .m-filelist-entry {
+  display: flex;
+  align-items: center;
+}
+.m-filelist .m-filelist-entry .m-filelist-filename-row-top {
+  display: flex;
+  justify-content: space-between;
+}
+.m-filelist .m-filelist-entry .m-filelist-rows {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 2rem;
 }
 
 .m-scrollbar::-webkit-scrollbar {
