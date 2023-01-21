@@ -35,6 +35,12 @@ namespace MComponents.MWizard
         [Parameter]
         public int Position { get; set; } = 0;
 
+        [Parameter]
+        public EventCallback<StepChangedArgs> OnStepEnter { get; set; }
+
+        [Parameter]
+        public EventCallback<StepChangedArgs> OnStepLeave { get; set; }
+
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 

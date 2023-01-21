@@ -254,6 +254,8 @@ namespace MComponents.MWizard
             await InvokeAsync(async () =>
             {
                 await OnStepChanged.InvokeAsync(args);
+                await args.OldStep.OnStepLeave.InvokeAsync(args);
+                await args.NewStep.OnStepEnter.InvokeAsync(args);
             });
 
             if (args.Cancelled)
