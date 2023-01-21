@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Forms
 @using System.Linq.Expressions
 @using System.Net.Http.Json
+@using System.Threading;
 
 @inject IFileUploadService FileUploader
 @inject IStringLocalizer L
@@ -25,11 +26,11 @@
 
         @if (MaxAllowedFiles == 1 && Value != null)
         {
-            <MFileList @ref="mFileList" Files="new[] { Value }" OnDeleteFileClicked="OnFileDeleteClicked" />
+            <MFileList @ref="mFileList" Files="new[] { Value }" OnDeleteFileClicked="OnFileDeleteClicked" OnCancelUploadClicked="OnCancelUploadClicked" />
         }
         else
         {
-            <MFileList @ref="mFileList" Files="Values" OnDeleteFileClicked="OnFileDeleteClicked" />
+            <MFileList @ref="mFileList" Files="Values" OnDeleteFileClicked="OnFileDeleteClicked" OnCancelUploadClicked="OnCancelUploadClicked" />
         }
 
     </div>
@@ -73,6 +74,10 @@
     protected string mDropClass = string.Empty;
 
     protected MFileList mFileList;
+    protected CancellationTokenSource mCancellationTokenSource;
+    protected IBrowserFile mCurrentlyUploadingFile;
+    protected List<IBrowserFile> mUploadQueue = new List<IBrowserFile>();
+    protected SemaphoreSlim mUploadSemaphore = new SemaphoreSlim(1, 1);
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -103,36 +108,77 @@
         if (!AdditionalHeaders.ContainsKey(nameof(FileInputName)))
             AdditionalHeaders.Add(nameof(FileInputName), FileInputName);
 
-        var files = e.GetMultipleFiles(int.MaxValue).Take(MaxAllowedFiles).ToArray();
+        int fileCountAvailable;
+
+        if (MaxAllowedFiles > 1)
+        {
+            fileCountAvailable = MaxAllowedFiles - (Values != null ? Values.Count : 0) - mUploadQueue.Count;
+        }
+        else
+        {
+            fileCountAvailable = mUploadQueue.Count > 0 ? 0 : 1;
+        }
+
+        if (fileCountAvailable <= 0)
+            return;
+
+        var files = e.GetMultipleFiles(int.MaxValue).Take(fileCountAvailable);
 
         foreach (var file in files)
         {
+            mUploadQueue.Add(file);
             mFileList.SetProgressbar(file, 0);
         }
 
         await InvokeAsync(StateHasChanged);
 
-        var createdFiles = new List<IFile>();
-
-        foreach (var file in files)
+        try
         {
-            var createdFile = await FileUploader.UploadFile(file, AdditionalHeaders, OnProgressChanged);
-            createdFiles.Add(createdFile);
+            await mUploadSemaphore.WaitAsync();
 
-            mFileList.SetUploadDone(file);
+            var createdFiles = new List<IFile>();
 
-            if (MaxAllowedFiles > 1)
+            while (mUploadQueue.Any())
             {
-                Values.Add(createdFile);
-                await ValuesChanged.InvokeAsync(Values);
+                var file = mUploadQueue.First();
+
+                try
+                {
+                    mCancellationTokenSource = new CancellationTokenSource();
+                    mCurrentlyUploadingFile = file;
+
+                    var createdFile = await FileUploader.UploadFile(file, AdditionalHeaders, OnProgressChanged, mCancellationTokenSource.Token);
+                    createdFiles.Add(createdFile);
+
+                    mFileList.SetUploadDone(file);
+
+                    if (MaxAllowedFiles > 1)
+                    {
+                        Values.Add(createdFile);
+                        await ValuesChanged.InvokeAsync(Values);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    mFileList.RemoveFileInProgress(file);
+                }
+
+                mUploadQueue.Remove(file);
+
+                await InvokeAsync(StateHasChanged);
             }
 
-            await InvokeAsync(StateHasChanged);
-        }
+            if (MaxAllowedFiles <= 1)
+            {
+                var createdFile = createdFiles.FirstOrDefault();
 
-        if (MaxAllowedFiles <= 1)
+                if (createdFile != null)
+                    CurrentValue = createdFile;
+            }
+        }
+        finally
         {
-            CurrentValue = createdFiles.FirstOrDefault();
+            mUploadSemaphore.Release();
         }
 
         await InvokeAsync(StateHasChanged);
@@ -140,7 +186,8 @@
 
     protected void OnProgressChanged(IBrowserFile pFile, long pBytesProcessed)
     {
-        mFileList.SetProgressbar(pFile, (int)((float)pBytesProcessed / pFile.Size * 100));
+        if (mUploadQueue.Contains(pFile))
+            mFileList.SetProgressbar(pFile, (int)((float)pBytesProcessed / pFile.Size * 100));
     }
 
     protected void HandleDragEnter()
@@ -166,6 +213,17 @@
         }
 
         StateHasChanged();
+    }
+
+    protected void OnCancelUploadClicked(IBrowserFile pBrowserFile)
+    {
+        if (pBrowserFile == mCurrentlyUploadingFile)
+        {
+            mCancellationTokenSource?.Cancel();
+        }
+
+        mFileList.RemoveFileInProgress(pBrowserFile);
+        mUploadQueue.Remove(pBrowserFile);
     }
 
     protected override bool TryParseValueFromString(string value, out IFile result, out string validationErrorMessage)
