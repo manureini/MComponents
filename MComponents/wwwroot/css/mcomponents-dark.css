@@ -1221,3 +1221,22 @@ button:active {
 .m-wizard .m-wizard-navigation-item.m-wizard-navigation-item--current .m-wizard-navigation-item-bar:after {
   background-color: #ebedf2;
 }
+
+.m-input-file-container .m-input-file-dropzone {
+  background-color: transparent;
+  border-color: #ebedf2;
+}
+.m-input-file-container .m-input-file-dropzone label {
+  color: #ebedf2;
+}
+.m-input-file-container .m-card {
+  background-color: #404040;
+  border: solid 1px #707070;
+  color: #ffffff;
+}
+.m-input-file-container .m-card .m-filelist-filename-row-bottom {
+  color: #707070;
+}
+.m-input-file-container .m-filelist-icon-container {
+  color: #707070;
+}

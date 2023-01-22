@@ -168,3 +168,28 @@ button:active {
         }
     }
 }
+
+.m-input-file-container {
+    .m-input-file-dropzone {
+        background-color: transparent;
+        border-color: $gray;
+
+        label {
+            color: $gray;
+        }
+    }
+
+    .m-card {
+        background-color: $secondary;
+        border: solid 1px $lightgray;
+        color: $white;
+
+        .m-filelist-filename-row-bottom {
+            color: $lightgray;
+        }
+    }
+
+    .m-filelist-icon-container {
+        color: $lightgray;
+    }
+}
