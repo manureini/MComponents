@@ -29,6 +29,8 @@ namespace MComponents
             mSupportedTypes.AddRange(mNumberTypes);
             mSupportedTypes.Add(typeof(string));
             mSupportedTypes.Add(typeof(DateTime));
+            mSupportedTypes.Add(typeof(DateOnly));
+            mSupportedTypes.Add(typeof(TimeOnly));
             mSupportedTypes.Add(typeof(bool));
             mSupportedTypes.Add(typeof(Guid));
             mSupportedTypes.Add(typeof(Type));
@@ -103,6 +105,14 @@ namespace MComponents
                     {
                         pBuilder.OpenComponent<InputDate<T>>(0);
                     }
+                }
+                else if (tType == typeof(DateOnly))
+                {
+                    pBuilder.OpenComponent<InputDate<T>>(0);
+                }
+                else if (tType == typeof(TimeOnly))
+                {
+                    pBuilder.OpenComponent<InputTime<T>>(0);
                 }
                 else if (typeof(T) == typeof(bool))
                 {
