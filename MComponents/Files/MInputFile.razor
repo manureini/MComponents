@@ -2,6 +2,7 @@
 @using System.Linq.Expressions
 @using System.Net.Http.Json
 @using System.Threading;
+@using System.Reflection;
 
 @inject IFileUploadService FileUploader
 @inject IStringLocalizer L
@@ -87,6 +88,7 @@
         if (MaxAllowedFiles > 1)
         {
             EditContext = CascadedEditContext2;
+            typeof(InputBase<IFile>).GetField("_hasInitializedParameters", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this, true);
         }
 
         await base.SetParametersAsync(parameters);

@@ -105,6 +105,7 @@ namespace MComponents.MSelect
             if (mMultipleSelectMode && !mEnumFlags)
             {
                 EditContext = CascadedEditContext2;
+                typeof(InputBase<T>).GetField("_hasInitializedParameters", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this, true);
             }
 
             await base.SetParametersAsync(parameters);
