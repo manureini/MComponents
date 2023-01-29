@@ -745,7 +745,14 @@ namespace MComponents.MSelect
                         {
                             if (mIsNullableType)
                             {
-                                CurrentValue = (T)ReflectionHelper.ChangeType((int)(object)CurrentValue | (int)(object)pSelectedValue, mtType);
+                                if (CurrentValue == null)
+                                {
+                                    CurrentValue = pSelectedValue;
+                                }
+                                else
+                                {
+                                    CurrentValue = (T)ReflectionHelper.ChangeType((int)(object)CurrentValue | (int)(object)pSelectedValue, mtType);
+                                }
                             }
                             else
                             {

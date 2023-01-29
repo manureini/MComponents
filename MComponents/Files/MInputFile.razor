@@ -17,8 +17,8 @@
             Datei auswählen oder hierher ziehen.
         </label>
         <InputFile OnChange="LoadFiles"
-        @ondragenter="HandleDragEnter"
-        @ondragleave="HandleDragLeave"
+                   @ondragenter="HandleDragEnter"
+                   @ondragleave="HandleDragLeave"
                    title=""
                    multiple />
     </div>
@@ -27,11 +27,11 @@
 
         @if (MaxAllowedFiles == 1 && Value != null)
         {
-            <MFileList @ref="mFileList" Files="new[] { Value }" OnDeleteFileClicked="OnFileDeleteClicked" OnCancelUploadClicked="OnCancelUploadClicked" />
+            <MFileList @ref="mFileList" Files="new[] { Value }" OnDeleteFileClicked="OnFileDeleteClicked" OnCancelUploadClicked="OnCancelUploadClicked" OnFileClicked="OnFileClicked" />
         }
         else
         {
-            <MFileList @ref="mFileList" Files="Values" OnDeleteFileClicked="OnFileDeleteClicked" OnCancelUploadClicked="OnCancelUploadClicked" />
+            <MFileList @ref="mFileList" Files="Values" OnDeleteFileClicked="OnFileDeleteClicked" OnCancelUploadClicked="OnCancelUploadClicked" OnFileClicked="OnFileClicked" />
         }
 
     </div>
@@ -69,6 +69,9 @@
     [Parameter]
     public Expression<Func<ICollection<IFile>>> ValuesExpression { get; set; }
 
+    [Parameter]
+    public EventCallback<IFile> OnFileClicked { get; set; }
+
     [CascadingParameter]
     protected EditContext CascadedEditContext2 { get; set; }
 
@@ -101,6 +104,8 @@
 
     protected async void LoadFiles(InputFileChangeEventArgs e)
     {
+        mDropClass = string.Empty;
+
         if (e.FileCount <= 0) //should we set the Document to null?
             return;
 

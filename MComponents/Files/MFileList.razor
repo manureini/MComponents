@@ -1,6 +1,8 @@
 ﻿@using MComponents.MCards
 @using MComponents.MProgressbar
 
+@inject Navigation Navigation
+
 <div class="m-filelist">
 
     @if (mFilesProgress.Any())
@@ -77,6 +79,9 @@
     public EventCallback<IBrowserFile> OnCancelUploadClicked { get; set; }
 
     [Parameter]
+    public EventCallback<IFile> OnFileClicked { get; set; }
+
+    [Parameter]
     public EventCallback<IFile> OnDeleteFileClicked { get; set; }
 
     protected Dictionary<IBrowserFile, int> mFilesProgress = new Dictionary<IBrowserFile, int>();
@@ -111,13 +116,6 @@
     public void RemoveFileInProgress(IBrowserFile pFile)
     {
         mFilesProgress.Remove(pFile);
-    }
-
-    protected void OnFileClicked(IFile pFile)
-    {
-
-
-
     }
 
 }

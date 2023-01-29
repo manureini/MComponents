@@ -177,6 +177,10 @@ button:active {
         label {
             color: $gray;
         }
+
+        &.active {
+            background-color: $secondary;
+        }
     }
 
     .m-card {

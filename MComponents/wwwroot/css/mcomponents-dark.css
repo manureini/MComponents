@@ -1229,6 +1229,9 @@ button:active {
 .m-input-file-container .m-input-file-dropzone label {
   color: #ebedf2;
 }
+.m-input-file-container .m-input-file-dropzone.active {
+  background-color: #404040;
+}
 .m-input-file-container .m-card {
   background-color: #404040;
   border: solid 1px #707070;
