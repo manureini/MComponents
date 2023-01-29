@@ -86,8 +86,6 @@
 
     protected Dictionary<IBrowserFile, int> mFilesProgress = new Dictionary<IBrowserFile, int>();
 
-    //  protected HashSet<IFile> mFilesUploadDone = new HashSet<IFile>();
-
     public void SetProgressbar(IBrowserFile pFile, int pPercent)
     {
         mFilesProgress.Remove(pFile);
@@ -98,19 +96,7 @@
     public void SetUploadDone(IBrowserFile pFile)
     {
         mFilesProgress.Remove(pFile);
-
-
-        //mFilesUploadDone.Add(pFile);
-
         _ = InvokeAsync(StateHasChanged);
-
-        /*
-        _ = Task.Run(async () =>
-        {
-            await Task.Delay(2000);
-            mFilesUploadDone.Remove(pFile);
-            _ = InvokeAsync(StateHasChanged);
-        }); */
     }
 
     public void RemoveFileInProgress(IBrowserFile pFile)
