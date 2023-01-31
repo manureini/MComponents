@@ -105,15 +105,17 @@ namespace MComponents.MSelect
             if (mMultipleSelectMode && !mEnumFlags)
             {
                 EditContext = CascadedEditContext2;
+#if NET7_0_OR_GREATER
                 typeof(InputBase<T>).GetField("_hasInitializedParameters", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this, true);
+#endif
             }
-
-            await base.SetParametersAsync(parameters);
 
             if (mMultipleSelectMode && !mEnumFlags)
             {
                 FieldIdentifier = FieldIdentifier.Create(ValuesExpression);
             }
+
+            await base.SetParametersAsync(parameters);
 
             mNullValueDescription = mNullValueDescription ?? L["Please select..."];
         }
@@ -316,7 +318,7 @@ namespace MComponents.MSelect
                     pBuilder.AddAttribute(306, "role", "option");
 
                     pBuilder.OpenElement(310, "label");
-                    pBuilder.AddAttribute(311, "class", "m-checkbox m-select-checkbox m-clickable");
+                    pBuilder.AddAttribute(311, "class", "m-select-checkbox m-clickable");
                     pBuilder.AddEventStopPropagationClicksAttribute(312);
 
                     pBuilder.OpenElement(314, "input");
@@ -356,7 +358,7 @@ namespace MComponents.MSelect
                     if (mMultipleSelectMode)
                     {
                         pBuilder.OpenElement(310, "label");
-                        pBuilder.AddAttribute(311, "class", "m-checkbox m-select-checkbox m-clickable");
+                        pBuilder.AddAttribute(311, "class", "m-select-checkbox m-clickable");
                         pBuilder.AddEventStopPropagationClicksAttribute(312);
 
                         pBuilder.OpenElement(314, "input");

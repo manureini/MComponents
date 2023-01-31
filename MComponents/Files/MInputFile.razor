@@ -91,7 +91,10 @@
         if (MaxAllowedFiles > 1)
         {
             EditContext = CascadedEditContext2;
-            typeof(InputBase<IFile>).GetField("_hasInitializedParameters", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this, true);
+
+#if NET7_0_OR_GREATER
+        typeof(InputBase<IFile>).GetField("_hasInitializedParameters", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(this, true);
+#endif
         }
 
         await base.SetParametersAsync(parameters);
