@@ -114,6 +114,20 @@
 <MProgressbar Percentage="99" />
 <MProgressbar Percentage="100" />
 
+<br />
+<br />
+<br />
+
+<CascadingValue Value="mEditContext">
+
+    <MComponents.InputElements.MInputCheckbox @bind-Value=mBool />
+
+    <br />
+
+    <MComponents.InputElements.MInputSwitch @bind-Value=mBool />
+
+</CascadingValue>
+
 
 @code {
 
@@ -122,6 +136,7 @@
     protected ICollection<string> mSelectedValues;
     protected DateTime? mDateTime0;
     protected DateTime mDateTime1;
+    protected bool mBool;
 
     protected EditContext mEditContext = new EditContext(string.Empty);
 

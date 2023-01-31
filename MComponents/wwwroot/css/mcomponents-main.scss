@@ -570,7 +570,7 @@
     }
 }
 
-.m-checkbox {
+.m-select-checkbox {
     position: relative;
     padding-left: 25px;
     margin: 0;
@@ -619,6 +619,8 @@
     }
 }
 
+/* END Select ----------------------------------------------------------------------------- */
+
 .m-grid-row .m-switch {
     label {
         display: flex;
@@ -638,103 +640,192 @@
         background-color: transparent;
     }
 
-    label {
+    label input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        color: black;
 
-        input {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-            color: black;
+        &:focus {
+            box-shadow: none;
+        }
 
-            &:focus {
-                box-shadow: none;
-            }
+        &:disabled ~ span {
+            color: darken($disabled, 25);
+            cursor: default;
+        }
 
-            &:disabled ~ span {
-                color: darken($disabled, 25);
-                cursor: default;
-            }
+        ~ span {
+            position: relative;
+            line-height: 30px;
+            height: 30px;
+            width: 57px;
+            border-radius: 15px;
+            cursor: pointer;
 
-            ~ span {
-                position: relative;
-                line-height: 30px;
-                height: 30px;
-                width: 57px;
+            &:before {
+                position: absolute;
+                content: ' ';
+                display: block;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                background-color: $gray;
+                width: 54px;
                 border-radius: 15px;
-                cursor: pointer;
+                border-style: solid;
+                border-width: 1px;
+                border-color: darken($gray, 50);
+            }
+        }
 
-                &:before {
+        &:empty {
+            ~ span {
+                &:after {
                     position: absolute;
-                    content: ' ';
                     display: block;
-                    top: 0;
-                    bottom: 0;
-                    left: 0;
-                    background-color: $gray;
-                    width: 54px;
+                    background-color: white;
+                    height: 24px;
+                    width: 24px;
+                    line-height: 23px;
+                    top: 3px;
+                    margin-left: 3px;
+                    font-size: 0.9em;
+                    text-align: center;
                     border-radius: 15px;
+                    content: '\f00d';
+                    transition: all 80ms ease-in;
                     border-style: solid;
                     border-width: 1px;
                     border-color: darken($gray, 50);
                 }
             }
+        }
 
-            &:empty {
-                ~ span {
-                    &:after {
-                        position: absolute;
-                        display: block;
-                        background-color: white;
-                        height: 24px;
-                        width: 24px;
-                        line-height: 23px;
-                        top: 3px;
-                        margin-left: 3px;
-                        font-size: 0.9em;
-                        text-align: center;
-                        border-radius: 15px;
-                        content: '\f00d';
-                        transition: all 80ms ease-in;
-                        border-style: solid;
-                        border-width: 1px;
-                        border-color: darken($gray, 50);
-                    }
+        &:checked {
+            ~ span {
+                &:after {
+                    color: white;
+                    background-color: $primary;
+                    content: '\f00c';
+                    margin-left: 26px;
                 }
             }
+        }
 
-            &:checked {
-                ~ span {
-                    &:after {
-                        color: white;
-                        background-color: $primary;
-                        content: '\f00c';
-                        margin-left: 26px;
-                    }
+        &:disabled {
+            ~ span {
+                &::before {
+                    cursor: not-allowed;
                 }
-            }
 
-            &:disabled {
-                ~ span {
-                    &::before {
-                        cursor: not-allowed;
-                    }
-
-                    &:after {
-                        background-color: $disabled;
-                        cursor: not-allowed;
-                    }
+                &:after {
+                    background-color: $disabled;
+                    cursor: not-allowed;
                 }
             }
         }
     }
 }
 
-/* END Select ----------------------------------------------------------------------------- */
+.m-checkbox {
+    position: relative;
 
+    &.m-form-control {
+        padding: 0;
+        border: 0;
+        height: 2rem;
+        background-color: transparent;
+    }
+
+    label input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        color: black;
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        &:disabled ~ span {
+            color: darken($disabled, 25);
+            cursor: default;
+        }
+
+        & ~ span {
+            position: relative;
+            line-height: 30px;
+            height: 30px;
+            width: 57px;
+            border-radius: 15px;
+            cursor: pointer;
+
+            &:before {
+                position: absolute;
+                content: ' ';
+                display: block;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: 54px;
+            }
+
+            &:after {
+                color: $failure;
+                border-color: $gray;
+            }
+        }
+
+        &:empty {
+            ~ span {
+                &:after {
+                    position: absolute;
+                    display: block;
+                    height: 24px;
+                    width: 24px;
+                    line-height: 23px;
+                    top: 3px;
+                    margin-left: 3px;
+                    font-size: 0.9em;
+                    text-align: center;
+                    border-radius: 15px;
+                    content: '\f00d';
+                    transition: all 80ms ease-in;
+                    border-style: solid;
+                    border-width: 1px;
+                    border-color: darken($gray, 50);
+                }
+            }
+        }
+
+        &:checked {
+            ~ span {
+                &:after {
+                    color: $success;
+                    content: '\f00c';
+                }
+            }
+        }
+
+        &:disabled {
+            ~ span {
+                &::before {
+                    cursor: not-allowed;
+                }
+
+                &:after {
+                    background-color: $disabled;
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+}
 
 /* START Wizard ----------------------------------------------------------------------------- */
-
 .m-wizard {
     display: flex;
     flex-direction: column;
@@ -850,11 +941,7 @@
         display: none;
     }
 }
-
 /* END Wizard ----------------------------------------------------------------------------- */
-
-
-
 /* START Accordion ------------------------------------------------------------------------ */
 
 .m-accordion {
@@ -916,10 +1003,7 @@
         }
     }
 }
-
 /* END Accordion -------------------------------------------------------------------------- */
-
-
 /* START Cards --------------------------------------------------------------------------  */
 
 .m-cards-container {
@@ -935,7 +1019,6 @@
 .m-card > *:only-child {
     padding: 1rem;
 }
-
 /* END Cards --------------------------------------------------------------------------  */
 
 

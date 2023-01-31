@@ -1,6 +1,7 @@
 ﻿$white: #ffffff;
 $primary: black;
 $success: #28a745;
+$failure: #FF3C3C;
 $disabled: #282424;
 
 $main_bg: #151515;
@@ -93,14 +94,17 @@ $borderRadius: 0;
     }
 }
 
-.m-switch label input ~ span:before {
-    color: $white;
-    background-color: $white !important;
-}
+.m-switch label input {
 
-.m-switch label input ~ span:after {
-    color: black;
-    border-color: lighten($primary, 50%) !important;
+    &~ span:before {
+        color: $white;
+        background-color: $white !important;
+    }
+
+    &~ span:after {
+        color: black;
+        border-color: lighten($primary, 50%) !important;
+    }
 }
 
 .m-btn {

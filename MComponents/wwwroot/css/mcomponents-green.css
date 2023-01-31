@@ -468,16 +468,16 @@
   background: #f1f3f6;
 }
 
-.m-checkbox {
+.m-select-checkbox {
   position: relative;
   padding-left: 25px;
   margin: 0;
 }
-.m-checkbox > input {
+.m-select-checkbox > input {
   position: absolute;
   visibility: hidden;
 }
-.m-checkbox > input:checked ~ span:after {
+.m-select-checkbox > input:checked ~ span:after {
   content: "";
   position: absolute;
   left: 6px;
@@ -488,7 +488,7 @@
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
-.m-checkbox > input ~ span {
+.m-select-checkbox > input ~ span {
   position: absolute;
   top: 3px;
   left: 0;
@@ -497,14 +497,15 @@
   border: 1px solid #d1d7e2;
   border-radius: 0.25rem;
 }
-.m-checkbox .checkmark:after {
+.m-select-checkbox .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
-.m-checkbox .container input:checked ~ .checkmark:after {
+.m-select-checkbox .container input:checked ~ .checkmark:after {
   display: block;
 }
+/* END Select ----------------------------------------------------------------------------- */
 .m-grid-row .m-switch label {
   display: flex;
   margin: 0;
@@ -589,7 +590,79 @@
   cursor: not-allowed;
 }
 
-/* END Select ----------------------------------------------------------------------------- */
+.m-checkbox {
+  position: relative;
+}
+.m-checkbox.m-form-control {
+  padding: 0;
+  border: 0;
+  height: 2rem;
+  background-color: transparent;
+}
+.m-checkbox label input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  color: black;
+}
+.m-checkbox label input:focus {
+  box-shadow: none;
+}
+.m-checkbox label input:disabled ~ span {
+  color: #a9afba;
+  cursor: default;
+}
+.m-checkbox label input ~ span {
+  position: relative;
+  line-height: 30px;
+  height: 30px;
+  width: 57px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+.m-checkbox label input ~ span:before {
+  position: absolute;
+  content: " ";
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 54px;
+}
+.m-checkbox label input ~ span:after {
+  color: #FF3C3C;
+  border-color: #ebedf2;
+}
+.m-checkbox label input:empty ~ span:after {
+  position: absolute;
+  display: block;
+  height: 24px;
+  width: 24px;
+  line-height: 23px;
+  top: 3px;
+  margin-left: 3px;
+  font-size: 0.9em;
+  text-align: center;
+  border-radius: 15px;
+  content: "\f00d";
+  transition: all 80ms ease-in;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #576587;
+}
+.m-checkbox label input:checked ~ span:after {
+  color: #0e7027;
+  content: "\f00c";
+}
+.m-checkbox label input:disabled ~ span::before {
+  cursor: not-allowed;
+}
+.m-checkbox label input:disabled ~ span:after {
+  background-color: #f0f1f3;
+  cursor: not-allowed;
+}
+
 /* START Wizard ----------------------------------------------------------------------------- */
 .m-wizard {
   display: flex;

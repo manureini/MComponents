@@ -116,7 +116,18 @@ namespace MComponents
                 }
                 else if (typeof(T) == typeof(bool))
                 {
-                    pBuilder.OpenComponent<MInputCheckbox>(0);
+                    if (pPropertyInfo.GetCustomAttribute<MInputCheckboxAttribute>() != null)
+                    {
+                        pBuilder.OpenComponent<MInputCheckbox>(0);
+                    }
+                    else if (pPropertyInfo.GetCustomAttribute<MInputSwitchAttribute>() != null)
+                    {
+                        pBuilder.OpenComponent<MInputSwitch>(0);
+                    }
+                    else
+                    {
+                        pBuilder.OpenComponent<MInputSwitch>(0);
+                    }
                 }
                 else if (tType == typeof(Guid))
                 {
