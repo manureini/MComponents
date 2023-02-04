@@ -108,7 +108,11 @@ namespace MComponents
             }
 
             EnsureSize();
-            mHistory.Add(e.Location);
+
+            var lastValue = mHistory[^1];
+
+            if (lastValue != e.Location)
+                mHistory.Add(e.Location);
         }
 
         private void EnsureSize()
