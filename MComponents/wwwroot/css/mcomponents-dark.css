@@ -1303,14 +1303,15 @@ button:active {
 .m-input-file-container .m-input-file-dropzone.active {
   background-color: #404040;
 }
-.m-input-file-container .m-card {
+
+.m-filelist .m-card {
   background-color: #404040;
   border: solid 1px #707070;
   color: #ffffff;
 }
-.m-input-file-container .m-card .m-filelist-filename-row-bottom {
+.m-filelist .m-card .m-filelist-filename-row-bottom {
   color: #707070;
 }
-.m-input-file-container .m-filelist-icon-container {
+.m-filelist .m-filelist-icon-container {
   color: #707070;
 }
