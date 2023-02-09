@@ -1,5 +1,6 @@
 ﻿using MComponents.InputElements;
 using MComponents.MForm;
+using MComponents.MForm.InputElements;
 using MComponents.MGrid;
 using MComponents.MSelect;
 using MComponents.Shared.Attributes;
@@ -145,7 +146,14 @@ namespace MComponents
                     }
                     else
                     {
-                        pBuilder.OpenComponent<InputText>(0);
+                        if (pUpdateOnInput)
+                        {
+                            pBuilder.OpenComponent<InputTextOnInput>(0);
+                        }
+                        else
+                        {
+                            pBuilder.OpenComponent<InputText>(0);
+                        }
                     }
                 }
 
@@ -167,34 +175,24 @@ namespace MComponents
                         .ToDictionary(a => a.Key, a => a.Value));
                 }
 
-                pBuilder.AddAttribute(1, "id", pId);
-                pBuilder.AddAttribute(2, "Value", value);
+                pBuilder.AddAttribute(178, "id", pId);
+                pBuilder.AddAttribute(179, "Value", value);
 
-                pBuilder.AddAttribute(129, "form", pParent.Id);
+                pBuilder.AddAttribute(181, "form", pParent.Id);
 
-                pBuilder.AddAttribute(23, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, async __value =>
+                pBuilder.AddAttribute(183, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, async __value =>
                 {
                     await InvokeValueChanged(pParent, pPropertyInfo, pField, pModel, __value);
                 }, value));
 
-                if (pUpdateOnInput && !mNumberTypes.Contains(tType))
-                {
-                    pBuilder.AddAttribute(23, "oninput", EventCallback.Factory.Create<ChangeEventArgs>(pParent, async a =>
-                    {
-                        object value = a.Value;
-                        value = ReflectionHelper.ChangeType(value, typeof(T)); //maybe the TryParseValueFromString method of the input is better?
-                        await InvokeValueChanged(pParent, pPropertyInfo, pField, pModel, value);
-                    }));
-                }
-
-                pBuilder.AddAttribute(23, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
+                pBuilder.AddAttribute(188, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
                 {
                     pParent.OnInputKeyUp(a, pPropertyInfo);
                 }));
 
                 var valueExpression = GetValueExpression<T>(pPropertyInfo, pModel);
 
-                pBuilder.AddAttribute(4, "ValueExpression", valueExpression);
+                pBuilder.AddAttribute(195, "ValueExpression", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Func<T>>>(valueExpression));
 
                 string cssClass = "m-form-control";
 

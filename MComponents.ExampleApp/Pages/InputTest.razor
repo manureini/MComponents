@@ -1,0 +1,14 @@
+﻿@page "/inputtext"
+
+<CascadingValue Value="mEditContext">
+    <InputText placeholder="Input field" Class="form-control" @bind-Value:event="onkeydown" @bind-Value="@Text" />
+</CascadingValue>
+
+@Text
+
+@code {
+
+    public string Text { get; set; }
+
+    protected EditContext mEditContext = new EditContext(string.Empty);
+}

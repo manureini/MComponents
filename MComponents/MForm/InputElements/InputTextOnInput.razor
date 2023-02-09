@@ -1,0 +1,20 @@
+﻿@inherits InputText
+
+<input @attributes="AdditionalAttributes"
+       class="@CssClass"
+       @bind="CurrentValueAsString"
+       @bind:event="oninput" />
+
+@code {
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        if (ValueExpression != null)
+        {
+            FieldIdentifier = FieldIdentifier.Create(ValueExpression);
+        }
+    }
+
+}
