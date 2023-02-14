@@ -617,7 +617,7 @@
   position: relative;
   line-height: 30px;
   height: 30px;
-  width: 57px;
+  width: 30px;
   border-radius: 15px;
   cursor: pointer;
 }
@@ -628,7 +628,6 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: 54px;
 }
 .m-checkbox label input ~ span:after {
   color: #FF3C3C;
@@ -645,11 +644,13 @@
   font-size: 0.9em;
   text-align: center;
   border-radius: 15px;
-  content: "\f00d";
   transition: all 80ms ease-in;
   border-style: solid;
   border-width: 1px;
   border-color: #576587;
+}
+.m-checkbox label input:empty:not(:checked) ~ span:after {
+  content: "\f00d";
 }
 .m-checkbox label input:checked ~ span:after {
   color: #28a745;

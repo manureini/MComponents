@@ -791,11 +791,18 @@
                     font-size: 0.9em;
                     text-align: center;
                     border-radius: 15px;
-                    content: '\f00d';
                     transition: all 80ms ease-in;
                     border-style: solid;
                     border-width: 1px;
                     border-color: darken($gray, 50);
+                }
+            }
+        }
+
+        &:empty:not(:checked) {
+            ~ span {
+                &:after {
+                    content: '\f00d';
                 }
             }
         }
