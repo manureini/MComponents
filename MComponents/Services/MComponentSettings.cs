@@ -7,7 +7,7 @@ namespace MComponents.Services
 {
     public class MComponentSettings
     {
-        public static readonly CultureInfo[] AllSupportedCultures = new[] { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("fr") };
+        public static readonly CultureInfo[] AllSupportedCultures = new[] { new CultureInfo("en-US"), new CultureInfo("de-DE"), new CultureInfo("fr-FR") };
 
         public bool UseDeleteConfirmationWithAlert { get; set; }
 

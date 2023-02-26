@@ -250,7 +250,7 @@ namespace MComponents
             }
         }
 
-        private static async Task InvokeValueChanged(IMForm pParent, IMPropertyInfo pPropertyInfo, IMField pField, object pModel, object pNewValue)
+        internal static async Task InvokeValueChanged(IMForm pParent, IMPropertyInfo pPropertyInfo, IMField pField, object pModel, object pNewValue)
         {
             lock (pModel)
             {
@@ -311,40 +311,45 @@ namespace MComponents
             }
         }
 
-        private static Expression<Func<T>> GetValueExpression<T>(IMPropertyInfo pPropertyInfo, object pModel)
+        internal static Expression<Func<T>> GetValueExpression<T>(IMPropertyInfo pPropertyInfo, object pModel)
         {
             if (pModel is IDictionary<string, object>)
             {
-                var fake = new FakePropertyInfo<T>(pPropertyInfo.Name);
-
-                //just create a member expression with random values
-                MemberExpression expression = Expression.Property(Expression.Constant(fake), nameof(fake.CanRead));
-
-                Expression constantExpression = Expression.Constant(default(T), typeof(T));
-
-                var constantExpressionValueBaseFields = constantExpression.GetType().BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-                var constantExpressionValueFields = constantExpression.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-
-                var field = constantExpressionValueBaseFields.Concat(constantExpressionValueFields).First(f => f.FieldType == typeof(object));
-                field.SetValue(constantExpression, pModel);
-
-                //set generated constant expression
-                var expressionField = expression.GetType().BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(Expression));
-                expressionField.SetValue(expression, constantExpression);
-
-                //set fake property type
-                var propertyField = expression.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(PropertyInfo));
-                propertyField.SetValue(expression, fake);
-
-                //now we have generated an MemberExpression which has the pModel as value and an FakePropertyInfo with correct type
-
-                return Expression.Lambda<Func<T>>(expression);
+                return GetFakePropertyInfoExpression<T>(pModel, pPropertyInfo.Name);
             }
             else
             {
                 var propertyholder = pPropertyInfo.GetPropertyHolder(pModel);
                 return Expression.Lambda<Func<T>>(Expression.Property(Expression.Constant(propertyholder), pPropertyInfo.Name));
             }
+        }
+
+        internal static Expression<Func<T>> GetFakePropertyInfoExpression<T>(object pModel, string pPropertyName)
+        {
+            var fake = new FakePropertyInfo<T>(pPropertyName);
+
+            //just create a member expression with random values
+            MemberExpression expression = Expression.Property(Expression.Constant(fake), nameof(fake.CanRead));
+
+            Expression constantExpression = Expression.Constant(default(T), typeof(T));
+
+            var constantExpressionValueBaseFields = constantExpression.GetType().BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+            var constantExpressionValueFields = constantExpression.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+
+            var field = constantExpressionValueBaseFields.Concat(constantExpressionValueFields).First(f => f.FieldType == typeof(object));
+            field.SetValue(constantExpression, pModel);
+
+            //set generated constant expression
+            var expressionField = expression.GetType().BaseType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(Expression));
+            expressionField.SetValue(expression, constantExpression);
+
+            //set fake property type
+            var propertyField = expression.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(f => f.FieldType == typeof(PropertyInfo));
+            propertyField.SetValue(expression, fake);
+
+            //now we have generated an MemberExpression which has the pModel as value and an FakePropertyInfo with correct type
+
+            return Expression.Lambda<Func<T>>(expression);
         }
 
         private static bool IsPropertyHolderNull(IMPropertyInfo pPropertyInfo, object pModel)

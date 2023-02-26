@@ -1,4 +1,6 @@
-﻿using MComponents.Shared.Attributes;
+﻿using MComponents.Services;
+using MComponents.Shared.Attributes;
+using MComponents.Shared.Localization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -56,6 +58,9 @@ namespace MComponents.MForm
 
         [Inject]
         public IStringLocalizer L { get; set; }
+
+        [Inject]
+        public MComponentSettings Settings { get; set; }
 
         public Type ModelType => Model?.GetType() ?? typeof(T);
 
@@ -488,6 +493,13 @@ namespace MComponents.MForm
                     return;
                 }
 
+                if (propertyInfo.GetCustomAttribute<LocalizedStringAttribute>() != null)
+                {
+                    var lmethod = typeof(RenderHelperInputLocalized).GetMethod(nameof(RenderHelperInputLocalized.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
+                    lmethod.Invoke(null, new object[] { builder2, propertyInfo, Model, this, field, UpdateOnInput, Settings.SupportedCultures });
+                    return;
+                }
+
                 bool isInFilterRow = AdditionalAttributes != null && AdditionalAttributes.ContainsKey("data-is-filterrow");
 
                 var method = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
@@ -502,9 +514,7 @@ namespace MComponents.MForm
 
         private async Task<bool> CascadedFormContext_OnFormSubmit(object sender, MFormContainerContextSubmitArgs e)
         {
-            // Console.WriteLine("FormContextSubmit: " + typeof(T));
-
-            var isValid = false;
+            bool isValid;
 
             try
             {
@@ -519,10 +529,6 @@ namespace MComponents.MForm
             if (!isValid)
             {
                 Console.WriteLine(typeof(T) + ": Not valid");
-
-                //       if (ContainerContext != null)
-                //           throw new UserMessageException(L["Please check all forms. There is at least one validation error!"]);
-
                 return false;
             }
 

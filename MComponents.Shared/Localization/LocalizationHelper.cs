@@ -10,6 +10,11 @@ namespace MComponents.Shared.Localization
 {
     public static class LocalizationHelper
     {
+        public static string GetLocPropertyName(string pProperty)
+        {
+            return pProperty + "Loc";
+        }
+
         public static void SyncLocalizedStrings(object pObject, IDictionary<string, object> pChangedValues = null)
         {
             foreach (var prop in pObject.GetType().GetProperties().Where(p => p.GetCustomAttribute<LocalizedStringAttribute>() != null))
@@ -29,9 +34,9 @@ namespace MComponents.Shared.Localization
                 {
                     SetLocalizedStringValue(pObject, pPropertyInfo.Name, value);
 
-                    if (pChangedValues != null && !pChangedValues.ContainsKey(pPropertyInfo.Name + "Loc"))
+                    if (pChangedValues != null && !pChangedValues.ContainsKey(GetLocPropertyName(pPropertyInfo.Name)))
                     {
-                        var locProp = pObject.GetType().GetProperty(pPropertyInfo.Name + "Loc");
+                        var locProp = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyInfo.Name));
                         pChangedValues.Add(locProp.Name, locProp.GetValue(pObject));
                     }
                 }
@@ -43,15 +48,15 @@ namespace MComponents.Shared.Localization
             }
         }
 
-        public static void SetLocalizedStringValue(object pObject, string pPropertyName, string pValue)
+        public static void SetLocalizedStringValue(object pObject, string pPropertyName, string pValue, CultureInfo pCulture = null)
         {
-            var prop = pObject.GetType().GetProperty(pPropertyName + "Loc");
+            var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
 
             var locValuesJson = (string)prop.GetValue(pObject) ?? "[]";
 
             var locValues = JsonSerializer.Deserialize<List<LocalizedJsonString>>(locValuesJson);
 
-            var culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            var culture = (pCulture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName;
 
             locValues.RemoveAll(l => l.Culture == culture);
             locValues.Add(new LocalizedJsonString(culture, pValue));
@@ -61,24 +66,33 @@ namespace MComponents.Shared.Localization
             prop.SetValue(pObject, json);
         }
 
-        public static string GetLocalizedStringValue(object pObject, string pPropertyName)
+        public static string GetLocalizedStringValue(object pObject, string pPropertyName, CultureInfo pCulture = null)
         {
-            var prop = pObject.GetType().GetProperty(pPropertyName + "Loc");
+            var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
 
             var locValuesJson = (string)prop.GetValue(pObject) ?? "[]";
 
-            var culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            var culture = (pCulture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName;
 
             var locValues = JsonSerializer.Deserialize<List<LocalizedJsonString>>(locValuesJson);
 
             var value = locValues.FirstOrDefault(l => l.Culture == culture);
 
-            if (value != null)
-            {
-                return value.Value;
-            }
+            return value?.Value ?? string.Empty;
+        }
 
-            return locValues.FirstOrDefault(l => l.Culture == "en")?.Value;
+        public static void SetLocalizedStringValues(object pObject, string pPropertyName, List<LocalizedJsonString> values)
+        {
+            var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
+            var json = JsonSerializer.Serialize(values);
+            prop.SetValue(pObject, json);
+        }
+
+        public static List<LocalizedJsonString> GetLocalizedStringValues(object pObject, string pPropertyName)
+        {
+            var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
+            var locValuesJson = (string)prop.GetValue(pObject) ?? "[]";
+            return JsonSerializer.Deserialize<List<LocalizedJsonString>>(locValuesJson);
         }
     }
 }
