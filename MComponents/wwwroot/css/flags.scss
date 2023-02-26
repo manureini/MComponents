@@ -1,6 +1,6 @@
 ﻿// https://github.com/lipis/flag-icons
 
-$flag-icons-path: "../flags" !default;
+$flag-icons-path: "../images/flags" !default;
 $flag-icons-rect-path: "/4x3" !default;
 $flag-icons-square-path: "/1x1" !default;
 $flag-icons-use-square: true !default;
@@ -16,7 +16,7 @@ input.m-flag {
     background-position-x: 10px;
     background-position-y: center;
     background-size: 1rem;
-    padding-left: 2em;
+    padding-left: 2rem;
 }
 
 .m-flag-inline {
