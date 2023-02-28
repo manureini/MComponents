@@ -47,19 +47,19 @@ namespace MComponents.Shared.Localization
                 pPropertyInfo.SetValue(pObject, value);
             }
         }
-
+        /*
         public static void SetLocalizedStringValue(object pObject, string pPropertyName, string pValue, CultureInfo pCulture = null)
         {
             var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
 
-            var locValuesJson = (string)prop.GetValue(pObject) ?? "[]";
-
-            var locValues = JsonSerializer.Deserialize<List<LocalizedJsonString>>(locValuesJson);
+            var locValuesJson = (string)prop.GetValue(pObject) ?? "{}";
 
             var culture = (pCulture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName;
 
-            locValues.RemoveAll(l => l.Culture == culture);
-            locValues.Add(new LocalizedJsonString(culture, pValue));
+            var locValues = JsonSerializer.Deserialize<Dictionary<string, string>>(locValuesJson);
+
+            locValues.Remove(culture);
+            locValues.Add(culture, pValue);
 
             var json = JsonSerializer.Serialize(locValues);
 
@@ -70,29 +70,53 @@ namespace MComponents.Shared.Localization
         {
             var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
 
-            var locValuesJson = (string)prop.GetValue(pObject) ?? "[]";
+            var locValuesJson = (string)prop.GetValue(pObject) ?? "{}";
 
             var culture = (pCulture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName;
 
-            var locValues = JsonSerializer.Deserialize<List<LocalizedJsonString>>(locValuesJson);
+            if (JsonDocument.Parse(locValuesJson).RootElement.TryGetProperty(culture, out var element))
+            {
+                return element.GetString();
+            }
 
-            var value = locValues.FirstOrDefault(l => l.Culture == culture);
-
-            return value?.Value ?? string.Empty;
+            return string.Empty;
         }
+        */
 
-        public static void SetLocalizedStringValues(object pObject, string pPropertyName, List<LocalizedJsonString> values)
+        public static void SetLocalizedStringValue(object pObject, string pPropertyName, string pValue, CultureInfo pCulture = null)
         {
             var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
-            var json = JsonSerializer.Serialize(values);
-            prop.SetValue(pObject, json);
+
+            var locValuesJson = (JsonDocument)prop.GetValue(pObject) ?? JsonDocument.Parse("{}");
+
+            var culture = (pCulture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName;
+
+            var locValues = locValuesJson.RootElement.Deserialize<Dictionary<string, string>>();
+
+            locValues.Remove(culture);
+            locValues.Add(culture, pValue);
+
+            var json = JsonSerializer.Serialize(locValues);
+
+            var jsonDoc = JsonDocument.Parse(json);
+
+            prop.SetValue(pObject, jsonDoc);
         }
 
-        public static List<LocalizedJsonString> GetLocalizedStringValues(object pObject, string pPropertyName)
+        public static string GetLocalizedStringValue(object pObject, string pPropertyName, CultureInfo pCulture = null)
         {
             var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
-            var locValuesJson = (string)prop.GetValue(pObject) ?? "[]";
-            return JsonSerializer.Deserialize<List<LocalizedJsonString>>(locValuesJson);
+
+            var locValuesJson = (JsonDocument)prop.GetValue(pObject) ?? JsonDocument.Parse("{}");
+
+            var culture = (pCulture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName;
+
+            if (locValuesJson.RootElement.TryGetProperty(culture, out var element))
+            {
+                return element.GetString();
+            }
+
+            return string.Empty;
         }
     }
 }
