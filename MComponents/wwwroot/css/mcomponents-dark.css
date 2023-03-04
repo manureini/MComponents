@@ -3021,6 +3021,11 @@ input.m-flag, input.m-flag-inline {
   font-size: smaller;
 }
 
+.m-tab-container .m-tab {
+  border: 1px solid;
+  padding: 1rem;
+}
+
 .m-progressbar {
   display: flex;
   border: 1px solid #212529;
@@ -3213,4 +3218,10 @@ button:active {
 }
 .m-filelist .m-filelist-icon-container {
   color: #707070;
+}
+
+.m-tabs-container .m-tab {
+  border: 1px solid;
+  border-color: #a6a6a6;
+  padding: 1rem;
 }

@@ -1,21 +1,23 @@
 ﻿@inject Navigation Navigation
 
-<div class="btn-group m-tabs-buttons" role="group">
-    @foreach (var tab in Tabs)
-    {
-        <button type="button"
-            class="m-btn @GetButtonClass(tab) m-tabs-btn"
-            @onclick=@(() => ActivatePage(tab))>
-            <span class="m-tabs-btn-title">@tab.Title</span>
-        </button>
-    }
-</div>
-
-<CascadingValue Value="this">
-    <div class="m-tab">
-        @ChildContent
+<div class="m-tabs-container">
+    <div class="btn-group m-tabs-buttons" role="group">
+        @foreach (var tab in Tabs)
+        {
+            <button type="button"
+                class="m-btn @GetButtonClass(tab) m-tabs-btn"
+                @onclick=@(() => ActivatePage(tab))>
+                <span class="m-tabs-btn-title">@tab.Title</span>
+            </button>
+        }
     </div>
-</CascadingValue>
+
+    <CascadingValue Value="this">
+        <div class="m-tab">
+            @ChildContent
+        </div>
+    </CascadingValue>
+</div>
 
 @code {
 

@@ -1356,6 +1356,13 @@
     }
 }
 
+.m-tab-container {
+    .m-tab {
+        border: 1px solid;
+        padding: 1rem;
+    }
+}
+
 .m-progressbar {
     display: flex;
     border: 1px solid $text_color;
