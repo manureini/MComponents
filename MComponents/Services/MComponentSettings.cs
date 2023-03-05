@@ -1,4 +1,5 @@
 ﻿using MComponents.MGrid;
+using MComponents.MToaster;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace MComponents.Services
         public bool SetRequestLocalizationOptions { get; set; }
 
         public MGridSettings MGridSettings => MGridSettings.Instance;
+
+        public ToasterConfiguration ToasterConfiguration { get; set; } = new ToasterConfiguration();
 
         public Func<IServiceProvider, string, Task> EnsureAssemblyIsLoaded { get; set; }
     }

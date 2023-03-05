@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using MComponents.MGrid;
+using MComponents.MToaster;
 using MComponents.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -161,9 +162,9 @@ namespace MComponents
             {
                 pServices.AddScoped<Navigation>();
             }
-
             pServices.AddBlazoredLocalStorage();
 
+            pServices.AddScoped<IToaster>(builder => new Toaster(settings.ToasterConfiguration));
             pServices.AddScoped<MLocalStorageService>();
             pServices.AddScoped<MGridStateService>();
         }

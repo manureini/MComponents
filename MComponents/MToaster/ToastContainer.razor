@@ -1,0 +1,8 @@
+﻿@inherits ToastContainerModel
+
+<div id="toast-container" class="@Class">
+    @foreach (var toast in Toasts)
+    {
+        <ToastElement @key="toast" Toast="@toast"></ToastElement>
+    }
+</div>

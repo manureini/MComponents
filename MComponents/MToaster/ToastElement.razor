@@ -1,0 +1,31 @@
+﻿@inherits ToastElementModel
+@Css
+<div class="@Toast.State.ToastClass" style="@Toast.State.AnimationStyle" @onmouseenter="MouseEnter" @onmouseleave="MouseLeave" @onclick="Clicked">
+    @if (Toast.State.ShowProgressBar)
+    {
+        <div class="@Toast.State.ProgressBarClass" style="@Toast.State.ProgressBarStyle"></div>
+    }
+    @if (Toast.State.ShowCloseIcon)
+    {
+        <button type="button" class="@Toast.State.CloseIconClass" @onclick="CloseIconClicked" @onclick:stopPropagation="true">×</button>
+    }
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        if (Toast.State.EscapeHtml)
+        {
+            <div class="@Toast.State.ToastTitleClass">@Title</div>
+        }
+        else
+        {
+            <div class="@Toast.State.ToastTitleClass">@((MarkupString)Title)</div>
+        }
+    }
+    @if (Toast.State.EscapeHtml)
+    {
+        <div class="@Toast.State.ToastMessageClass">@Message</div>
+    }
+    else
+    {
+        <div class="@Toast.State.ToastMessageClass">@((MarkupString)Message)</div>
+    }
+</div>
