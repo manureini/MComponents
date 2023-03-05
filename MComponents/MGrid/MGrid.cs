@@ -1261,14 +1261,7 @@ namespace MComponents.MGrid
             {
                 return b =>
                 {
-                    try
-                    {
-                        b.AddContent(1147, fieldGenerator.EditFieldTemplate(pIsInFilterRow));
-                    }
-                    catch (Exception e)
-                    {
-                        throw;
-                    }
+                    b.AddContent(1147, fieldGenerator.EditFieldTemplate(pIsInFilterRow));
                 };
             };
 
