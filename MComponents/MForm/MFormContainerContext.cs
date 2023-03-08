@@ -10,8 +10,7 @@ namespace MComponents.MForm
 {
     public class MFormContainerContext
     {
-        public delegate Task AsyncEventHandler<TEventArgs>(object sender, TEventArgs e) where TEventArgs : EventArgs;
-
+        public delegate Task<bool> AsyncEventHandler<TEventArgs>(object sender, TEventArgs e) where TEventArgs : EventArgs;
 
         public event AsyncEventHandler<MFormContainerContextSubmitArgs> OnFormSubmit;
 
@@ -55,7 +54,12 @@ namespace MComponents.MForm
                 {
                     try
                     {
-                        await handler(this, args);
+                        var formValid = await handler(this, args);
+
+                        if (submitSuccessful && !formValid)
+                        {
+                            submitSuccessful = false;
+                        }
                     }
                     catch (Exception e)
                     {
@@ -76,15 +80,15 @@ namespace MComponents.MForm
                     }
                 }
 
-                if (FormContainer.OnAfterAllFormsSubmitted.HasDelegate)
+                if (submitSuccessful)
                 {
-                    await FormContainer.OnAfterAllFormsSubmitted.InvokeAsync(new MFormContainerAfterAllFormsSubmittedArgs()
+                    if (FormContainer.OnAfterAllFormsSubmitted.HasDelegate)
                     {
-                        AllFormsSuccessful = submitSuccessful
-                    });
-                }
+                        await FormContainer.OnAfterAllFormsSubmitted.InvokeAsync(new MFormContainerAfterAllFormsSubmittedArgs());
+                    }
 
-                Notificator.InvokeNotification(ServiceProvider, false, pLocalizer["Gespeichert!"]);
+                    Notificator.InvokeNotification(ServiceProvider, false, pLocalizer["Gespeichert!"]);
+                }
             }
             finally
             {
