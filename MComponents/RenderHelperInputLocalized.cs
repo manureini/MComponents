@@ -2,7 +2,6 @@
 using MComponents.MForm.InputElements;
 using MComponents.MGrid;
 using MComponents.Shared.Attributes;
-using MComponents.Shared.Localization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.CompilerServices;
 using Microsoft.AspNetCore.Components.Forms;
@@ -69,7 +68,7 @@ namespace MComponents
                 LocalizationHelper.SetLocalizedStringValue(pModel, pPropertyInfo.Name, (string)(object)__value, pCulture);
 
                 var locProp = ReflectionHelper.GetIMPropertyInfo(pModel.GetType(), LocalizationHelper.GetLocPropertyName(pPropertyInfo.Name), typeof(T));
-                await pParent.OnInputValueChanged(null, locProp, null);
+                await pParent.OnInputValueChanged(new MFieldEmpty(), locProp, null);
 
                 if (pCulture.TwoLetterISOLanguageName == CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)
                 {

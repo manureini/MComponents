@@ -493,14 +493,14 @@ namespace MComponents.MForm
                     return;
                 }
 
-                if (propertyInfo.GetCustomAttribute<LocalizedStringAttribute>() != null)
+                bool isInFilterRow = AdditionalAttributes != null && AdditionalAttributes.ContainsKey("data-is-filterrow");
+
+                if (!isInFilterRow && propertyInfo.GetCustomAttribute<LocalizedStringAttribute>() != null)
                 {
                     var lmethod = typeof(RenderHelperInputLocalized).GetMethod(nameof(RenderHelperInputLocalized.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
                     lmethod.Invoke(null, new object[] { builder2, propertyInfo, Model, this, field, UpdateOnInput, Settings.SupportedCultures });
                     return;
                 }
-
-                bool isInFilterRow = AdditionalAttributes != null && AdditionalAttributes.ContainsKey("data-is-filterrow");
 
                 var method = typeof(RenderHelper).GetMethod(nameof(RenderHelper.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
                 method.Invoke(null, new object[] { builder2, propertyInfo, Model, inpId, this, isInFilterRow, field, UpdateOnInput });

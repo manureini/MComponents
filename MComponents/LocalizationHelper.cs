@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MComponents.Shared.Localization;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 
-namespace MComponents.Shared.Localization
+namespace MComponents
 {
     public static class LocalizationHelper
     {
@@ -36,7 +37,7 @@ namespace MComponents.Shared.Localization
 
                     if (pChangedValues != null && !pChangedValues.ContainsKey(GetLocPropertyName(pPropertyInfo.Name)))
                     {
-                        var locProp = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyInfo.Name));
+                        var locProp = ReflectionHelper.GetIMPropertyInfo(pObject.GetType(), GetLocPropertyName(pPropertyInfo.Name), typeof(JsonDocument));
                         pChangedValues.Add(locProp.Name, locProp.GetValue(pObject));
                     }
                 }
@@ -47,45 +48,10 @@ namespace MComponents.Shared.Localization
                 pPropertyInfo.SetValue(pObject, value);
             }
         }
-        /*
-        public static void SetLocalizedStringValue(object pObject, string pPropertyName, string pValue, CultureInfo pCulture = null)
-        {
-            var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
-
-            var locValuesJson = (string)prop.GetValue(pObject) ?? "{}";
-
-            var culture = (pCulture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName;
-
-            var locValues = JsonSerializer.Deserialize<Dictionary<string, string>>(locValuesJson);
-
-            locValues.Remove(culture);
-            locValues.Add(culture, pValue);
-
-            var json = JsonSerializer.Serialize(locValues);
-
-            prop.SetValue(pObject, json);
-        }
-
-        public static string GetLocalizedStringValue(object pObject, string pPropertyName, CultureInfo pCulture = null)
-        {
-            var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
-
-            var locValuesJson = (string)prop.GetValue(pObject) ?? "{}";
-
-            var culture = (pCulture ?? CultureInfo.CurrentUICulture).TwoLetterISOLanguageName;
-
-            if (JsonDocument.Parse(locValuesJson).RootElement.TryGetProperty(culture, out var element))
-            {
-                return element.GetString();
-            }
-
-            return string.Empty;
-        }
-        */
 
         public static void SetLocalizedStringValue(object pObject, string pPropertyName, string pValue, CultureInfo pCulture = null)
         {
-            var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
+            var prop = ReflectionHelper.GetIMPropertyInfo(pObject.GetType(), GetLocPropertyName(pPropertyName), typeof(JsonDocument));
 
             var locValuesJson = (JsonDocument)prop.GetValue(pObject) ?? JsonDocument.Parse("{}");
 
@@ -105,7 +71,7 @@ namespace MComponents.Shared.Localization
 
         public static string GetLocalizedStringValue(object pObject, string pPropertyName, CultureInfo pCulture = null)
         {
-            var prop = pObject.GetType().GetProperty(GetLocPropertyName(pPropertyName));
+            var prop = ReflectionHelper.GetIMPropertyInfo(pObject.GetType(), GetLocPropertyName(pPropertyName), typeof(JsonDocument));
 
             var locValuesJson = (JsonDocument)prop.GetValue(pObject) ?? JsonDocument.Parse("{}");
 
