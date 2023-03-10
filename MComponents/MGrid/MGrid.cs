@@ -87,6 +87,9 @@ namespace MComponents.MGrid
         [Parameter]
         public bool UseStaticLayoutMode { get; set; } = MGridSettings.Instance.UseStaticLayoutMode;
 
+        [Parameter]
+        public string NoDataDescription { get; set; }
+
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
@@ -607,9 +610,24 @@ namespace MComponents.MGrid
                        }
                        else if (DataCache != null)
                        {
-                           foreach (var entry in DataCache)
+                           if (DataCache.Count == 0)
                            {
-                               AddContentRow(builder2, entry, MGridAction.Edit);
+                               if (!mIsLoading)
+                               {
+                                   builder2.OpenElement(612, "tr");
+                                   builder2.OpenElement(613, "td");
+                                   builder2.AddAttribute(614, "colspan", ColumnsList.Count);
+                                   builder2.AddContent(615, NoDataDescription ?? L[nameof(MComponentsLocalization.NoDataAvailable)]);
+                                   builder2.CloseElement(); //td
+                                   builder2.CloseElement(); //tr
+                               }
+                           }
+                           else
+                           {
+                               foreach (var entry in DataCache)
+                               {
+                                   AddContentRow(builder2, entry, MGridAction.Edit);
+                               }
                            }
                        }
 
@@ -1548,7 +1566,7 @@ namespace MComponents.MGrid
                 InvokeStateHasChanged();
                 await Task.Delay(150);
 
-                bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", L["Are you sure?"].ToString());
+                bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", L[nameof(MComponentsLocalization.AreYouSure)].ToString());
 
                 Formatter.ClearRowMetadata();
                 InvokeStateHasChanged();

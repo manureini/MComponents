@@ -117,9 +117,9 @@ namespace MComponents.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Are you sure?.
         /// </summary>
-        public static string Are_you_sure_ {
+        public static string AreYouSure {
             get {
-                return ResourceManager.GetString("Are you sure?", resourceCulture);
+                return ResourceManager.GetString("AreYouSure", resourceCulture);
             }
         }
         
@@ -192,6 +192,15 @@ namespace MComponents.Resources {
         public static string Next {
             get {
                 return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No data available.
+        /// </summary>
+        public static string NoDataAvailable {
+            get {
+                return ResourceManager.GetString("NoDataAvailable", resourceCulture);
             }
         }
         

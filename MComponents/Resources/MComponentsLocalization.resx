@@ -109,7 +109,7 @@
   <data name="Add" xml:space="preserve">
     <value>Add</value>
   </data>
-  <data name="Are you sure?" xml:space="preserve">
+  <data name="AreYouSure" xml:space="preserve">
     <value>Are you sure?</value>
   </data>
   <data name="Back" xml:space="preserve">
@@ -168,5 +168,8 @@
   </data>
   <data name="DeleteFailed" xml:space="preserve">
     <value>Value could not be deleted</value>
+  </data>
+  <data name="NoDataAvailable" xml:space="preserve">
+    <value>No data available</value>
   </data>
 </root>
