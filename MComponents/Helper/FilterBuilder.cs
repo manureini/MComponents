@@ -63,7 +63,7 @@ namespace MComponents
                 }
             }
 
-            return Expression.Equal(property, Expression.Constant(pInstruction.Value));
+            return Expression.Equal(property, Expression.Constant(pInstruction.Value, pInstruction.PropertyInfo.PropertyType));
         }
 
         public IQueryable<TSource> FilterBy(IQueryable<TSource> source, ICollection<FilterInstruction> instructions)
