@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Localization;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -190,6 +192,11 @@ namespace MComponents
                 return true;
 
             return false;
+        }
+
+        public static string GetDisplayName<T>(string pProperty, IStringLocalizer L)
+        {
+            return GetMPropertyInfo(typeof(T), pProperty, null).GetDisplayName(L);
         }
     }
 }
