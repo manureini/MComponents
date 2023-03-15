@@ -187,6 +187,15 @@ namespace MComponents.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Grouping.
+        /// </summary>
+        public static string Grouping {
+            get {
+                return ResourceManager.GetString("Grouping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Next.
         /// </summary>
         public static string Next {

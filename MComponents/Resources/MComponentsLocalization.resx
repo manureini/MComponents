@@ -172,4 +172,7 @@
   <data name="NoDataAvailable" xml:space="preserve">
     <value>No data available</value>
   </data>
+  <data name="Grouping" xml:space="preserve">
+    <value>Grouping</value>
+  </data>
 </root>
