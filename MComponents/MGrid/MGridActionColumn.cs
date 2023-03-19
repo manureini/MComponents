@@ -1,11 +1,9 @@
-﻿using MComponents.Services;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace MComponents.MGrid
