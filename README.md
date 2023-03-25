@@ -44,7 +44,10 @@ and if you want to use RequestLocalization
 ```c#
 app.UseRequestLocalization();
 ```
-
+Add to App.razor or MainLayout.razor
+```html
+<MComponentsRoot />
+```
 
 ### Please create an issue or make Pull requests if you want to support this project
 
