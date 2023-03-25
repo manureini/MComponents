@@ -1,19 +1,8 @@
-﻿
+﻿@inject TooltipService TooltipService
 
-<div class="m-tooltip" tabindex="-1">
-
-    <div class="m-tooltip-spacer">
-    </div>
-
-    <div class="m-tooltip-content">
-        @Text
-        @TooltipContent
-    </div>
-
+<div id="m-tooltip-@mId" class="m-tooltip" @onmouseenter="ShowTooltip" @onmouseleave="HideTooltip">
     @ChildContent
-
 </div>
-
 
 @code {
 
@@ -25,5 +14,27 @@
 
     [Parameter]
     public RenderFragment TooltipContent { get; set; }
+
+    protected Guid mId;
+
+    protected override void OnInitialized()
+    {
+        mId = Guid.NewGuid();
+    }
+
+    protected void ShowTooltip()
+    {
+        TooltipService.ShowTooltip(new TooltipReference()
+            {
+                Id = mId,
+                Text = Text,
+                Content = TooltipContent,
+            });
+    }
+
+    protected void HideTooltip()
+    {
+        TooltipService.HideTooltip(mId);
+    }
 
 }

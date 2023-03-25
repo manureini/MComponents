@@ -1082,70 +1082,33 @@
     }
 }
 
-
 .m-tooltip {
-    position: relative;
     display: inline-block;
     cursor: help;
-
-    .m-tooltip-content {
-        display: none;
-        position: absolute;
-        padding: 0.25rem 1rem;
-        bottom: 100%;
-        left: 50%;
-        background-color: $secondary;
-        text-align: center;
-        border-radius: $borderRadius;
-        z-index: 55;
-        transform: translateX(-50%) translateY(-0.6rem);
-        color: $white;
-
-        &::after { //arrow
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: $secondary transparent transparent transparent;
-        }
-    }
-
-    .m-tooltip-spacer {
-        position: absolute;
-        padding: 0.25rem 1rem;
-        bottom: 100%;
-        left: 50%;
-        z-index: 54;
-        transform: translateX(-50%);
-        height: 1rem;
-        width: 100%;
-        display: none;
-    }
-
-    &:hover {
-        .m-tooltip-content {
-            display: block;
-            animation: fade_in_show 0.25s
-        }
-
-        .m-tooltip-spacer {
-            display: block;
-        }
-    }
 }
 
-@keyframes fade_in_show {
-    0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-0.6rem) scale(0);
-    }
+.m-tooltip-instance {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    padding: 0.25rem 1rem;
+    color: $white;
+    background-color: $secondary;
+    text-align: center;
+    border-radius: $borderRadius;
+    transform: translateX(-50%) translateY(-100%) translateY(-2rem);
 
-    100% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(-0.6rem) scale(1);
+    &::after { //arrow
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: $secondary transparent transparent transparent;
     }
 }
 

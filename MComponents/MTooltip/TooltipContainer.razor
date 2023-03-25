@@ -1,0 +1,38 @@
+﻿@using MComponents.MToaster
+
+@inject TooltipService TooltipService
+@inject IJSRuntime JsRuntime
+
+@foreach (var tooltipInstance in TooltipService.TooltipReferences.Values.ToArray())
+{
+    <div id="m-tooltip-instance-@tooltipInstance.Id" class="m-tooltip-instance">
+        @tooltipInstance.Text
+        @tooltipInstance.Content
+    </div>
+}
+
+@code {
+
+    protected bool mUpdateTooltips = true;
+
+    protected override void OnInitialized()
+    {
+        TooltipService.TooltipContainer = this;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (mUpdateTooltips)
+        {
+            _ = JsRuntime.InvokeVoidAsync("mcomponents.moveTooltips");
+            mUpdateTooltips = false;
+        }
+    }
+
+    public void InvokeStateHasChanged()
+    {
+        mUpdateTooltips = true;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+}

@@ -273,13 +273,32 @@ var mcomponents = (function () {
         },
 
         invokeClick: function (id) {
-            var elem = document.getElementById(id);
+            let elem = document.getElementById(id);
             if (elem && document.createEvent) {
-                var evt = document.createEvent("MouseEvents");
+                let evt = document.createEvent("MouseEvents");
                 evt.initEvent("click", true, false);
                 elem.dispatchEvent(evt);
             }
+        },
+
+        moveTooltips: function () {
+
+            let tooltips = document.getElementsByClassName("m-tooltip-instance");
+
+            for (let tooltip of tooltips) {
+
+                let id = tooltip.id.replace("m-tooltip-instance-", "");
+
+                var parent = document.getElementById("m-tooltip-" + id);
+
+                let boundRect = parent.getBoundingClientRect();
+
+                tooltip.style.top = boundRect.top + (boundRect.height / 2) + 'px';
+                tooltip.style.left = boundRect.left + (boundRect.width / 2) + 'px';
+                tooltip.style.display = 'unset';
+            }
         }
+
     };
 })();
 

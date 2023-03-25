@@ -167,6 +167,7 @@ namespace MComponents
             pServices.AddScoped<IToaster>(builder => new Toaster(settings.ToasterConfiguration));
             pServices.AddScoped<MLocalStorageService>();
             pServices.AddScoped<MGridStateService>();
+            pServices.AddScoped<TooltipService>();
         }
     }
 
