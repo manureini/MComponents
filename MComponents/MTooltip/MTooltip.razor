@@ -1,5 +1,7 @@
 ﻿@inject TooltipService TooltipService
 
+@implements IDisposable
+
 <div id="m-tooltip-@mId" class="m-tooltip" @onmouseenter="ShowTooltip" @onmouseleave="HideTooltip">
     @ChildContent
 </div>
@@ -15,6 +17,9 @@
     [Parameter]
     public RenderFragment TooltipContent { get; set; }
 
+    [Parameter]
+    public string CssClass { get; set; }
+
     protected Guid mId;
 
     protected override void OnInitialized()
@@ -29,12 +34,18 @@
                 Id = mId,
                 Text = Text,
                 Content = TooltipContent,
+                CssClass = CssClass
             });
     }
 
     protected void HideTooltip()
     {
         TooltipService.HideTooltip(mId);
+    }
+
+    public void Dispose()
+    {
+        HideTooltip();
     }
 
 }

@@ -291,6 +291,11 @@ var mcomponents = (function () {
 
                 var parent = document.getElementById("m-tooltip-" + id);
 
+                if (!parent) {
+                    tooltip.style.display = 'none';
+                    continue;
+                }
+
                 let boundRect = parent.getBoundingClientRect();
 
                 tooltip.style.top = boundRect.top + (boundRect.height / 2) + 'px';

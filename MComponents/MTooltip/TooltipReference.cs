@@ -8,5 +8,6 @@ namespace MComponents.MTooltip
         public Guid Id { get; set; }
         public string Text { get; set; }
         public RenderFragment Content { get; set; }
+        public string CssClass { get; set; }
     }
 }
