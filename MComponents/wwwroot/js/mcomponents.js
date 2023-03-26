@@ -289,17 +289,31 @@ var mcomponents = (function () {
 
                 let id = tooltip.id.replace("m-tooltip-instance-", "");
 
-                var parent = document.getElementById("m-tooltip-" + id);
+                var tooltipElement = document.getElementById("m-tooltip-" + id);
 
-                if (!parent) {
+                if (!tooltipElement) {
                     tooltip.style.display = 'none';
                     continue;
                 }
 
-                let boundRect = parent.getBoundingClientRect();
+                let boundRect = tooltipElement.getBoundingClientRect();
+                let width = boundRect.width;
 
-                tooltip.style.top = boundRect.top + (boundRect.height / 2) + 'px';
-                tooltip.style.left = boundRect.left + (boundRect.width / 2) + 'px';
+                let a = tooltipElement;
+
+                while (true) {
+                    a = a.parentNode;
+                    if (a.nodeName == 'BODY' || a == null)
+                        break;
+
+                    let awidth = a.getBoundingClientRect().width;
+                    if (awidth < width) {
+                        width = awidth;
+                    }
+                }
+
+                tooltip.style.top = boundRect.top + (boundRect.height / 2) - 8 + 'px'; // -8 prevents flickering
+                tooltip.style.left = boundRect.left + (width / 2) + 'px';
                 tooltip.style.display = 'unset';
             }
         }
