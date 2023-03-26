@@ -1099,6 +1099,8 @@
     text-align: center;
     border-radius: $borderRadius;
     transform: translateX(-50%) translateY(-100%) translateY(-2rem);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    transition: linear 1s;
 
     &::after { //arrow
         content: "";
