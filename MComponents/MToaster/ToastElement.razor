@@ -1,5 +1,6 @@
-﻿@inherits ToastElementModel
+﻿
 @Css
+
 <div class="@Toast.State.ToastClass" style="@Toast.State.AnimationStyle" @onmouseenter="MouseEnter" @onmouseleave="MouseLeave" @onclick="Clicked">
     @if (Toast.State.ShowProgressBar)
     {

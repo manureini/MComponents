@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Components;
 
 namespace MComponents.MToaster
 {
-    public class ToastElementModel : ComponentBase, IDisposable
+    public partial class ToastElement : IDisposable
     {
         [Parameter]
         public Toast Toast { get; set; }
-        protected RenderFragment Css;
 
+        protected RenderFragment Css;
+        
         protected string Title => Toast.Title;
         protected string Message => Toast.Message;
 
