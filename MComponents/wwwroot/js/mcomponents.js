@@ -311,9 +311,9 @@ var mcomponents = (function () {
                         width = awidth;
                     }
                 }
-
-                tooltip.style.top = boundRect.top + (boundRect.height / 2) - 8 + 'px'; // -8 prevents flickering
-                tooltip.style.left = boundRect.left + (width / 2) + 'px';
+                              
+                tooltip.style.top = (boundRect.top + document.documentElement.scrollTop - 1) + 'px'; // -1 prevents flickering
+                tooltip.style.left = (boundRect.left + (width / 2) + document.documentElement.scrollLeft) + 'px';
                 tooltip.style.display = 'unset';
             }
         }
