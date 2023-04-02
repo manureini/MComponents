@@ -2816,6 +2816,7 @@ input.m-flag, input.m-flag-inline {
   background-color: #595d6e;
   margin-top: 0.5rem;
   transform: translateX(-50%);
+  z-index: 2;
 }
 
 .m-tooltip {
