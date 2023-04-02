@@ -110,7 +110,7 @@ var mcomponents = (function () {
                 return;
             }
 
-            if (!args.target.matches('.m-select-options-container *')) {
+            if (!args.target.closest(".m-select")) {
                 mSelectReference.invokeMethodAsync('JsInvokeMSelectFocusOut');
             }
         },
@@ -311,7 +311,7 @@ var mcomponents = (function () {
                         width = awidth;
                     }
                 }
-                              
+
                 tooltip.style.top = (boundRect.top + document.documentElement.scrollTop - 1) + 'px'; // -1 prevents flickering
                 tooltip.style.left = (boundRect.left + (width / 2) + document.documentElement.scrollLeft) + 'px';
                 tooltip.style.display = 'unset';
