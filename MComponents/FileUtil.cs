@@ -1,14 +1,16 @@
 ﻿using Microsoft.JSInterop;
-using System;
+using System.IO;
+using System.IO.Pipes;
 using System.Threading.Tasks;
 
 namespace MComponents
 {
     public static class FileUtil
     {
-        public static async Task SaveAs(IJSRuntime pJsRuntime, string filename, byte[] data)
+        public static async Task SaveAs(IJSRuntime pJsRuntime, string pFilename, Stream pStream)
         {
-            await pJsRuntime.InvokeAsync<object>("mcomponents.saveAsFile", filename, Convert.ToBase64String(data));
+            using var streamRef = new DotNetStreamReference(stream: pStream);
+            await pJsRuntime.InvokeVoidAsync("mcomponents.saveAsFile", pFilename, streamRef);
         }
     }
 }

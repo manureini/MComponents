@@ -15,107 +15,107 @@ namespace MComponents
     {
         private const int DATE_NUMBER_FORMAT = 14;
 
-        public static byte[] GetExcelSpreadsheet<T>(IEnumerable<IMGridColumn> pColumns, IDictionary<IMGridPropertyColumn, IMPropertyInfo> pPropertyInfos, IEnumerable<T> pData, IMGridObjectFormatter<T> pFormatter)
+        public static Stream GetExcelSpreadsheet<T>(IEnumerable<IMGridColumn> pColumns, IDictionary<IMGridPropertyColumn, IMPropertyInfo> pPropertyInfos, IEnumerable<T> pData, IMGridObjectFormatter<T> pFormatter)
         {
             var columns = pColumns.Where(c => c.VisibleInExport);
 
-            using (MemoryStream ms = new MemoryStream())
+            MemoryStream ms = new MemoryStream();
+
+            using (var document = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
             {
-                using (var document = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
+                var workbookpart = document.AddWorkbookPart();
+                workbookpart.Workbook = new Workbook();
+
+                var stylesPart = workbookpart.AddNewPart<WorkbookStylesPart>();
+                stylesPart.Stylesheet = new Stylesheet
                 {
-                    var workbookpart = document.AddWorkbookPart();
-                    workbookpart.Workbook = new Workbook();
-
-                    var stylesPart = workbookpart.AddNewPart<WorkbookStylesPart>();
-                    stylesPart.Stylesheet = new Stylesheet
-                    {
-                        Fonts = new Fonts(new Font()),
-                        Fills = new Fills(new Fill()),
-                        Borders = new Borders(new Border()),
-                        CellStyleFormats = new CellStyleFormats(new CellFormat()),
-                        CellFormats =
-                            new CellFormats(
-                                new CellFormat(),
-                                new CellFormat()
-                                {
-                                    NumberFormatId = DATE_NUMBER_FORMAT,
-                                    ApplyNumberFormat = true
-                                },
-                                new CellFormat()
-                                {
-                                    NumberFormatId = 49,
-                                    ApplyNumberFormat = true
-                                })
-                    };
-
-                    var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
-
-                    var sheetData = new SheetData();
-
-                    worksheetPart.Worksheet = new Worksheet(sheetData);
-
-                    var sheets = document.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
-
-                    var sheet = new Sheet()
-                    {
-                        Id = document.WorkbookPart.GetIdOfPart(worksheetPart),
-                        SheetId = 1,
-                        Name = "Sheet 1"
-                    };
-                    sheets.AppendChild(sheet);
-
-                    var sst = workbookpart.AddNewPart<SharedStringTablePart>();
-                    sst.SharedStringTable = new SharedStringTable();
-
-                    var sstCache = new Dictionary<string, int>();
-
-                    UInt32 rowIdex = 0;
-                    var hrow = new Row { RowIndex = ++rowIdex };
-                    sheetData.AppendChild(hrow);
-
-                    var sstWrapper = new SharedStringTableWrapper()
-                    {
-                        SharedStringTable = sst
-                    };
-
-                    foreach (var headerrow in columns.Select(c => c.HeaderText))
-                    {
-                        hrow.AppendChild((Cell)CreateTextCell(sstWrapper, sstCache, headerrow ?? string.Empty));
-                    }
-
-                    foreach (var rowData in pData)
-                    {
-                        var row = new Row { RowIndex = ++rowIdex };
-                        sheetData.AppendChild(row);
-
-                        foreach (var column in columns)
-                        {
-                            if (column is IMGridComplexExport<T> exporter)
+                    Fonts = new Fonts(new Font()),
+                    Fills = new Fills(new Fill()),
+                    Borders = new Borders(new Border()),
+                    CellStyleFormats = new CellStyleFormats(new CellFormat()),
+                    CellFormats =
+                        new CellFormats(
+                            new CellFormat(),
+                            new CellFormat()
                             {
-                                row.AppendChild((Cell)exporter.GenerateExportCell(sstWrapper, sstCache, rowData));
-                            }
-                            else if (column is IMGridPropertyColumn propColumn)
+                                NumberFormatId = DATE_NUMBER_FORMAT,
+                                ApplyNumberFormat = true
+                            },
+                            new CellFormat()
                             {
-                                var iprop = pPropertyInfos[propColumn];
-                                Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop, sstWrapper, sstCache);
-                                row.AppendChild(cell);
-                            }
-                            else
-                            {
-                                row.AppendChild(CreateGeneralCell(string.Empty));
-                            }
-                        }
-                    }
+                                NumberFormatId = 49,
+                                ApplyNumberFormat = true
+                            })
+                };
 
-                    sst.SharedStringTable.Save();
-                    workbookpart.Workbook.Save();
+                var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
 
-                    document.Save();
-                    document.Close();
+                var sheetData = new SheetData();
+
+                worksheetPart.Worksheet = new Worksheet(sheetData);
+
+                var sheets = document.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
+
+                var sheet = new Sheet()
+                {
+                    Id = document.WorkbookPart.GetIdOfPart(worksheetPart),
+                    SheetId = 1,
+                    Name = "Sheet 1"
+                };
+                sheets.AppendChild(sheet);
+
+                var sst = workbookpart.AddNewPart<SharedStringTablePart>();
+                sst.SharedStringTable = new SharedStringTable();
+
+                var sstCache = new Dictionary<string, int>();
+
+                UInt32 rowIdex = 0;
+                var hrow = new Row { RowIndex = ++rowIdex };
+                sheetData.AppendChild(hrow);
+
+                var sstWrapper = new SharedStringTableWrapper()
+                {
+                    SharedStringTable = sst
+                };
+
+                foreach (var headerrow in columns.Select(c => c.HeaderText))
+                {
+                    hrow.AppendChild((Cell)CreateTextCell(sstWrapper, sstCache, headerrow ?? string.Empty));
                 }
 
-                return ms.ToArray();
+                foreach (var rowData in pData)
+                {
+                    var row = new Row { RowIndex = ++rowIdex };
+                    sheetData.AppendChild(row);
+
+                    foreach (var column in columns)
+                    {
+                        if (column is IMGridComplexExport<T> exporter)
+                        {
+                            row.AppendChild((Cell)exporter.GenerateExportCell(sstWrapper, sstCache, rowData));
+                        }
+                        else if (column is IMGridPropertyColumn propColumn)
+                        {
+                            var iprop = pPropertyInfos[propColumn];
+                            Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop, sstWrapper, sstCache);
+                            row.AppendChild(cell);
+                        }
+                        else
+                        {
+                            row.AppendChild(CreateGeneralCell(string.Empty));
+                        }
+                    }
+                }
+
+                sst.SharedStringTable.Save();
+                workbookpart.Workbook.Save();
+
+                document.Save();
+                document.Close();
             }
+
+            ms.Seek(0, SeekOrigin.Begin);
+            return ms;
         }
 
         private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop, SharedStringTableWrapper pSsTable, Dictionary<string, int> pSstCache)
