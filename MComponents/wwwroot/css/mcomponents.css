@@ -2817,18 +2817,21 @@ input.m-flag, input.m-flag-inline {
 .m-image-preview-editor .m-image-editor {
   max-height: calc(99% - 3.5rem);
 }
+.m-image-preview-editor .m-image-editor input {
+  padding-bottom: 1rem;
+}
 .m-image-preview-editor .m-image-preview-editor-buttons {
   display: flex;
 }
 
-.m-image-editor {
+.m-image-viewer {
   max-height: 90%;
   min-height: 20vh;
   padding-bottom: 0.5rem;
   display: flex;
   flex-direction: column;
 }
-.m-image-editor img {
+.m-image-viewer img {
   object-fit: contain;
   flex-grow: 1000;
   align-self: flex-start;
