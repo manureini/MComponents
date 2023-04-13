@@ -17,7 +17,7 @@
          style="width: @(Width)px; height: @(Height)px;">
         <BECanvas Width="@Width" Height="@Height" @ref="mCanvasRef"></BECanvas>
     </div>
-    <button @onclick="OnResetClick" class="m-btn m-btn-primary" style="width: @(Width)px">@L["Reset"]</button>
+    <button type="button" @onclick="OnResetClick" class="m-btn m-btn-primary" style="width: @($"{Width}px")">@L["Reset"]</button>
 </div>
 
 @code {
