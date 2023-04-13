@@ -390,27 +390,30 @@ namespace MComponents.MGrid
                            if (EnableAdding && ToolbarItems.HasFlag(ToolbarItem.Add))
                            {
                                builder2.OpenElement(233, "button");
-                               builder2.AddAttribute(234, "class", "m-btn m-btn-primary");
-                               builder2.AddAttribute(235, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarAdd));
-                               builder2.AddContent(236, (MarkupString)$"<i class=\"fa-solid fa-plus\"></i><span>{L[nameof(MComponentsLocalization.Add)]}</span>");
+                               builder.AddAttribute(234, "type", "button");
+                               builder2.AddAttribute(235, "class", "m-btn m-btn-primary");
+                               builder2.AddAttribute(236, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarAdd));
+                               builder2.AddContent(237, (MarkupString)$"<i class=\"fa-solid fa-plus\"></i><span>{L[nameof(MComponentsLocalization.Add)]}</span>");
                                builder2.CloseElement(); // button
                            }
 
                            if (EnableEditing && ToolbarItems.HasFlag(ToolbarItem.Edit))
                            {
                                builder2.OpenElement(242, "button");
-                               builder2.AddAttribute(243, "class", "m-btn m-btn-primary");
-                               builder2.AddAttribute(244, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarEdit));
-                               builder2.AddContent(245, (MarkupString)$"<i class=\"fa-solid fa-pen-to-square\"></i><span>{L[nameof(MComponentsLocalization.Edit)]}</span>");
+                               builder.AddAttribute(243, "type", "button");
+                               builder2.AddAttribute(244, "class", "m-btn m-btn-primary");
+                               builder2.AddAttribute(245, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarEdit));
+                               builder2.AddContent(246, (MarkupString)$"<i class=\"fa-solid fa-pen-to-square\"></i><span>{L[nameof(MComponentsLocalization.Edit)]}</span>");
                                builder2.CloseElement(); // button
                            }
 
                            if (EnableDeleting && ToolbarItems.HasFlag(ToolbarItem.Delete))
                            {
                                builder2.OpenElement(251, "button");
-                               builder2.AddAttribute(252, "class", "m-btn m-btn-primary");
-                               builder2.AddAttribute(253, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarRemove));
-                               builder2.AddContent(254, (MarkupString)$"<i class=\"fa-solid fa-trash-can\"></i><span>{L[nameof(MComponentsLocalization.Delete)]}</span>");
+                               builder.AddAttribute(252, "type", "button");
+                               builder2.AddAttribute(253, "class", "m-btn m-btn-primary");
+                               builder2.AddAttribute(254, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToolbarRemove));
+                               builder2.AddContent(255, (MarkupString)$"<i class=\"fa-solid fa-trash-can\"></i><span>{L[nameof(MComponentsLocalization.Delete)]}</span>");
                                builder2.CloseElement(); // button
                            }
 
@@ -426,25 +429,27 @@ namespace MComponents.MGrid
 
                        if (EnableGrouping)
                        {
-                           builder2.OpenElement(263, "button");
-                           builder2.AddAttribute(264, "class", "m-btn m-btn-primary m-btn-sm");
-                           builder2.AddAttribute(265, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleGrouping));
-                           builder2.OpenElement(266, "i");
-                           builder2.AddAttribute(267, "class", "fa-solid fa-window-restore");
+                           builder2.OpenElement(432, "button");
+                           builder.AddAttribute(433, "type", "button");
+                           builder2.AddAttribute(434, "class", "m-btn m-btn-primary m-btn-sm");
+                           builder2.AddAttribute(435, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleGrouping));
+                           builder2.OpenElement(436, "i");
+                           builder2.AddAttribute(437, "class", "fa-solid fa-window-restore");
                            builder2.CloseElement(); //i
-                           builder2.AddContent(269, (MarkupString)$"<span>{L[nameof(MComponentsLocalization.Grouping)]}</span>");
+                           builder2.AddContent(439, (MarkupString)$"<span>{L[nameof(MComponentsLocalization.Grouping)]}</span>");
                            builder2.CloseElement(); //button
                        }
 
                        if (EnableFilterRow)
                        {
-                           builder2.OpenElement(263, "button");
-                           builder2.AddAttribute(264, "class", "m-btn m-btn-primary m-btn-sm");
-                           builder2.AddAttribute(265, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleFilter));
-                           builder2.OpenElement(266, "i");
-                           builder2.AddAttribute(267, "class", "fa-solid fa-filter");
+                           builder2.OpenElement(445, "button");
+                           builder.AddAttribute(446, "type", "button");
+                           builder2.AddAttribute(447, "class", "m-btn m-btn-primary m-btn-sm");
+                           builder2.AddAttribute(448, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnToggleFilter));
+                           builder2.OpenElement(449, "i");
+                           builder2.AddAttribute(450, "class", "fa-solid fa-filter");
                            builder2.CloseElement(); //i
-                           builder2.AddContent(269, (MarkupString)$"<span>{L[nameof(MComponentsLocalization.Filter)]}</span>");
+                           builder2.AddContent(452, (MarkupString)$"<span>{L[nameof(MComponentsLocalization.Filter)]}</span>");
                            builder2.CloseElement(); //button
                        }
 
@@ -710,25 +715,27 @@ namespace MComponents.MGrid
 
                        if (EnableImport)
                        {
-                           builder2.OpenElement(560, "button");
-                           builder2.AddAttribute(561, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                           builder2.AddAttribute(562, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnBtnImportClicked));
-                           builder2.AddContent(563, (MarkupString)"<i class=\"fa-solid fa-upload\"></i>");
+                           builder2.OpenElement(718, "button");
+                           builder.AddAttribute(719, "type", "button");
+                           builder2.AddAttribute(720, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
+                           builder2.AddAttribute(721, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnBtnImportClicked));
+                           builder2.AddContent(722, (MarkupString)"<i class=\"fa-solid fa-upload\"></i>");
                            builder2.CloseElement(); // button
 
                            builder2.OpenComponent<InputFile>(566);
-                           builder2.AddAttribute(567, "accept", ".xlsx");
-                           builder2.AddAttribute(568, "OnChange", EventCallback.Factory.Create<InputFileChangeEventArgs>(this, OnFileChange));
-                           builder2.AddAttribute(567, "style", "visibility: hidden; position: absolute; top: -1000px;");
-                           builder2.AddAttribute(567, "id", mInputFileId);
+                           builder2.AddAttribute(726, "accept", ".xlsx");
+                           builder2.AddAttribute(727, "OnChange", EventCallback.Factory.Create<InputFileChangeEventArgs>(this, OnFileChange));
+                           builder2.AddAttribute(728, "style", "visibility: hidden; position: absolute; top: -1000px;");
+                           builder2.AddAttribute(729, "id", mInputFileId);
                            builder2.CloseElement(); // InputFile
                        }
                        if (EnableExport)
                        {
-                           builder2.OpenElement(435, "button");
-                           builder2.AddAttribute(436, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
-                           builder2.AddAttribute(437, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async () => await ExportContent()));
-                           builder2.AddContent(438, (MarkupString)"<i class=\"fa-solid fa-download\"></i>");
+                           builder2.OpenElement(734, "button");
+                           builder.AddAttribute(735, "type", "button");
+                           builder2.AddAttribute(736, "class", "m-btn m-btn-secondary m-btn-icon m-btn-sm");
+                           builder2.AddAttribute(737, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async () => await ExportContent()));
+                           builder2.AddContent(738, (MarkupString)"<i class=\"fa-solid fa-download\"></i>");
                            builder2.CloseElement(); // button
                        }
 
