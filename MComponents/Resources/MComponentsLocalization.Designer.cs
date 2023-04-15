@@ -259,6 +259,15 @@ namespace MComponents.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select file or drag it here..
+        /// </summary>
+        public static string SelectOrDropFile {
+            get {
+                return ResourceManager.GetString("SelectOrDropFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Submit.
         /// </summary>
         public static string Submit {

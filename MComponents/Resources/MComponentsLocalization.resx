@@ -175,4 +175,7 @@
   <data name="Grouping" xml:space="preserve">
     <value>Grouping</value>
   </data>
+  <data name="SelectOrDropFile" xml:space="preserve">
+    <value>Select file or drag it here.</value>
+  </data>
 </root>
