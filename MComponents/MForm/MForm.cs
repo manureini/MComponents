@@ -630,7 +630,7 @@ namespace MComponents.MForm
 
             var propertyType = Nullable.GetUnderlyingType(pPropertyInfo.PropertyType) ?? pPropertyInfo.PropertyType;
 
-            if (propertyType == typeof(string))
+            if (propertyType == typeof(string) && pNewValue != null)
             {
                 var newValueStr = pNewValue.ToString();
 
