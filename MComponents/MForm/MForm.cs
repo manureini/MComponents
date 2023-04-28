@@ -61,11 +61,16 @@ namespace MComponents.MForm
         [Inject]
         public MComponentSettings Settings { get; set; }
 
+        [Inject]
+        public IServiceProvider ServiceProvider { get; set; }
+
         public Type ModelType => Model?.GetType() ?? typeof(T);
 
         protected HashSet<IMPropertyInfo> ChangedValues { get; set; } = new HashSet<IMPropertyInfo>();
 
+        protected IDisposable mSubscriptions;
         protected ValidationMessageStore mValidationMessageStore;
+        protected ValidationMessageStore mAdditionalValidationMessageStore;
 
         public List<IMField> FieldList = new List<IMField>();
         public List<MFieldRow> RowList = new List<MFieldRow>();
@@ -81,7 +86,14 @@ namespace MComponents.MForm
 
             if (EnableValidation)
             {
-                mValidationMessageStore = new ValidationMessageStore(mEditContext);
+#if NET7_0_OR_GREATER
+                mSubscriptions = EditContextDataAnnotationsExtensions.EnableDataAnnotationsValidation(mEditContext, ServiceProvider);
+#else
+                mSubscriptions = mEditContext.EnableDataAnnotationsValidation();
+#endif
+
+                mValidationMessageStore = (ValidationMessageStore)mSubscriptions.GetType().GetField("_messages", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mSubscriptions);
+                mAdditionalValidationMessageStore = new ValidationMessageStore(mEditContext);
 
                 mEditContext.OnValidationRequested += MEditContext_OnValidationRequested;
                 mEditContext.OnFieldChanged += MEditContext_OnFieldChanged;
@@ -164,12 +176,6 @@ namespace MComponents.MForm
                             builder2.CloseComponent();
                         }
 
-                        if (EnableValidation)
-                        {
-                            builder2.OpenComponent<DataAnnotationsValidator>(0);
-                            builder2.CloseComponent();
-                        }
-
                         if (EnableValidationSummary && !IsInTableRow)
                         {
                             builder2.OpenComponent<ValidationSummary>(1);
@@ -223,11 +229,12 @@ namespace MComponents.MForm
 
             ValidateField(field);
             mEditContext.NotifyValidationStateChanged();
+            StateHasChanged();
         }
 
         private void MEditContext_OnValidationRequested(object sender, ValidationRequestedEventArgs e)
         {
-            mValidationMessageStore.Clear();
+            mAdditionalValidationMessageStore.Clear();
 
             foreach (var field in FieldList.OfType<IMPropertyField>())
             {
@@ -235,6 +242,7 @@ namespace MComponents.MForm
             }
 
             mEditContext.NotifyValidationStateChanged();
+            StateHasChanged();
         }
 
         private void ValidateField(IMPropertyField pField)
@@ -262,7 +270,7 @@ namespace MComponents.MForm
                 {
                     if (!messagesCleared)
                     {
-                        mValidationMessageStore.Clear(fieldIdentifier);
+                        mAdditionalValidationMessageStore.Clear(fieldIdentifier);
                         messagesCleared = true;
                     }
 
@@ -272,7 +280,7 @@ namespace MComponents.MForm
                     {
                         string displayname = propInfo.GetDisplayName(L, false);
                         var msg = attribute.FormatErrorMessage(displayname);
-                        mValidationMessageStore.Add(fieldIdentifier, msg);
+                        mAdditionalValidationMessageStore.Add(fieldIdentifier, msg);
                     }
                 }
             }
@@ -583,6 +591,14 @@ namespace MComponents.MForm
         public void UnregisterField(IMField pField)
         {
             FieldList.Remove(pField);
+
+            if (EnableValidation && pField is IMPropertyField pf)
+            {
+                var fi = mEditContext.Field(pf.Property);
+                mValidationMessageStore.Clear(fi);
+                mAdditionalValidationMessageStore.Clear(fi);
+            }
+
             StateHasChanged();
         }
 

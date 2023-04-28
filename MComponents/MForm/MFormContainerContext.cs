@@ -17,10 +17,7 @@ namespace MComponents.MForm
         protected SemaphoreSlim mLocker = new SemaphoreSlim(1, 1);
 
         public List<IMForm> Forms { get; set; } = new List<IMForm>();
-
-
         public MFormContainer FormContainer { get; protected set; }
-
         public IServiceProvider ServiceProvider { get; protected set; }
 
         internal MFormContainerContext(IServiceProvider pServiceProvider, MFormContainer pFormContainer)
