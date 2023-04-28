@@ -628,6 +628,31 @@ namespace MComponents.MForm
             if (!ChangedValues.Contains(pPropertyInfo))
                 ChangedValues.Add(pPropertyInfo);
 
+            var propertyType = Nullable.GetUnderlyingType(pPropertyInfo.PropertyType) ?? pPropertyInfo.PropertyType;
+
+            if (propertyType == typeof(string))
+            {
+                var newValueStr = pNewValue.ToString();
+
+                if (pPropertyInfo.GetCustomAttribute<TrimAttribute>() != null || pPropertyInfo.GetCustomAttribute<FirstCharUpperTrim>() != null)
+                {
+                    newValueStr = newValueStr.Trim();
+                    pPropertyInfo.SetValue(Model, newValueStr);
+                }
+
+                if (pPropertyInfo.GetCustomAttribute<ReplaceWhitespacesAttribute>() != null)
+                {
+                    newValueStr = newValueStr.Replace(" ", string.Empty).Replace("\t", string.Empty).Replace("\r", string.Empty).Replace("\n", string.Empty);
+                    pPropertyInfo.SetValue(Model, newValueStr);
+                }
+
+                if (pPropertyInfo.GetCustomAttribute<FirstCharUpperAttribute>() != null || pPropertyInfo.GetCustomAttribute<FirstCharUpperTrim>() != null)
+                {
+                    newValueStr = string.Concat(newValueStr[0].ToString().ToUpper(), newValueStr.AsSpan(1));
+                    pPropertyInfo.SetValue(Model, newValueStr);
+                }
+            }
+
             if (OnValueChanged.HasDelegate)
             {
                 await OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pPropertyInfo, pNewValue, Model));
