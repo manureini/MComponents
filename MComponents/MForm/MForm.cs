@@ -646,9 +646,17 @@ namespace MComponents.MForm
                     pPropertyInfo.SetValue(Model, newValueStr);
                 }
 
-                if (pPropertyInfo.GetCustomAttribute<FirstCharUpperAttribute>() != null || pPropertyInfo.GetCustomAttribute<FirstCharUpperTrim>() != null)
+                if (newValueStr.Length > 0 && (pPropertyInfo.GetCustomAttribute<FirstCharUpperAttribute>() != null || pPropertyInfo.GetCustomAttribute<FirstCharUpperTrim>() != null))
                 {
-                    newValueStr = string.Concat(newValueStr[0].ToString().ToUpper(), newValueStr.AsSpan(1));
+                    if (newValueStr.Length == 1)
+                    {
+                        newValueStr = newValueStr.ToUpper();
+                    }
+                    else
+                    {
+                        newValueStr = string.Concat(newValueStr[0].ToString().ToUpper(), newValueStr.AsSpan(1));
+                    }
+
                     pPropertyInfo.SetValue(Model, newValueStr);
                 }
             }
