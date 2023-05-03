@@ -592,7 +592,7 @@ namespace MComponents.MForm
         {
             FieldList.Remove(pField);
 
-            if (EnableValidation && pField is IMPropertyField pf)
+            if (EnableValidation && pField is IMPropertyField pf && !string.IsNullOrWhiteSpace(pf.Property))
             {
                 var fi = mEditContext.Field(pf.Property);
                 mValidationMessageStore.Clear(fi);
