@@ -117,14 +117,7 @@ namespace MComponents
             var displayAttribute = pPropertyInfo.GetCustomAttribute<DisplayAttribute>();
             if (displayAttribute != null)
             {
-                var display = displayAttribute.GetName();
-
-                if (displayAttribute.ResourceType == null)
-                {
-                    display = L[displayAttribute.Name];
-                }
-
-                display ??= string.Empty;
+                var display = (string)L[displayAttribute.Name] ?? string.Empty;
 
                 if (pMarkup)
                     return HttpUtility.HtmlEncode(display).Replace("\n", "<br>");
