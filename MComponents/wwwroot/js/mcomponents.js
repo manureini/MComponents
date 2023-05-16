@@ -275,6 +275,13 @@ var mcomponents = (function () {
             }, 30);
         },
 
+        scrollTo: function (id) {
+            const element = document.getElementById(id)
+
+            const y = element.getBoundingClientRect().top + window.pageYOffset - 20;
+            window.scrollTo({ top: y, behavior: 'smooth' }); 
+        },
+
         invokeClick: function (id) {
             let elem = document.getElementById(id);
             if (elem && document.createEvent) {

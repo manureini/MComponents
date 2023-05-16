@@ -1,0 +1,28 @@
+﻿@inject IJSRuntime JsRuntime
+@inject Navigation Navigation
+
+<span class="m-scroll-anchor" id="@Id"></span>
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var fragment = new Uri(Navigation.Uri).Fragment;
+
+            if (fragment == Id)
+            {
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(500);
+                    _ = JsRuntime.InvokeVoidAsync("mcomponents.scrollTo", Id);
+                });
+            }
+        }
+    }
+
+}

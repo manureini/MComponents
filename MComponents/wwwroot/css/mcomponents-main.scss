@@ -1647,6 +1647,10 @@
 
 /* END Toasts --------------------------------------------------------------------------  */
 
+.m-scroll-anchor {
+    visibility: hidden;
+}
+
 .m-scrollbar::-webkit-scrollbar {
     width: 8px;
 }
