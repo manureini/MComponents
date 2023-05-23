@@ -146,7 +146,7 @@ namespace MComponents.MGrid
         internal T NewValue;
 
         protected ICollection<T> DataCache;
-        protected long DataCountCache;
+        protected long DataCountCache = -1;
         protected long TotalDataCountCache;
 
         protected IEnumerable<IGrouping<object, T>> GroupedDataCache;
@@ -696,12 +696,13 @@ namespace MComponents.MGrid
                                }
 
                                var count = DataCache?.Count;
+
                                if (GroupedDataCache != null)
                                {
                                    count = GroupedDataCache.Sum(g => g.Count());
                                }
 
-                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{string.Format(L["{0} entries of {1}"], count, TotalDataCountCache)}</span>");
+                               builder3.AddMarkupContent(429, $"<span class=\"m-pagination-descr\">{(DataCountCache != -1 ? string.Format(L["{0} entries of {1}"], count, DataCountCache) : string.Empty)}</span>");
 
                                builder3.CloseElement(); //div
                            }
