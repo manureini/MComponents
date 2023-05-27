@@ -121,6 +121,8 @@ namespace MComponents.MGrid
         public List<IMGridColumn> ColumnsList { get; set; } = new List<IMGridColumn>();
 
         protected string mSelectedRowId;
+        protected bool mFirstRender = true;
+        protected bool mFirstRenderUpdateColumnWidths = true;
 
         private T mSelected;
         public T Selected
@@ -313,21 +315,21 @@ namespace MComponents.MGrid
         {
             if (firstRender)
             {
-                await UpdateColumnsWidth();
-
                 if (EnableSaveState)
                 {
                     await StateService.RestoreGridState(this);
                 }
 
                 await UpdateDataCacheIfDataAdapter();
+
+                mFirstRender = false;
+                StateHasChanged();
             }
 
             if (UpdateColumnsWidthOnNextRender)
             {
-                await UpdateColumnsWidth();
                 UpdateColumnsWidthOnNextRender = false;
-
+                await UpdateColumnsWidth();
                 StateHasChanged();
             }
 
@@ -368,6 +370,17 @@ namespace MComponents.MGrid
                 builder.CloseComponent();
             }
 
+            if (mFirstRender && EnableSaveState)
+            {
+                builder.CloseRegion();
+                return;
+            }
+
+            if (mFirstRenderUpdateColumnWidths)
+            {
+                UpdateColumnsWidthOnNextRender = true;
+                mFirstRenderUpdateColumnWidths = false;
+            }
 
             RenderFragment childMain() =>
                    (builder2) =>
