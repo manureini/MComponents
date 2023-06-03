@@ -2895,10 +2895,6 @@ input.m-flag, input.m-flag-inline {
 .m-form-row-actions {
   padding-top: 1rem;
 }
-.m-form-row-actions .form-group {
-  display: flex;
-  justify-content: flex-end;
-}
 
 .m-combined-input-container {
   padding: 0.65rem;
