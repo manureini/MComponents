@@ -2037,6 +2037,9 @@ namespace MComponents.MGrid
 
         protected double GetColumnWidth(int pIndex)
         {
+            if (mColumnsWidth == null)
+                return 200;
+
             if (pIndex < mColumnsWidth.Length)
             {
                 return mColumnsWidth[pIndex];
