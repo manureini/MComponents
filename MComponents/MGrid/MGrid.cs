@@ -1145,62 +1145,72 @@ namespace MComponents.MGrid
             {
                 IMGridColumn column = pVisibleColumns[i];
 
-                var columnWidth = GetColumnWidth(i);
+                BoundingBox box = null;
 
-                var bWidth = columnWidth;
-                var bHeight = mFieldBoundingBox.Height;
+                double columnWidth = 0;
 
-                if (mFieldBoundingBox.BorderCollapse == "separate")
+                if (mFieldBoundingBox != null)
                 {
-                    bWidth -= mFieldBoundingBox.BorderRight;
-                }
-                else if (mFieldBoundingBox.BorderCollapse == "collapse")
-                {
-                    if (i == 0)
+                    columnWidth = GetColumnWidth(i);
+
+                    var bWidth = columnWidth;
+                    var bHeight = mFieldBoundingBox.Height;
+
+                    if (mFieldBoundingBox.BorderCollapse == "separate")
                     {
-                        bWidth -= mFieldBoundingBox.BorderRight / 2;
-                    }
-                    else
                         bWidth -= mFieldBoundingBox.BorderRight;
-
-                    if (i == 0 || i == pVisibleColumns.Length - 1)
-                    {
-                        bWidth -= mTableBorderLeft / 2;
                     }
+                    else if (mFieldBoundingBox.BorderCollapse == "collapse")
+                    {
+                        if (i == 0)
+                        {
+                            bWidth -= mFieldBoundingBox.BorderRight / 2;
+                        }
+                        else
+                            bWidth -= mFieldBoundingBox.BorderRight;
+
+                        if (i == 0 || i == pVisibleColumns.Length - 1)
+                        {
+                            bWidth -= mTableBorderLeft / 2;
+                        }
+                    }
+
+                    box = new BoundingBox()
+                    {
+                        BorderTop = 0,
+                        BorderRight = mFieldBoundingBox.BorderRight,
+                        BorderSpace = mFieldBoundingBox.BorderSpace,
+                        BorderCollapse = mFieldBoundingBox.BorderCollapse,
+
+                        Width = bWidth,
+                        Height = bHeight,
+                    };
                 }
-
-                BoundingBox box = new BoundingBox()
-                {
-                    BorderTop = 0,
-                    BorderRight = mFieldBoundingBox.BorderRight,
-                    BorderSpace = mFieldBoundingBox.BorderSpace,
-                    BorderCollapse = mFieldBoundingBox.BorderCollapse,
-
-                    Width = bWidth,
-                    Height = bHeight,
-                };
 
                 AddMFormField(pBuilder, column, pIsFilterRow, left, box);
 
-                if (mFieldBoundingBox.BorderCollapse == "separate")
+                if (mFieldBoundingBox != null)
                 {
-                    left += columnWidth + mFieldBoundingBox.BorderSpace;
-                }
-                else if (mFieldBoundingBox.BorderCollapse == "collapse")
-                {
-                    if (i == 0)
-                    {
-                        left += columnWidth + mFieldBoundingBox.BorderRight / 2 + mFieldBoundingBox.BorderSpace;
-                        left -= mTableBorderLeft / 2;
-                    }
-                    else
+                    if (mFieldBoundingBox.BorderCollapse == "separate")
                     {
                         left += columnWidth + mFieldBoundingBox.BorderSpace;
                     }
-                }
-                else
-                {
-                    throw new InvalidOperationException($"border-collapse {mFieldBoundingBox.BorderCollapse} not supported!");
+                    else if (mFieldBoundingBox.BorderCollapse == "collapse")
+                    {
+                        if (i == 0)
+                        {
+                            left += columnWidth + mFieldBoundingBox.BorderRight / 2 + mFieldBoundingBox.BorderSpace;
+                            left -= mTableBorderLeft / 2;
+                        }
+                        else
+                        {
+                            left += columnWidth + mFieldBoundingBox.BorderSpace;
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"border-collapse {mFieldBoundingBox.BorderCollapse} not supported!");
+                    }
                 }
             }
         }
