@@ -1124,7 +1124,7 @@ namespace MComponents.MGrid
 
         private void AddInlineTrHeight(RenderTreeBuilder pBuilder)
         {
-            if (UseStaticLayoutMode)
+            if (UseStaticLayoutMode && mFieldBoundingBox != null)
             {
                 var inlineTrHeight = mFieldBoundingBox.Height;
 
