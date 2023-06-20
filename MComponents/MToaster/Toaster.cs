@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Web;
 
 namespace MComponents.MToaster
 {
@@ -68,6 +69,13 @@ namespace MComponents.MToaster
             title = title?.Trim();
 
             var options = new ToastOptions(type, Configuration);
+
+            if (message.Contains("\n"))
+            {
+                message = HttpUtility.HtmlEncode(message).Replace("\n", "<br />");
+                options.EscapeHtml = false;
+            }
+
             configure?.Invoke(options);
 
             var toast = new Toast(title, message, options);
