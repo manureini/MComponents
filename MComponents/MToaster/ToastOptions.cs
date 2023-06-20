@@ -46,6 +46,12 @@ namespace MComponents.MToaster
             CloseIconClass = configuration.CloseIconClass;
 
             RequireInteraction = configuration.RequireInteraction;
+
+            if (configuration.ErrorRequiresInteraction && type == ToastType.Error)
+            {
+                RequireInteraction = true;
+                ShowCloseIcon = true;
+            }
         }
     }
 }

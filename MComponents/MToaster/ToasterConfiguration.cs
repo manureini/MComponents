@@ -11,6 +11,7 @@ namespace MComponents.MToaster
         private bool _preventDuplicates;
         private int _maxDisplayedToasts;
         private string _positionClass;
+        private bool _errorRequiresInteraction;
 
         internal event Action OnUpdate;
 
@@ -62,6 +63,19 @@ namespace MComponents.MToaster
             set
             {
                 _positionClass = value;
+                OnUpdate?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Error Toasts require user interaction to dismiss them. Defaults to false
+        /// </summary>
+        public bool ErrorRequiresInteraction
+        {
+            get => _errorRequiresInteraction;
+            set
+            {
+                _errorRequiresInteraction = value;
                 OnUpdate?.Invoke();
             }
         }
