@@ -12,6 +12,7 @@ namespace MComponents.MToaster
         private int _maxDisplayedToasts;
         private string _positionClass;
         private bool _errorRequiresInteraction;
+        private int? _errorVisibleStateDuration;
 
         internal event Action OnUpdate;
 
@@ -76,6 +77,19 @@ namespace MComponents.MToaster
             set
             {
                 _errorRequiresInteraction = value;
+                OnUpdate?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// How long the error toast remain visible without user interaction. A value less than 1 triggers the hiding immediately. Defaults to 5000 ms.
+        /// </summary>
+        public int? ErrorVisibleStateDuration
+        {
+            get => _errorVisibleStateDuration;
+            set
+            {
+                _errorVisibleStateDuration = value;
                 OnUpdate?.Invoke();
             }
         }

@@ -35,7 +35,7 @@ namespace MComponents.MToaster
 
             ShowTransitionDuration = configuration.ShowTransitionDuration;
 
-            VisibleStateDuration = configuration.VisibleStateDuration;
+            VisibleStateDuration = type == ToastType.Error && configuration.ErrorVisibleStateDuration != null ? configuration.ErrorVisibleStateDuration.Value : configuration.VisibleStateDuration;
 
             HideTransitionDuration = configuration.HideTransitionDuration;
 
