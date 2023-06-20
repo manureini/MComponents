@@ -2,8 +2,8 @@
 {
     public class Notification
     {
-        public string Text { get; internal set; }
+        public string Text { get; set; }
 
-        public bool IsError { get; internal set; }
+        public bool IsError { get; set; }
     }
 }

@@ -198,4 +198,7 @@
   <data name="SelectOrDropFile" xml:space="preserve">
     <value>Datei auswählen oder hierher ziehen.</value>
   </data>
+  <data name="InvalidImageError" xml:space="preserve">
+    <value>Ungültiges Bild. Bitte benutze ein anderes.</value>
+  </data>
 </root>

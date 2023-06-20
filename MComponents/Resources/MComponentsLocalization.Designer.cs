@@ -196,6 +196,15 @@ namespace MComponents.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid Image. Please try another one..
+        /// </summary>
+        public static string InvalidImageError {
+            get {
+                return ResourceManager.GetString("InvalidImageError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Next.
         /// </summary>
         public static string Next {
