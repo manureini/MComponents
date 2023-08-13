@@ -173,6 +173,11 @@ namespace MComponents.MSelect
             {
                 mObjReference = DotNetObjectReference.Create(this);
             }
+
+            if (mOptionsVisible)
+            {
+                _ = JSRuntime.InvokeVoidAsync("mcomponents.findBestMSelectOptionsPosition");
+            }
         }
 
         [JSInvokable]

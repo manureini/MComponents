@@ -94,6 +94,8 @@ var mcomponents = (function () {
 
             mSelectReference = element;
             document.addEventListener('click', mcomponents.onMSelectClickEvent);
+            document.addEventListener('scroll', mcomponents.findBestMSelectOptionsPosition);
+            window.addEventListener('resize', mcomponents.findBestMSelectOptionsPosition);
         },
 
         unRegisterMSelect: function (element) {
@@ -103,6 +105,8 @@ var mcomponents = (function () {
 
             mSelectReference = null;
             document.removeEventListener('click', mcomponents.onMSelectClickEvent);
+            document.removeEventListener('scroll', mcomponents.findBestMSelectOptionsPosition);
+            window.removeEventListener('resize', mcomponents.findBestMSelectOptionsPosition);
         },
 
         onMSelectClickEvent: function (args) {
@@ -112,6 +116,27 @@ var mcomponents = (function () {
 
             if (!args.target.closest(".m-select")) {
                 mSelectReference.invokeMethodAsync('JsInvokeMSelectFocusOut');
+            }
+        },
+
+        findBestMSelectOptionsPosition: function () {
+            const elements = document.getElementsByClassName("m-select-options-container");
+
+            if (elements.length == 0) {
+                return;
+            }
+
+            const element = elements[0];
+
+            const clientRect = element.getBoundingClientRect();
+
+            const y = clientRect.top + element.firstChild.clientHeight;
+
+            if (y > window.innerHeight) {
+                const offset = element.firstChild.clientHeight + element.closest(".m-select").clientHeight;
+                element.firstChild.style.top = -offset + "px";
+            } else {
+                element.firstChild.style.top = '';
             }
         },
 
@@ -279,7 +304,7 @@ var mcomponents = (function () {
             const element = document.getElementById(id)
 
             const y = element.getBoundingClientRect().top + window.pageYOffset - 20;
-            window.scrollTo({ top: y, behavior: 'smooth' }); 
+            window.scrollTo({ top: y, behavior: 'smooth' });
         },
 
         invokeClick: function (id) {
