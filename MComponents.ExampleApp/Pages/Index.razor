@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using MComponents.MLoading
 @using MComponents.MProgressbar
+@using MComponents.MSeparator
 
 
 <MComponents.MBadge.MBadge>MBadge</MComponents.MBadge.MBadge>
@@ -24,6 +25,15 @@
 
             <br />
             <MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
+
+
+            <br />
+
+            <MSeparator />
+
+            <MSeparator>
+                <h4>Title</h4>
+            </MSeparator>
         </MTab>
 
         <MTab Title="Tab2">

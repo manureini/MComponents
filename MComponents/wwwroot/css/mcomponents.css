@@ -3030,6 +3030,26 @@ input.m-flag, input.m-flag-inline {
   padding: 0 2rem;
 }
 
+/* START separator --------------------------------------------------------------------------  */
+.m-separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 1rem 0;
+}
+.m-separator::before, .m-separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #212529;
+}
+.m-separator:not(.empty)::before {
+  margin-right: 0.25em;
+}
+.m-separator:not(.empty)::after {
+  margin-left: 0.25em;
+}
+
+/* END separator --------------------------------------------------------------------------  */
 /* START Toasts --------------------------------------------------------------------------  */
 #toast-container {
   position: fixed;

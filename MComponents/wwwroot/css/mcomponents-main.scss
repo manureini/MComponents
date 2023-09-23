@@ -1367,10 +1367,33 @@
     }
 }
 
+/* START separator --------------------------------------------------------------------------  */
+.m-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    padding: 1rem 0;
+
+    &::before, &::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid $text_color;
+    }
+
+    &:not(.empty)::before {
+        margin-right: .25em;
+    }
+
+    &:not(.empty)::after {
+        margin-left: .25em;
+    }
+}
+
+
+/* END separator --------------------------------------------------------------------------  */
+
 
 /* START Toasts --------------------------------------------------------------------------  */
-
-
 #toast-container {
     position: fixed;
     z-index: 999999;
