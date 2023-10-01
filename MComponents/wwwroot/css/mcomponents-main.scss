@@ -1377,7 +1377,7 @@
     &::before, &::after {
         content: '';
         flex: 1;
-        border-bottom: 1px solid $text_color;
+        border-bottom: 1px solid rgba($gray, .4);
     }
 
     &:not(.empty)::before {

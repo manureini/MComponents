@@ -3080,7 +3080,7 @@ input.m-flag, input.m-flag-inline {
 .m-separator::before, .m-separator::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid #212529;
+  border-bottom: 1px solid rgba(235, 237, 242, 0.4);
 }
 .m-separator:not(.empty)::before {
   margin-right: 0.25em;
