@@ -230,7 +230,7 @@ namespace MComponents.MGrid
 
         public void Dispose()
         {
-            mDeleteResetTimer.Dispose();
+            mDeleteResetTimer?.Dispose();
         }
     }
 }
