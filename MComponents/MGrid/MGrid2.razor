@@ -1,0 +1,288 @@
+﻿@namespace MComponents.MGrid
+@using MComponents.Resources;
+@using System.Globalization;
+
+@typeparam T
+
+<div>
+
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+
+    @if (!(mFirstRender && EnableSaveState))
+    {
+        @if (mFirstRenderUpdateColumnWidths)
+        {
+            UpdateColumnsWidthOnNextRender = true;
+            mFirstRenderUpdateColumnWidths = false;
+        }
+
+        <div class="m-grid-container" @attributes="AdditionalAttributes">
+            <div class="m-btn-toolbar" role="toolbar">
+
+                @if (ToolbarItems != ToolbarItem.None)
+                {
+                    <div class="m-btn-group m-grid-crud-button-group" role="group">
+
+                        @if (EnableAdding && ToolbarItems.HasFlag(ToolbarItem.Add))
+                        {
+                            <button type="button" class="m-btn m-btn-primary" @onclick="OnToolbarAdd">
+                                <i class="fa-solid fa-plus"></i><span>@L[nameof(MComponentsLocalization.Add)]</span>
+                            </button>
+                        }
+                        @if (EnableEditing && ToolbarItems.HasFlag(ToolbarItem.Edit))
+                        {
+                            <button type="button" class="m-btn m-btn-primary" @onclick="OnToolbarEdit">
+                                <i class="fa-solid fa-pen-to-square"></i><span>@L[nameof(MComponentsLocalization.Edit)]</span>
+                            </button>
+                        }
+                        @if (EnableDeleting && ToolbarItems.HasFlag(ToolbarItem.Delete))
+                        {
+                            <button type="button" class="m-btn m-btn-primary" @onclick="OnToolbarRemove">
+                                <i class="fa-solid fa-trash-can"></i><span>@L[nameof(MComponentsLocalization.Delete)]</span>
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="m-btn-group m-grid-tools">
+                <div class="m-btn-group m-grid-tools-button-group" role="group">
+
+                    @if (EnableGrouping)
+                    {
+                        <button type="button" class="m-btn m-btn-primary m-btn-sm" @onclick="OnToggleGrouping">
+                            <i class="fa-solid fa-window-restore"></i><span>@L[nameof(MComponentsLocalization.Grouping)]</span>
+                        </button>
+                    }
+                    @if (EnableFilterRow)
+                    {
+                        <button type="button" class="m-btn m-btn-primary m-btn-sm" @onclick="OnToggleFilter">
+                            <i class="fa-solid fa-filter"></i><span>@L[nameof(MComponentsLocalization.Filter)]</span>
+                        </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        @if (IsGroupingVisible)
+        {
+            <div class="m-grouping">
+                @L["Grouping..."]
+            </div>
+        }
+
+        <div class="m-table-container">
+            <table @ref="mTableReference" class="@($"{HtmlTableClass} {(UseStaticLayoutMode ? "m-static-layout" : string.Empty)} {(EnableEditing ? "m-clickable" : string.Empty)} {(IsEditingRow ? "m-editing" : string.Empty)}")"
+                   style="@((UseStaticLayoutMode && FixedColumns ? "table-layout: fixed" : string.Empty)))">
+
+                <thead>
+                    <tr>
+                        @for (int i = 0; i < ColumnsList.Count; i++)
+                        {
+                            IMGridColumn column = ColumnsList[i];
+
+                            if (!column.ShouldRenderColumn)
+                            {
+                                continue;
+                            }
+
+                            string style = string.Empty;
+
+                            @if (UseStaticLayoutMode && FixedColumns)
+                            {
+                                style = $"width: {GetColumnWidth(i).ToString(CultureInfo.InvariantCulture)}px;";
+                            }
+
+                            if (column.AdditionalAttributes != null && column.AdditionalAttributes.ContainsKey("style"))
+                            {
+                                style += column.AdditionalAttributes["style"].ToString();
+                            }
+
+                            <th data-identifier="@column.Identifier"
+                                style="@style"
+                                scope="col"
+                            @onclick="@(a => OnColumnHeaderClick(column, a))"
+                            @attributes="@(column.AdditionalAttributes?.Where(k => k.Key != "style"))">
+
+                                @(((MarkupString)column.HeaderText.Replace("\n", "<br />")))
+
+                                @if (EnableUserSorting)
+                                {
+                                    var sortInstr = SortInstructions.FirstOrDefault(si => si.GridColumn == column);
+                                    if (sortInstr != null)
+                                    {
+                                        if (sortInstr.Direction == MSortDirection.Ascending)
+                                        {
+                                            <i class="fa-solid fa-arrow-down m-grid-header-icon"></i>
+                                        }
+                                        if (sortInstr.Direction == MSortDirection.Descending)
+                                        {
+                                            <i class="fa-solid fa-arrow-up m-grid-header-icon"></i>
+                                        }
+                                    }
+                                }
+
+                            </th>
+                        }
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (DataCache == null)
+                    {
+                        if (DataSource != null)
+                        {
+                            if (GroupByInstructions.Any())
+                            {
+                                GroupedDataCache = FetchGroupByPartsAndUpdateDataCount();
+                            }
+                            else
+                            {
+                                DataCache = GetIQueryable(DataSource, true).ToArray();
+                            }
+                        }
+                        else if (DataAdapter == null)
+                            throw new InvalidOperationException("Please provide a " + nameof(DataSource) + " or " + nameof(DataAdapter));
+                    }
+
+                    @if (IsFilterRowVisible)
+                    {
+                        @*    @AddFilterRow(__builder); *@
+                    }
+
+                    @if (GroupedDataCache != null)
+                    {
+                        var lastValues = new object[GroupByInstructions.Count];
+
+                        foreach (var grouped in GroupedDataCache)
+                        {
+                            object key = grouped.Key;
+
+                            int index = 0;
+                            foreach (var prop in key.GetType().GetProperties())
+                            {
+                                var keyValue = prop.GetValue(key);
+
+                                bool renderRow = lastValues[index] == null;
+
+                                if (lastValues[index] != null)
+                                {
+                                    renderRow = !lastValues[index].Equals(keyValue);
+                                }
+
+                                for (int i = index; i >= 1; i--)
+                                {
+                                    var keyValuesRow = MGridGroupByAnonymousTypeHelper.GetKeyValues(key, i);
+                                    renderRow = !HiddenGroupByKeys.Any(h => Extensions.DictionaryEqual(h.Item1, keyValuesRow));
+                                    if (renderRow == false)
+                                        break;
+                                }
+
+                                if (renderRow)
+                                {
+                                    var instr = GroupByInstructions[index];
+                                    @*            AddGroupByHeaderRow(builder2, instr, key, keyValue, index + 1, grouped.FirstOrDefault());            *@
+                                }
+
+                                lastValues[index] = keyValue;
+                                index++;
+                            }
+
+                            foreach (var entry in grouped)
+                            {
+                                <MGridContentRow Grid="this" Action="MGridAction.Edit" Entry="entry" />
+                            }
+                        }
+                    }
+                    else if (DataCache != null)
+                    {
+                        if (DataCache.Count == 0)
+                        {
+                            if (!mIsLoading)
+                            {
+                                <tr>
+                                    <td colspan="@ColumnsList.Count">@NoDataDescription ?? L[nameof(MComponentsLocalization.NoDataAvailable)]</td>
+                                </tr>
+
+                            }
+                        }
+                        else
+                        {
+                            foreach (var entry in DataCache)
+                            {
+                                <MGridContentRow Grid="this" Action="MGridAction.Edit" Entry="entry" />
+                            }
+                        }
+                    }
+
+                    @if (NewValue != null)
+                    {
+                        <MGridContentRow Grid="this" Action="MGridAction.Add" Entry="NewValue" />
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="m-grid-footer">
+            @if (Pager != null)
+            {
+                long dataCount = DataCountCache;
+                long pagecount = (long)Math.Ceiling(dataCount / (double)Pager.PageSize);
+
+                if (Pager.CurrentPage > pagecount && dataCount >= 0)
+                {
+                    _ = OnPagerPageChanged(pagecount);
+                }
+
+                <MPager CurrentPage="Pager.CurrentPage" PageCount="pagecount" DisplayCount="(mTableContainerWidth < 100 || mTableContainerWidth > 670 ? 9 : 5)" OnPageChanged="OnPagerPageChanged">
+                    <div class="m-pagination-entry m-pagination-tools">
+                        @if (Pager.SelectablePageSizes != null)
+                        {
+                            <select class="m-form-control" @onchange="OnPageSizeChange">
+
+                                @foreach (var entry in Pager.SelectablePageSizes)
+                                {
+                                    <option value="@entry" selected="@entry == Pager.PageSize">@entry</option>
+                                }
+
+                            </select>
+                        }
+                        @{
+                            var count = DataCache?.Count;
+
+                            if (GroupedDataCache != null)
+                            {
+                                count = GroupedDataCache.Sum(g => g.Count());
+                            }
+                        }
+
+                        <span class="m-pagination-descr">@((DataCountCache != -1 ? string.Format(L["{0} entries of {1}"], count, DataCountCache) : string.Empty))</span>
+                    </div>
+                </MPager>
+            }
+
+            <div class="m-grid-footer-buttons">
+
+                @if (EnableImport)
+                {
+                    <button type="button" class="m-btn m-btn-secondary m-btn-icon m-btn-sm" @onclick="OnBtnImportClicked">
+                        <i class="fa-solid fa-upload"></i>
+                    </button>
+
+                    <InputFile id="@mInputFileId" accept=".xlsx" OnChange="OnFileChange" style="visibility: hidden; position: absolute; top: -1000px;" />
+                }
+                @if (EnableExport)
+                {
+                    <button type="button" class="m-btn m-btn-secondary m-btn-icon m-btn-sm" @onclick="() => ExportContent()">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                }
+
+            </div>
+        </div>
+    }
+</div>

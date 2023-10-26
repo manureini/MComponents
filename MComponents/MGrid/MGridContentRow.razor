@@ -1,0 +1,98 @@
+﻿@using System.Globalization;
+@typeparam T
+
+@{
+    bool rowEdit = Grid.EditRow != null && Grid.EditRow.Equals(Entry);
+
+    string cssClass = "m-grid-row";
+
+    if (rowEdit)
+    {
+        cssClass += " m-grid-edit-row";
+    }
+
+    bool selected = Grid.Selected != null && Grid.Selected.Equals(Entry);
+
+    if (Grid.mSelectedRowId != null && Grid.GetIdentifierValue(Entry) == Grid.mSelectedRowId)
+    {
+        selected = true;
+        Grid.Selected = Entry; //will set mSelectedRowId to null
+    }
+
+    if (selected)
+        cssClass += " m-grid-highlight";
+
+    @*
+    Grid.Formatter.AppendToTableRow(pBuilder, ref cssClass, pEntry, selected);
+    *@
+
+    string style = string.Empty;
+
+    if (Grid.UseStaticLayoutMode && Grid.mFieldBoundingBox != null)
+    {
+        var inlineTrHeight = Grid.mFieldBoundingBox.Height;
+
+        if (Grid.mFieldBoundingBox.BorderCollapse == "collapse")
+        {
+            inlineTrHeight += Grid.mFieldBoundingBox.BorderTop / 2 - Grid.mTableBorderTop / 2;
+        }
+
+        style = $"height: {(inlineTrHeight).ToString(CultureInfo.InvariantCulture)}px";
+    }
+}
+
+<tr class="@cssClass" style="@style" @onclick="a => Grid.OnRowClick(Entry, a)" @onclick:stopPropagation>
+
+    @if (rowEdit)
+    {
+        Grid.EditValue = Entry;
+
+
+
+        @*
+    Grid.AddEditRow(pBuilder, pAction, false, EditValue);
+    *@
+    }
+    else
+    {
+        for (int i = 0; i < Grid.ColumnsList.Count; i++)
+        {
+            IMGridColumn column = Grid.ColumnsList[i];
+
+            if (!column.ShouldRenderColumn)
+                continue;
+
+            <td class="@(Grid.mIsLoading ? "m-grid-td-loading" : string.Empty)">
+
+                @*   Formatter.AppendToTableRowData(pBuilder, column, pEntry); *@
+
+                @if (column is IMGridColumnGenerator<T> generator)
+                {
+                    @generator.GenerateContent(Entry)
+                    ;
+                }
+                else if (column is IMGridPropertyColumn pc)
+                {
+                    var iprop = Grid.PropertyInfos[pc];
+                    @Grid.Formatter.FormatPropertyColumnValue(pc, iprop, Entry)
+                }
+
+            </td>
+        }
+    }
+
+</tr>
+
+
+@code {
+
+    [Parameter]
+    public MGrid2<T> Grid { get; set; }
+
+    [Parameter]
+    public T Entry { get; set; }
+
+    [Parameter]
+    public MGridAction Action { get; set; }
+
+}

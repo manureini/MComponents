@@ -1,0 +1,79 @@
+﻿@using MComponents.MForm
+@using System.Dynamic;
+
+@typeparam T
+@typeparam M
+
+@if (Grid.UseStaticLayoutMode)
+{
+    <td colspan="@Grid.VisibleColumns.Length">
+        <table>
+            <tbody>
+                <tr>
+
+                    <MForm T="M"
+                    @ref="Grid.EditFormSetter"
+                           Model="@pValue"
+                           IsInTableRow="true"
+                           MFormGridContext=" new MFormGridContext()
+                        {
+                            Action = pAction
+                        }"
+                           EnableValidation="@(!pIsFilterRow)"
+                           OnValueChanged="async (a) => {  if(pIsFilterRow) { await Grid.OnFilterValueChanged((MFormValueChangedArgs<ExpandoObject>)(object)a); } else { Grid.OnEditValueChanged((MFormValueChangedArgs<T>)(object)a); } }"
+                           OnValidSubmit="async a => { if(!pIsFilterRow) {  await Grid.OnFormSubmit(a);} }"
+                           data-is-filterrow="@(pIsFilterRow)">
+
+                        <Fields>
+
+                        </Fields>
+
+                    </MForm>
+
+                </tr>
+            </tbody>
+        </table>
+    </td>
+}
+else
+{
+    <MForm T="M"
+    @ref="Grid.EditFormSetter"
+           Model="@pValue"
+           IsInTableRow="true"
+           MFormGridContext=" new MFormGridContext()
+                        {
+                            Action = pAction
+                        }"
+           EnableValidation="@(!pIsFilterRow)"
+           OnValueChanged="async (a) => {  if(pIsFilterRow) { await Grid.OnFilterValueChanged((MFormValueChangedArgs<ExpandoObject>)(object)a); } else { Grid.OnEditValueChanged((MFormValueChangedArgs<T>)(object)a); } }"
+           OnValidSubmit="async a => { if(!pIsFilterRow) {  await Grid.OnFormSubmit(a);} }"
+           data-is-filterrow="@(pIsFilterRow)">
+
+        <Fields>
+
+        </Fields>
+
+    </MForm>
+
+}
+
+
+
+@code {
+
+    [Parameter]
+    public MGrid2<T> Grid { get; set; }
+
+    [Parameter]
+    public MGridAction pAction { get; set; }
+
+    [Parameter]
+    public bool pIsFilterRow { get; set; }
+
+    [Parameter]
+    public M pValue { get; set; }
+
+
+
+}
