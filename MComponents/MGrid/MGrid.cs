@@ -345,7 +345,35 @@ namespace MComponents.MGrid
         {
             if (pKey == "Escape")
             {
-                InvokeAsync(() => _ = StopEditing(true, true));
+                InvokeAsync(async () =>
+                {
+                    if (EditForm != null)
+                    {
+                        EditForm.SkipValueChangedEvents = true;
+
+                        if (EditForm.HasUnsavedChanges)
+                        {
+                            foreach (var entry in EditForm.OldValues)
+                            {
+                                var value = entry.Value.Item1.GetValue(EditForm.Model);
+
+                                if (value != entry.Value.Item2)
+                                {
+                                    entry.Value.Item1.SetValue(EditForm.Model, entry.Value.Item2);
+                                }
+                            }
+                        }
+
+                        EditForm.OldValues.Clear();
+                    }
+
+                    await StopEditing(false, true);
+
+                    if (DataAdapter != null)
+                    {
+                        await UpdateDataCacheIfDataAdapter(true);
+                    }
+                });
             }
         }
 
@@ -1101,6 +1129,7 @@ namespace MComponents.MGrid
                         await OnFormSubmit(a);
                     }));
 
+                    pBuilder.AddAttribute(616, nameof(MForm<T>.StoreOriginalValues), true);
                     pBuilder.AddAttribute(616, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<T>>(this, OnEditValueChanged));
 
                     pBuilder.AddComponentReferenceCapture(618, (__value) =>

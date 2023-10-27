@@ -6,6 +6,7 @@ namespace MComponents
     {
         public string Property { get; protected set; }
 
+        public object OldValue { get; protected set; }
         public object NewValue { get; protected set; }
 
         public T Model { get; protected set; }
@@ -14,13 +15,14 @@ namespace MComponents
 
         public IMPropertyInfo PropertyInfo { get; protected set; }
 
-        internal MFormValueChangedArgs(IMField pField, IMPropertyInfo pPropertyInfo, object pNewValue, T pModel)
+        internal MFormValueChangedArgs(IMField pField, IMPropertyInfo pPropertyInfo, object pOldValue, object pNewValue, T pModel)
         {
+            Field = pField;
+            PropertyInfo = pPropertyInfo;
+            OldValue = pOldValue;
             NewValue = pNewValue;
             Model = pModel;
-            Field = pField;
             Property = pPropertyInfo.Name;
-            PropertyInfo = pPropertyInfo;
         }
     }
 }

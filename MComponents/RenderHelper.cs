@@ -182,7 +182,7 @@ namespace MComponents
 
                 pBuilder.AddAttribute(183, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, async __value =>
                 {
-                    await InvokeValueChanged(pParent, pPropertyInfo, pField, pModel, __value);
+                    await pParent.OnInputValueChanged(pField, pPropertyInfo, __value);
                 }, value));
 
                 pBuilder.AddAttribute(188, "onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(pParent, (a) =>
@@ -248,26 +248,6 @@ namespace MComponents
                 Console.WriteLine(e.ToString());
                 throw;
             }
-        }
-
-        internal static async Task InvokeValueChanged(IMForm pParent, IMPropertyInfo pPropertyInfo, IMField pField, object pModel, object pNewValue)
-        {
-            lock (pModel)
-            {
-                if (pPropertyInfo.GetCustomAttribute<DateAttribute>() != null)
-                {
-                    var dateTime = pNewValue as DateTime?;
-
-                    if (dateTime != null && dateTime.Value.Kind == DateTimeKind.Unspecified)
-                    {
-                        pNewValue = DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
-                    }
-                }
-
-                pPropertyInfo.SetValue(pModel, pNewValue);
-            }
-
-            await pParent.OnInputValueChanged(pField, pPropertyInfo, pNewValue);
         }
 
         public static void AppendComplexType<T, TProperty>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, T pModel, Guid pId, IMForm pParent, MComplexPropertyField<TProperty> pComplexField,

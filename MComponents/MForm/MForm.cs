@@ -55,6 +55,9 @@ namespace MComponents.MForm
         [Parameter]
         public bool UpdateOnInput { get; set; }
 
+        [Parameter]
+        public bool StoreOriginalValues { get; set; }
+
         [Inject]
         public IStringLocalizer L { get; set; }
 
@@ -66,7 +69,9 @@ namespace MComponents.MForm
 
         public Type ModelType => Model?.GetType() ?? typeof(T);
 
-        protected HashSet<IMPropertyInfo> ChangedValues { get; set; } = new HashSet<IMPropertyInfo>();
+        public Dictionary<string, (IMPropertyInfo, object)> OldValues { get; set; } = new Dictionary<string, (IMPropertyInfo, object)>();
+        protected HashSet<IMPropertyInfo> mChangedValues = new HashSet<IMPropertyInfo>();
+        public bool SkipValueChangedEvents { get; set; }
 
         protected IDisposable mSubscriptions;
         protected ValidationMessageStore mValidationMessageStore;
@@ -83,6 +88,7 @@ namespace MComponents.MForm
             base.OnInitialized();
 
             mEditContext = new EditContext(Model);
+            OldValues.Clear();
 
             if (EnableValidation)
             {
@@ -491,6 +497,16 @@ namespace MComponents.MForm
 
         private void AddInput(RenderTreeBuilder builder2, IMField field, IMPropertyInfo propertyInfo, Guid inpId)
         {
+            if (StoreOriginalValues)
+            {
+                var fullname = propertyInfo.GetFullName();
+
+                if (fullname != null && !OldValues.ContainsKey(fullname) && !propertyInfo.IsReadOnly)
+                {
+                    OldValues.Add(propertyInfo.GetFullName(), (propertyInfo, propertyInfo.GetValue(Model)));
+                }
+            }
+
             if (field is IMPropertyField pf)
             {
                 if (field is IMComplexField)
@@ -516,7 +532,7 @@ namespace MComponents.MForm
 
         public bool HasUnsavedChanges
         {
-            get { return ChangedValues.Count > 0; }
+            get { return mChangedValues.Count > 0; }
         }
 
         private async Task<bool> CascadedFormContext_OnFormSubmit(object sender, MFormContainerContextSubmitArgs e)
@@ -543,7 +559,7 @@ namespace MComponents.MForm
 
             if (HasUnsavedChanges)
             {
-                foreach (var entry in ChangedValues)
+                foreach (var entry in mChangedValues)
                 {
                     var fullname = entry.GetFullName();
 
@@ -554,7 +570,7 @@ namespace MComponents.MForm
                     changedDict.Add(fullname, value);
                 }
 
-                ChangedValues.Clear();
+                mChangedValues.Clear();
             }
 
             if (OnValidSubmit.HasDelegate)
@@ -625,8 +641,26 @@ namespace MComponents.MForm
 
         public async Task OnInputValueChanged(IMField pField, IMPropertyInfo pPropertyInfo, object pNewValue)
         {
-            if (!ChangedValues.Contains(pPropertyInfo))
-                ChangedValues.Add(pPropertyInfo);
+            if (SkipValueChangedEvents)
+                return;
+
+            lock (Model)
+            {
+                if (pPropertyInfo.GetCustomAttribute<DateAttribute>() != null)
+                {
+                    var dateTime = pNewValue as DateTime?;
+
+                    if (dateTime != null && dateTime.Value.Kind == DateTimeKind.Unspecified)
+                    {
+                        pNewValue = DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+                    }
+                }
+
+                pPropertyInfo.SetValue(Model, pNewValue);
+            }
+
+            if (!mChangedValues.Contains(pPropertyInfo))
+                mChangedValues.Add(pPropertyInfo);
 
             var propertyType = Nullable.GetUnderlyingType(pPropertyInfo.PropertyType) ?? pPropertyInfo.PropertyType;
 
@@ -658,12 +692,20 @@ namespace MComponents.MForm
                     }
 
                     pPropertyInfo.SetValue(Model, newValueStr);
+                    pNewValue = newValueStr;
                 }
             }
 
             if (OnValueChanged.HasDelegate)
             {
-                await OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pPropertyInfo, pNewValue, Model));
+                object oldValue = null;
+
+                if (OldValues.ContainsKey(pPropertyInfo.GetFullName()))
+                {
+                    oldValue = OldValues[pPropertyInfo.GetFullName()];
+                }
+
+                await OnValueChanged.InvokeAsync(new MFormValueChangedArgs<T>(pField, pPropertyInfo, oldValue, pNewValue, Model));
             }
 
             if (mEditContext != null && pField is IMPropertyField propertyField)

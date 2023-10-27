@@ -69,7 +69,7 @@ namespace MComponents
 
                 if (pCulture.TwoLetterISOLanguageName == CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)
                 {
-                    await RenderHelper.InvokeValueChanged(pParent, pPropertyInfo, pField, pModel, __value);
+                    await pParent.OnInputValueChanged(pField, pPropertyInfo, __value);
                 }
             }, value));
 
