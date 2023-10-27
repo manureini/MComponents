@@ -2,7 +2,6 @@
 using MComponents.MGrid;
 using MComponents.MToaster;
 using MComponents.Services;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
@@ -142,10 +141,7 @@ namespace MComponents
 
             if (settings.SetRequestLocalizationOptions)
             {
-                pServices.Configure<RequestLocalizationOptions>(options =>
-                {
-                    options.SupportedUICultures = settings.SupportedCultures;
-                });
+                throw new NotSupportedException();
             }
             if (settings.RegisterStringLocalizer)
             {

@@ -12,6 +12,7 @@ using MComponents.ExampleApp.Data;
 using System.Globalization;
 using MComponents.ExampleApp.Service;
 using MComponents.Files;
+using MComponents.Services;
 
 namespace MComponents.ExampleApp
 {
@@ -36,9 +37,13 @@ namespace MComponents.ExampleApp
             services.AddMComponents(options =>
             {
                 options.RegisterResourceLocalizer = true;
-                options.SetRequestLocalizationOptions = true;
                 options.RegisterStringLocalizer = true;
                 options.RegisterNavigation = true;
+            });
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.SupportedUICultures = MComponentSettings.AllSupportedCultures;
             });
         }
 
