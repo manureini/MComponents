@@ -1649,8 +1649,9 @@ namespace MComponents.MGrid
 
             // START
 
+            var changed = args.ChangedValues.Count > 0 || args.UserInteracted;
 
-            if (args.ChangedValues.Count > 0 || args.UserInteracted)
+            if (changed)
             {
                 if (NewValue == null)
                 {
@@ -1664,27 +1665,16 @@ namespace MComponents.MGrid
 
                     if (DataAdapter != null)
                     {
-                        // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
-                        _ = DataAdapter.Update(value).ContinueWith(async t =>
+                        try
                         {
-                            if (t.Exception != null)
-                            {
-                                Notificator.InvokeNotification(ServiceProvider, true, L[nameof(MComponentsLocalization.UpdateFailed)]);
-                                await ResetRowsAndCache();
-                                return;
-                            }
-
-                            if (Events?.OnAfterEdit != null)
-                            {
-                                await Events.OnAfterEdit.InvokeAsync(new AfterEditArgs<T>()
-                                {
-                                    Row = value
-                                });
-                            }
-
-                            await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
-                        });
-                        return;
+                            await DataAdapter.Update(value);
+                        }
+                        catch
+                        {
+                            Notificator.InvokeNotification(ServiceProvider, true, L[nameof(MComponentsLocalization.UpdateFailed)]);
+                            await ResetRowsAndCache();
+                            return;
+                        }
                     }
 
                     if (Events?.OnAfterEdit != null)
@@ -1702,28 +1692,16 @@ namespace MComponents.MGrid
 
                     if (DataAdapter != null)
                     {
-                        // WARNING: Code is Redundant because with DataAdapter ContinueWith is required !
-                        _ = DataAdapter.Add(NewValue).ContinueWith(async t =>
+                        try
                         {
-                            if (t.Exception != null)
-                            {
-                                Notificator.InvokeNotification(ServiceProvider, true, L[nameof(MComponentsLocalization.CreateFailed)]);
-                                await ResetRowsAndCache();
-                                return;
-                            }
-
-                            if (Events?.OnAfterAdd != null)
-                            {
-                                await Events.OnAfterAdd.InvokeAsync(new AfterAddArgs<T>()
-                                {
-                                    Row = NewValue
-                                });
-                            }
-
-                            await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
-                            await StopEditing(false, false);
-                        });
-                        return;
+                            await DataAdapter.Add(NewValue);
+                        }
+                        catch
+                        {
+                            Notificator.InvokeNotification(ServiceProvider, true, L[nameof(MComponentsLocalization.CreateFailed)]);
+                            await ResetRowsAndCache();
+                            return;
+                        }
                     }
 
                     if (Events?.OnAfterAdd != null)
@@ -1735,10 +1713,18 @@ namespace MComponents.MGrid
                     }
                 }
 
-                ClearDataCache();
+                if (DataAdapter == null)
+                {
+                    ClearDataCache();
+                }
             }
 
             await StopEditing(false, false);
+
+            if (changed && DataAdapter != null)
+            {
+                await ClearDataCacheIfDataSourceOrUpdateIfDataAdapter();
+            }
 
             //END
 
