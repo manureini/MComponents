@@ -50,6 +50,10 @@ $borderRadius: 0;
         background-color: lighten($input_bg, 5%);
         border-color: $white;
     }
+
+    &.m-combined-input {
+        border-bottom: 0;
+    }
 }
 
 .m-grid thead td, .m-grid thead th {

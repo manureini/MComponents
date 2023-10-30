@@ -3333,6 +3333,9 @@ input.m-flag, input.m-flag-inline {
   background-color: #2d2d2d;
   border-color: #ffffff;
 }
+.m-form-control.m-combined-input {
+  border-bottom: 0;
+}
 
 .m-grid thead td, .m-grid thead th {
   box-shadow: inset 0 -1px 0 #bfbfbf !important;
