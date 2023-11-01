@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace MComponents
 {
@@ -19,6 +20,23 @@ namespace MComponents
 
         public static string ToName(this Enum value)
         {
+            if (value.GetType().GetCustomAttribute<FlagsAttribute>() != null)
+            {
+                string str = string.Empty;
+
+                foreach (Enum flagVal in Enum.GetValues(value.GetType()))
+                {
+                    if ((int)(object)flagVal == 0 || !value.HasFlag(flagVal))
+                        continue;
+
+                    var flagAttr = flagVal.GetAttribute<DisplayAttribute>();
+                    str += flagAttr == null ? flagVal.ToString() : flagAttr.GetName();
+                    str += ", ";
+                }
+
+                return str.Trim(',', ' ');
+            }
+
             var attribute = value.GetAttribute<DisplayAttribute>();
             return attribute == null ? value.ToString() : attribute.GetName();
         }

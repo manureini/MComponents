@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using MComponents.ExportData;
 using MComponents.MGrid;
+using MComponents.Shared.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,8 +14,6 @@ namespace MComponents
 {
     internal static class ExcelExportHelper
     {
-        private const int DATE_NUMBER_FORMAT = 14;
-
         public static Stream GetExcelSpreadsheet<T>(IEnumerable<IMGridColumn> pColumns, IDictionary<IMGridPropertyColumn, IMPropertyInfo> pPropertyInfos, IEnumerable<T> pData, IMGridObjectFormatter<T> pFormatter)
         {
             var columns = pColumns.Where(c => c.VisibleInExport);
@@ -38,12 +37,12 @@ namespace MComponents
                             new CellFormat(),
                             new CellFormat()
                             {
-                                NumberFormatId = DATE_NUMBER_FORMAT,
+                                NumberFormatId = 14,
                                 ApplyNumberFormat = true
                             },
                             new CellFormat()
                             {
-                                NumberFormatId = 49,
+                                NumberFormatId = 22,
                                 ApplyNumberFormat = true
                             })
                 };
@@ -111,7 +110,6 @@ namespace MComponents
                 workbookpart.Workbook.Save();
 
                 document.Save();
-                document.Close();
             }
 
             ms.Seek(0, SeekOrigin.Begin);
@@ -124,7 +122,21 @@ namespace MComponents
             if (iprop.PropertyType == typeof(DateTime) || iprop.PropertyType == typeof(DateTime?))
             {
                 var datetime = iprop.GetValue(rowData) as DateTime?;
-                cell = CreateDateCell(datetime);
+
+                if (iprop.GetCustomAttribute<DateTimeAttribute>() != null)
+                {
+                    cell = CreateDateTimeCell(datetime);
+                }
+                else
+                {
+                    cell = CreateDateCell(datetime);
+                }
+            }
+            else if (iprop.PropertyType == typeof(DateOnly) || iprop.PropertyType == typeof(DateOnly?))
+            {
+                var value = iprop.GetValue(rowData) as DateOnly?;
+                var dateTime = value?.ToDateTime(TimeOnly.MinValue);
+                cell = CreateDateCell(dateTime);
             }
             else if (iprop.PropertyType == typeof(int) || iprop.PropertyType == typeof(int?))
             {
@@ -189,7 +201,6 @@ namespace MComponents
             {
                 DataType = CellValues.SharedString,
                 CellValue = new CellValue(ssIndex.ToString()),
-                StyleIndex = 2
             };
 
             return cell;
@@ -216,8 +227,32 @@ namespace MComponents
 
             if (pDate != null)
             {
-                pDate = new DateTime(pDate.Value.Year, pDate.Value.Month, pDate.Value.Day);
+                try
+                {
+                    value = pDate.Value.Date.ToOADate().ToString(CultureInfo.InvariantCulture);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
 
+            var cell = new Cell
+            {
+                DataType = CellValues.Number,
+                CellValue = new CellValue(value),
+                StyleIndex = 1, //must match to CellFormats
+            };
+
+            return cell;
+        }
+
+        public static Cell CreateDateTimeCell(DateTime? pDate)
+        {
+            var value = string.Empty;
+
+            if (pDate != null)
+            {
                 try
                 {
                     value = pDate.Value.ToOADate().ToString(CultureInfo.InvariantCulture);
@@ -232,27 +267,11 @@ namespace MComponents
             {
                 DataType = CellValues.Number,
                 CellValue = new CellValue(value),
-                StyleIndex = 1, //must match to date number format
+                StyleIndex = 2,
             };
 
             return cell;
         }
-
-        /*
-        public static Cell CreateDateCell(DateTime? pDate)
-        {
-            //var formatString = ExcelHelper.GetDateTimeFormat(DATE_NUMBER_FORMAT);
-
-            var cell = new Cell
-            {
-                DataType = CellValues.Date,
-                CellValue = new CellValue(pDate?.ToString("s",  CultureInfo.InvariantCulture) ?? string.Empty),
-                StyleIndex = 1
-            };
-
-            return cell;
-        }
-        */
 
         public static Cell CreateNumberCell(string pValue)
         {
