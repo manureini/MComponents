@@ -656,7 +656,7 @@ namespace MComponents.MForm
                     }
                 }
 
-                if (!(pField is MFieldEmpty)) // do not set for Loc Json Values
+                if (pField != null && !(pField is MFieldEmpty)) // do not set for Loc Json Values or if event faked for changed values
                 {
                     pPropertyInfo.SetValue(Model, pNewValue);
                 }
