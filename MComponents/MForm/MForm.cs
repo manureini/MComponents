@@ -521,7 +521,7 @@ namespace MComponents.MForm
                 if (!isInFilterRow && propertyInfo.GetCustomAttribute<LocalizedStringAttribute>() != null)
                 {
                     var lmethod = typeof(RenderHelperInputLocalized).GetMethod(nameof(RenderHelperInputLocalized.AppendInput)).MakeGenericMethod(propertyInfo.PropertyType);
-                    lmethod.Invoke(null, new object[] { builder2, propertyInfo, Model, this, field, UpdateOnInput, Settings.SupportedCultures });
+                    lmethod.Invoke(null, new object[] { builder2, propertyInfo, Model, this, field, UpdateOnInput, Settings, MFormGridContext });
                     return;
                 }
 
@@ -656,7 +656,10 @@ namespace MComponents.MForm
                     }
                 }
 
-                pPropertyInfo.SetValue(Model, pNewValue);
+                if (!(pField is MFieldEmpty)) // do not set for Loc Json Values
+                {
+                    pPropertyInfo.SetValue(Model, pNewValue);
+                }
             }
 
             if (!mChangedValues.Contains(pPropertyInfo))

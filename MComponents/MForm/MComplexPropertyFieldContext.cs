@@ -21,5 +21,7 @@ namespace MComponents.MForm
         public IMForm Form { get; set; }
 
         public MFormGridContext MFormGridContext { get; set; }
+
+        public bool IsReadOnly { get; set; }
     }
 }

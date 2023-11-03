@@ -80,7 +80,7 @@ namespace MComponents
                 return element.GetString();
             }
 
-            return culture + pPropertyName;
+            return string.Empty;
         }
     }
 }

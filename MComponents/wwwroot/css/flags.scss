@@ -9,10 +9,17 @@ $flag-icons-use-square: true !default;
     background-size: contain;
     background-position-x: 50%;
     background-position-y: 50%;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat !important;
 }
 
-input.m-flag { 
+input.m-flag, textarea.m-flag {
+    background-position-x: 10px;
+    background-position-y: center;
+    background-size: 1rem;
+    padding-left: 2rem;
+}
+
+.m-btn.m-flag {
     background-position-x: 10px;
     background-position-y: center;
     background-size: 1rem;
@@ -37,11 +44,11 @@ input.m-flag {
 
 @mixin flag-icon($country) {
     .m-flag-#{$country} {
-        background-image: url(#{$flag-icons-path}#{$flag-icons-rect-path}/#{$country}.svg);
+        background-image: url(#{$flag-icons-path}#{$flag-icons-rect-path}/#{$country}.svg) !important;
 
         @if $flag-icons-use-square {
             &.fis {
-                background-image: url(#{$flag-icons-path}#{$flag-icons-square-path}/#{$country}.svg);
+                background-image: url(#{$flag-icons-path}#{$flag-icons-square-path}/#{$country}.svg) !important;
             }
         }
     }

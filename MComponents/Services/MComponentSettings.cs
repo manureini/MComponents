@@ -1,5 +1,7 @@
-﻿using MComponents.MGrid;
+﻿using MComponents.MForm;
+using MComponents.MGrid;
 using MComponents.MToaster;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -27,5 +29,7 @@ namespace MComponents.Services
         public ToasterConfiguration ToasterConfiguration { get; set; } = new ToasterConfiguration();
 
         public Func<IServiceProvider, string, Task> EnsureAssemblyIsLoaded { get; set; }
+
+        public RenderFragment<MComplexPropertyFieldContext<string>> CustomTextAreaComponent { get; set; }
     }
 }

@@ -278,7 +278,8 @@ namespace MComponents
                     await pParent.OnInputValueChanged(pComplexField, pPropertyInfo, __value);
                 }, value),
 
-                ValueExpression = isEmptyProperty ? default : GetValueExpression<TProperty>(pPropertyInfo, pModel)
+                ValueExpression = isEmptyProperty ? default : GetValueExpression<TProperty>(pPropertyInfo, pModel),
+                IsReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute<ReadOnlyAttribute>() != null
             };
 
             pBuilder.AddContent(263, pComplexField.Template?.Invoke(context));
