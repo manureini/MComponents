@@ -1,12 +1,12 @@
 ﻿@inject Navigation Navigation
 
-<div class="m-tabs-container">
+<div class="m-tabs-container @CssClass">
     <div class="btn-group m-tabs-buttons" role="group">
         @foreach (var tab in Tabs)
         {
             <button type="button"
-                class="m-btn @GetButtonClass(tab) m-tabs-btn @tab.CssClass"
-                @onclick=@(() => ActivatePage(tab))>
+                    class="m-btn @GetButtonClass(tab) m-tabs-btn @tab.CssClassButton"
+            @onclick=@(() => ActivatePage(tab))>
                 <span class="m-tabs-btn-title">@tab.Title</span>
             </button>
         }
@@ -26,6 +26,9 @@
 
     [Parameter]
     public bool SyncTabsWithFragmentIdentifierInUrl { get; set; }
+
+    [Parameter]
+    public string CssClass { get; set; }
 
     List<MTab> Tabs = new List<MTab>();
     public MTab CurrentTab { get; set; }

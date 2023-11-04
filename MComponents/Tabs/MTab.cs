@@ -24,7 +24,7 @@ namespace MComponents.Tabs
         public string FragmentIdentifier { get; set; }
 
         [Parameter]
-        public string CssClass { get; set; }
+        public string CssClassButton { get; set; }
 
         protected override void OnInitialized()
         {

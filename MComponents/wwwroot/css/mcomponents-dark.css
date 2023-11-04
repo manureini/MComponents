@@ -3003,9 +3003,12 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
   font-size: smaller;
 }
 
-.m-tab-container .m-tab {
+.m-tabs-container .m-tab {
   border: 1px solid;
   padding: 1rem;
+}
+.m-tabs-container.m-localization-tab .m-tab {
+  padding: 0;
 }
 
 .m-progressbar {
@@ -3461,7 +3464,5 @@ button:active {
 }
 
 .m-tabs-container .m-tab {
-  border: 1px solid;
   border-color: #a6a6a6;
-  padding: 1rem;
 }

@@ -42,14 +42,15 @@ namespace MComponents
 
                         builder2.OpenComponent<MTab>(10);
                         builder2.AddAttribute(11, nameof(MTab.Title), culture.Parent.NativeName);
-                        builder2.AddAttribute(13, nameof(MTab.CssClass), GetCssFlagClass(culture));
-                        builder2.AddAttribute(12, nameof(MTab.ChildContent), childTab());
+                        builder2.AddAttribute(12, nameof(MTab.CssClassButton), GetCssFlagClass(culture));
+                        builder2.AddAttribute(13, nameof(MTab.ChildContent), childTab());
                         builder2.CloseComponent(); //MTab
                     }
                 };
 
                 pBuilder.OpenComponent<MTabs>(0);
                 pBuilder.AddAttribute(1, nameof(MTabs.ChildContent), child());
+                pBuilder.AddAttribute(2, nameof(MTabs.CssClass), "m-localization-tab");
                 pBuilder.CloseComponent(); //MTabs
 
                 return;

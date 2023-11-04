@@ -1325,10 +1325,14 @@
     }
 }
 
-.m-tab-container {
+.m-tabs-container {
     .m-tab {
         border: 1px solid;
         padding: 1rem;
+    }
+
+    &.m-localization-tab .m-tab {
+        padding: 0;
     }
 }
 
