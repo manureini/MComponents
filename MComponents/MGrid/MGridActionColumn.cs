@@ -210,7 +210,7 @@ namespace MComponents.MGrid
 
                     builder.OpenElement(212, "i");
 
-                    if (RowDeleteEnabled != null && RowDeleteEnabled.Equals(pModel))
+                    if (!UseDeleteDoubleClick || (RowDeleteEnabled != null && RowDeleteEnabled.Equals(pModel)))
                     {
                         builder.AddAttribute(240, "class", "fa-solid fa-trash-can m-grid-action-icon");
                     }
