@@ -53,131 +53,61 @@ namespace MComponents
 
         public static void AppendInput<T>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, object pModel, Guid pId, IMForm pParent, bool pIsInFilterRow, IMField pField, bool pUpdateOnInput)
         {
-            try
+            if (!IsTypeSupported(typeof(T)) || IsPropertyHolderNull(pPropertyInfo, pModel))
             {
-                if (!IsTypeSupported(typeof(T)) || IsPropertyHolderNull(pPropertyInfo, pModel))
-                {
-                    ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId);
-                    return;
-                }
+                ShowNotSupportedType(pBuilder, pPropertyInfo, pModel, pId);
+                return;
+            }
 
-                T value = default(T);
-                var val = pPropertyInfo.GetValue(pModel);
+            T value = default(T);
+            var val = pPropertyInfo.GetValue(pModel);
 
-                if (val != null)
-                {
-                    value = (T)ReflectionHelper.ChangeType(val, typeof(T));
-                }
+            if (val != null)
+            {
+                value = (T)ReflectionHelper.ChangeType(val, typeof(T));
+            }
 
-                Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+            bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute<ReadOnlyAttribute>() != null;
+            var restrictValues = pPropertyInfo.GetCustomAttribute<RestrictValuesAttribute>();
 
-                bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute<ReadOnlyAttribute>() != null;
+            Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
-                var restrictValues = pPropertyInfo.GetCustomAttribute<RestrictValuesAttribute>();
+            var componentType = GetComponentType<T>(pPropertyInfo, pUpdateOnInput);
+            pBuilder.OpenComponent(0, componentType);
 
-                if (typeof(T) == typeof(bool?) || tType.IsEnum || restrictValues != null)
-                {
-                    pBuilder.OpenComponent<MSelect<T>>(0);
-                    if (pIsInFilterRow)
-                        pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
-                }
-                else if (mNumberTypes.Contains(tType))
-                {
-                    if (pUpdateOnInput)
-                    {
-                        pBuilder.OpenComponent<InputNumberOnInput<T>>(0);
-                    }
-                    else
-                    {
-                        pBuilder.OpenComponent<InputNumber<T>>(0);
-                    }
-                }
-                else if (tType == typeof(DateTime) || tType == typeof(DateTimeOffset))
-                {
-                    if (pPropertyInfo.GetCustomAttribute<TimeAttribute>() != null)
-                    {
-                        pBuilder.OpenComponent<InputTime<T>>(0);
-                    }
-                    else if (pPropertyInfo.GetCustomAttribute<DateTimeAttribute>() != null)
-                    {
-                        pBuilder.OpenComponent<InputDateTime<T>>(0);
-                    }
-                    else
-                    {
-                        pBuilder.OpenComponent<InputDate<T>>(0);
-                    }
-                }
-                else if (tType == typeof(DateOnly))
-                {
-                    pBuilder.OpenComponent<InputDate<T>>(0);
-                }
-                else if (tType == typeof(TimeOnly))
-                {
-                    pBuilder.OpenComponent<InputTime<T>>(0);
-                }
-                else if (typeof(T) == typeof(bool))
-                {
-                    if (pPropertyInfo.GetCustomAttribute<MInputCheckboxAttribute>() != null)
-                    {
-                        pBuilder.OpenComponent<MInputCheckbox>(0);
-                    }
-                    else if (pPropertyInfo.GetCustomAttribute<MInputSwitchAttribute>() != null)
-                    {
-                        pBuilder.OpenComponent<MInputSwitch>(0);
-                    }
-                    else
-                    {
-                        pBuilder.OpenComponent<MInputSwitch>(0);
-                    }
-                }
-                else if (tType == typeof(Guid))
-                {
-                    pBuilder.OpenComponent<InputGuid<T>>(0);
-                }
-                else if (tType == typeof(Type))
-                {
-                    pBuilder.OpenComponent<InputType>(0);
-                }
-                else
-                {
-                    if (pPropertyInfo.GetCustomAttribute<TextAreaAttribute>() != null)
-                    {
-                        pBuilder.OpenComponent<InputTextArea>(0);
-                    }
-                    else
-                    {
-                        if (pUpdateOnInput)
-                        {
-                            pBuilder.OpenComponent<InputTextOnInput>(0);
-                        }
-                        else
-                        {
-                            pBuilder.OpenComponent<InputText>(0);
-                        }
-                    }
-                }
+            if (typeof(T) == typeof(bool?) || tType.IsEnum || restrictValues != null)
+            {
+                if (pIsInFilterRow)
+                    pBuilder.AddAttribute(10, "NullValueDescription", "\u200b");
+            }
 
-                if (pPropertyInfo.GetCustomAttribute<PasswordAttribute>() != null)
-                {
-                    pBuilder.AddAttribute(33, "type", "password");
-                }
+            if (pPropertyInfo.GetCustomAttribute<PasswordAttribute>() != null)
+            {
+                pBuilder.AddAttribute(33, "type", "password");
+            }
 
-                if (pPropertyInfo.GetCustomAttribute<EmailAddressAttribute>() != null)
-                {
-                    pBuilder.AddAttribute(33, "type", "email");
-                }
+            if (pPropertyInfo.GetCustomAttribute<EmailAddressAttribute>() != null)
+            {
+                pBuilder.AddAttribute(33, "type", "email");
+            }
 
-                if (pField.AdditionalAttributes != null)
-                {
-                    pBuilder.AddMultipleAttributes(17, pField.AdditionalAttributes
-                        .Where(a => a.Key != Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE)
-                        .Where(a => a.Key != nameof(IMGridColumn))
-                        .ToDictionary(a => a.Key, a => a.Value));
-                }
+            if (pField != null && pField.AdditionalAttributes != null)
+            {
+                pBuilder.AddMultipleAttributes(17, pField.AdditionalAttributes
+                    .Where(a => a.Key != Extensions.MFORM_IN_TABLE_ROW_TD_STYLE_ATTRIBUTE)
+                    .Where(a => a.Key != nameof(IMGridColumn))
+                    .ToDictionary(a => a.Key, a => a.Value));
+            }
 
+            if (pId != Guid.Empty)
+            {
                 pBuilder.AddAttribute(178, "id", pId);
-                pBuilder.AddAttribute(179, "Value", value);
+            }
 
+            pBuilder.AddAttribute(179, "Value", value);
+
+            if (pParent != null)
+            {
                 pBuilder.AddAttribute(181, "form", pParent.Id);
 
                 pBuilder.AddAttribute(183, "ValueChanged", RuntimeHelpers.CreateInferredEventCallback<T>(pParent, async __value =>
@@ -189,65 +119,142 @@ namespace MComponents
                 {
                     pParent.OnInputKeyUp(a, pPropertyInfo);
                 }));
-
-                var valueExpression = GetValueExpression<T>(pPropertyInfo, pModel);
-
-                pBuilder.AddAttribute(195, "ValueExpression", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Func<T>>>(valueExpression));
-
-                string cssClass = "m-form-control";
-
-                if (isReadOnly)
-                {
-                    pBuilder.AddAttribute(33, "disabled", string.Empty);
-                    pBuilder.AddAttribute(33, "IsDisabled", true);
-                }
-
-                pBuilder.AddAttribute(10, "class", cssClass);
-                // pBuilder.SetUpdatesAttributeName(pPropertyInfo.Name); <- new code generator will add this, but I don't know why
-
-                if (restrictValues != null)
-                {
-                    foreach (var allowedValue in restrictValues.AllowedValues)
-                    {
-                        if (typeof(T) != typeof(string) && !typeof(T).IsAssignableFrom(allowedValue.GetType()))
-                        {
-                            throw new Exception($"Allowed value {allowedValue} does not implement property type {typeof(T).AssemblyQualifiedName}");
-                        }
-                    }
-
-                    IEnumerable<T> options;
-
-                    if (typeof(T) == typeof(string))
-                    {
-                        options = restrictValues.AllowedValues.Select(v => (T)(object)v.ToString()).ToArray();
-                    }
-                    else
-                    {
-                        options = restrictValues.AllowedValues.Cast<T>().ToArray();
-                    }
-
-                    pBuilder.AddAttribute(10, "Options", options);
-                }
-                else if (typeof(T) == typeof(bool?))
-                {
-                    IEnumerable<bool?> options = new bool?[] { true, false };
-                    pBuilder.AddAttribute(10, "Options", options);
-                }
-
-                pBuilder.CloseComponent();
-
-                if (pParent.EnableValidation)
-                {
-                    pBuilder.OpenComponent<ValidationMessage<T>>(60);
-                    pBuilder.AddAttribute(61, "For", valueExpression);
-                    pBuilder.CloseComponent();
-                }
             }
-            catch (Exception e)
+
+            var valueExpression = GetValueExpression<T>(pPropertyInfo, pModel);
+
+            pBuilder.AddAttribute(195, "ValueExpression", RuntimeHelpers.TypeCheck<global::System.Linq.Expressions.Expression<System.Func<T>>>(valueExpression));
+
+            if (isReadOnly)
             {
-                Console.WriteLine(e.ToString());
-                throw;
+                pBuilder.AddAttribute(33, "disabled", string.Empty);
+                pBuilder.AddAttribute(33, "IsDisabled", true);
             }
+
+            pBuilder.AddAttribute(10, "class", "m-form-control");
+            // pBuilder.SetUpdatesAttributeName(pPropertyInfo.Name); <- new code generator will add this, but I don't know why
+
+            if (restrictValues != null)
+            {
+                foreach (var allowedValue in restrictValues.AllowedValues)
+                {
+                    if (typeof(T) != typeof(string) && !typeof(T).IsAssignableFrom(allowedValue.GetType()))
+                    {
+                        throw new Exception($"Allowed value {allowedValue} does not implement property type {typeof(T).AssemblyQualifiedName}");
+                    }
+                }
+
+                IEnumerable<T> options;
+
+                if (typeof(T) == typeof(string))
+                {
+                    options = restrictValues.AllowedValues.Select(v => (T)(object)v.ToString()).ToArray();
+                }
+                else
+                {
+                    options = restrictValues.AllowedValues.Cast<T>().ToArray();
+                }
+
+                pBuilder.AddAttribute(10, "Options", options);
+            }
+            else if (typeof(T) == typeof(bool?))
+            {
+                IEnumerable<bool?> options = new bool?[] { true, false };
+                pBuilder.AddAttribute(10, "Options", options);
+            }
+
+            pBuilder.CloseComponent();
+
+            if (pParent != null && pParent.EnableValidation)
+            {
+                pBuilder.OpenComponent<ValidationMessage<T>>(60);
+                pBuilder.AddAttribute(61, "For", valueExpression);
+                pBuilder.CloseComponent();
+            }
+        }
+
+        private static Type GetComponentType<T>(IMPropertyInfo pPropertyInfo, bool pUpdateOnInput)
+        {
+            Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+            var restrictValues = pPropertyInfo.GetCustomAttribute<RestrictValuesAttribute>();
+
+            if (typeof(T) == typeof(bool?) || tType.IsEnum || restrictValues != null)
+            {
+                return typeof(MSelect<T>);
+            }
+
+            if (mNumberTypes.Contains(tType))
+            {
+                if (pUpdateOnInput)
+                {
+                    return typeof(InputNumberOnInput<T>);
+                }
+
+                return typeof(InputNumber<T>);
+            }
+
+            if (tType == typeof(DateTime) || tType == typeof(DateTimeOffset))
+            {
+                if (pPropertyInfo.GetCustomAttribute<TimeAttribute>() != null)
+                {
+                    return typeof(InputTime<T>);
+                }
+
+                if (pPropertyInfo.GetCustomAttribute<DateTimeAttribute>() != null)
+                {
+                    return typeof(InputDateTime<T>);
+                }
+
+                return typeof(InputDate<T>);
+            }
+
+            if (tType == typeof(DateOnly))
+            {
+                return typeof(InputDate<T>);
+            }
+
+            if (tType == typeof(TimeOnly))
+            {
+                return typeof(InputTime<T>);
+            }
+
+            if (typeof(T) == typeof(bool))
+            {
+                if (pPropertyInfo.GetCustomAttribute<MInputCheckboxAttribute>() != null)
+                {
+                    return typeof(MInputCheckbox);
+                }
+
+                if (pPropertyInfo.GetCustomAttribute<MInputSwitchAttribute>() != null)
+                {
+                    return typeof(MInputSwitch);
+                }
+
+                return typeof(MInputSwitch);
+            }
+
+            if (tType == typeof(Guid))
+            {
+                return typeof(InputGuid<T>);
+            }
+
+            if (tType == typeof(Type))
+            {
+                return typeof(InputType);
+            }
+
+            if (pPropertyInfo.GetCustomAttribute<TextAreaAttribute>() != null)
+            {
+                return typeof(InputTextArea);
+            }
+
+            if (pUpdateOnInput)
+            {
+                return typeof(InputTextOnInput);
+            }
+
+            return typeof(InputText);
         }
 
         public static void AppendComplexType<T, TProperty>(RenderTreeBuilder pBuilder, IMPropertyInfo pPropertyInfo, T pModel, Guid pId, IMForm pParent, MComplexPropertyField<TProperty> pComplexField,
