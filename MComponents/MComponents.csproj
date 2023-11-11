@@ -15,7 +15,6 @@
 		<FileVersion>1.6.1</FileVersion>
 		<Company>MComponents</Company>
 		<Version>1.6.1</Version>
-		<LangVersion>8</LangVersion>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<CompilerGeneratedFilesOutputPath>_Generated</CompilerGeneratedFilesOutputPath>
 	</PropertyGroup>
