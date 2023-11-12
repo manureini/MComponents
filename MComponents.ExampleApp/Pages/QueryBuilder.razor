@@ -1,0 +1,30 @@
+﻿@page "/querybuilder"
+
+@using MComponents.ExampleApp.Data
+@using MComponents.MQueryBuilder
+@inject WeatherForecastService ForecastService
+
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MQueryBuilder T="WeatherForecast">
+        <MQueryBuilderField Property="@nameof(WeatherForecast.Summary)" />
+        <MQueryBuilderField Property="@nameof(WeatherForecast.TemperatureC)" />
+        <MQueryBuilderField Property="@nameof(WeatherForecast.TemperatureF)" />
+        <MQueryBuilderField Property="@nameof(WeatherForecast.ForcastType)" />
+        <MQueryBuilderField Property="@nameof(WeatherForecast.IsGoodWeather)" />
+    </MQueryBuilder>
+}
+
+@code {
+    private List<WeatherForecast> forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = (await ForecastService.GetForecastAsync(DateTime.Now)).ToList();
+    }
+}

@@ -1,0 +1,83 @@
+﻿@using System.Text.Json;
+@typeparam T
+@implements IMQueryBuilder
+
+<div class="m-query-builder">
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+
+    <MQueryBuilderGroup IsRootGroup="true" QueryBuilder="this" RuleGroup="RuleGroup" />
+</div>
+
+
+@code {
+
+    [Parameter]
+    public MQueryBuilderRuleGroup RuleGroup { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<MQueryBuilderRuleGroup> RuleGroupChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public Type ModelType => typeof(T);
+
+    public List<IMQueryBuilderField> Fields { get; set; } = new();
+
+    public void RegisterField(IMQueryBuilderField pField)
+    {
+        if (Fields.Any(f => f.Property == pField.Property))
+            return;
+
+        Fields.Add(pField);
+    }
+
+    public async Task InvokeRulesChanged()
+    {
+        await RuleGroupChanged.InvokeAsync(RuleGroup);
+        StateHasChanged();
+    }
+
+    public void RemoveCondition(MQueryBuilderJsonCondition pCondition)
+    {
+        Remove(RuleGroup, pCondition);
+        InvokeAsync(InvokeRulesChanged);
+    }
+
+    public void RemoveRuleGroup(MQueryBuilderRuleGroup pRuleGroup)
+    {
+        Remove(RuleGroup, pRuleGroup);
+        InvokeAsync(InvokeRulesChanged);
+    }
+
+    protected static void Remove(MQueryBuilderRuleGroup ruleGroup, object pValue)
+    {
+        if (pValue is MQueryBuilderJsonCondition condition && ruleGroup.Conditions.Contains(condition))
+        {
+            ruleGroup.Conditions.Remove(condition);
+            return;
+        }
+
+        if (ruleGroup.ChildGroups != null)
+            foreach (var group in ruleGroup.ChildGroups.ToArray())
+            {
+                Remove(group, pValue);
+
+                if (pValue is MQueryBuilderRuleGroup rg && ruleGroup.ChildGroups != null && ruleGroup.ChildGroups.Contains(rg))
+                {
+                    ruleGroup.ChildGroups.Remove(rg);
+                    return;
+                }
+            }
+    }
+
+    public string ToJson()
+    {
+
+        return JsonSerializer.Serialize(RuleGroup);
+
+    }
+
+}

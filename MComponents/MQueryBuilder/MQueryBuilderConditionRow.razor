@@ -1,0 +1,112 @@
+﻿@using MComponents.MSelect
+@using MComponents.Resources;
+@using Microsoft.AspNetCore.Components.CompilerServices;
+
+<div class="m-query-builder-rule-row">
+
+    <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.Property)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" />
+
+    @if (Field != null)
+    {
+        <MSelect @bind-Value=@Condition.Operator @bind-Value:after="OnOperatorChanged" />
+    }
+
+    @if (Condition.Operator != null && mPropertyType != null)
+    {
+        <CascadingValue Value="mEditContext">
+
+            @if (Field is IMComplexQueryBuilderField cf && cf.HasFormTemplate)
+            {
+                @RenderComplex(cf)
+            }
+            else
+            {
+                <MInputValue @bind-Value="Condition.Value" ValueType="mPropertyType" />
+            }
+
+        </CascadingValue>
+    }
+
+    <button type="button" class="m-btn" @onclick="() => QueryBuilder.RemoveCondition(Condition)">@L[nameof(MComponentsLocalization.Delete)]</button>
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public MQueryBuilderJsonCondition Condition { get; set; }
+
+    [Parameter]
+    public IMQueryBuilder QueryBuilder { get; set; }
+
+    public IMQueryBuilderField Field { get; set; }
+
+    protected EditContext mEditContext = new EditContext(string.Empty);
+    protected Type mPropertyType;
+    protected IDictionary<string, object> FakeModel = new Dictionary<string, object>();
+
+    protected override void OnParametersSet()
+    {
+        if (Field == null)
+        {
+            Update();
+        }
+    }
+
+    protected void Update()
+    {
+        if (string.IsNullOrWhiteSpace(Condition.Property))
+            return;
+
+        Field = QueryBuilder.Fields.FirstOrDefault(f => f.Property == Condition.Property);
+        mPropertyType = Field?.PropertyType;
+
+        if (mPropertyType == null)
+        {
+            mPropertyType = ReflectionHelper.GetIMPropertyInfo(QueryBuilder.ModelType, Field.Property, null)?.PropertyType;
+        }
+    }
+
+    protected RenderFragment RenderComplex(IMComplexQueryBuilderField field)
+    {
+        var appendMethod = typeof(MQueryBuilderConditionRow).GetMethod(nameof(MQueryBuilderConditionRow.RenderComplexFormTemplate), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).MakeGenericMethod(mPropertyType);
+        return (RenderFragment)appendMethod.Invoke(this, new object[] { field });
+    }
+
+    protected RenderFragment RenderComplexFormTemplate<TProperty>(MQueryBuilderComplexField<TProperty> field)
+    {
+        TProperty value = (TProperty)(Condition.Value ?? default(TProperty));
+
+        var context = new MQueryBuilderFormTemplateContext<TProperty>()
+            {
+                Value = value,
+                ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(this, async v =>
+                {
+                    await OnValueChanged(v);
+                }, value),
+                ValueExpression = RenderHelper.GetFakePropertyInfoExpression<TProperty>(FakeModel, Condition.Property),
+            };
+
+        return field.FormTemplate(context);
+    }
+
+    protected async Task OnFieldChanged()
+    {
+        Condition.Property = Field.Property;
+        Update();
+        await QueryBuilder.InvokeRulesChanged();
+    }
+
+    protected async Task OnOperatorChanged()
+    {
+        await QueryBuilder.InvokeRulesChanged();
+    }
+
+    protected async Task OnValueChanged(object value)
+    {
+        Condition.Value = value;
+        await QueryBuilder.InvokeRulesChanged();
+    }
+
+}

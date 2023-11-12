@@ -289,7 +289,7 @@ namespace MComponents
                 IsReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute<ReadOnlyAttribute>() != null
             };
 
-            pBuilder.AddContent(263, pComplexField.Template?.Invoke(context));
+            pBuilder.AddContent(263, pComplexField.Template.Invoke(context));
 
             if (pParent.EnableValidation && !isEmptyProperty)
             {
@@ -312,7 +312,7 @@ namespace MComponents
             }
         }
 
-        internal static Expression<Func<T>> GetFakePropertyInfoExpression<T>(object pModel, string pPropertyName)
+        public static Expression<Func<T>> GetFakePropertyInfoExpression<T>(object pModel, string pPropertyName)
         {
             var fake = new FakePropertyInfo<T>(pPropertyName);
 

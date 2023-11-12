@@ -1,0 +1,74 @@
+﻿@using MComponents.Resources;
+
+
+<div class="m-query-builder-group">
+
+    <div class="m-query-builder-group-header">
+
+        <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 0)" @onclick="() => RuleGroup.Operator = MQueryBuilderRuleGroupOperator.And">@L[nameof(MComponentsLocalization.And)]</button>
+        <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 0)" @onclick="() => RuleGroup.Operator = MQueryBuilderRuleGroupOperator.Or">@L[nameof(MComponentsLocalization.Or)]</button>
+
+        <button type="button" class="m-btn" @onclick="AddNewCondition">@L[nameof(MComponentsLocalization.Add)]</button>
+        <button type="button" class="m-btn" @onclick="AddNewRuleGroup">@L[nameof(MComponentsLocalization.Add)]</button>
+
+        @if (!IsRootGroup)
+        {
+            <button type="button" class="m-btn" @onclick="() => QueryBuilder.RemoveRuleGroup(RuleGroup)">@L[nameof(MComponentsLocalization.Delete)]</button>
+        }
+
+    </div>
+
+    <div class="m-query-builder-group-content">
+
+        <div class="m-query-builder-group-rules">
+            @foreach (var rule in RuleGroup.Conditions)
+            {
+                <MQueryBuilderConditionRow Condition="rule" QueryBuilder="QueryBuilder" />
+            }
+        </div>
+
+        @if (RuleGroup.ChildGroups != null)
+        {
+            @foreach (var ruleGroup in RuleGroup.ChildGroups)
+            {
+                <MQueryBuilderGroup RuleGroup="ruleGroup" QueryBuilder="QueryBuilder" />
+            }
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public IMQueryBuilder QueryBuilder { get; set; }
+
+    [Parameter]
+    public MQueryBuilderRuleGroup RuleGroup { get; set; }
+
+    [Parameter]
+    public bool IsRootGroup { get; set; }
+
+    public async Task AddNewCondition()
+    {
+        RuleGroup.Conditions.Add(new MQueryBuilderJsonCondition());
+
+        await QueryBuilder.InvokeRulesChanged();
+    }
+
+    public async Task AddNewRuleGroup()
+    {
+        if (RuleGroup.ChildGroups == null)
+        {
+            RuleGroup.ChildGroups = new();
+        }
+
+        RuleGroup.ChildGroups.Add(new MQueryBuilderRuleGroup());
+
+        await QueryBuilder.InvokeRulesChanged();
+    }
+
+
+}

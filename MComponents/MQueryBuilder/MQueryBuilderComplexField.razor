@@ -1,0 +1,37 @@
+﻿@implements IMQueryBuilderField
+@implements IMComplexQueryBuilderField
+
+@typeparam T
+
+@code {
+
+    [Parameter]
+    public string Property { get; set; }
+
+    [Parameter]
+    public RenderFragment<MQueryBuilderFormTemplateContext<T>> FormTemplate { get; set; }
+
+    public Type PropertyType => typeof(T);
+
+    private IMQueryBuilder mQueryBuilder;
+
+    public bool HasFormTemplate => FormTemplate != null;
+
+    [CascadingParameter]
+    public IMQueryBuilder QueryBuilder
+    {
+        get
+        {
+            return mQueryBuilder;
+        }
+        set
+        {
+            if (value != mQueryBuilder)
+            {
+                mQueryBuilder = value;
+                mQueryBuilder.RegisterField(this);
+            }
+        }
+    }
+
+}

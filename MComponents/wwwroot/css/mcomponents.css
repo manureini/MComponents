@@ -3291,6 +3291,21 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 }
 
 /* END Toasts --------------------------------------------------------------------------  */
+.m-query-builder .m-query-builder-group {
+  padding-left: 2rem;
+  border: 1px solid black;
+}
+.m-query-builder .m-query-builder-rule-row {
+  display: flex;
+  padding: 0.25rem;
+}
+.m-query-builder .m-query-builder-rule-row > * {
+  padding-right: 1rem;
+}
+.m-query-builder .m-query-builder-rule-row .m-form-control, .m-query-builder .m-query-builder-rule-row .m-select {
+  max-width: 15rem;
+}
+
 .m-scroll-anchor {
   visibility: hidden;
 }

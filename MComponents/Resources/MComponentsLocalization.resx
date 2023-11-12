@@ -181,4 +181,10 @@
   <data name="InvalidImageError" xml:space="preserve">
     <value>Invalid Image. Please try another one.</value>
   </data>
+  <data name="And" xml:space="preserve">
+    <value>And</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>Or</value>
+  </data>
 </root>

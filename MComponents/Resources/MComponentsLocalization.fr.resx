@@ -201,4 +201,10 @@
   <data name="InvalidImageError" xml:space="preserve">
     <value>Image non valide. Veuillez en essayer une autre.</value>
   </data>
+  <data name="And" xml:space="preserve">
+    <value>Et</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>Ou</value>
+  </data>
 </root>

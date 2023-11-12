@@ -1,0 +1,30 @@
+﻿@implements IMQueryBuilderField
+
+@code {
+
+    [Parameter]
+    public string Property { get; set; }
+
+    [Parameter]
+    public Type PropertyType { get; set; }
+
+    private IMQueryBuilder mQueryBuilder;
+
+    [CascadingParameter]
+    public IMQueryBuilder QueryBuilder
+    {
+        get
+        {
+            return mQueryBuilder;
+        }
+        set
+        {
+            if (value != mQueryBuilder)
+            {
+                mQueryBuilder = value;
+                mQueryBuilder.RegisterField(this);
+            }
+        }
+    }
+
+}

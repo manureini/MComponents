@@ -1674,6 +1674,26 @@
 
 /* END Toasts --------------------------------------------------------------------------  */
 
+.m-query-builder {
+    .m-query-builder-group {
+        padding-left: 2rem;
+        border: 1px solid black;
+    }
+
+    .m-query-builder-rule-row {
+        display: flex;
+        padding: 0.25rem;
+
+        & > * {
+            padding-right: 1rem;
+        }
+
+        .m-form-control, .m-select {
+            max-width: 15rem;
+        }
+    }
+}
+
 .m-scroll-anchor {
     visibility: hidden;
 }
