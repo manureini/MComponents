@@ -94,6 +94,7 @@
     protected async Task OnFieldChanged()
     {
         Condition.Value = null;
+        Condition.Operator = null;
         Condition.RuleName = Field.RuleName;
         mOperators = null;
         Update();

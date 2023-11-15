@@ -5,8 +5,8 @@
 
     <div class="m-query-builder-group-header">
 
-        <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 0)" @onclick="() => RuleGroup.Operator = MQueryBuilderRuleGroupOperator.And">@L[nameof(MComponentsLocalization.And)]</button>
-        <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 0)" @onclick="() => RuleGroup.Operator = MQueryBuilderRuleGroupOperator.Or">@L[nameof(MComponentsLocalization.Or)]</button>
+        <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.And)">@L[nameof(MComponentsLocalization.And)]</button>
+        <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.Or)">@L[nameof(MComponentsLocalization.Or)]</button>
 
         <button type="button" class="m-btn" @onclick="AddNewCondition">@L[nameof(MComponentsLocalization.Add)]</button>
         <button type="button" class="m-btn" @onclick="AddNewRuleGroup">@L[nameof(MComponentsLocalization.Add)]</button>
@@ -70,5 +70,10 @@
         await QueryBuilder.InvokeRulesChanged();
     }
 
+    public async Task OnOperatorChanged(MQueryBuilderRuleGroupOperator pOperator)
+    {
+        RuleGroup.Operator = pOperator;
+        await QueryBuilder.InvokeRulesChanged();
+    }
 
 }

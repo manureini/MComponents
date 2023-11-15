@@ -155,6 +155,5 @@ namespace MComponents.MQueryBuilder
                 return base.VisitParameter(node);
             }
         }
-
     }
 }
