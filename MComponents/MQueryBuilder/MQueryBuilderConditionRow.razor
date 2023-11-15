@@ -4,14 +4,14 @@
 
 <div class="m-query-builder-rule-row">
 
-    <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.Property)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" />
+    <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.RuleName)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" />
 
-    @if (Field != null)
+    @if (Field != null && mOperators != null && mOperators.Length > 0)
     {
-        <MSelect @bind-Value=@Condition.Operator @bind-Value:after="OnOperatorChanged" />
+        <MSelect @bind-Value=@Condition.Operator @bind-Value:after="OnOperatorChanged" Options="mOperators" IsDisabled="mOperators.Length <= 1" />
     }
 
-    @if (Condition.Operator != null && mPropertyType != null)
+    @if (mPropertyType != null)
     {
         <CascadingValue Value="mEditContext">
 
@@ -21,7 +21,7 @@
             }
             else
             {
-                <MInputValue @bind-Value="Condition.Value" ValueType="mPropertyType" />
+                <MInputValue @bind-Value="Condition.Value" @bind-Value:after="QueryBuilder.InvokeRulesChanged" ValueType="mPropertyType" />
             }
 
         </CascadingValue>
@@ -45,27 +45,27 @@
     protected EditContext mEditContext = new EditContext(string.Empty);
     protected Type mPropertyType;
     protected IDictionary<string, object> FakeModel = new Dictionary<string, object>();
+    protected MQueryBuilderConditionOperator?[] mOperators = new MQueryBuilderConditionOperator?[0];
 
     protected override void OnParametersSet()
     {
-        if (Field == null)
-        {
-            Update();
-        }
+        Update();
     }
 
     protected void Update()
     {
-        if (string.IsNullOrWhiteSpace(Condition.Property))
+        if (string.IsNullOrWhiteSpace(Condition.RuleName))
             return;
 
-        Field = QueryBuilder.Fields.FirstOrDefault(f => f.Property == Condition.Property);
+        Field = QueryBuilder.Fields.FirstOrDefault(f => f.RuleName == Condition.RuleName);
         mPropertyType = Field?.PropertyType;
 
         if (mPropertyType == null)
         {
-            mPropertyType = ReflectionHelper.GetIMPropertyInfo(QueryBuilder.ModelType, Field.Property, null)?.PropertyType;
+            mPropertyType = ReflectionHelper.GetIMPropertyInfo(QueryBuilder.ModelType, Field.RuleName, null)?.PropertyType;
         }
+
+        LoadOperators();
     }
 
     protected RenderFragment RenderComplex(IMComplexQueryBuilderField field)
@@ -85,7 +85,7 @@
                 {
                     await OnValueChanged(v);
                 }, value),
-                ValueExpression = RenderHelper.GetFakePropertyInfoExpression<TProperty>(FakeModel, Condition.Property),
+                ValueExpression = RenderHelper.GetFakePropertyInfoExpression<TProperty>(FakeModel, Condition.RuleName),
             };
 
         return field.FormTemplate(context);
@@ -93,9 +93,31 @@
 
     protected async Task OnFieldChanged()
     {
-        Condition.Property = Field.Property;
+        Condition.Value = null;
+        Condition.RuleName = Field.RuleName;
+        mOperators = null;
         Update();
         await QueryBuilder.InvokeRulesChanged();
+    }
+
+    protected void LoadOperators()
+    {
+        if (mOperators == null)
+        {
+            var operators = Field.AllowedOperators;
+
+            if (operators == null)
+            {
+                operators = MQueryBuilderConditionOperatorHelper.GetOperatorsFromType(mPropertyType);
+            }
+
+            mOperators = operators.Cast<MQueryBuilderConditionOperator?>().ToArray();
+        }
+
+        if (Condition.Operator == null)
+        {
+            Condition.Operator = mOperators.FirstOrDefault();
+        }
     }
 
     protected async Task OnOperatorChanged()

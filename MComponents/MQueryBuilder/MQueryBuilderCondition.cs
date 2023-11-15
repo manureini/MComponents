@@ -9,7 +9,7 @@ namespace MComponents.MQueryBuilder
 {
     public class MQueryBuilderJsonCondition
     {         
-        public string Property { get; set; }
+        public string RuleName { get; set; }
 
         public MQueryBuilderConditionOperator? Operator { get; set; }
 

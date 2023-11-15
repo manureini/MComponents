@@ -6,10 +6,13 @@
 @code {
 
     [Parameter]
-    public string Property { get; set; }
+    public string RuleName { get; set; }
 
     [Parameter]
     public RenderFragment<MQueryBuilderFormTemplateContext<T>> FormTemplate { get; set; }
+
+    [Parameter]
+    public MQueryBuilderConditionOperator[] AllowedOperators { get; set; }
 
     public Type PropertyType => typeof(T);
 

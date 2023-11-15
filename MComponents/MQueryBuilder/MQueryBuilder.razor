@@ -28,7 +28,7 @@
 
     public void RegisterField(IMQueryBuilderField pField)
     {
-        if (Fields.Any(f => f.Property == pField.Property))
+        if (Fields.Any(f => f.RuleName == pField.RuleName))
             return;
 
         Fields.Add(pField);
@@ -75,9 +75,7 @@
 
     public string ToJson()
     {
-
         return JsonSerializer.Serialize(RuleGroup);
-
     }
 
 }

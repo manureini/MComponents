@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,8 @@ namespace MComponents.MQueryBuilder
 {
     public interface IMQueryBuilderField
     {
-        string Property { get; }
+        string RuleName { get; }
         Type PropertyType { get; }
+        MQueryBuilderConditionOperator[] AllowedOperators { get; }
     }
 }

@@ -21,13 +21,13 @@ namespace MComponents
 {
     public static class RenderHelper
     {
-        private static readonly Type[] mNumberTypes = { typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal) };
+        internal static readonly Type[] NumberTypes = { typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal) };
 
         private static readonly List<Type> mSupportedTypes = new List<Type>();
 
         static RenderHelper()
         {
-            mSupportedTypes.AddRange(mNumberTypes);
+            mSupportedTypes.AddRange(NumberTypes);
             mSupportedTypes.Add(typeof(string));
             mSupportedTypes.Add(typeof(DateTime));
             mSupportedTypes.Add(typeof(DateOnly));
@@ -184,7 +184,7 @@ namespace MComponents
                 return typeof(MSelect<T>);
             }
 
-            if (mNumberTypes.Contains(tType))
+            if (NumberTypes.Contains(tType))
             {
                 if (pUpdateOnInput)
                 {
