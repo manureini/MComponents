@@ -96,24 +96,20 @@
         Condition.Value = null;
         Condition.Operator = null;
         Condition.RuleName = Field.RuleName;
-        mOperators = null;
         Update();
         await QueryBuilder.InvokeRulesChanged();
     }
 
     protected void LoadOperators()
     {
-        if (mOperators == null)
+        var operators = Field.AllowedOperators;
+
+        if (operators == null)
         {
-            var operators = Field.AllowedOperators;
-
-            if (operators == null)
-            {
-                operators = MQueryBuilderConditionOperatorHelper.GetOperatorsFromType(mPropertyType);
-            }
-
-            mOperators = operators.Cast<MQueryBuilderConditionOperator?>().ToArray();
+            operators = MQueryBuilderConditionOperatorHelper.GetOperatorsFromType(mPropertyType);
         }
+
+        mOperators = operators.Cast<MQueryBuilderConditionOperator?>().ToArray();
 
         if (Condition.Operator == null)
         {

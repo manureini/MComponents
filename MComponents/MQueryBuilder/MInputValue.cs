@@ -32,6 +32,7 @@ namespace MComponents.MQueryBuilder
         {
             base.OnParametersSet();
             mPropertyInfo = new MPropertyExpandoInfo("Value", ValueType, null);
+            mModel["Value"] = Value;
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
