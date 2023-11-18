@@ -2,32 +2,41 @@
 @using MComponents.Resources;
 @using Microsoft.AspNetCore.Components.CompilerServices;
 
-<div class="m-query-builder-rule-row">
+<div class="m-query-builder-row m-query-builder-condition-row">
 
-    <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.RuleName)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" />
+    <div class="m-query-builder-connector">
+        <div class="m-query-builder-connector-top"></div>
+        <div class="m-query-builder-connector-bottom"></div>
+    </div>
 
-    @if (Field != null && mOperators != null && mOperators.Length > 0)
-    {
-        <MSelect @bind-Value=@Condition.Operator @bind-Value:after="OnOperatorChanged" Options="mOperators" IsDisabled="mOperators.Length <= 1" />
-    }
+    <div class="m-query-builder-condition-content">
 
-    @if (mPropertyType != null)
-    {
-        <CascadingValue Value="mEditContext">
+        <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.RuleName)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" />
 
-            @if (Field is IMComplexQueryBuilderField cf && cf.HasFormTemplate)
-            {
-                @RenderComplex(cf)
-            }
-            else
-            {
-                <MInputValue @bind-Value="Condition.Value" @bind-Value:after="QueryBuilder.InvokeRulesChanged" ValueType="mPropertyType" />
-            }
+        @if (Field != null && mOperators != null && mOperators.Length > 0)
+        {
+            <MSelect @bind-Value=@Condition.Operator @bind-Value:after="OnOperatorChanged" Options="mOperators" IsDisabled="mOperators.Length <= 1" />
+        }
 
-        </CascadingValue>
-    }
+        @if (mPropertyType != null)
+        {
+            <CascadingValue Value="mEditContext">
 
-    <button type="button" class="m-btn" @onclick="() => QueryBuilder.RemoveCondition(Condition)">@L[nameof(MComponentsLocalization.Delete)]</button>
+                @if (Field is IMComplexQueryBuilderField cf && cf.HasFormTemplate)
+                {
+                    @RenderComplex(cf)
+                }
+                else
+                {
+                    <MInputValue @bind-Value="Condition.Value" @bind-Value:after="QueryBuilder.InvokeRulesChanged" ValueType="mPropertyType" />
+                }
+
+            </CascadingValue>
+        }
+
+        <button type="button" class="m-btn" @onclick="() => QueryBuilder.RemoveCondition(Condition)">@L[nameof(MComponentsLocalization.Delete)]</button>
+
+    </div>
 
 </div>
 

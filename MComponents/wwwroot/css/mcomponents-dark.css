@@ -3291,19 +3291,62 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 }
 
 /* END Toasts --------------------------------------------------------------------------  */
-.m-query-builder .m-query-builder-group {
-  padding-left: 2rem;
-  border: 1px solid black;
-}
-.m-query-builder .m-query-builder-rule-row {
+.m-query-builder .m-query-builder-group .m-query-builder-group-header {
   display: flex;
-  padding: 0.25rem;
 }
-.m-query-builder .m-query-builder-rule-row > * {
+.m-query-builder .m-query-builder-group .m-query-builder-group-content {
+  padding-left: 3rem;
+}
+.m-query-builder .m-query-builder-group [class~=m-query-builder-row]:last-of-type > .m-query-builder-group-header .m-query-builder-connector-bottom {
+  border: none;
+}
+.m-query-builder .m-query-builder-group .m-query-builder-group-container {
+  display: flex;
+}
+.m-query-builder [class~=m-query-builder-group]:not(:last-of-type) > .m-query-builder-group-container > .m-query-builder-container-connector {
+  border-width: 0 5px 0 0;
+  border-style: dotted;
+  border-color: #ffffff;
+  margin-left: 1rem;
+}
+.m-query-builder .m-query-builder-condition-row {
+  display: flex;
+}
+.m-query-builder .m-query-builder-condition-row .m-query-builder-condition-content {
+  display: flex;
+}
+.m-query-builder .m-query-builder-condition-row .m-query-builder-condition-content > * {
   padding-right: 1rem;
 }
-.m-query-builder .m-query-builder-rule-row .m-form-control, .m-query-builder .m-query-builder-rule-row .m-select {
+.m-query-builder .m-query-builder-condition-row .m-form-control, .m-query-builder .m-query-builder-condition-row .m-select {
   max-width: 15rem;
+}
+.m-query-builder .m-query-builder-connector {
+  display: flex;
+  flex-direction: column;
+  width: 3rem;
+  margin-left: 1rem;
+}
+.m-query-builder .m-query-builder-connector .m-query-builder-connector-top {
+  flex-grow: 1;
+  border-width: 0 0 5px 5px;
+  border-style: solid;
+  border-color: #ffffff;
+}
+.m-query-builder .m-query-builder-connector .m-query-builder-connector-bottom {
+  flex-grow: 1;
+  border-width: 0 0 0 5px;
+  border-style: solid;
+  border-color: #ffffff;
+}
+.m-query-builder > .m-query-builder-group > .m-query-builder-group-header > .m-query-builder-connector {
+  display: none;
+}
+.m-query-builder > .m-query-builder-group > .m-query-builder-group-content {
+  padding-left: 0;
+}
+.m-query-builder .m-query-builder-group-content:not(.has-group) .m-query-builder-condition-row:last-child .m-query-builder-connector-bottom {
+  border: none;
 }
 
 .m-scroll-anchor {

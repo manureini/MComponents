@@ -1,9 +1,14 @@
 ﻿@using MComponents.Resources;
 
 
-<div class="m-query-builder-group">
+<div class="m-query-builder-row m-query-builder-group">
 
     <div class="m-query-builder-group-header">
+
+        <div class="m-query-builder-connector">
+            <div class="m-query-builder-connector-top"></div>
+            <div class="m-query-builder-connector-bottom"></div>
+        </div>
 
         <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.And)">@L[nameof(MComponentsLocalization.And)]</button>
         <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.Or)">@L[nameof(MComponentsLocalization.Or)]</button>
@@ -18,22 +23,30 @@
 
     </div>
 
-    <div class="m-query-builder-group-content">
+    <div class="m-query-builder-group-container">
 
-        <div class="m-query-builder-group-rules">
+        @if (RuleGroup.Conditions.Count > 0 || (RuleGroup.ChildGroups != null && RuleGroup.ChildGroups.Count > 0))
+        {
+            <div class="m-query-builder-container-connector">
+            </div>
+        }
+
+        <div class="m-query-builder-group-content @(RuleGroup.ChildGroups != null && RuleGroup.ChildGroups.Count > 0 ? "has-group" : string.Empty)">
+
             @foreach (var rule in RuleGroup.Conditions)
             {
                 <MQueryBuilderConditionRow Condition="rule" QueryBuilder="QueryBuilder" />
             }
-        </div>
 
-        @if (RuleGroup.ChildGroups != null)
-        {
-            @foreach (var ruleGroup in RuleGroup.ChildGroups)
+            @if (RuleGroup.ChildGroups != null)
             {
-                <MQueryBuilderGroup RuleGroup="ruleGroup" QueryBuilder="QueryBuilder" />
+                @foreach (var ruleGroup in RuleGroup.ChildGroups)
+                {
+                    <MQueryBuilderGroup RuleGroup="ruleGroup" QueryBuilder="QueryBuilder" />
+                }
             }
-        }
+
+        </div>
 
     </div>
 
