@@ -10,16 +10,20 @@
             <div class="m-query-builder-connector-bottom"></div>
         </div>
 
-        <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.And)">@L[nameof(MComponentsLocalization.And)]</button>
-        <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.Or)">@L[nameof(MComponentsLocalization.Or)]</button>
+        <div class="m-query-builder-group-header-content">
 
-        <button type="button" class="m-btn" @onclick="AddNewCondition">@L[nameof(MComponentsLocalization.Add)]</button>
-        <button type="button" class="m-btn" @onclick="AddNewRuleGroup">@L[nameof(MComponentsLocalization.Add)]</button>
+            <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1 || RuleGroup.Operator == MQueryBuilderRuleGroupOperator.And)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.And)">@L[nameof(MComponentsLocalization.And)]</button>
+            <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1 || RuleGroup.Operator == MQueryBuilderRuleGroupOperator.Or)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.Or)">@L[nameof(MComponentsLocalization.Or)]</button>
 
-        @if (!IsRootGroup)
-        {
-            <button type="button" class="m-btn" @onclick="() => QueryBuilder.RemoveRuleGroup(RuleGroup)">@L[nameof(MComponentsLocalization.Delete)]</button>
-        }
+            <button type="button" class="m-btn" @onclick="AddNewCondition">@L[nameof(MComponentsLocalization.Add)]</button>
+            <button type="button" class="m-btn" @onclick="AddNewRuleGroup">@L[nameof(MComponentsLocalization.Add)]</button>
+
+            @if (!IsRootGroup)
+            {
+                <button type="button" class="m-btn m-btn-secondary m-btn-icon m-btn-sm" @onclick="() => QueryBuilder.RemoveRuleGroup(RuleGroup)"><i class="fa-solid fa-trash-can m-grid-action-icon"></i></button>
+            }
+
+        </div>
 
     </div>
 
