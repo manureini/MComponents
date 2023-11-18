@@ -10,6 +10,7 @@ namespace MComponents.MQueryBuilder
     public interface IMQueryBuilderField
     {
         string RuleName { get; }
+        string Title { get; }
         Type PropertyType { get; }
         MQueryBuilderConditionOperator[] AllowedOperators { get; }
     }

@@ -11,7 +11,7 @@
 
     <div class="m-query-builder-condition-content">
 
-        <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.RuleName)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" />
+        <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.RuleName)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" CustomFormatter="f => f.Title ?? f.RuleName" />
 
         @if (Field != null && mOperators != null && mOperators.Length > 0)
         {
@@ -34,7 +34,7 @@
             </CascadingValue>
         }
 
-        <button type="button" class="m-btn m-btn-secondary m-btn-icon m-btn-sm" @onclick="() => QueryBuilder.RemoveCondition(Condition)"><i class="fa-solid fa-trash-can m-grid-action-icon"></i></button>
+        <button type="button" class="m-btn m-btn-secondary m-btn-icon m-btn-sm" @onclick="() => QueryBuilder.RemoveCondition(Condition)"><i class="fa-solid fa-trash-can"></i></button>
 
     </div>
 

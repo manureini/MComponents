@@ -1,4 +1,5 @@
-﻿@using MComponents.Resources;
+﻿@using MComponents.MPopup
+@using MComponents.Resources;
 
 
 <div class="m-query-builder-row m-query-builder-group">
@@ -12,15 +13,26 @@
 
         <div class="m-query-builder-group-header-content">
 
-            <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1 || RuleGroup.Operator == MQueryBuilderRuleGroupOperator.And)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.And)">@L[nameof(MComponentsLocalization.And)]</button>
-            <button type="button" class="m-btn" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1 || RuleGroup.Operator == MQueryBuilderRuleGroupOperator.Or)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.Or)">@L[nameof(MComponentsLocalization.Or)]</button>
+            <div class="m-query-builder-group-header-operator-buttons">
+                <button type="button" class="m-btn m-btn-outline @(RuleGroup.Operator == MQueryBuilderRuleGroupOperator.And ? "m-btn-primary" : string.Empty)" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.And)">@L[nameof(MComponentsLocalization.And)]</button>
+                <button type="button" class="m-btn m-btn-outline @(RuleGroup.Operator == MQueryBuilderRuleGroupOperator.Or ? "m-btn-primary" : string.Empty)" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.Or)">@L[nameof(MComponentsLocalization.Or)]</button>
+            </div>
 
-            <button type="button" class="m-btn" @onclick="AddNewCondition">@L[nameof(MComponentsLocalization.Add)]</button>
-            <button type="button" class="m-btn" @onclick="AddNewRuleGroup">@L[nameof(MComponentsLocalization.Add)]</button>
+            <MPopup>
+                <Target>
+                    <button type="button" class="m-btn m-btn-secondary m-btn-icon"><i class="fa-solid fa-plus"></i></button>
+                </Target>
+                <PopupContent>
+                    <ul class="popup-language-selection">
+                        <li @onclick="AddNewCondition"><i class="fa-solid fa-plus"></i> @L[nameof(MComponentsLocalization.AddCondition)]</li>
+                        <li @onclick="AddNewRuleGroup"><i class="fa-solid fa-plus"></i> @L[nameof(MComponentsLocalization.AddGroup)]</li>
+                    </ul>
+                </PopupContent>
+            </MPopup>
 
             @if (!IsRootGroup)
             {
-                <button type="button" class="m-btn m-btn-secondary m-btn-icon m-btn-sm" @onclick="() => QueryBuilder.RemoveRuleGroup(RuleGroup)"><i class="fa-solid fa-trash-can m-grid-action-icon"></i></button>
+                <button type="button" class="m-btn m-btn-secondary m-btn-icon" @onclick="() => QueryBuilder.RemoveRuleGroup(RuleGroup)"><i class="fa-solid fa-trash-can"></i></button>
             }
 
         </div>

@@ -9,6 +9,9 @@
     public string RuleName { get; set; }
 
     [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
     public RenderFragment<MQueryBuilderFormTemplateContext<T>> FormTemplate { get; set; }
 
     [Parameter]

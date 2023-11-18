@@ -36,6 +36,7 @@ namespace MComponents.MForm
         public IServiceProvider ServiceProvider { get; set; }
 
         protected MFormContainerContext mFormContext;
+        protected bool mIsLoading;
 
         protected override void OnInitialized()
         {
@@ -69,9 +70,9 @@ namespace MComponents.MForm
                 builder.OpenElement(19, "button");
                 builder.AddAttribute(20, "type", "button");
                 builder.AddAttribute(20, "class", "m-btn m-btn-primary");
-                builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, Click));
+                builder.AddAttribute(21, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, TrySubmit));
 
-                if (SaveButtonDisabled)
+                if (SaveButtonDisabled || mIsLoading)
                 {
                     builder.AddAttribute(22, "disabled", true);
                 }
@@ -86,14 +87,26 @@ namespace MComponents.MForm
             builder.CloseRegion();
         }
 
-        protected void Click(MouseEventArgs pArgs)
+        public async Task<bool> TrySubmit()
         {
-            TrySubmit();
-        }
+            if (mIsLoading)
+                return false;
 
-        public Task<bool> TrySubmit()
-        {
-            return mFormContext.NotifySubmit(L);
+            var result = false;
+
+            try
+            {
+                mIsLoading = true;
+                StateHasChanged();
+
+                result = await mFormContext.NotifySubmit(L);
+            }
+            finally
+            {
+                mIsLoading = false;
+            }
+
+            return result;
         }
 
         public bool AllFormsValid

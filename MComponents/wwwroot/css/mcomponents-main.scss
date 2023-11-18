@@ -36,6 +36,28 @@
 
     &.disabled, &:disabled {
         opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    &.m-btn-outline {
+        background-color: transparent;
+        color: $gray;
+        border: 1px solid rgba($gray, 0.6);
+
+        &.disabled, &:disabled {
+            background-color: transparent;
+            opacity: 0.65;
+            border: 1px solid rgba($gray, 0.6);
+        }
+
+        &.m-btn-primary {
+            color: $text_color;
+            background-color: $white;
+
+            &:hover {                 
+                border-color: rgba($gray, 0.6);
+            }
+        }
     }
 }
 
@@ -54,7 +76,6 @@
         color: $white;
         background-color: $disabled;
         border-color: $disabled;
-        cursor: not-allowed;
     }
 }
 
@@ -104,7 +125,7 @@
     align-items: center;
     justify-content: center;
     padding: 0;
-    height: 3rem;
+    height: 3rem; //todo does not match normal button height
     width: 3rem;
 
     &.m-btn-sm {
@@ -113,9 +134,7 @@
     }
 }
 
-
 /* Font Awesome ----------------------------------------------------------------------------- */
-
 .m-btn > i {
     font-size: 1.2rem;
     vertical-align: middle;
@@ -1679,6 +1698,9 @@
     $queryBorderWidth: 2px;
     $queryBorderColor: rgba($gray, 0.7);
 
+    border: 1px solid $queryBorderColor;
+    padding: 1rem;
+
     > .m-query-builder-group > .m-query-builder-group-container > .m-query-builder-group-content {
         padding-left: 0;
     }
@@ -1717,7 +1739,7 @@
 
     .m-query-builder-condition-row {
         display: flex;
-        
+
         .m-query-builder-condition-content {
             display: flex;
             padding-top: 10px;
@@ -1731,6 +1753,20 @@
 
     .m-query-builder-group-header-content {
         padding-top: 15px;
+        display: flex;
+
+        .m-query-builder-group-header-operator-buttons {
+            padding-right: 1rem;
+            display: flex;
+
+            .m-btn {
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    > .m-query-builder-group > .m-query-builder-group-header > .m-query-builder-group-header-content {
+        padding-top: 0;
     }
 
     .m-query-builder-connector {

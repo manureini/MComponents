@@ -56,6 +56,10 @@ namespace MComponents.MSelect
         [Parameter]
         public bool EnableSelectAll { get; set; }
 
+
+        [Parameter]
+        public Func<T, string> CustomFormatter { get; set; }
+
         [Parameter]
         public ICollection<T> Values { get; set; }
 
@@ -681,6 +685,11 @@ namespace MComponents.MSelect
         {
             if (value == null)
                 return NullValueDescription;
+
+            if (CustomFormatter != null)
+            {
+                return CustomFormatter(value);
+            }
 
             if (Property != null && mPropertyInfo != null)
             {

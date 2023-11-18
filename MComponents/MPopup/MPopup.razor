@@ -1,6 +1,6 @@
-﻿
+﻿@inject IJSRuntime JSRuntime
 
-<div class="m-popup" tabindex="-1" @onfocusout=Hide>
+<div @ref="mPopupElement" class="m-popup" tabindex="-1" @onblur=Hide @onclick="Hide">
 
     <div class="m-popup-target" @onclick="Toggle" @onclick:preventDefault @onclick:stopPropagation>
         @Target
@@ -8,6 +8,7 @@
 
     @if(mPopupVisible)
     {    
+        JSRuntime.InvokeVoidAsync("mcomponents.focusElement", mPopupElement);
         <div class="m-popup-align">
             <diV class="m-popup-content">
                 @PopupContent
@@ -17,7 +18,6 @@
     
 </div>
 
-
 @code {
 
     [Parameter]
@@ -26,11 +26,12 @@
     [Parameter]
     public RenderFragment PopupContent { get; set; }
 
+    protected ElementReference mPopupElement;
     protected bool mPopupVisible;
 
     public void Toggle()
     {
-       mPopupVisible = !mPopupVisible;
+        mPopupVisible = !mPopupVisible;
     }
 
     public void Show()
@@ -40,7 +41,7 @@
 
     public void Hide()
     {
-       mPopupVisible = false;
+        mPopupVisible = false;        
     }
 
 }

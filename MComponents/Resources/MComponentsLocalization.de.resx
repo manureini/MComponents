@@ -207,4 +207,10 @@
   <data name="Or" xml:space="preserve">
     <value>Oder</value>
   </data>
+  <data name="AddGroup" xml:space="preserve">
+    <value>Gruppe hinzufügen</value>
+  </data>
+  <data name="AddCondition" xml:space="preserve">
+    <value>Bedingung hinzufügen</value>
+  </data>
 </root>
