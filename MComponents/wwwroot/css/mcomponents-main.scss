@@ -54,9 +54,21 @@
             color: $text_color;
             background-color: $white;
 
-            &:hover {                 
+            &:hover {
                 border-color: rgba($gray, 0.6);
             }
+        }
+    }
+
+    &.m-btn-danger {
+        color: $white;
+        background-color: $failure;
+        border-color: darken($failure, 10%);
+
+        &:hover {
+            color: $white;
+            background-color: darken($failure, 5%);
+            border-color: darken($failure, 10%);
         }
     }
 }

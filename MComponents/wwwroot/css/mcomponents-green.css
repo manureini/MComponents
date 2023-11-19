@@ -1955,6 +1955,16 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 .m-btn.m-btn-outline.m-btn-primary:hover {
   border-color: rgba(235, 237, 242, 0.6);
 }
+.m-btn.m-btn-danger {
+  color: white;
+  background-color: #FF3C3C;
+  border-color: #ff0909;
+}
+.m-btn.m-btn-danger:hover {
+  color: white;
+  background-color: #ff2323;
+  border-color: #ff0909;
+}
 
 .m-btn-primary {
   color: white;
