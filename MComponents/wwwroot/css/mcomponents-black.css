@@ -3385,7 +3385,7 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 }
 .m-query-builder [class~=m-query-builder-group]:not(:last-of-type) > .m-query-builder-group-container > .m-query-builder-container-connector {
   border-width: 0 2px 0 0;
-  border-style: dotted;
+  border-style: dashed;
   border-color: rgba(235, 237, 242, 0.7);
 }
 .m-query-builder .m-query-builder-condition-row {

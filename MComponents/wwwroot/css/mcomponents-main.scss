@@ -1745,7 +1745,7 @@
 
     [class~='m-query-builder-group']:not(:last-of-type) > .m-query-builder-group-container > .m-query-builder-container-connector {
         border-width: 0 $queryBorderWidth 0 0;
-        border-style: dotted;
+        border-style: dashed;
         border-color: $queryBorderColor;
     }
 
