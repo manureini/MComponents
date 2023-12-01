@@ -9,8 +9,8 @@ namespace MComponents.MToaster
     /// </summary>
     public class Toast : IDisposable
     {
-        private Timer Timer { get; }
         internal State State { get; }
+        private Timer Timer { get; set; }
 
         public string Title { get; }
         public string Message { get; }
@@ -32,11 +32,17 @@ namespace MComponents.MToaster
 
         internal void MouseLeave()
         {
-            if (State.ToastState.IsHiding()) return;
+            if (State.ToastState.IsHiding())
+                return;
+
             if (State.Options.RequireInteraction && !State.UserHasInteracted)
+            {
                 TransitionTo(ToastState.Visible);
+            }
             else
+            {
                 TransitionTo(ToastState.Hiding);
+            }
         }
 
         internal void Clicked(bool fromCloseIcon)
@@ -45,8 +51,10 @@ namespace MComponents.MToaster
             {
                 // Execute the click action only if it's not from the close icon
                 State.Options.Onclick?.Invoke(this);
+
                 // If the close icon is show do not start the hiding transition
-                if (State.Options.ShowCloseIcon) return;
+                if (State.Options.ShowCloseIcon)
+                    return;
             }
 
             State.UserHasInteracted = true;
@@ -61,18 +69,36 @@ namespace MComponents.MToaster
 
             if (state.IsShowing())
             {
-                if (options.ShowTransitionDuration <= 0) TransitionTo(ToastState.Visible);
-                else StartTimer(options.ShowTransitionDuration);
+                if (options.ShowTransitionDuration <= 0)
+                {
+                    TransitionTo(ToastState.Visible);
+                }
+                else
+                {
+                    StartTimer(options.ShowTransitionDuration);
+                }
             }
             else if (state.IsVisible() && !options.RequireInteraction)
             {
-                if (options.VisibleStateDuration <= 0) TransitionTo(ToastState.Hiding);
-                else StartTimer(options.VisibleStateDuration);
+                if (options.VisibleStateDuration <= 0)
+                {
+                    TransitionTo(ToastState.Hiding);
+                }
+                else
+                {
+                    StartTimer(options.VisibleStateDuration);
+                }
             }
             else if (state.IsHiding())
             {
-                if (options.HideTransitionDuration <= 0) OnClose?.Invoke(this);
-                else StartTimer(options.HideTransitionDuration);
+                if (options.HideTransitionDuration <= 0)
+                {
+                    OnClose?.Invoke(this);
+                }
+                else
+                {
+                    StartTimer(options.HideTransitionDuration);
+                }
             }
 
             OnUpdate?.Invoke();
@@ -113,9 +139,12 @@ namespace MComponents.MToaster
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            if (!disposing)
+                return;
+
             StopTimer();
             Timer.Dispose();
+            Timer = null;
         }
     }
 }
