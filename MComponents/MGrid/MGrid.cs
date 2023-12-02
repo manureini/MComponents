@@ -105,6 +105,9 @@ namespace MComponents.MGrid
         [Inject]
         public IServiceProvider ServiceProvider { get; set; }
 
+        [Inject]
+        public ITimezoneService TimezoneService { get; set; }
+
         internal List<SortInstruction> SortInstructions { get; set; } = new List<SortInstruction>();
         internal List<FilterInstruction> FilterInstructions { get; set; } = new List<FilterInstruction>();
         internal List<SortInstruction> GroupByInstructions { get; set; } = new List<SortInstruction>();
@@ -210,7 +213,7 @@ namespace MComponents.MGrid
                 }
                 else
                 {
-                    Formatter = new MGridDefaultObjectFormatter<T>();
+                    Formatter = new MGridDefaultObjectFormatter<T>(TimezoneService);
                 }
             }
 
@@ -1926,7 +1929,7 @@ namespace MComponents.MGrid
                 await MComponentSettings.EnsureAssemblyIsLoaded(ServiceProvider, "DocumentFormat.OpenXml.dll");
             }
 
-            var data = ExcelExportHelper.GetExcelSpreadsheet<T>(ColumnsList, PropertyInfos, dataForExport, Formatter);
+            var data = ExcelExportHelper.GetExcelSpreadsheet<T>(TimezoneService, ColumnsList, PropertyInfos, dataForExport, Formatter);
             await FileUtil.SaveAs(JsRuntime, pFileName, data);
         }
 

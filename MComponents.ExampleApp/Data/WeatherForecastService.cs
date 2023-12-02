@@ -28,6 +28,7 @@ namespace MComponents.ExampleApp.Data
             mValues = Enumerable.Range(1, 500).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
+                UtcInternalDate = DateTime.UtcNow,
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)],
                 WeatherStation = AllWeatherStations[rng.Next(0, 2)],

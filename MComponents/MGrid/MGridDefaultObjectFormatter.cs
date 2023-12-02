@@ -1,4 +1,5 @@
-﻿using MComponents.Shared.Attributes;
+﻿using MComponents.Services;
+using MComponents.Shared.Attributes;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Localization;
 using System;
@@ -14,6 +15,12 @@ namespace MComponents.MGrid
         public IStringLocalizer L { get; set; }
 
         protected Dictionary<T, object> mRowMetadata = new Dictionary<T, object>();
+        protected ITimezoneService mTimezoneService;
+
+        public MGridDefaultObjectFormatter(ITimezoneService pTimezoneService)
+        {
+            mTimezoneService = pTimezoneService;
+        }
 
         public virtual void AppendToTableRow(RenderTreeBuilder pBuilder, ref string pCssClass, T pRow, bool pSelected)
         {
@@ -54,21 +61,20 @@ namespace MComponents.MGrid
 
             if (pType == typeof(DateTime))
             {
-                if (HasAttribute<TimeAttribute>(pColumn, pPropertyInfo))
-                    return string.Format("{0:t}", (DateTime)value);
+                var timeVal = (DateTime)value;
 
-                if (HasAttribute<DateTimeAttribute>(pColumn, pPropertyInfo))
-                    return string.Format("{0:g}", (DateTime)value);
+                timeVal = (DateTime)ReflectionHelper.AdjustTimezoneIfUtcInternal(mTimezoneService, timeVal, pPropertyInfo);
 
-                return string.Format("{0:d}", ((DateTime)value));
+                if (pPropertyInfo.GetCustomAttribute<TimeAttribute>() != null)
+                    return string.Format("{0:t}", timeVal);
+
+                if (pPropertyInfo.GetCustomAttribute<DateTimeAttribute>() != null)
+                    return string.Format("{0:g}", timeVal);
+
+                return string.Format("{0:d}", timeVal);
             }
 
             return value.ToString();
-        }
-
-        protected bool HasAttribute<AT>(IMGridPropertyColumn pColumn, IMPropertyInfo pPropertyInfo) where AT : Attribute
-        {
-            return pPropertyInfo.GetCustomAttribute<AT>() != null || (pColumn.Attributes != null && pColumn.Attributes.Any(a => a.GetType() == typeof(AT)));
         }
 
         public void AddRowMetadata(T pRow, object pValue)

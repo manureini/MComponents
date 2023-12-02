@@ -20,9 +20,9 @@ namespace MComponents.Services
 
         public bool RegisterNavigation { get; set; }
 
-        public CultureInfo[] SupportedCultures { get; set; } = AllSupportedCultures;
+        public bool RegisterTimezoneService { get; set; }
 
-        public bool SetRequestLocalizationOptions { get; set; }
+        public CultureInfo[] SupportedCultures { get; set; } = AllSupportedCultures;
 
         public MGridSettings MGridSettings => MGridSettings.Instance;
 

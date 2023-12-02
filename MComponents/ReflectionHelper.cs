@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using MComponents.MGrid;
+using MComponents.Services;
+using MComponents.Shared.Attributes;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -196,6 +199,21 @@ namespace MComponents
         public static string GetDisplayName<T>(string pProperty, IStringLocalizer L)
         {
             return GetMPropertyInfo(typeof(T), pProperty, null).GetDisplayName(L);
+        }
+
+        public static DateTime? AdjustTimezoneIfUtcInternal(ITimezoneService pTimezoneService, DateTime? pDateTime, IMPropertyInfo pPropertyInfo)
+        {
+            if (pDateTime != null && pPropertyInfo.GetCustomAttribute<UtcInternalDisplayUserTimezone>() != null)
+            {
+                if (pDateTime.Value.Kind != DateTimeKind.Utc)
+                {
+                    throw new InvalidOperationException($"{nameof(UtcInternalDisplayUserTimezone)} DateTimeKind {pDateTime.Value.Kind} != UTC");
+                }
+
+                pDateTime = pTimezoneService.ToLocalTime(pDateTime.Value);
+            }
+
+            return pDateTime;
         }
     }
 }

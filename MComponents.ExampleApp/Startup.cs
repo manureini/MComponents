@@ -39,6 +39,7 @@ namespace MComponents.ExampleApp
                 options.RegisterResourceLocalizer = true;
                 options.RegisterStringLocalizer = true;
                 options.RegisterNavigation = true;
+                options.RegisterTimezoneService = true;
             });
 
             services.Configure<RequestLocalizationOptions>(options =>

@@ -59,18 +59,23 @@ namespace MComponents
                 return;
             }
 
+            Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
             T value = default(T);
             var val = pPropertyInfo.GetValue(pModel);
 
             if (val != null)
             {
+                if (tType == typeof(DateTime) && pPropertyInfo.GetCustomAttribute<UtcInternalDisplayUserTimezone>() != null)
+                {
+                    val = pParent.TimezoneService.ToLocalTime((DateTime)val);
+                }
+
                 value = (T)ReflectionHelper.ChangeType(val, typeof(T));
             }
 
             bool isReadOnly = pPropertyInfo.IsReadOnly || pPropertyInfo.GetCustomAttribute<ReadOnlyAttribute>() != null;
             var restrictValues = pPropertyInfo.GetCustomAttribute<RestrictValuesAttribute>();
-
-            Type tType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
             var componentType = GetComponentType<T>(pPropertyInfo, pUpdateOnInput);
             pBuilder.OpenComponent(0, componentType);

@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using MComponents.ExportData;
 using MComponents.MGrid;
+using MComponents.Services;
 using MComponents.Shared.Attributes;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace MComponents
 {
     internal static class ExcelExportHelper
     {
-        public static Stream GetExcelSpreadsheet<T>(IEnumerable<IMGridColumn> pColumns, IDictionary<IMGridPropertyColumn, IMPropertyInfo> pPropertyInfos, IEnumerable<T> pData, IMGridObjectFormatter<T> pFormatter)
+        public static Stream GetExcelSpreadsheet<T>(ITimezoneService pTimezoneService, IEnumerable<IMGridColumn> pColumns, IDictionary<IMGridPropertyColumn, IMPropertyInfo> pPropertyInfos, IEnumerable<T> pData, IMGridObjectFormatter<T> pFormatter)
         {
             var columns = pColumns.Where(c => c.VisibleInExport);
 
@@ -96,7 +97,7 @@ namespace MComponents
                         else if (column is IMGridPropertyColumn propColumn)
                         {
                             var iprop = pPropertyInfos[propColumn];
-                            Cell cell = GetPropertyColumnCell(pFormatter, rowData, propColumn, iprop, sstWrapper, sstCache);
+                            Cell cell = GetPropertyColumnCell(pTimezoneService, pFormatter, rowData, propColumn, iprop, sstWrapper, sstCache);
                             row.AppendChild(cell);
                         }
                         else
@@ -116,12 +117,14 @@ namespace MComponents
             return ms;
         }
 
-        private static Cell GetPropertyColumnCell<T>(IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop, SharedStringTableWrapper pSsTable, Dictionary<string, int> pSstCache)
+        private static Cell GetPropertyColumnCell<T>(ITimezoneService pTimezoneService, IMGridObjectFormatter<T> pFormatter, T rowData, IMGridPropertyColumn popcolumn, IMPropertyInfo iprop, SharedStringTableWrapper pSsTable, Dictionary<string, int> pSstCache)
         {
             Cell cell;
             if (iprop.PropertyType == typeof(DateTime) || iprop.PropertyType == typeof(DateTime?))
             {
                 var datetime = iprop.GetValue(rowData) as DateTime?;
+
+                datetime = ReflectionHelper.AdjustTimezoneIfUtcInternal(pTimezoneService, datetime, iprop);
 
                 if (iprop.GetCustomAttribute<DateTimeAttribute>() != null)
                 {

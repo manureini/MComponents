@@ -138,10 +138,9 @@ namespace MComponents
             {
                 pServices.AddLocalization(options => options.ResourcesPath = "Resources");
             }
-
-            if (settings.SetRequestLocalizationOptions)
+            if (settings.RegisterStringLocalizer)
             {
-                throw new NotSupportedException();
+                pServices.AddSingleton<IStringLocalizer, StringLocalizer>();
             }
             if (settings.RegisterStringLocalizer)
             {
@@ -151,6 +150,11 @@ namespace MComponents
             {
                 pServices.AddScoped<Navigation>();
             }
+            if (settings.RegisterTimezoneService)
+            {
+                pServices.AddScoped<ITimezoneService, DefaultTimezoneService>();
+            }
+
             pServices.AddBlazoredLocalStorage();
 
             pServices.AddScoped<IToaster>(builder => new Toaster(settings.ToasterConfiguration));

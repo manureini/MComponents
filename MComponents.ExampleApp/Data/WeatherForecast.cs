@@ -9,6 +9,10 @@ namespace MComponents.ExampleApp.Data
 
         public DateTime Date { get; set; }
 
+        [DateTime]
+        [UtcInternalDisplayUserTimezone]
+        public DateTime UtcInternalDate { get; set; }
+
         [Row(4)]
         public int TemperatureC { get; set; }
 

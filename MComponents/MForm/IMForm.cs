@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MComponents.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,14 @@ namespace MComponents.MForm
 {
     public interface IMForm
     {
+        Guid Id { get; }
+
+        Type ModelType { get; }
+
+        bool IsInTableRow { get; }
+
+        bool EnableValidation { get; }
+
         EventCallback<MFormSubmitArgs> OnValidSubmit { get; set; }
 
         bool HasUnsavedChanges { get; }
@@ -26,14 +35,8 @@ namespace MComponents.MForm
 
         void InvokeStateHasChanged();
 
-        bool IsInTableRow { get; }
-
-        bool EnableValidation { get; }
-
         IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
-        Type ModelType { get; }
-
-        Guid Id { get; }
+        ITimezoneService TimezoneService { get; }
     }
 }

@@ -67,6 +67,9 @@ namespace MComponents.MForm
         [Inject]
         public IServiceProvider ServiceProvider { get; set; }
 
+        [Inject]
+        public ITimezoneService TimezoneService { get; set; }
+
         public Type ModelType => Model?.GetType() ?? typeof(T);
 
         public Dictionary<string, (IMPropertyInfo, object)> OldValues { get; set; } = new Dictionary<string, (IMPropertyInfo, object)>();
@@ -646,6 +649,11 @@ namespace MComponents.MForm
 
             lock (Model)
             {
+                if (pPropertyInfo.GetCustomAttribute<UtcInternalDisplayUserTimezone>() != null && pNewValue != null)
+                {
+                    pNewValue = TimezoneService.ToUtcTime((DateTime)pNewValue);
+                }
+
                 if (pPropertyInfo.GetCustomAttribute<DateAttribute>() != null)
                 {
                     var dateTime = pNewValue as DateTime?;
