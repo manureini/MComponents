@@ -661,7 +661,7 @@ namespace MComponents.MGrid
                        {
                            if (DataCache.Count == 0)
                            {
-                               if (!mIsLoading)
+                               if (!mIsLoading && NewValue == null)
                                {
                                    builder2.OpenElement(612, "tr");
                                    builder2.OpenElement(613, "td");
