@@ -49,7 +49,7 @@
         {
             var fragment = new Uri(Navigation.Uri).Fragment.ToLowerInvariant();
 
-            if (fragment == pTab.FragmentIdentifier)
+            if (fragment == ("#" + pTab.FragmentIdentifier))
                 ActivatePage(pTab);
         }
 

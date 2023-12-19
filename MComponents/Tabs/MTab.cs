@@ -34,7 +34,7 @@ namespace MComponents.Tabs
                 throw new Exception($"{nameof(MTab)} can only be placed in a {nameof(MTabs)} element");
 
             if (Tabs.SyncTabsWithFragmentIdentifierInUrl && FragmentIdentifier == null && Title != null)
-                FragmentIdentifier = "#" + HttpUtility.UrlEncode(Title.Trim().ToLowerInvariant().Replace(" ", "_")).ToLowerInvariant();
+                FragmentIdentifier = HttpUtility.UrlEncode(Title.Trim().ToLowerInvariant().Replace(" ", "_")).ToLowerInvariant();
 
             Tabs.RegisterTab(this);
         }

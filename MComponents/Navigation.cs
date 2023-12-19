@@ -151,7 +151,7 @@ namespace MComponents
             mNavigationManager.LocationChanged -= OnLocationChanged;
         }
 
-        private static string GetUrlFromType<T>(Guid pId)
+        public static string GetUrlFromType<T>(Guid pId)
         {
             var routeAttribute = typeof(T).GetCustomAttributes<RouteAttribute>().FirstOrDefault(r => r.Template.Contains("{Id:guid}", StringComparison.InvariantCultureIgnoreCase));
 
@@ -162,7 +162,7 @@ namespace MComponents
             return url;
         }
 
-        private static string GetUrlFromType<T>()
+        public static string GetUrlFromType<T>()
         {
             var routeAttribute = typeof(T).GetCustomAttribute<RouteAttribute>();
 
