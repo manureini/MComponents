@@ -1,22 +1,18 @@
-﻿@page "/"
-@namespace MComponents.ExampleApp.Pages
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@{
-    Layout = null;
-}
+﻿@using Microsoft.Extensions.Hosting
+
+@inject IHostEnvironment Env
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MComponents.ExampleApp</title>
-    <base href="~/" />
+    <base href="/" />
+
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700|Roboto:300,400,500,600,700">
-
 
     <link href="_content/MComponents/css/fontawesome.css" rel="stylesheet" />
     <link href="_content/MComponents/css/mcomponents.css" rel="stylesheet" />
@@ -24,23 +20,35 @@
     <script src="_content/MComponents/js/mcomponents.js"></script>
     <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
 
+    <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 <body>
     <app>
-        <component type="typeof(App)" render-mode="ServerPrerendered" />
+        <Routes @rendermode="InteractiveServer" />
     </app>
 
     <div id="blazor-error-ui">
-        <environment include="Staging,Production">
-            An error has occurred. This application may no longer respond until reloaded.
-        </environment>
-        <environment include="Development">
-            An unhandled exception has occurred. See browser dev tools for details.
-        </environment>
+        @if (Env.IsDevelopment())
+        {
+            <text>
+                An unhandled exception has occurred. See browser dev tools for details.
+            </text>
+        }
+        else
+        {
+            <text>
+                An error has occurred. This app may no longer respond until reloaded.
+            </text>
+        }
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
 
-    <script src="_framework/blazor.server.js"></script>
+    <script src="_framework/blazor.web.js"></script>
 </body>
 </html>
+
+
+
+
+

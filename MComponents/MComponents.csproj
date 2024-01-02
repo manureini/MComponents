@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFrameworks>net7.0</TargetFrameworks>
-		<RazorLangVersion>3.0</RazorLangVersion>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<Product>MComponents</Product>
 		<Authors>manureini</Authors>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -39,16 +38,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="7.1.4" />
-		<PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.13" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.13" />
-		<PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.13" />
+		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="8.1.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.0" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
 		<PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
-		<PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
+		<PackageReference Include="DocumentFormat.OpenXml" Version="3.0.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
-		<PackageReference Include="System.Text.Json" Version="7.0.3" />
+		<PackageReference Include="System.Text.Json" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -34,27 +34,27 @@ namespace MComponents
 
         public override object[] GetCustomAttributes(bool inherit)
         {
-            throw new NotImplementedException();
+            return Array.Empty<Attribute>();
         }
 
         public override object[] GetCustomAttributes(Type attributeType, bool inherit)
         {
-            throw new NotImplementedException();
+            return Array.Empty<Attribute>();
         }
 
         public override MethodInfo GetGetMethod(bool nonPublic)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public override ParameterInfo[] GetIndexParameters()
         {
-            throw new NotImplementedException();
+            return Array.Empty<ParameterInfo>();
         }
 
         public override MethodInfo GetSetMethod(bool nonPublic)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public override object GetValue(object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
