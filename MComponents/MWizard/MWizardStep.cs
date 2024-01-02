@@ -71,9 +71,7 @@ namespace MComponents.MWizard
 
         protected override void OnParametersSet()
         {
-            if (StepContext == null)
-                StepContext = new MWizardStepContext();
-
+            StepContext ??= new MWizardStepContext();
             StepContext.CurrentStep = this;
         }
     }
