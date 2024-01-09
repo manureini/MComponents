@@ -157,5 +157,11 @@ namespace MComponents.MAccordion
 
             StateHasChanged();
         }
+
+        public void UnregisterCard(MAccordionCard pCard)
+        {
+            CardsList.Remove(pCard);
+            StateHasChanged();
+        }
     }
 }

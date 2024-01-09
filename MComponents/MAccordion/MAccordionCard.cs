@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
 
 namespace MComponents.MAccordion
 {
-    public class MAccordionCard : ComponentBase
+    public class MAccordionCard : ComponentBase, IDisposable
     {
         [Parameter]
         public string Identifier { get; set; }
@@ -35,6 +36,20 @@ namespace MComponents.MAccordion
 
                 mAccordion = value;
                 mAccordion.RegisterCard(this);
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && mAccordion != null)
+            {
+                mAccordion.UnregisterCard(this);
             }
         }
     }
