@@ -19,22 +19,9 @@ namespace MComponents.MAccordion
         [Parameter]
         public bool RenderHiddenCards { get; set; }
 
-        [Parameter]
-        public bool CacheCards { get; set; }
-
         protected List<int> mOpenIndexes = new List<int>();
 
         protected List<MAccordionCard> CardsList { get; set; } = new List<MAccordionCard>();
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-
-            if (CacheCards)
-                return;
-
-            CardsList.Clear();
-        }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
