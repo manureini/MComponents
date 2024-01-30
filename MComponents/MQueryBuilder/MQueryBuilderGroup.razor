@@ -18,12 +18,12 @@
                 <button type="button" class="m-btn m-btn-outline @(RuleGroup.Operator == MQueryBuilderRuleGroupOperator.Or ? "m-btn-primary" : string.Empty)" disabled="@(RuleGroup.Conditions == null || RuleGroup.Conditions.Count <= 1)" @onclick="() => OnOperatorChanged(MQueryBuilderRuleGroupOperator.Or)">@L[nameof(MComponentsLocalization.Or)]</button>
             </div>
 
-            <MPopup>
+            <MPopup CssClass="m-popup m-query-builder-popup">
                 <Target>
                     <button type="button" class="m-btn m-btn-secondary m-btn-icon"><i class="fa-solid fa-plus"></i></button>
                 </Target>
                 <PopupContent>
-                    <ul class="popup-language-selection">
+                    <ul>
                         <li @onclick="AddNewCondition"><i class="fa-solid fa-plus"></i> @L[nameof(MComponentsLocalization.AddCondition)]</li>
                         <li @onclick="AddNewRuleGroup"><i class="fa-solid fa-plus"></i> @L[nameof(MComponentsLocalization.AddGroup)]</li>
                     </ul>

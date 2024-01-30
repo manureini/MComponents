@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 
-<div @ref="mPopupElement" class="m-popup" tabindex="-1" @onblur=Hide @onclick="Hide">
+<div @ref="mPopupElement" class="@CssClass" tabindex="-1" @onblur=Hide @onclick="Hide">
 
     <div class="m-popup-target" @onclick="Toggle" @onclick:preventDefault @onclick:stopPropagation>
         @Target
@@ -26,6 +26,9 @@
     [Parameter]
     public RenderFragment PopupContent { get; set; }
 
+    [Parameter]
+    public string CssClass { get; set; } = "m-popup";
+
     protected ElementReference mPopupElement;
     protected bool mPopupVisible;
 
@@ -41,7 +44,7 @@
 
     public void Hide()
     {
-        mPopupVisible = false;        
+      //  mPopupVisible = false;        
     }
 
 }

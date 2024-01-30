@@ -1813,6 +1813,24 @@
     .m-query-builder-group-content:not(.has-group) .m-query-builder-condition-row:last-child .m-query-builder-connector-bottom {
         border: none;
     }
+
+    .m-query-builder-popup {
+        color: $white;
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            padding: 0.5rem;
+        }
+
+        li:not(:first-child) {
+            padding-top: 1rem;
+        }
+    }
 }
 
 .m-scroll-anchor {
