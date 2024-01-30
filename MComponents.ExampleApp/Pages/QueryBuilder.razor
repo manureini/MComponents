@@ -4,23 +4,47 @@
 @using MComponents.MQueryBuilder
 @inject WeatherForecastService ForecastService
 
+<MQueryBuilder T="WeatherForecast" @bind-RuleGroup="mRuleGroup" @bind-RuleGroup:after="OnRuleGroupChanged">
+    <MQueryBuilderField RuleName="Summary" />
+</MQueryBuilder>
 
-@if (forecasts == null)
+@if (mResults != null)
 {
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <MQueryBuilder T="WeatherForecast">
-        <MQueryBuilderField RuleName="@nameof(WeatherForecast.Summary)" />
-    </MQueryBuilder>
+    <br />
+    <hr />
+    <br />
+
+    <h6>Results</h6>
+
+    <ul>
+        @foreach (var forecast in mResults)
+        {
+            <li>
+                @forecast.Summary
+            </li>
+        }
+    </ul>
 }
 
 @code {
-    private List<WeatherForecast> forecasts;
 
-    protected override async Task OnInitializedAsync()
+    protected MQueryBuilderRuleGroup mRuleGroup = new();
+
+    protected WeatherForecast[] mResults;
+
+    protected async Task OnRuleGroupChanged()
     {
-        forecasts = (await ForecastService.GetForecastAsync(DateTime.Now)).ToList();
+        var forecasts = (await ForecastService.GetForecastAsync(DateTime.Now)).AsQueryable();
+
+        var query = MQueryBuilderHelper.ApplyRules<WeatherForecast>(forecasts, mRuleGroup, (c) =>
+          {
+              return c switch
+              {
+                  "Summary" => (u, v) => u.Summary.ToLowerInvariant(),
+                  _ => null
+              };
+          });
+
+        mResults = query.ToArray();
     }
 }
