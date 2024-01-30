@@ -8,12 +8,12 @@ namespace MComponents.MQueryBuilder
 {
     public class MQueryBuilderHelper
     {
-        public static IQueryable<T> ApplyRules<T>(IQueryable<T> pDataSource, MQueryBuilderRuleGroup pRules, Func<string, Expression<Func<T, object, object>>> pExpressionCallback)
+        public static IQueryable<T> ApplyRules<T>(IQueryable<T> pDataSource, MQueryBuilderRuleGroup pRules, Func<string, Expression<Func<T, object, object>>> pExpressionCallback, Func<object, object> pConditionValueModifier = null)
         {
             var expandable = pDataSource.AsExpandable();
 
             var paramExpr = Expression.Parameter(typeof(T), "p");
-            var groupExpr = GetGroupExpression(pRules, paramExpr, pExpressionCallback);
+            var groupExpr = GetGroupExpression(pRules, paramExpr, pExpressionCallback, pConditionValueModifier);
 
             if (groupExpr == null)
             {
@@ -25,7 +25,7 @@ namespace MComponents.MQueryBuilder
             return expandable.Where(expr).AsQueryable();
         }
 
-        private static Expression GetGroupExpression<T>(MQueryBuilderRuleGroup pRuleGroup, ParameterExpression pParameterExpression, Func<string, Expression<Func<T, object, object>>> pExpressionCallback)
+        private static Expression GetGroupExpression<T>(MQueryBuilderRuleGroup pRuleGroup, ParameterExpression pParameterExpression, Func<string, Expression<Func<T, object, object>>> pExpressionCallback, Func<object, object> pConditionValueModifier)
         {
             var parameterExpressions = new List<ParameterExpression>();
 
@@ -41,9 +41,9 @@ namespace MComponents.MQueryBuilder
 
                     var val = condition.Value;
 
-                    if (val is string s)
+                    if (pConditionValueModifier != null)
                     {
-                        val = s.ToLowerInvariant();
+                        val = pConditionValueModifier(val);
                     }
 
                     var valueExpr = Expression.Constant(val);
@@ -85,7 +85,7 @@ namespace MComponents.MQueryBuilder
             if (pRuleGroup.ChildGroups != null)
                 foreach (var childGroup in pRuleGroup.ChildGroups)
                 {
-                    var expr = GetGroupExpression(childGroup, pParameterExpression, pExpressionCallback);
+                    var expr = GetGroupExpression(childGroup, pParameterExpression, pExpressionCallback, pConditionValueModifier);
 
                     if (expr != null)
                     {
