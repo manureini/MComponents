@@ -9,9 +9,9 @@
     <PackageProjectUrl>https://github.com/manureini/MComponents/</PackageProjectUrl>
     <Description>Another blazor component library</Description>
     <PackageTags>Blazor Components</PackageTags>
-    <AssemblyVersion>1.0.6</AssemblyVersion>
-    <FileVersion>1.0.6</FileVersion>
-    <Version>1.0.6</Version>
+    <AssemblyVersion>1.0.7</AssemblyVersion>
+    <FileVersion>1.0.7</FileVersion>
+    <Version>1.0.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
