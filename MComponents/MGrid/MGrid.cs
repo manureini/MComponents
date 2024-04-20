@@ -1127,10 +1127,7 @@ namespace MComponents.MGrid
                 {
                     //T == M here
 
-                    pBuilder.AddAttribute(611, nameof(MForm<T>.OnValidSubmit), EventCallback.Factory.Create<MFormSubmitArgs>(this, async (a) =>
-                    {
-                        await OnFormSubmit(a);
-                    }));
+                    pBuilder.AddAttribute(611, nameof(MForm<T>.OnValidSubmit), EventCallback.Factory.Create<MFormSubmitArgs>(this, OnFormSubmit));
 
                     pBuilder.AddAttribute(616, nameof(MForm<T>.StoreOriginalValues), true);
                     pBuilder.AddAttribute(616, nameof(MForm<T>.OnValueChanged), EventCallback.Factory.Create<MFormValueChangedArgs<T>>(this, OnEditValueChanged));
@@ -1713,7 +1710,8 @@ namespace MComponents.MGrid
                     {
                         await Events.OnAfterEdit.InvokeAsync(new AfterEditArgs<T>()
                         {
-                            Row = value
+                            Row = value,
+                            FormSubmitArgs = args
                         });
                     }
                 }
@@ -1740,7 +1738,8 @@ namespace MComponents.MGrid
                     {
                         await Events.OnAfterAdd.InvokeAsync(new AfterAddArgs<T>()
                         {
-                            Row = NewValue
+                            Row = NewValue,
+                            FormSubmitArgs = args
                         });
                     }
                 }

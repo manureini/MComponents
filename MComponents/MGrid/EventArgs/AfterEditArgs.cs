@@ -2,6 +2,6 @@
 {
     public class AfterEditArgs<T> : RowEventArgs<T>
     {
-        //TODO add changed values from form events
+        public MFormSubmitArgs FormSubmitArgs { get; set; }
     }
 }
