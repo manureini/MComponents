@@ -2591,6 +2591,14 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
   background-color: #f0f1f3;
   cursor: not-allowed;
 }
+.m-checkbox.m-checkbox-inline {
+  padding-right: 0.5rem;
+}
+.m-checkbox.m-checkbox-inline label {
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+}
 
 /* START Wizard ----------------------------------------------------------------------------- */
 .m-wizard {

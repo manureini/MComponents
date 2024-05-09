@@ -1,14 +1,18 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace MComponents.InputElements
 {
     public class MInputCheckbox : InputCheckbox
     {
+        [Parameter]
+        public string SpanCssClass { get; set; } = "m-form-control m-checkbox m-checkbox--icon";
+
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             builder.OpenElement(10, "span");
-            builder.AddAttribute(11, "class", "m-form-control m-checkbox m-checkbox--icon");
+            builder.AddAttribute(11, "class", SpanCssClass);
 
             builder.OpenElement(13, "label");
 

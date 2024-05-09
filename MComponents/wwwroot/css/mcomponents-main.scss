@@ -861,6 +861,16 @@
             }
         }
     }
+
+    &.m-checkbox-inline {
+        padding-right: 0.5rem;
+
+        label {
+            vertical-align: middle;
+            margin: 0;
+            padding: 0;
+        }
+    }
 }
 
 /* START Wizard ----------------------------------------------------------------------------- */
