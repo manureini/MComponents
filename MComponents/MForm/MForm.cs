@@ -427,7 +427,7 @@ namespace MComponents.MForm
                     if (propertyInfo.GetCustomAttribute<RequiredAttribute>() != null)
                     {
                         builder2.OpenElement(291, "span");
-                        builder2.AddAttribute(292, "style", "color: red;");
+                        builder2.AddAttribute(292, "style", "color: red; white-space: nowrap;");
                         builder2.AddContent(293, " *");
                         builder2.CloseElement();
                     }
