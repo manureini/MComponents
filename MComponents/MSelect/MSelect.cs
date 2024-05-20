@@ -149,8 +149,8 @@ namespace MComponents.MSelect
 
         protected override void OnInitialized()
         {
-            if (Values != null && Value != null)
-                throw new ArgumentException($"use {nameof(Values)} or {nameof(Value)} through bind-value, but not both");
+            if (ValuesExpression != null && ValueExpression != null)
+                throw new ArgumentException($"use {nameof(Values)} or {nameof(Value)} through bind-, but not both");
 
             if (mMultipleSelectMode && Values == null && !mEnumFlags)
                 throw new ArgumentException($"{nameof(Values)} must be != null");
@@ -241,7 +241,7 @@ namespace MComponents.MSelect
             pBuilder.AddAttribute(232, "class", "m-select-content");
             pBuilder.AddAttribute(233, "role", "textbox");
 
-            pBuilder.AddContent(235, CurrentValueAsString);
+            pBuilder.AddContent(235, mMultipleSelectMode ? NullValueDescription : CurrentValueAsString);
 
             pBuilder.CloseElement();
 
@@ -798,11 +798,11 @@ namespace MComponents.MSelect
 
         protected void UpdateDescription()
         {
-            if (Values == null)
+            if (ValuesExpression == null)
             {
                 mNullValueOverride = null;
             }
-            else
+            else if (Values != null)
             {
                 if (Values.Count >= 3)
                 {
