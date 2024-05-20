@@ -567,7 +567,7 @@ namespace MComponents.MGrid
                            builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, a => OnColumnHeaderClick(column, a)));
                            builder2.AddAttribute(319, "scope", "col");
 
-                           builder2.AddContent(321, (MarkupString)column.HeaderText.Replace("\n", "<br />"));
+                           builder2.AddContent(321, (MarkupString)column.HeaderText?.Replace("\n", "<br />"));
 
                            if (EnableUserSorting)
                            {
