@@ -3364,7 +3364,7 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
   padding-top: 10px;
   gap: 1rem;
 }
-.m-query-builder .m-query-builder-condition-row .m-form-control, .m-query-builder .m-query-builder-condition-row .m-select {
+.m-query-builder .m-query-builder-condition-row .m-form-control:not(.m-select-search-input), .m-query-builder .m-query-builder-condition-row .m-select > .m-form-control {
   width: 15rem;
 }
 .m-query-builder .m-query-builder-group-header-content {

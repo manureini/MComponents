@@ -1768,7 +1768,7 @@
             gap: 1rem;
         }
 
-        .m-form-control, .m-select {
+        .m-form-control:not(.m-select-search-input), .m-select > .m-form-control {
             width: 15rem;
         }
     }
