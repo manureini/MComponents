@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MComponents.MQueryBuilder
@@ -31,6 +32,12 @@ namespace MComponents.MQueryBuilder
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+
+            if (Value is JsonElement elem)
+            {
+                Value = elem.ToObject(ValueType);
+            }
+
             mPropertyInfo = new MPropertyExpandoInfo("Value", ValueType, null);
             mModel["Value"] = Value;
         }
