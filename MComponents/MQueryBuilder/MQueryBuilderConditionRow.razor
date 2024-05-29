@@ -85,7 +85,7 @@
 
     protected RenderFragment RenderComplexFormTemplate<TProperty>(MQueryBuilderComplexField<TProperty> field)
     {
-        TProperty value = (TProperty)(Condition.Value ?? default(TProperty));
+        TProperty value = ReflectionHelper.ChangeType<TProperty>(Condition.Value ?? default(TProperty));
 
         var context = new MQueryBuilderFormTemplateContext<TProperty>()
             {

@@ -32,11 +32,8 @@ namespace MComponents.MQueryBuilder
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-
-            if (Value is JsonElement elem)
-            {
-                Value = elem.ToObject(ValueType);
-            }
+            
+            Value = ReflectionHelper.ChangeType(Value, ValueType);
 
             mPropertyInfo = new MPropertyExpandoInfo("Value", ValueType, null);
             mModel["Value"] = Value;

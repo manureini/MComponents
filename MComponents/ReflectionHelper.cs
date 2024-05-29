@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 
 namespace MComponents
 {
@@ -116,6 +117,11 @@ namespace MComponents
             return pValue.GetType().GetProperties().Select(v => GetIMPropertyInfo(pValue.GetType(), v.Name, v.PropertyType));
         }
 
+        public static T ChangeType<T>(object pObjecte)
+        {
+            return (T)ChangeType(pObjecte, typeof(T));
+        }
+
         public static object ChangeType(object pObject, Type pType)
         {
             if (pObject == null)
@@ -173,6 +179,11 @@ namespace MComponents
                 if (decimal.TryParse(pObject.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal result))
                     return result;
                 return null;
+            }
+
+            if (pObject is JsonElement elem)
+            {
+                return elem.ToObject(pType);
             }
 
             if (IsNullable(pType))
