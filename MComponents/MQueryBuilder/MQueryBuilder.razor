@@ -32,6 +32,7 @@
             return;
 
         Fields.Add(pField);
+        StateHasChanged();
     }
 
     public async Task InvokeRulesChanged()
@@ -40,16 +41,21 @@
         StateHasChanged();
     }
 
+    public void InvokeStateHasChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
     public void RemoveCondition(MQueryBuilderJsonCondition pCondition)
     {
         Remove(RuleGroup, pCondition);
-        InvokeAsync(InvokeRulesChanged);
+        _ = InvokeAsync(InvokeRulesChanged);
     }
 
     public void RemoveRuleGroup(MQueryBuilderRuleGroup pRuleGroup)
     {
         Remove(RuleGroup, pRuleGroup);
-        InvokeAsync(InvokeRulesChanged);
+        _ = InvokeAsync(InvokeRulesChanged);
     }
 
     protected static void Remove(MQueryBuilderRuleGroup ruleGroup, object pValue)

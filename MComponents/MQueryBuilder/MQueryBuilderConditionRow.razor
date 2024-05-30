@@ -9,7 +9,7 @@
         <div class="m-query-builder-connector-bottom"></div>
     </div>
 
-    <div class="m-query-builder-condition-content">
+    <div class="m-query-builder-condition-content">     
 
         <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.RuleName)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" CustomFormatter="f => f.Title ?? f.RuleName" />
 
@@ -67,7 +67,11 @@
             return;
 
         Field = QueryBuilder.Fields.FirstOrDefault(f => f.RuleName == Condition.RuleName);
-        mPropertyType = Field?.PropertyType;
+
+        if (Field == null)
+            return;
+
+        mPropertyType = Field.PropertyType;
 
         if (mPropertyType == null)
         {

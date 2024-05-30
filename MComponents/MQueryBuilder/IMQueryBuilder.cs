@@ -19,5 +19,7 @@ namespace MComponents.MQueryBuilder
         void RemoveRuleGroup(MQueryBuilderRuleGroup pRuleGroup);
 
         Task InvokeRulesChanged();
+
+        void InvokeStateHasChanged();
     }
 }
