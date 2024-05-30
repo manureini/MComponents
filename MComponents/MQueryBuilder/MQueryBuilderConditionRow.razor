@@ -28,7 +28,7 @@
                 }
                 else
                 {
-                    <MInputValue @bind-Value="Condition.Value" @bind-Value:after="QueryBuilder.InvokeRulesChanged" ValueType="mPropertyType" />
+                    <MInputValue @bind-Value="Condition.Value" @bind-Value:after="async () => {Condition.ValueTypeName = mPropertyType.FullName; await QueryBuilder.InvokeRulesChanged(); }" ValueType="mPropertyType" />
                 }
 
             </CascadingValue>
@@ -103,6 +103,7 @@
     protected async Task OnFieldChanged()
     {
         Condition.Value = null;
+        Condition.ValueTypeName = null;
         Condition.Operator = null;
         Condition.RuleName = Field.RuleName;
         Update();
@@ -134,6 +135,7 @@
     protected async Task OnValueChanged(object value)
     {
         Condition.Value = value;
+        Condition.ValueTypeName = mPropertyType.FullName;
         await QueryBuilder.InvokeRulesChanged();
     }
 

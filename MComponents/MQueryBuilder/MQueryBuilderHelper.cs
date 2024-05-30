@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json;
 
 namespace MComponents.MQueryBuilder
 {
@@ -41,6 +42,11 @@ namespace MComponents.MQueryBuilder
 
                     var val = condition.Value;
 
+                    if (condition.ValueTypeName != null)
+                    {
+                        val = ReflectionHelper.ChangeType(val, Type.GetType(condition.ValueTypeName));
+                    }
+
                     if (pConditionValueModifier != null)
                     {
                         val = pConditionValueModifier(val);
@@ -70,9 +76,9 @@ namespace MComponents.MQueryBuilder
                             MQueryBuilderConditionOperator.LessThan => Expression.LessThan(expr.Body, valueExpr),
                             MQueryBuilderConditionOperator.LessThanOrEqual => Expression.LessThanOrEqual(expr.Body, valueExpr),
 
-                            MQueryBuilderConditionOperator.StartsWith => Expression.Call(expr.Body, typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }), valueExpr),
-                            MQueryBuilderConditionOperator.EndsWith => Expression.Call(expr.Body, typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }), valueExpr),
-                            MQueryBuilderConditionOperator.Contains => Expression.Call(expr.Body, typeof(string).GetMethod(nameof(string.Contains), new Type[] { typeof(string) }), valueExpr),
+                            MQueryBuilderConditionOperator.StartsWith => Expression.Call(expr.Body, typeof(string).GetMethod(nameof(string.StartsWith), new Type[] { typeof(string) }), Expression.Constant(val, typeof(string))),
+                            MQueryBuilderConditionOperator.EndsWith => Expression.Call(expr.Body, typeof(string).GetMethod(nameof(string.EndsWith), new Type[] { typeof(string) }), Expression.Constant(val, typeof(string))),
+                            MQueryBuilderConditionOperator.Contains => Expression.Call(expr.Body, typeof(string).GetMethod(nameof(string.Contains), new Type[] { typeof(string) }), Expression.Constant(val, typeof(string))),
 
                             _ => Expression.Equal(expr.Body, valueExpr),
                         };
