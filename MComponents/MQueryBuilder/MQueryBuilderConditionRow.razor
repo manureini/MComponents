@@ -9,7 +9,7 @@
         <div class="m-query-builder-connector-bottom"></div>
     </div>
 
-    <div class="m-query-builder-condition-content">     
+    <div class="m-query-builder-condition-content">
 
         <MSelect @bind-Value=@Field Property="@nameof(MQueryBuilderField.RuleName)" Options="QueryBuilder.Fields" @bind-Value:after="OnFieldChanged" CustomFormatter="f => f.Title ?? f.RuleName" />
 
@@ -28,7 +28,8 @@
                 }
                 else
                 {
-                    <MInputValue @bind-Value="Condition.Value" @bind-Value:after="async () => {Condition.ValueTypeName = mPropertyType.FullName; await QueryBuilder.InvokeRulesChanged(); }" ValueType="mPropertyType" />
+                    var value = Condition.Values?[0];
+                    <MInputValue @bind-Value="value" @bind-Value:after="async () => { if(Condition.Values == null) { Condition.Values = new object[1]; } Condition.Values[0] = value; Condition.ValuesTypeNames = [mPropertyType.FullName]; await QueryBuilder.InvokeRulesChanged(); }" ValueType="mPropertyType" />
                 }
 
             </CascadingValue>
@@ -55,6 +56,8 @@
     protected Type mPropertyType;
     protected IDictionary<string, object> FakeModel = new Dictionary<string, object>();
     protected MQueryBuilderConditionOperator?[] mOperators = new MQueryBuilderConditionOperator?[0];
+
+    protected bool IsMultiValueField => mPropertyType.IsArray;
 
     protected override void OnParametersSet()
     {
@@ -89,14 +92,41 @@
 
     protected RenderFragment RenderComplexFormTemplate<TProperty>(MQueryBuilderComplexField<TProperty> field)
     {
-        TProperty value = ReflectionHelper.ChangeType<TProperty>(Condition.Value ?? default(TProperty));
+        TProperty value;
+
+        if (IsMultiValueField && Field is IMComplexQueryBuilderField complex)
+        {
+            var array = Array.CreateInstance(typeof(TProperty).GetElementType(), complex.ParameterCount);
+
+            for (int i = 0; i < complex.ParameterCount; i++)
+            {
+                if (Condition.Values != null && Condition.Values.Length > i)
+                {
+                    var val = ReflectionHelper.ChangeType(Condition.Values[i], typeof(TProperty).GetElementType());
+                    array.SetValue(val, i);
+                }
+            }
+
+            value = (TProperty)(object)array;
+        }
+        else
+        {
+            value = ReflectionHelper.ChangeType<TProperty>(Condition.Values?[0] ?? default(TProperty));
+        }
 
         var context = new MQueryBuilderFormTemplateContext<TProperty>()
             {
                 Value = value,
                 ValueChanged = RuntimeHelpers.CreateInferredEventCallback<TProperty>(this, async v =>
                 {
-                    await OnValueChanged(v);
+                    if (IsMultiValueField)
+                    {
+                        await OnValuesChanged((v as Array).Cast<object>().ToArray());
+                    }
+                    else
+                    {
+                        await OnValueChanged(v);
+                    }
                 }, value),
                 ValueExpression = RenderHelper.GetFakePropertyInfoExpression<TProperty>(FakeModel, Condition.RuleName),
             };
@@ -106,8 +136,8 @@
 
     protected async Task OnFieldChanged()
     {
-        Condition.Value = null;
-        Condition.ValueTypeName = null;
+        Condition.Values = null;
+        Condition.ValuesTypeNames = null;
         Condition.Operator = null;
         Condition.RuleName = Field.RuleName;
         Update();
@@ -136,10 +166,19 @@
         await QueryBuilder.InvokeRulesChanged();
     }
 
+    protected async Task OnValuesChanged(object[] values)
+    {
+        Condition.Values = values;
+        Condition.ValuesTypeNames = values.Select(_ => mPropertyType.GetElementType().FullName).ToArray();
+
+        await QueryBuilder.InvokeRulesChanged();
+    }
+
     protected async Task OnValueChanged(object value)
     {
-        Condition.Value = value;
-        Condition.ValueTypeName = mPropertyType.FullName;
+        Condition.Values = [value];
+        Condition.ValuesTypeNames = [mPropertyType.FullName];
+
         await QueryBuilder.InvokeRulesChanged();
     }
 

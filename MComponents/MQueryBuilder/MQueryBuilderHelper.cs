@@ -9,7 +9,7 @@ namespace MComponents.MQueryBuilder
 {
     public class MQueryBuilderHelper
     {
-        public static IQueryable<T> ApplyRules<T>(IQueryable<T> pDataSource, MQueryBuilderRuleGroup pRules, Func<string, Expression<Func<T, object, object>>> pExpressionCallback, Func<object, object> pConditionValueModifier = null)
+        public static IQueryable<T> ApplyRules<T>(IQueryable<T> pDataSource, MQueryBuilderRuleGroup pRules, Func<string, object[], Expression<Func<T, object>>> pExpressionCallback, Func<object, object> pConditionValueModifier = null)
         {
             var expandable = pDataSource.AsExpandable();
 
@@ -26,7 +26,7 @@ namespace MComponents.MQueryBuilder
             return expandable.Where(expr).AsQueryable();
         }
 
-        private static Expression GetGroupExpression<T>(MQueryBuilderRuleGroup pRuleGroup, ParameterExpression pParameterExpression, Func<string, Expression<Func<T, object, object>>> pExpressionCallback, Func<object, object> pConditionValueModifier)
+        private static Expression GetGroupExpression<T>(MQueryBuilderRuleGroup pRuleGroup, ParameterExpression pParameterExpression, Func<string, object[], Expression<Func<T, object>>> pExpressionCallback, Func<object, object> pConditionValueModifier)
         {
             var parameterExpressions = new List<ParameterExpression>();
 
@@ -34,39 +34,47 @@ namespace MComponents.MQueryBuilder
 
             foreach (var condition in pRuleGroup.Conditions)
             {
-                var expr = pExpressionCallback(condition.RuleName);
+                var val = condition.Values;
+
+                if (val != null)
+                {
+                    if (condition.ValuesTypeNames != null)
+                    {
+                        for (int i = 0; i < condition.Values.Length; i++)
+                        {
+                            val[i] = ReflectionHelper.ChangeType(val[i], Type.GetType(condition.ValuesTypeNames[i]));
+                        }
+                    }
+
+                    if (pConditionValueModifier != null)
+                    {
+                        for (int i = 0; i < condition.Values.Length; i++)
+                        {
+                            val[i] = pConditionValueModifier(val[i]);
+                        }
+                    }
+                }
+
+                // var valCast = Expression.Convert(valueExpr, typeof(object));
+
+                var expr = pExpressionCallback(condition.RuleName, val);
 
                 if (expr != null)
                 {
                     parameterExpressions.Add(expr.Parameters[0]);
 
-                    var val = condition.Value;
-
-                    if (condition.ValueTypeName != null)
-                    {
-                        val = ReflectionHelper.ChangeType(val, Type.GetType(condition.ValueTypeName));
-                    }
-
-                    if (pConditionValueModifier != null)
-                    {
-                        val = pConditionValueModifier(val);
-                    }
-
-                    var valueExpr = Expression.Constant(val);
-
-                    var containsVisitor = new ExpressionContainsExpressionParameter(expr.Parameters[1]);
-                    containsVisitor.Visit(expr.Body);
-                    bool containValueExpr = containsVisitor.ContainsExpressionParameter;
+                    bool hasReturnTypeBoolExpr = expr.Body is UnaryExpression u && u.Operand is MethodCallExpression mc && mc.Method.ReturnType == typeof(bool);
 
                     Expression operatorExpr = null;
 
-                    if (containValueExpr)
+                    if (hasReturnTypeBoolExpr)
                     {
-                        var valCast = Expression.Convert(valueExpr, typeof(object));
-                        operatorExpr = Expression.Convert(Expression.Invoke(expr, pParameterExpression, valCast), typeof(bool));
+                        operatorExpr = Expression.Convert(Expression.Invoke(expr, pParameterExpression), typeof(bool));
                     }
                     else
                     {
+                        var valueExpr = Expression.Constant(val?[0]);
+
                         operatorExpr = condition.Operator switch
                         {
                             MQueryBuilderConditionOperator.NotEqual => Expression.NotEqual(expr.Body, valueExpr),

@@ -9,6 +9,7 @@ namespace MComponents.MQueryBuilder
 {
     public interface IMComplexQueryBuilderField
     {
+        public int ParameterCount { get; }
         public bool HasFormTemplate { get; }
     }
 }

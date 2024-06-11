@@ -13,8 +13,8 @@ namespace MComponents.MQueryBuilder
 
         public MQueryBuilderConditionOperator? Operator { get; set; }
 
-        public object Value { get; set; }
+        public object[] Values { get; set; }
 
-        public string ValueTypeName { get; set; }
+        public string[] ValuesTypeNames { get; set; }
     }
 }

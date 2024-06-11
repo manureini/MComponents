@@ -15,6 +15,9 @@
     public RenderFragment<MQueryBuilderFormTemplateContext<T>> FormTemplate { get; set; }
 
     [Parameter]
+    public int ParameterCount { get; set; } = 1;
+
+    [Parameter]
     public MQueryBuilderConditionOperator[] AllowedOperators { get; set; }
 
     public Type PropertyType => typeof(T);
