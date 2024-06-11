@@ -77,10 +77,15 @@ namespace MComponents
 
             if (locValuesJson.RootElement.TryGetProperty(culture, out var element))
             {
+                if (element.ValueKind == JsonValueKind.Number)
+                {
+                    return element.GetInt64().ToString();
+                }
+
                 return element.GetString();
             }
 
-            return string.Empty;
+            return culture;
         }
     }
 }
