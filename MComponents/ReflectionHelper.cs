@@ -186,26 +186,17 @@ namespace MComponents
                 return elem.ToObject(pType);
             }
 
-            if (IsNullable(pType))
-            {
-                var innerType = Nullable.GetUnderlyingType(pType);
+            var innerType = Nullable.GetUnderlyingType(pType);
+
+            if (innerType != null)
+            {        
                 var innerValue = ChangeType(pObject, innerType);
                 return innerValue;
             }
 
             return Convert.ChangeType(pObject, pType);
         }
-
-        public static bool IsNullable(Type pType)
-        {
-            if (!pType.IsValueType)
-                return true;
-
-            if (Nullable.GetUnderlyingType(pType) != null)
-                return true;
-
-            return false;
-        }
+         
 
         public static string GetDisplayName<T>(string pProperty, IStringLocalizer L)
         {
