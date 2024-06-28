@@ -85,7 +85,7 @@ namespace MComponents
                 return element.GetString();
             }
 
-            return culture;
+            return string.Empty;
         }
     }
 }
