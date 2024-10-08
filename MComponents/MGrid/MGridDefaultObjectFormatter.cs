@@ -17,6 +17,10 @@ namespace MComponents.MGrid
         protected Dictionary<T, object> mRowMetadata = new Dictionary<T, object>();
         protected ITimezoneService mTimezoneService;
 
+        public MGridDefaultObjectFormatter()
+        {
+        }
+
         public MGridDefaultObjectFormatter(ITimezoneService pTimezoneService)
         {
             mTimezoneService = pTimezoneService;
@@ -63,7 +67,10 @@ namespace MComponents.MGrid
             {
                 var timeVal = (DateTime)value;
 
-                timeVal = (DateTime)ReflectionHelper.AdjustTimezoneIfUtcInternal(mTimezoneService, timeVal, pPropertyInfo);
+                if (mTimezoneService != null)
+                {
+                    timeVal = (DateTime)ReflectionHelper.AdjustTimezoneIfUtcInternal(mTimezoneService, timeVal, pPropertyInfo);
+                }
 
                 if (pPropertyInfo.GetCustomAttribute<TimeAttribute>() != null)
                     return string.Format("{0:t}", timeVal);

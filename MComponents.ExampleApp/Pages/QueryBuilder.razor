@@ -36,11 +36,11 @@
     {
         var forecasts = (await ForecastService.GetForecastAsync(DateTime.Now)).AsQueryable();
 
-        var query = MQueryBuilderHelper.ApplyRules<WeatherForecast>(forecasts, mRuleGroup, (c) =>
+        var query = MQueryBuilderHelper.ApplyRules<WeatherForecast>(forecasts, mRuleGroup, (c, o) =>
           {
               return c switch
               {
-                  "Summary" => (u, v) => u.Summary.ToLowerInvariant(),
+                  "Summary" => u => u.Summary.ToLowerInvariant(),
                   _ => null
               };
           },
