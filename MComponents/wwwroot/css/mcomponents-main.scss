@@ -231,6 +231,10 @@
         thead th {
             background-color: white;
             position: sticky;
+
+            @media print {
+                position: unset !important;
+            }
         }
     }
 
@@ -383,6 +387,10 @@
 
         .m-btn {
             margin-left: 5px;
+        }
+
+        @media print {
+            display: none !important;
         }
     }
 }

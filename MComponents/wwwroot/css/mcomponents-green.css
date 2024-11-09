@@ -2102,6 +2102,11 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
   background-color: white;
   position: sticky;
 }
+@media print {
+  .m-grid.m-grid-sticky thead th {
+    position: unset !important;
+  }
+}
 .m-grid .m-grid-highlight {
   background-color: #dddfe2;
 }
@@ -2219,6 +2224,11 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 }
 .m-grid-footer .m-grid-footer-buttons .m-btn {
   margin-left: 5px;
+}
+@media print {
+  .m-grid-footer .m-grid-footer-buttons {
+    display: none !important;
+  }
 }
 
 .m-pagination-container {
