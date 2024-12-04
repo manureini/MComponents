@@ -51,7 +51,7 @@ namespace MComponents.MToaster
                 ToastLock.EnterReadLock();
                 try
                 {
-                    return Toasts.Take(Configuration.MaxDisplayedToasts);
+                    return Toasts.Take(Configuration.MaxDisplayedToasts).ToList();
                 }
                 finally
                 {
