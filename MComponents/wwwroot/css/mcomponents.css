@@ -1965,6 +1965,16 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
   background-color: #ff2323;
   border-color: #ff0909;
 }
+.m-btn .m-checkbox label input:empty ~ span:after {
+  border-color: black;
+}
+.m-btn .m-checkbox label input:disabled ~ span:after {
+  background: #ffffff;
+  border-color: black;
+}
+.m-btn .m-checkbox label input:checked ~ span:after {
+  color: black;
+}
 
 .m-btn-primary {
   color: #ffffff;
@@ -1998,6 +2008,10 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
   font-size: 0.875rem;
   line-height: 1.5;
   border-radius: 0.25rem;
+}
+.m-btn-sm .m-checkbox label {
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .m-btn-tall {
@@ -2600,9 +2614,6 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 .m-checkbox label input:disabled ~ span:after {
   background-color: #f0f1f3;
   cursor: not-allowed;
-}
-.m-checkbox.m-checkbox-inline {
-  padding-right: 0.5rem;
 }
 .m-checkbox.m-checkbox-inline label {
   vertical-align: middle;

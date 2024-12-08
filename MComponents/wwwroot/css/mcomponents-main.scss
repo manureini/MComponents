@@ -71,6 +71,22 @@
             border-color: darken($failure, 10%);
         }
     }
+
+    .m-checkbox label {
+
+        input:empty ~ span:after {
+            border-color: black;
+        }
+
+        input:disabled ~ span:after {
+            background: $white;
+            border-color: black;
+        }
+
+        input:checked ~ span:after {
+            color: black;
+        }
+    }
 }
 
 .m-btn-primary {
@@ -108,6 +124,11 @@
     font-size: 0.875rem;
     line-height: 1.5;
     border-radius: $borderRadius;
+
+    .m-checkbox label {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
 }
 
 .m-btn-tall {
@@ -871,7 +892,7 @@
     }
 
     &.m-checkbox-inline {
-        padding-right: 0.5rem;
+        // padding-right: 0.5rem;
 
         label {
             vertical-align: middle;
