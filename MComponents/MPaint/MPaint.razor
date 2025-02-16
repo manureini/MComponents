@@ -7,13 +7,14 @@
 
 <div class="m-paint-container">
     <div class="m-paint @(CssClass)"
-         @onmousedown="OnMouseDown"
-         @onmousemove="OnMouseMove"
-         @onmouseup="OnMouseUp"
-         @onmouseout="OnMouseOut"
-         @onmouseover="OnMouseOver"
-         @ontouchstart="OnTouchStart"
-         @ontouchend="OnTouchEnd"
+         @onmousedown="OnMouseDown" @onmousedown:stopPropagation
+         @onmousemove="OnMouseMove" @onmousemove:stopPropagation
+         @onmouseup="OnMouseUp" @onmouseup:stopPropagation
+         @onmouseout="OnMouseOut" @onmouseout:stopPropagation
+         @onmouseover="OnMouseOver" @onmouseover:stopPropagation
+         @ontouchstart="OnTouchStart" @ontouchstart:stopPropagation
+         @ontouchend="OnTouchEnd" @ontouchend:stopPropagation
+         @onscroll:preventDefault @onscroll:stopPropagation
          style="width: @(Width)px; height: @(Height)px;">
         <BECanvas Width="@Width" Height="@Height" @ref="mCanvasRef"></BECanvas>
     </div>
