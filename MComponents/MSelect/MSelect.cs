@@ -798,7 +798,11 @@ namespace MComponents.MSelect
 
         protected void UpdateDescription()
         {
-            if (ValuesExpression == null)
+            if (mEnumFlags)
+            {
+                mNullValueOverride = FormatValueAsString(Value);
+            }
+            else if (ValuesExpression == null)
             {
                 mNullValueOverride = null;
             }
