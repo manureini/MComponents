@@ -295,12 +295,12 @@ namespace MComponents.MForm
             }
         }
 
-        private IEnumerable<IGrouping<int, IMField>> GroupByRow(IEnumerable<IMField> pFields)
+        private IEnumerable<IGrouping<int?, IMField>> GroupByRow(IEnumerable<IMField> pFields)
         {
             return pFields.GroupBy(p =>
             {
                 if (IsInTableRow)
-                    return 0;
+                    return null;
 
                 if (p.FieldRow != null)
                 {
@@ -310,9 +310,9 @@ namespace MComponents.MForm
                 var rowAttr = p.Attributes?.FirstOrDefault(a => a.GetType() == typeof(RowAttribute)) as RowAttribute;
 
                 if (rowAttr == null)
-                    return 0;
+                    return null;
 
-                return rowAttr.RowId;
+                return (int?)rowAttr.RowId;
             }).OrderByDescending(g => g.Key).Reverse();
         }
 
@@ -358,9 +358,9 @@ namespace MComponents.MForm
             };
         }
 
-        protected void Process(RenderTreeBuilder builder2, IGrouping<int, IMField> groupResult)
+        protected void Process(RenderTreeBuilder builder2, IGrouping<int?, IMField> groupResult)
         {
-            if (groupResult.Key != 0 && !IsInTableRow)
+            if (groupResult.Key != null && !IsInTableRow)
             {
                 builder2.OpenElement(10, "div");
                 builder2.AddAttribute(11, "class", "m-form-row" + (groupResult.Count() > 1 ? " multiple-forms-in-row" : string.Empty));
@@ -370,7 +370,7 @@ namespace MComponents.MForm
             {
                 string cssClass = "form-group col-"; //TODO we use bootstrap here - good idea or bad?
 
-                if (groupResult.Key == 0)
+                if (groupResult.Key == null)
                 {
                     cssClass += "12";
                 }
@@ -407,7 +407,7 @@ namespace MComponents.MForm
                         continue;
                     }
 
-                    if (groupResult.Key == 0)
+                    if (groupResult.Key == null)
                     {
                         builder2.OpenElement(10, "div");
                         builder2.AddAttribute(11, "class", "m-form-row");
@@ -449,7 +449,7 @@ namespace MComponents.MForm
 
                     builder2.CloseElement(); // </div>
 
-                    if (groupResult.Key == 0)
+                    if (groupResult.Key == null)
                     {
                         builder2.CloseElement(); // </div>
                     }
@@ -492,7 +492,7 @@ namespace MComponents.MForm
                 }
             }
 
-            if (groupResult.Key != 0 && !IsInTableRow)
+            if (groupResult.Key != null && !IsInTableRow)
             {
                 builder2.CloseElement();
             }
