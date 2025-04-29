@@ -63,7 +63,7 @@ namespace MComponents.MQueryBuilder
                 {
                     parameterExpressions.Add(expr.Parameters[0]);
 
-                    bool hasReturnTypeBoolExpr = expr.Body is UnaryExpression u && u.Operand is MethodCallExpression mc && mc.Method.ReturnType == typeof(bool);
+                    bool hasReturnTypeBoolExpr = expr.Body is UnaryExpression u && (u.Operand is MethodCallExpression mc && mc.Method.ReturnType == typeof(bool) || u.Operand is UnaryExpression ue && ue.Type == typeof(bool));
 
                     Expression operatorExpr = null;
 
