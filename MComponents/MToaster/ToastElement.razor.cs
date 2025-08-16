@@ -9,7 +9,7 @@ namespace MComponents.MToaster
         public Toast Toast { get; set; }
 
         protected RenderFragment Css;
-        
+
         protected string Title => Toast.Title;
         protected string Message => Toast.Message;
 
@@ -38,7 +38,7 @@ namespace MComponents.MToaster
 
         private void ToastUpdated()
         {
-            InvokeAsync(StateHasChanged);
+            _ = InvokeAsync(StateHasChanged);
         }
 
         public void Dispose()
@@ -49,7 +49,9 @@ namespace MComponents.MToaster
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing || Toast == null) return;
+            if (!disposing || Toast == null) 
+                return;
+
             Toast.OnUpdate -= ToastUpdated;
         }
     }

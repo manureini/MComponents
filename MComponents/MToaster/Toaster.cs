@@ -13,7 +13,7 @@ namespace MComponents.MToaster
         public event Action OnToastsUpdated;
 
         private ReaderWriterLockSlim ToastLock { get; }
-        private IList<Toast> Toasts { get; }
+        private List<Toast> Toasts { get; }
 
         public Toaster(ToasterConfiguration configuration)
         {
@@ -70,7 +70,7 @@ namespace MComponents.MToaster
 
             var options = new ToastOptions(type, Configuration);
 
-            if (message.Contains("\n"))
+            if (message.Contains('\n'))
             {
                 message = HttpUtility.HtmlEncode(message).Replace("\n", "<br />");
                 options.EscapeHtml = false;
@@ -83,7 +83,9 @@ namespace MComponents.MToaster
             ToastLock.EnterWriteLock();
             try
             {
-                if (Configuration.PreventDuplicates && ToastAlreadyPresent(toast)) return;
+                if (Configuration.PreventDuplicates && ToastAlreadyPresent(toast))
+                    return;
+
                 toast.OnClose += Remove;
                 Toasts.Add(toast);
             }
@@ -100,7 +102,7 @@ namespace MComponents.MToaster
             ToastLock.EnterWriteLock();
             try
             {
-                RemoveAllToasts(Toasts);
+                RemoveAllToasts();
             }
             finally
             {
@@ -118,9 +120,7 @@ namespace MComponents.MToaster
             ToastLock.EnterWriteLock();
             try
             {
-                var index = Toasts.IndexOf(toast);
-                if (index < 0) return;
-                Toasts.RemoveAt(index);
+                Toasts.Remove(toast);
             }
             finally
             {
@@ -147,20 +147,28 @@ namespace MComponents.MToaster
         public void Dispose()
         {
             Configuration.OnUpdate -= ConfigurationUpdated;
-            RemoveAllToasts(Toasts);
+            RemoveAllToasts();
+            ToastLock?.Dispose();
         }
 
-        private void RemoveAllToasts(IEnumerable<Toast> toasts)
+        private void RemoveAllToasts()
         {
-            if (Toasts.Count == 0) return;
+            ToastLock.EnterWriteLock();
 
-            foreach (var toast in toasts)
+            try
             {
-                toast.OnClose -= Remove;
-                toast.Dispose();
-            }
+                foreach (var toast in Toasts)
+                {
+                    toast.OnClose -= Remove;
+                    toast.Dispose();
+                }
 
-            Toasts.Clear();
+                Toasts.Clear();
+            }
+            finally
+            {
+                ToastLock.ExitWriteLock();
+            }
         }
     }
 }

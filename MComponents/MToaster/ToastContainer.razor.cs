@@ -5,26 +5,38 @@ using Microsoft.AspNetCore.Components;
 
 namespace MComponents.MToaster
 {
-    public class ToastContainerModel : ComponentBase, IDisposable
+    public partial class ToastContainer : ComponentBase, IDisposable
     {
         [Inject]
         private IToaster Toaster { get; set; }
 
         protected IEnumerable<Toast> Toasts => Toaster.Configuration.NewestOnTop
-                ? Toaster.ShownToasts.Reverse()
-                : Toaster.ShownToasts;
+                        ? Toaster.ShownToasts.Reverse()
+                        : Toaster.ShownToasts;
 
         protected string Class => Toaster.Configuration.PositionClass;
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Toaster.OnToastsUpdated += () => InvokeAsync(StateHasChanged);
+
+            if (Toaster == null)
+            {
+                throw new ArgumentNullException("Toaster");
+            }
+
+            Toaster.OnToastsUpdated += ToastsUpdated;
         }
 
         public void Dispose()
         {
-            Toaster.OnToastsUpdated -= StateHasChanged;
+            if (Toaster != null)
+                Toaster.OnToastsUpdated -= ToastsUpdated;
+        }
+
+        protected void ToastsUpdated()
+        {
+            _ = InvokeAsync(StateHasChanged);
         }
     }
 }
