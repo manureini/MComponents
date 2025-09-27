@@ -2695,7 +2695,7 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 }
 @media (max-width: 768px) {
   .m-wizard .m-wizard-step {
-    width: 90%;
+    width: 99%;
   }
 }
 .m-wizard .m-wizard-action-group {
@@ -2704,6 +2704,11 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
   flex-direction: row;
   justify-content: space-between;
   padding-top: 20px;
+}
+@media (max-width: 768px) {
+  .m-wizard .m-wizard-action-group {
+    padding-top: 0;
+  }
 }
 .m-wizard .m-wizard-btn {
   text-transform: uppercase;
@@ -2719,6 +2724,21 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 }
 .m-wizard.m-wizard--last .m-wizard-btn[data-action=next] {
   display: none;
+}
+.m-wizard.m-wizard-compact .m-wizard-navigation-item-title-contaier {
+  font-size: 1rem;
+}
+.m-wizard.m-wizard-compact .m-wizard-navigation-item-title-contaier .m-wizard-navigation-item-number {
+  font-size: 1.1rem;
+}
+.m-wizard.m-wizard-compact .m-wizard-navigation-item-title-contaier .m-wizard-navigation-item-title {
+  padding: 0;
+}
+.m-wizard.m-wizard-compact .m-wizard-navigation-item {
+  padding: 0;
+}
+.m-wizard.m-wizard-compact .m-wizard-step {
+  padding: 0;
 }
 
 /* END Wizard ----------------------------------------------------------------------------- */

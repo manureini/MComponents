@@ -46,6 +46,9 @@ namespace MComponents.MWizard
             r.CloseComponent();
         };
 
+        [Parameter]
+        public string CssClass { get; set; }
+
         public bool FreezeCurrentStep { get; set; }
 
         public int CurrentStep { get; protected set; }
