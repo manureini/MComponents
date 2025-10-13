@@ -1,8 +1,10 @@
-﻿<span class="m-badge m-badge--primary">@ChildContent</span>
+﻿<span class="m-badge m-badge--primary" style="@Style">@ChildContent</span>
 
-@code  {
+@code {
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
+    [Parameter]
+    public string Style { get; set; } = null!;
 }
