@@ -94,7 +94,7 @@ namespace MComponents.MSelect
 
         protected bool mMultipleSelectMode;
         protected bool mEnumFlags;
-        protected bool mAllEntriesSelected;
+        protected bool mAllEntriesSelected => DisplayValues.All(Values.Contains);
 
         public override async Task SetParametersAsync(ParameterView parameters)
         {
@@ -139,9 +139,9 @@ namespace MComponents.MSelect
             {
                 DisplayValues = Array.Empty<T>();
             }
-            else
+            else if (string.IsNullOrEmpty(InputValue))
             {
-                DisplayValues = Options.ToArray();
+                DisplayValues = Options.ToArray(); //todo remove this and use Rebind(), will break existing code, introduce a new DataAdapter
             }
 
             UpdateDescription();
@@ -323,7 +323,7 @@ namespace MComponents.MSelect
 
                 int i = 0;
 
-                if (EnableSelectAll && mMultipleSelectMode)
+                if (EnableSelectAll && mMultipleSelectMode && DisplayValues.Any())
                 {
                     pBuilder.OpenElement(319, "li");
                     pBuilder.AddAttribute(320, "class", "m-select-options-entry m-clickable");
@@ -429,6 +429,11 @@ namespace MComponents.MSelect
             pBuilder.CloseElement(); //span
         }
 
+        public void Rebind()
+        {
+            FilterDisplayValues();
+        }
+
         public void RegisterOption(MSelectOption pOption)
         {
             if (mAdditionalOptions.Any(o => o.Identifier == pOption.Identifier))
@@ -511,19 +516,23 @@ namespace MComponents.MSelect
         protected void OnSearchInputChanged(ChangeEventArgs args)
         {
             InputValue = (string)args.Value;
+            FilterDisplayValues();
+            _ = JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
+        }
 
-            if (InputValue == string.Empty)
+        protected void FilterDisplayValues()
+        {
+            if (string.IsNullOrEmpty(InputValue))
             {
                 DisplayValues = Options.ToArray();
             }
             else
             {
-                InputValue = InputValue.ToLower();
-                DisplayValues = Options.Where(v => FormatValueAsString(v).ToLower().Contains(InputValue)).ToArray();
+                InputValue = InputValue.ToLowerInvariant();
+                DisplayValues = Options.Where(v => FormatValueAsString(v).ToLowerInvariant().Contains(InputValue)).ToArray();
             }
 
             StateHasChanged();
-            _ = JSRuntime.InvokeVoidAsync("mcomponents.scrollToSelectedEntry");
         }
 
         protected void InputKeyDown(KeyboardEventArgs args)
@@ -660,8 +669,6 @@ namespace MComponents.MSelect
                         Values.Remove(val);
                     }
                 }
-
-                mAllEntriesSelected = false;
             }
             else
             {
@@ -672,8 +679,6 @@ namespace MComponents.MSelect
                         Values.Add(val);
                     }
                 }
-
-                mAllEntriesSelected = true;
             }
 
             UpdateDescription();
@@ -724,16 +729,10 @@ namespace MComponents.MSelect
                 if (Values.Contains(pSelectedValue))
                 {
                     Values.Remove(pSelectedValue);
-                    mAllEntriesSelected = false;
                 }
                 else
                 {
                     Values.Add(pSelectedValue);
-
-                    if (DisplayValues.Length == Values.Count)
-                    {
-                        mAllEntriesSelected = true;
-                    }
                 }
 
                 UpdateDescription();
