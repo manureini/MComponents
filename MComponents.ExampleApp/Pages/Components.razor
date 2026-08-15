@@ -272,6 +272,10 @@
     <h3>Advanced</h3>
     <button type="button" class="btn btn-success" @onclick="ShowInteractiveToast">Show interactive toast</button>
     <button type="button" class="btn btn-secondary" @onclick="Toaster.Clear">Clear all</button>
+    @if (!string.IsNullOrEmpty(ToastStatus))
+    {
+        <p>@ToastStatus</p>
+    }
 </section>
 
 <section id="mtooltip" class="mb-5">
@@ -337,6 +341,7 @@
     private string SelectedValue { get; set; }
     private ICollection<string> SelectedValues { get; set; } = new List<string>();
     private bool IsLoading { get; set; }
+    private string ToastStatus { get; set; }
     private string WizardStatus { get; set; }
     private EditContext ExampleEditContext { get; } = new(new object());
     private IEnumerable<GalleryItem> GridItems => GalleryItems;
@@ -364,7 +369,7 @@
             options.RequireInteraction = true;
             options.Onclick = toast =>
             {
-                WizardStatus = "The toast callback ran.";
+                ToastStatus = "The toast callback ran.";
                 return Task.CompletedTask;
             };
         });

@@ -5,7 +5,7 @@
 ## Simple
 
 ```razor
-<MCards T="string" Values="new[] { "First", "Second", "Third" }">
+<MCards T="string" Values='new[] { "First", "Second", "Third" }'>
     <Template Context="name">
         <strong>@name</strong>
     </Template>
