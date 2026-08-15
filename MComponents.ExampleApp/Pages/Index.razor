@@ -1,160 +1,49 @@
 ﻿@page "/"
-@using MComponents.MLoading
-@using MComponents.MProgressbar
-@using MComponents.MSeparator
 
+<h1>MComponents examples</h1>
 
-<MComponents.MBadge.MBadge>MBadge</MComponents.MBadge.MBadge>
+<p>
+    Explore simple and advanced examples for every public component, with links to the corresponding
+    <a href="https://github.com/manureini/MComponents/wiki" target="_blank">GitHub Wiki</a> pages.
+</p>
 
-<h1>MSelect</h1>
-
-<br />
-
-
-<CascadingValue Value="mEditContext">
-
-    <MTabs>
-
-        <MTab Title="Tab1">
-            <br />
-            <MSelect T="string" @bind-Value="mValue" Options="mValues" />
-
-            <br />
-            <MSelect T="string" @bind-Value="mValue" Options="mValues" EnableSearch="true" />
-
-
-            <br />
-            <MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" />
-
-
-            <br />
-
-            <MSeparator />
-
-            <MSeparator>
-                <h4>Title</h4>
-            </MSeparator>
-        </MTab>
-
-        <MTab Title="Tab2">
-            <br />
-            <MSelect T="string" @bind-Values="mSelectedValues" Options="mValues" EnableSearch="true" />
-
-            <br />
-            <MSelect T="string" @bind-Value="mValue" Options="mValues" IsDisabled="true" />
-
-            <br />
-            <MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime?" @bind-Value="mDateTime0" />
-
-            <br />
-            <MComponents.InputElements.InputDateTime class="m-form-control" T="DateTime" @bind-Value="mDateTime1" />
-        </MTab>
-
-    </MTabs>
-
-</CascadingValue>
-
-
-<br />
-<br />
-<br />
-
-@mDateTime0
-<br />
-@mDateTime1
-
-<MComponents.MPaint.MPaint />
-
-<br />
-<br />
-<br />
-<br />
-
-<MSpinner />
-
-
-<br />
-<br />
-<br />
-<br />
-
---------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- --------------- ---------------
-<br />
-<MTooltip Text="Helloo">
-    Tooltip Text Test
-</MTooltip>
-
----------------
-
-<MTooltip>
-    <TooltipContent>
-        <button>test</button>
-    </TooltipContent>
-    <ChildContent>
-        Tooltip Content Test
-    </ChildContent>
-</MTooltip>
-
----------------
-
-
-<br />
-<br />
-<br />
-
-<MPopup>
-    <Target>
-        <span>DE</span>
-    </Target>
-    <PopupContent>
-        <ul>
-            <li>Deutsch</li>
-            <li>Englisch</li>
-        </ul>
-    </PopupContent>
-</MPopup>
-
-
-<br />
-<br />
-<br />
-
-<MProgressbar />
-<MProgressbar Percentage="50" />
-<MProgressbar Percentage="99" />
-<MProgressbar Percentage="100" />
-
-<br />
-<br />
-<br />
-
-<CascadingValue Value="mEditContext">
-
-    <MComponents.InputElements.MInputCheckbox @bind-Value=mBool />
-
-    <br />
-
-    <MComponents.InputElements.MInputSwitch @bind-Value=mBool />
-
-</CascadingValue>
-
+<div class="row">
+    @foreach (var component in Components)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 card-title">@component</h2>
+                    <a class="card-link" href="components#@component.ToLowerInvariant()">Examples</a>
+                    <a class="card-link"
+                       href="https://github.com/manureini/MComponents/wiki/@component"
+                       target="_blank">Wiki</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
-
-    protected string mValue;
-    protected string[] mValues;
-    protected ICollection<string> mSelectedValues;
-    protected DateTime? mDateTime0;
-    protected DateTime mDateTime1;
-    protected bool mBool;
-
-    protected EditContext mEditContext = new EditContext(string.Empty);
-
-
-    override protected void OnInitialized()
+    private static readonly string[] Components =
     {
-        mValues = Enumerable.Range(1, 1000).Select(v => "value" + v).ToArray();
-        mSelectedValues = mValues.Take(3).ToList();
-    }
-
+        "MAccordion",
+        "MBadge",
+        "MCards",
+        "MForm",
+        "MGrid",
+        "MInputFile",
+        "MPaint",
+        "MPopup",
+        "MProgressbar",
+        "MQueryBuilder",
+        "MScrollAnchor",
+        "MSelect",
+        "MSeparator",
+        "MSpinner",
+        "MTabs",
+        "MToaster",
+        "MTooltip",
+        "MWizard"
+    };
 }

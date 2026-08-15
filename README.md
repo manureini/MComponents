@@ -5,12 +5,22 @@
 [![NuGet Downloads](https://img.shields.io/nuget/dt/MComponents.svg)](https://www.nuget.org/packages/MComponents)
 
 
-This is another Blazor component libary which supports
+This is a Blazor component library with data-entry, navigation, feedback, and workflow controls.
 
-* Grids
-* Wizards
-* Forms
-* Paint
+### Components
+
+| Data and input | Layout and navigation | Feedback and utilities |
+| --- | --- | --- |
+| [MForm](https://github.com/manureini/MComponents/wiki/MForm) | [MAccordion](https://github.com/manureini/MComponents/wiki/MAccordion) | [MBadge](https://github.com/manureini/MComponents/wiki/MBadge) |
+| [MGrid](https://github.com/manureini/MComponents/wiki/MGrid) | [MCards](https://github.com/manureini/MComponents/wiki/MCards) | [MPaint](https://github.com/manureini/MComponents/wiki/MPaint) |
+| [MInputFile](https://github.com/manureini/MComponents/wiki/MInputFile) | [MPopup](https://github.com/manureini/MComponents/wiki/MPopup) | [MProgressbar](https://github.com/manureini/MComponents/wiki/MProgressbar) |
+| [MQueryBuilder](https://github.com/manureini/MComponents/wiki/MQueryBuilder) | [MScrollAnchor](https://github.com/manureini/MComponents/wiki/MScrollAnchor) | [MSpinner](https://github.com/manureini/MComponents/wiki/MSpinner) |
+| [MSelect](https://github.com/manureini/MComponents/wiki/MSelect) | [MSeparator](https://github.com/manureini/MComponents/wiki/MSeparator) | [MToaster](https://github.com/manureini/MComponents/wiki/MToaster) |
+|  | [MTabs](https://github.com/manureini/MComponents/wiki/MTabs) | [MTooltip](https://github.com/manureini/MComponents/wiki/MTooltip) |
+|  | [MWizard](https://github.com/manureini/MComponents/wiki/MWizard) |  |
+
+Each Wiki page includes simple and advanced examples. The same scenarios are runnable in the
+[ExampleApp component gallery](MComponents.ExampleApp/Pages/Components.razor).
 
 ### Screenshots
 
@@ -49,10 +59,10 @@ Add to App.razor or MainLayout.razor
 <MComponentsRoot />
 ```
 
-### Please create an issue or make Pull requests if you want to support this project
+### Documentation and contributions
 
-The documentation is pretty limited, because I'm lazy:
-https://github.com/manureini/MComponents/wiki
+Read the complete [GitHub Wiki](https://github.com/manureini/MComponents/wiki). Its Markdown sources are versioned in the [`Wiki`](Wiki) directory.
 
+Please create an issue or pull request if you want to support this project.
 
 

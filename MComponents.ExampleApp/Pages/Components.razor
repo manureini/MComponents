@@ -1,0 +1,400 @@
+﻿@page "/components"
+
+@using System.ComponentModel.DataAnnotations
+@using MComponents.ExampleApp.Service
+@using MComponents.Files
+@using MComponents.MAccordion
+@using MComponents.MBadge
+@using MComponents.MCards
+@using MComponents.MLoading
+@using MComponents.MPaint
+@using MComponents.MProgressbar
+@using MComponents.MQueryBuilder
+@using MComponents.MScrollAnchor
+@using MComponents.MSeparator
+@using MComponents.MToaster
+@using MComponents.MWizard
+
+@inject IToaster Toaster
+
+<h1>Component gallery</h1>
+<p>Each section contains a simple example and a more advanced scenario.</p>
+
+<section id="maccordion" class="mb-5">
+    <ExampleHeading Name="MAccordion" />
+    <h3>Simple</h3>
+    <MAccordion>
+        <Cards>
+            <MAccordionCard Identifier="first" Title="First card" InitialOpen="true">
+                The first card starts open.
+            </MAccordionCard>
+            <MAccordionCard Identifier="second" Title="Second card">
+                Select the heading to reveal this content.
+            </MAccordionCard>
+        </Cards>
+    </MAccordion>
+    <h3>Advanced</h3>
+    <MAccordion AllowMultipleOpenCards="true" RenderHiddenCards="true">
+        <Cards>
+            <MAccordionCard Identifier="profile" Title="<strong>Profile</strong>" InitialOpen="true">
+                Multiple cards can stay open and titles can contain markup.
+            </MAccordionCard>
+            <MAccordionCard Identifier="preferences" Title="Preferences">
+                Hidden card content remains rendered for stateful controls.
+            </MAccordionCard>
+        </Cards>
+    </MAccordion>
+</section>
+
+<section id="mbadge" class="mb-5">
+    <ExampleHeading Name="MBadge" />
+    <h3>Simple</h3>
+    <MBadge>New</MBadge>
+    <h3>Advanced</h3>
+    <MBadge CssClass="text-uppercase" title="Three pending items">3 pending</MBadge>
+</section>
+
+<section id="mcards" class="mb-5">
+    <ExampleHeading Name="MCards" />
+    <h3>Simple</h3>
+    <MCards T="string" Values="CardNames">
+        <Template Context="name"><strong>@name</strong></Template>
+    </MCards>
+    <h3>Advanced</h3>
+    <MCards T="GalleryItem" Values="GalleryItems" Columns="3" OnClick="SelectCard">
+        <Template Context="item">
+            <h4>@item.Title</h4>
+            <p>@item.Description</p>
+        </Template>
+        <TemplateEmpty><em>No cards are available.</em></TemplateEmpty>
+    </MCards>
+    @if (SelectedCard != null)
+    {
+        <p>Selected: @SelectedCard.Title</p>
+    }
+</section>
+
+<section id="mform" class="mb-5">
+    <ExampleHeading Name="MForm" />
+    <h3>Simple</h3>
+    <MFormContainer SaveButtonText="Save profile">
+        <MForm Model="SimpleProfile" />
+    </MFormContainer>
+    <h3>Advanced</h3>
+    <MFormContainer SaveButtonText="Validate and save" OnAfterAllFormsSubmitted="OnFormsSubmitted">
+        <MForm Model="AdvancedProfile" UpdateOnInput="true" StoreOriginalValues="true">
+            <Fields>
+                <MFieldRow>
+                    <MField Property="@nameof(Profile.Name)" />
+                    <MField Property="@nameof(Profile.Email)" />
+                </MFieldRow>
+                <MField Property="@nameof(Profile.Notes)" />
+            </Fields>
+        </MForm>
+    </MFormContainer>
+    @if (!string.IsNullOrEmpty(FormStatus))
+    {
+        <p>@FormStatus</p>
+    }
+</section>
+
+<section id="mgrid" class="mb-5">
+    <ExampleHeading Name="MGrid" />
+    <h3>Simple</h3>
+    <MGrid DataSource="GridItems" HtmlTableClass="m-grid m-grid-striped">
+        <MGridColumns>
+            <MGridColumn Property="@nameof(GalleryItem.Title)" />
+            <MGridColumn Property="@nameof(GalleryItem.Description)" />
+        </MGridColumns>
+    </MGrid>
+    <h3>Advanced</h3>
+    <MGrid DataSource="GridItems"
+           EnableAdding="true"
+           EnableEditing="true"
+           EnableDeleting="true"
+           EnableFilterRow="true"
+           EnableGrouping="true"
+           EnableUserSorting="true"
+           ToolbarItems="ToolbarItem.Add | ToolbarItem.Edit | ToolbarItem.Delete"
+           HtmlTableClass="m-grid m-grid-striped m-grid-bordered m-grid-hover">
+        <MGridColumns>
+            <MGridColumn Property="@nameof(GalleryItem.Title)" HeaderText="Item" />
+            <MGridColumn Property="@nameof(GalleryItem.Description)" />
+            <MGridActionColumn T="GalleryItem" />
+        </MGridColumns>
+        <MGridPager PageSize="5" SelectablePageSizes="new[] { 5, 10, 20 }" />
+    </MGrid>
+    <p>The data-adapter, import, and export scenario is also available in the <a href="fetchdata2">data-adapter example</a>.</p>
+</section>
+
+<section id="minputfile" class="mb-5">
+    <ExampleHeading Name="MInputFile" />
+    <CascadingValue Value="ExampleEditContext">
+        <h3>Simple</h3>
+        <MInputFileSimple @bind-Value="SingleFile" Accept=".pdf,image/*" />
+        <h3>Advanced</h3>
+        <MInputFile MaxAllowedFiles="5"
+                    @bind-Values="MultipleFiles"
+                    Accept=".pdf,image/*"
+                    OnFileClicked="OnFileClicked" />
+    </CascadingValue>
+    @if (!string.IsNullOrEmpty(FileStatus))
+    {
+        <p>@FileStatus</p>
+    }
+</section>
+
+<section id="mpaint" class="mb-5">
+    <ExampleHeading Name="MPaint" />
+    <h3>Simple</h3>
+    <MPaint Width="320" Height="120" />
+    <h3>Advanced</h3>
+    <MPaint @ref="Paint" Width="480" Height="160" PenColor="#0b7285" CssClass="border" />
+    <button type="button" class="btn btn-secondary mt-2" @onclick="CheckPainting">Check canvas</button>
+    <span class="ml-2">@PaintStatus</span>
+</section>
+
+<section id="mpopup" class="mb-5">
+    <ExampleHeading Name="MPopup" />
+    <h3>Simple</h3>
+    <MPopup>
+        <Target><button type="button" class="btn btn-secondary">Open menu</button></Target>
+        <PopupContent><a href="/">Home</a></PopupContent>
+    </MPopup>
+    <h3>Advanced</h3>
+    <MPopup CssClass="m-popup">
+        <Target><button type="button" class="btn btn-secondary">Choose language</button></Target>
+        <PopupContent>
+            <ul class="list-unstyled m-2">
+                <li><button class="btn btn-link" @onclick="SelectEnglish">English</button></li>
+                <li><button class="btn btn-link" @onclick="SelectGerman">German</button></li>
+            </ul>
+        </PopupContent>
+    </MPopup>
+    <p>Language: @Language</p>
+</section>
+
+<section id="mprogressbar" class="mb-5">
+    <ExampleHeading Name="MProgressbar" />
+    <h3>Simple</h3>
+    <MProgressbar Percentage="35" />
+    <h3>Advanced</h3>
+    <input type="range" min="0" max="100" @bind="Progress" @bind:event="oninput" />
+    <MProgressbar Percentage="Progress" CssClass="mt-2" />
+    <span>@Progress%</span>
+</section>
+
+<section id="mquerybuilder" class="mb-5">
+    <ExampleHeading Name="MQueryBuilder" />
+    <h3>Simple</h3>
+    <MQueryBuilder T="GalleryItem" @bind-RuleGroup="SimpleRules">
+        <MQueryBuilderField RuleName="@nameof(GalleryItem.Title)" />
+    </MQueryBuilder>
+    <h3>Advanced</h3>
+    <MQueryBuilder T="GalleryItem" @bind-RuleGroup="AdvancedRules">
+        <MQueryBuilderField RuleName="@nameof(GalleryItem.Title)" Title="Title" />
+        <MQueryBuilderField RuleName="@nameof(GalleryItem.Description)" Title="Description" />
+        <MQueryBuilderField RuleName="@nameof(GalleryItem.Priority)" Title="Priority" />
+    </MQueryBuilder>
+    <p>Use <code>MQueryBuilderHelper.ApplyRules</code> to apply the resulting rule group to an <code>IQueryable</code>.</p>
+</section>
+
+<section id="mscrollanchor" class="mb-5">
+    <ExampleHeading Name="MScrollAnchor" />
+    <h3>Simple</h3>
+    <a href="components#scroll-target">Jump to the target</a>
+    <div style="height: 8rem"></div>
+    <MScrollAnchor Id="scroll-target" />
+    <strong>Scroll target</strong>
+    <h3>Advanced</h3>
+    <p>Place anchors next to validation summaries or dynamically rendered sections so deep links return users to the relevant content.</p>
+</section>
+
+<section id="mselect" class="mb-5">
+    <ExampleHeading Name="MSelect" />
+    <CascadingValue Value="ExampleEditContext">
+        <h3>Simple</h3>
+        <MSelect T="string" @bind-Value="SelectedValue" Options="SelectValues" />
+        <p>Selected: @SelectedValue</p>
+        <h3>Advanced</h3>
+        <MSelect T="string"
+                 @bind-Values="SelectedValues"
+                 Options="SelectValues"
+                 EnableSearch="true"
+                 EnableSelectAll="true"
+                 CustomFormatter="FormatSelectValue" />
+        <p>Selected: @string.Join(", ", SelectedValues)</p>
+    </CascadingValue>
+</section>
+
+<section id="mseparator" class="mb-5">
+    <ExampleHeading Name="MSeparator" />
+    <h3>Simple</h3>
+    <MSeparator />
+    <h3>Advanced</h3>
+    <MSeparator><h4>Account details</h4></MSeparator>
+</section>
+
+<section id="mspinner" class="mb-5">
+    <ExampleHeading Name="MSpinner" />
+    <h3>Simple</h3>
+    <MSpinner />
+    <h3>Advanced</h3>
+    <button type="button" class="btn btn-secondary" @onclick="() => IsLoading = !IsLoading">Toggle loading</button>
+    @if (IsLoading)
+    {
+        <div class="mt-2"><MSpinner /> Loading data…</div>
+    }
+</section>
+
+<section id="mtabs" class="mb-5">
+    <ExampleHeading Name="MTabs" />
+    <h3>Simple</h3>
+    <MTabs>
+        <MTab Title="Overview">Overview content</MTab>
+        <MTab Title="Details">Details content</MTab>
+    </MTabs>
+    <h3>Advanced</h3>
+    <MTabs SyncTabsWithFragmentIdentifierInUrl="true" CssClass="mt-2">
+        <MTab Title="General" FragmentIdentifier="general">General settings</MTab>
+        <MTab Title="Notifications" FragmentIdentifier="notifications" CssClassButton="text-uppercase">
+            Notification settings
+        </MTab>
+    </MTabs>
+</section>
+
+<section id="mtoaster" class="mb-5">
+    <ExampleHeading Name="MToaster" />
+    <h3>Simple</h3>
+    <button type="button" class="btn btn-info" @onclick="ShowInfoToast">
+        Show info toast
+    </button>
+    <h3>Advanced</h3>
+    <button type="button" class="btn btn-success" @onclick="ShowInteractiveToast">Show interactive toast</button>
+    <button type="button" class="btn btn-secondary" @onclick="Toaster.Clear">Clear all</button>
+    @if (!string.IsNullOrEmpty(ToastStatus))
+    {
+        <p>@ToastStatus</p>
+    }
+</section>
+
+<section id="mtooltip" class="mb-5">
+    <ExampleHeading Name="MTooltip" />
+    <h3>Simple</h3>
+    <MTooltip Text="A plain text tooltip">Hover over this text</MTooltip>
+    <h3>Advanced</h3>
+    <MTooltip CssClass="p-2">
+        <ChildContent><button type="button" class="btn btn-secondary">Rich tooltip</button></ChildContent>
+        <TooltipContent>
+            <strong>Formatted content</strong>
+            <div>Tooltips can contain arbitrary render fragments.</div>
+        </TooltipContent>
+    </MTooltip>
+</section>
+
+<section id="mwizard" class="mb-5">
+    <ExampleHeading Name="MWizard" />
+    <h3>Simple</h3>
+    <MWizard>
+        <Steps>
+            <MWizardStep Title="Start"><Content>Welcome to the wizard.</Content></MWizardStep>
+            <MWizardStep Title="Finish"><Content>Review and finish.</Content></MWizardStep>
+        </Steps>
+    </MWizard>
+    <h3>Advanced</h3>
+    <MWizard EnableJumpToAnyStep="true" OnStepChanged="OnWizardStepChanged" OnSubmit="OnWizardSubmitted">
+        <Steps>
+            <MWizardStep Title="Account" Position="1"><Content>Enter account details.</Content></MWizardStep>
+            <MWizardStep Title="Options" Position="2"><Content>Choose optional features.</Content></MWizardStep>
+            <MWizardStep Title="Review" Position="3"><Content>Confirm the selections.</Content></MWizardStep>
+        </Steps>
+    </MWizard>
+    @if (!string.IsNullOrEmpty(WizardStatus))
+    {
+        <p>@WizardStatus</p>
+    }
+</section>
+
+@code {
+    private readonly string[] CardNames = { "First", "Second", "Third" };
+    private readonly string[] SelectValues = Enumerable.Range(1, 20).Select(i => $"Value {i}").ToArray();
+    private readonly List<GalleryItem> GalleryItems =
+    [
+        new() { Title = "Alpha", Description = "First item", Priority = 1 },
+        new() { Title = "Beta", Description = "Second item", Priority = 2 },
+        new() { Title = "Gamma", Description = "Third item", Priority = 3 }
+    ];
+
+    private GalleryItem SelectedCard { get; set; }
+    private Profile SimpleProfile { get; } = new();
+    private Profile AdvancedProfile { get; } = new();
+    private string FormStatus { get; set; }
+    private IFile SingleFile { get; set; }
+    private ICollection<IFile> MultipleFiles { get; set; } = new List<IFile>();
+    private string FileStatus { get; set; }
+    private MPaint Paint { get; set; }
+    private string PaintStatus { get; set; }
+    private string Language { get; set; } = "English";
+    private int Progress { get; set; } = 65;
+    private MQueryBuilderRuleGroup SimpleRules { get; set; } = new();
+    private MQueryBuilderRuleGroup AdvancedRules { get; set; } = new();
+    private string SelectedValue { get; set; }
+    private ICollection<string> SelectedValues { get; set; } = new List<string>();
+    private bool IsLoading { get; set; }
+    private string ToastStatus { get; set; }
+    private string WizardStatus { get; set; }
+    private EditContext ExampleEditContext { get; } = new(new object());
+    private IEnumerable<GalleryItem> GridItems => GalleryItems;
+
+    private void SelectCard(GalleryItem item) => SelectedCard = item;
+
+    private void OnFormsSubmitted(MFormContainerAfterAllFormsSubmittedArgs args)
+        => FormStatus = "All forms were submitted successfully.";
+
+    private void OnFileClicked(IFile file) => FileStatus = $"Selected {file.FileName}";
+
+    private void CheckPainting() => PaintStatus = Paint?.ImageIsEmpty == false ? "The canvas contains a drawing." : "The canvas is empty.";
+
+    private void SelectEnglish() => Language = "English";
+
+    private void SelectGerman() => Language = "German";
+
+    private string FormatSelectValue(string value) => $"Option: {value}";
+
+    private void ShowInfoToast() => Toaster.Info("The operation started.", "Information");
+
+    private void ShowInteractiveToast()
+        => Toaster.Success("Select this toast to run its callback.", "Saved", options =>
+        {
+            options.RequireInteraction = true;
+            options.Onclick = toast =>
+            {
+                ToastStatus = "The toast callback ran.";
+                return Task.CompletedTask;
+            };
+        });
+
+    private void OnWizardStepChanged(StepChangedArgs args)
+        => WizardStatus = $"Moved from {args.OldStep.Title} to {args.NewStep.Title}.";
+
+    private void OnWizardSubmitted(SubmitEventArgs args) => WizardStatus = "Wizard submitted.";
+
+    public sealed class GalleryItem
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        [Required]
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int Priority { get; set; }
+    }
+
+    public sealed class Profile
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        [Required]
+        public string Name { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
+        public string Notes { get; set; }
+    }
+}
