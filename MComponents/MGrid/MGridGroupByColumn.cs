@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 
@@ -38,6 +38,8 @@ namespace MComponents.MGrid
         }
 
         public bool EnableFilter => false;
+
+        public bool EnableGrouping => false;
 
         public bool ShouldRenderColumn => true;
 

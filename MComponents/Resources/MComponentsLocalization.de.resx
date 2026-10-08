@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -212,5 +212,8 @@
   </data>
   <data name="AddCondition" xml:space="preserve">
     <value>Bedingung hinzufügen</value>
+  </data>
+  <data name="DragColumnHereToGroup" xml:space="preserve">
+    <value>Spaltenüberschrift hierher ziehen, um danach zu gruppieren</value>
   </data>
 </root>

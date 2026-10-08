@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace MComponents.MGrid
 {
@@ -9,6 +9,8 @@ namespace MComponents.MGrid
         string HeaderText { get; set; }
 
         bool EnableFilter { get; }
+
+        bool EnableGrouping { get; }
 
         bool ShouldRenderColumn { get; }
 

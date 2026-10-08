@@ -1,4 +1,4 @@
-﻿using MComponents.MForm;
+using MComponents.MForm;
 using MComponents.MSelect;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -25,6 +25,9 @@ namespace MComponents.MGrid
 
         [Parameter]
         public bool EnableFilter { get; set; } = true;
+
+        [Parameter]
+        public bool EnableGrouping { get; set; } = true;
 
         [Parameter]
         public Func<T, string> ExportText { get; set; }

@@ -1,4 +1,4 @@
-﻿using MComponents.ExportData;
+using MComponents.ExportData;
 using MComponents.MForm;
 using MComponents.Notifications;
 using MComponents.Services;
@@ -145,6 +145,14 @@ namespace MComponents.MGrid
         public bool IsFilterRowVisible { get; internal set; }
         public bool IsGroupingVisible { get; internal set; }
 
+        protected IMGridColumn mDraggedColumn;
+        protected SortInstruction mDraggedChip;
+        protected bool mIsDraggingColumn;
+        protected bool mIsDraggingChip;
+        protected bool mIsDropzoneDragOver;
+        protected bool mGroupingToggledByToolbar;
+        protected bool mGroupingCollapsedByUser;
+
         protected EditContext EditContext;
 
         internal T EditValue;
@@ -177,7 +185,7 @@ namespace MComponents.MGrid
 
         public bool FixedColumns => (IsEditingRow || IsFilterRowVisible) && !UpdateColumnsWidthOnNextRender;
 
-        public IMGridColumn[] VisibleColumns => ColumnsList.Where(c => c.ShouldRenderColumn).ToArray();
+        public IMGridColumn[] VisibleColumns => ColumnsList.Where(c => c.ShouldRenderColumn && !IsColumnGrouped(c)).ToArray();
 
         public bool UpdateColumnsWidthOnNextRender { get; set; }
 
@@ -502,17 +510,88 @@ namespace MComponents.MGrid
 
                        builder2.CloseElement(); // div
 
-                       if (IsGroupingVisible)
+                       bool showGroupingDropzone = EnableGrouping && (mIsDraggingColumn || (!mGroupingCollapsedByUser && (IsGroupingVisible || GroupByInstructions.Any())));
+
+                       if (showGroupingDropzone)
                        {
                            builder2.OpenElement(377, "div");
-                           builder2.AddAttribute(378, "class", "m-grouping");
+                           string groupingClass = "m-grouping";
+                           if (mIsDropzoneDragOver)
+                           {
+                               groupingClass += " m-grouping--dragover";
+                           }
+                           builder2.AddAttribute(378, "class", groupingClass);
+                           builder2.AddAttribute(379, "ondragover", EventCallback.Factory.Create<DragEventArgs>(this, OnGroupingDropzoneDragOver));
+                           builder2.AddEventPreventDefaultAttribute(380, "ondragover", true);
+                           builder2.AddAttribute(381, "ondragenter", EventCallback.Factory.Create<DragEventArgs>(this, OnGroupingDropzoneDragEnter));
+                           builder2.AddAttribute(382, "ondragleave", EventCallback.Factory.Create<DragEventArgs>(this, OnGroupingDropzoneDragLeave));
+                           builder2.AddAttribute(383, "ondrop", EventCallback.Factory.Create<DragEventArgs>(this, OnGroupingDropzoneDrop));
+                           builder2.AddEventPreventDefaultAttribute(384, "ondrop", true);
 
-                           builder2.AddContent(269, L["Grouping..."]);
-                           builder2.CloseElement(); // div
+                           if (GroupByInstructions.Count == 0)
+                           {
+                               builder2.OpenElement(385, "div");
+                               builder2.AddAttribute(386, "class", "m-grouping-placeholder");
+                               builder2.AddContent(387, L[nameof(MComponentsLocalization.DragColumnHereToGroup)]);
+                               builder2.CloseElement(); // div placeholder
+                           }
+                           else
+                           {
+                               builder2.OpenElement(388, "div");
+                               builder2.AddAttribute(389, "class", "m-grouping-chips");
+
+                               foreach (var instr in GroupByInstructions)
+                               {
+                                   var currentInstr = instr;
+                                   builder2.OpenElement(390, "div");
+                                   builder2.AddAttribute(391, "class", "m-grouping-chip");
+                                   builder2.AddAttribute(392, "draggable", "true");
+                                   builder2.AddAttribute(393, "ondragstart", EventCallback.Factory.Create<DragEventArgs>(this, (e) => OnGroupChipDragStart(currentInstr, e)));
+                                   builder2.AddAttribute(394, "ondragend", EventCallback.Factory.Create<DragEventArgs>(this, OnGroupChipDragEnd));
+
+                                   builder2.OpenElement(395, "button");
+                                   builder2.AddAttribute(396, "type", "button");
+                                   builder2.AddAttribute(397, "class", "m-grouping-chip-title");
+                                   builder2.AddAttribute(398, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async () => await ToggleGroupSortDirection(currentInstr)));
+
+                                   builder2.AddContent(399, currentInstr.GridColumn.HeaderText?.Replace("\n", " "));
+
+                                   if (currentInstr.Direction == MSortDirection.Ascending)
+                                   {
+                                       builder2.AddContent(400, (MarkupString)" <i class=\"fa-solid fa-arrow-down m-grouping-sort-icon\"></i>");
+                                   }
+                                   else
+                                   {
+                                       builder2.AddContent(401, (MarkupString)" <i class=\"fa-solid fa-arrow-up m-grouping-sort-icon\"></i>");
+                                   }
+                                   builder2.CloseElement(); // button chip-title
+
+                                   builder2.OpenElement(402, "button");
+                                   builder2.AddAttribute(403, "type", "button");
+                                   builder2.AddAttribute(404, "class", "m-grouping-chip-remove");
+                                   builder2.AddAttribute(405, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async () => await RemoveGrouping(currentInstr.GridColumn)));
+                                   builder2.AddContent(406, (MarkupString)"<i class=\"fa-solid fa-xmark\"></i>");
+                                   builder2.CloseElement(); // button chip-remove
+
+                                   builder2.CloseElement(); // div m-grouping-chip
+                               }
+
+                               builder2.CloseElement(); // div m-grouping-chips
+                           }
+
+                           builder2.CloseElement(); // div m-grouping
                        }
 
                        builder2.OpenElement(270, "div");
                        builder2.AddAttribute(371, "class", "m-table-container");
+
+                       if (mIsDraggingChip)
+                       {
+                           builder2.AddAttribute(372, "ondragover", EventCallback.Factory.Create<DragEventArgs>(this, () => { }));
+                           builder2.AddEventPreventDefaultAttribute(373, "ondragover", true);
+                           builder2.AddAttribute(374, "ondrop", EventCallback.Factory.Create<DragEventArgs>(this, OnTableDrop));
+                           builder2.AddEventPreventDefaultAttribute(375, "ondrop", true);
+                       }
 
                        builder2.OpenElement(277, "table");
                        builder2.AddAttribute(286, "class", HtmlTableClass + (UseStaticLayoutMode ? " m-static-layout" : string.Empty) + (EnableEditing ? " m-clickable" : string.Empty) + (IsEditingRow ? " m-editing" : string.Empty));
@@ -530,15 +609,17 @@ namespace MComponents.MGrid
                        builder2.OpenElement(299, "thead");
                        builder2.OpenElement(300, "tr");
 
-                       for (int i = 0; i < ColumnsList.Count; i++)
+                       for (int i = 0; i < VisibleColumns.Length; i++)
                        {
-                           IMGridColumn column = ColumnsList[i];
-
-                           if (!column.ShouldRenderColumn)
-                               continue;
+                           IMGridColumn column = VisibleColumns[i];
 
                            builder2.OpenElement(309, "th");
                            builder2.AddAttribute(310, "data-identifier", column.Identifier);
+
+                           if (column is MGridGroupByColumn<T>)
+                           {
+                               builder2.AddAttribute(311, "class", "m-grid-groupby-header-cell");
+                           }
 
                            if (column.AdditionalAttributes != null)
                                builder2.AddMultipleAttributes(312, column.AdditionalAttributes.Where(k => k.Key != "style"));
@@ -562,6 +643,14 @@ namespace MComponents.MGrid
                                {
                                    builder2.AddAttribute(313, "style", column.AdditionalAttributes["style"].ToString());
                                }
+                           }
+
+                           bool isGroupable = IsColumnGroupable(column) && !IsColumnGrouped(column);
+                           if (isGroupable)
+                           {
+                               builder2.AddAttribute(314, "draggable", "true");
+                               builder2.AddAttribute(315, "ondragstart", EventCallback.Factory.Create<DragEventArgs>(this, (e) => OnColumnHeaderDragStart(column, e)));
+                               builder2.AddAttribute(316, "ondragend", EventCallback.Factory.Create<DragEventArgs>(this, OnColumnHeaderDragEnd));
                            }
 
                            builder2.AddAttribute(318, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, a => OnColumnHeaderClick(column, a)));
@@ -665,7 +754,7 @@ namespace MComponents.MGrid
                                {
                                    builder2.OpenElement(612, "tr");
                                    builder2.OpenElement(613, "td");
-                                   builder2.AddAttribute(614, "colspan", ColumnsList.Count);
+                                   builder2.AddAttribute(614, "colspan", VisibleColumns.Length);
                                    builder2.AddContent(615, NoDataDescription ?? L[nameof(MComponentsLocalization.NoDataAvailable)]);
                                    builder2.CloseElement(); //td
                                    builder2.CloseElement(); //tr
@@ -980,12 +1069,19 @@ namespace MComponents.MGrid
             pBuilder.CloseElement(); //td
 
             pBuilder.OpenElement(577, "td");
-            pBuilder.AddAttribute(618, "colspan", VisibleColumns.Length - pColumnIndex - 1);
+            pBuilder.AddAttribute(618, "colspan", VisibleColumns.Length - pColumnIndex);
 
             var pi = pInstruction.PropertyInfo;
 
+            pBuilder.OpenElement(620, "span");
+            pBuilder.AddAttribute(621, "class", "m-group-header-title");
             pBuilder.AddContent(625, (MarkupString)pInstruction.GridColumn.HeaderText.Replace("\n", " ") + ": ");
+            pBuilder.CloseElement(); //span
+
+            pBuilder.OpenElement(630, "span");
+            pBuilder.AddAttribute(631, "class", "m-group-header-title-value");
             RenderValueTdContent(pBuilder, value, pInstruction.GridColumn);
+            pBuilder.CloseElement(); //span        
 
             pBuilder.CloseElement(); //td
 
@@ -1042,14 +1138,17 @@ namespace MComponents.MGrid
             }
             else
             {
-                for (int i = 0; i < ColumnsList.Count; i++)
+                var visibleColumns = VisibleColumns;
+                for (int i = 0; i < visibleColumns.Length; i++)
                 {
-                    IMGridColumn column = ColumnsList[i];
-
-                    if (!column.ShouldRenderColumn)
-                        continue;
+                    IMGridColumn column = visibleColumns[i];
 
                     pBuilder.OpenElement(550, "td");
+
+                    if (column is MGridGroupByColumn<T>)
+                    {
+                        pBuilder.AddAttribute(551, "class", "m-grid-groupby-cell");
+                    }
 
                     if (mIsLoading)
                     {
@@ -1472,7 +1571,7 @@ namespace MComponents.MGrid
 
         private async Task UpdateColumnsWidth()
         {
-            var json = await JsRuntime.InvokeAsync<string>("mcomponents.getColumnSizes", new object[] { mTableReference, ColumnsList.Select(c => c.Identifier).ToArray() });
+            var json = await JsRuntime.InvokeAsync<string>("mcomponents.getColumnSizes", new object[] { mTableReference, VisibleColumns.Select(c => c.Identifier).ToArray() });
 
             if (string.IsNullOrWhiteSpace(json))
                 return;
@@ -1573,7 +1672,33 @@ namespace MComponents.MGrid
 
         protected void OnToggleGrouping()
         {
-            IsGroupingVisible = !IsGroupingVisible;
+            if (GroupByInstructions.Any())
+            {
+                mGroupingCollapsedByUser = !mGroupingCollapsedByUser;
+                IsGroupingVisible = !mGroupingCollapsedByUser;
+            }
+            else
+            {
+                mGroupingToggledByToolbar = !mGroupingToggledByToolbar;
+                IsGroupingVisible = mGroupingToggledByToolbar;
+            }
+
+            SaveCurrentState();
+            InvokeStateHasChanged();
+        }
+
+        public void SetGroupingVisible(bool pVisible)
+        {
+            IsGroupingVisible = pVisible;
+            if (GroupByInstructions.Any())
+            {
+                mGroupingCollapsedByUser = !pVisible;
+            }
+            else
+            {
+                mGroupingToggledByToolbar = pVisible;
+            }
+            SaveCurrentState();
             InvokeStateHasChanged();
         }
 
@@ -1809,35 +1934,18 @@ namespace MComponents.MGrid
 
             if (EnableGrouping && pArgs.CtrlKey && pArgs.ShiftKey)
             {
-                var groupByInstr = GroupByInstructions.FirstOrDefault(s => s.GridColumn == pColumn);
-
-                if (groupByInstr == null)
+                if (IsColumnGroupable(pColumn))
                 {
-                    GroupByInstructions.Add(new SortInstruction()
+                    if (IsColumnGrouped(pColumn))
                     {
-                        GridColumn = propInfoColumn,
-                        Direction = MSortDirection.Ascending,
-                        PropertyInfo = propInfo,
-                        Index = SortInstructions.Count,
-                        Comparer = comparer
-                    });
-
-                    ColumnsList.Insert(0, new MGridGroupByColumn<T>()
+                        await RemoveGrouping(pColumn);
+                    }
+                    else
                     {
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-                        Identifier = "groupby_" + pColumn.Identifier + "_" + Guid.NewGuid(),
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
-                        GridColumn = pColumn
-                    });
+                        await AddGrouping(pColumn);
+                    }
                 }
-                else
-                {
-                    GroupByInstructions.Remove(groupByInstr);
-                    ColumnsList.RemoveAll(r => r is MGridGroupByColumn<T> gc && gc.GridColumn == pColumn);
-                    HiddenGroupByKeys.RemoveAll(r => r.Item1.ContainsKey(propInfo.Name));
-                }
-
-                await ResetRowsAndCache();
+                return;
             }
             else
             {
@@ -2181,6 +2289,175 @@ namespace MComponents.MGrid
             DataCountCache = MGridGroupByHelper.GetDataCount(keyCounts, hiddenDict);
 
             return data;
+        }
+
+        public bool IsColumnGroupable(IMGridColumn pColumn)
+        {
+            if (!EnableGrouping)
+                return false;
+
+            if (!pColumn.EnableGrouping)
+                return false;
+
+            if (!(pColumn is IMGridPropertyColumn propCol))
+                return false;
+
+            if (!PropertyInfos.ContainsKey(propCol))
+                return false;
+
+            if (pColumn is MGridGroupByColumn<T>)
+                return false;
+
+            return true;
+        }
+
+        public bool IsColumnGrouped(IMGridColumn pColumn)
+        {
+            return GroupByInstructions.Any(s => s.GridColumn == pColumn);
+        }
+
+        public async Task AddGrouping(IMGridColumn pColumn, MSortDirection direction = MSortDirection.Ascending)
+        {
+            if (!IsColumnGroupable(pColumn) || IsColumnGrouped(pColumn))
+                return;
+
+            var propInfoColumn = (IMGridPropertyColumn)pColumn;
+            var propInfo = PropertyInfos[propInfoColumn];
+            var comparer = pColumn.GetComparer();
+
+            GroupByInstructions.Add(new SortInstruction()
+            {
+                GridColumn = propInfoColumn,
+                Direction = direction,
+                PropertyInfo = propInfo,
+                Index = GroupByInstructions.Count,
+                Comparer = comparer
+            });
+
+            ColumnsList.Insert(0, new MGridGroupByColumn<T>()
+            {
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+                Identifier = "groupby_" + pColumn.Identifier + "_" + Guid.NewGuid(),
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+                GridColumn = pColumn
+            });
+
+            IsGroupingVisible = true;
+            mGroupingCollapsedByUser = false;
+
+            await ResetRowsAndCache();
+            SaveCurrentState();
+        }
+
+        public async Task RemoveGrouping(IMGridColumn pColumn)
+        {
+            var groupByInstr = GroupByInstructions.FirstOrDefault(s => s.GridColumn == pColumn);
+            if (groupByInstr == null)
+                return;
+
+            GroupByInstructions.Remove(groupByInstr);
+            ColumnsList.RemoveAll(r => r is MGridGroupByColumn<T> gc && gc.GridColumn == pColumn);
+
+            if (pColumn is IMGridPropertyColumn propInfoColumn && PropertyInfos.TryGetValue(propInfoColumn, out var propInfo))
+            {
+                HiddenGroupByKeys.RemoveAll(r => r.Item1.ContainsKey(propInfo.Name));
+            }
+
+            if (GroupByInstructions.Count == 0 && !mGroupingToggledByToolbar)
+            {
+                IsGroupingVisible = false;
+            }
+
+            await ResetRowsAndCache();
+            SaveCurrentState();
+        }
+
+        public async Task ToggleGroupSortDirection(SortInstruction pInstruction)
+        {
+            pInstruction.Direction = pInstruction.Direction == MSortDirection.Ascending
+                ? MSortDirection.Descending
+                : MSortDirection.Ascending;
+
+            await ResetRowsAndCache();
+            SaveCurrentState();
+        }
+
+        protected void OnColumnHeaderDragStart(IMGridColumn pColumn, DragEventArgs pArgs)
+        {
+            if (!EnableGrouping || !IsColumnGroupable(pColumn))
+                return;
+
+            mDraggedColumn = pColumn;
+            mIsDraggingColumn = true;
+            mIsDropzoneDragOver = false;
+            InvokeStateHasChanged();
+        }
+
+        protected void OnColumnHeaderDragEnd(DragEventArgs pArgs)
+        {
+            mDraggedColumn = null;
+            mIsDraggingColumn = false;
+            mIsDropzoneDragOver = false;
+            InvokeStateHasChanged();
+        }
+
+        protected void OnGroupChipDragStart(SortInstruction pInstruction, DragEventArgs pArgs)
+        {
+            mDraggedChip = pInstruction;
+            mIsDraggingChip = true;
+            InvokeStateHasChanged();
+        }
+
+        protected void OnGroupChipDragEnd(DragEventArgs pArgs)
+        {
+            mDraggedChip = null;
+            mIsDraggingChip = false;
+            InvokeStateHasChanged();
+        }
+
+        protected void OnGroupingDropzoneDragOver(DragEventArgs pArgs)
+        {
+            if (!mIsDropzoneDragOver)
+            {
+                mIsDropzoneDragOver = true;
+                InvokeStateHasChanged();
+            }
+        }
+
+        protected void OnGroupingDropzoneDragEnter(DragEventArgs pArgs)
+        {
+            mIsDropzoneDragOver = true;
+            InvokeStateHasChanged();
+        }
+
+        protected void OnGroupingDropzoneDragLeave(DragEventArgs pArgs)
+        {
+            mIsDropzoneDragOver = false;
+            InvokeStateHasChanged();
+        }
+
+        protected async Task OnGroupingDropzoneDrop(DragEventArgs pArgs)
+        {
+            mIsDropzoneDragOver = false;
+
+            if (mDraggedColumn != null)
+            {
+                var col = mDraggedColumn;
+                mDraggedColumn = null;
+                mIsDraggingColumn = false;
+                await AddGrouping(col);
+            }
+        }
+
+        protected async Task OnTableDrop(DragEventArgs pArgs)
+        {
+            if (mDraggedChip != null)
+            {
+                var col = mDraggedChip.GridColumn;
+                mDraggedChip = null;
+                mIsDraggingChip = false;
+                await RemoveGrouping(col);
+            }
         }
     }
 }

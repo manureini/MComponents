@@ -1,4 +1,4 @@
-﻿namespace MComponents.MGrid
+namespace MComponents.MGrid
 {
     public class MGridState
     {
@@ -8,10 +8,14 @@
 
         public bool IsFilterRowVisible { get; set; }
 
+        public bool IsGroupingVisible { get; set; }
+
         public string SelectedRow { get; set; }
 
         public MGridFilterState[] FilterState { get; set; }
 
         public MGridSorterState[] SorterState { get; set; }
+
+        public MGridGroupByState[] GroupByState { get; set; }
     }
 }

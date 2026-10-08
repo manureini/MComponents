@@ -1,4 +1,4 @@
-﻿using MComponents.ExportData;
+using MComponents.ExportData;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -15,6 +15,9 @@ namespace MComponents.MGrid
 
         [Parameter]
         public bool EnableFilter { get; set; } = true;
+
+        [Parameter]
+        public bool EnableGrouping { get; set; } = true;
 
         [Parameter]
         public Func<T, string> ExportText { get; set; }

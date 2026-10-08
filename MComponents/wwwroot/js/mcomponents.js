@@ -1,4 +1,4 @@
-﻿
+
 
 var mcomponents = (function () {
 
@@ -355,4 +355,12 @@ var mcomponents = (function () {
 
     };
 })();
+
+document.addEventListener('dragstart', function (e) {
+    if (e.dataTransfer && e.target && e.target.getAttribute && e.target.getAttribute('draggable') === 'true') {
+        if (!e.dataTransfer.getData('text/plain')) {
+            e.dataTransfer.setData('text/plain', '');
+        }
+    }
+});
 

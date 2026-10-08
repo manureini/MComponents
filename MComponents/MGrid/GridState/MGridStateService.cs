@@ -1,4 +1,4 @@
-﻿using MComponents.Services;
+using MComponents.Services;
 using System;
 using System.Collections;
 using System.Linq;
@@ -117,6 +117,24 @@ namespace MComponents.MGrid
                     await pGrid.SetFilterRowVisible(state.IsFilterRowVisible);
                 }
 
+                if (pGrid.EnableGrouping)
+                {
+                    if (state.GroupByState != null)
+                    {
+                        foreach (var groupState in state.GroupByState.OrderBy(g => g.Index))
+                        {
+                            var column = pGrid.ColumnsList.FirstOrDefault(c => c.Identifier == groupState.ColumnIdentifier);
+
+                            if (column == null || !(column is IMGridPropertyColumn propc) || !pGrid.PropertyInfos.ContainsKey(propc))
+                                continue;
+
+                            await pGrid.AddGrouping(column, groupState.Direction);
+                        }
+                    }
+
+                    pGrid.IsGroupingVisible = state.IsGroupingVisible || pGrid.GroupByInstructions.Any();
+                }
+
                 pGrid.ClearDataCache();
                 pGrid.InvokeStateHasChanged();
             }
@@ -164,6 +182,7 @@ namespace MComponents.MGrid
             return new MGridState()
             {
                 IsFilterRowVisible = pGrid.IsFilterRowVisible,
+                IsGroupingVisible = pGrid.IsGroupingVisible,
                 Page = pGrid.Pager?.CurrentPage,
                 PageSize = pGrid.Pager?.PageSize,
                 SelectedRow = pGrid.GetIdentifierValue(pGrid.Selected),
@@ -188,6 +207,13 @@ namespace MComponents.MGrid
                 ).Where(f => f != null).ToArray(),
 
                 SorterState = pGrid.SortInstructions.Select(s => new MGridSorterState()
+                {
+                    ColumnIdentifier = s.GridColumn.Identifier,
+                    Direction = s.Direction,
+                    Index = s.Index
+                }).Where(s => s != null).ToArray(),
+
+                GroupByState = pGrid.GroupByInstructions.Select(s => new MGridGroupByState()
                 {
                     ColumnIdentifier = s.GridColumn.Identifier,
                     Direction = s.Direction,

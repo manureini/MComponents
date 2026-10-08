@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 
@@ -35,6 +35,9 @@ namespace MComponents.MGrid
 
         [Parameter]
         public bool EnableFilter { get; set; } = true;
+
+        [Parameter]
+        public bool EnableGrouping { get; set; } = true;
 
         [Parameter]
         public string HeaderText { get; set; }
