@@ -1983,7 +1983,7 @@ input.m-flag, input.m-flag-inline, textarea.m-flag, textarea.m-flag-inline {
 }
 .m-btn-primary:hover {
   color: #ffffff;
-  background-color: rgb(89.25, 89.25, 89.25);
+  background-color: rgb(33.15, 33.15, 33.15);
   border-color: rgb(63.75, 63.75, 63.75);
 }
 .m-btn-primary.disabled, .m-btn-primary:disabled {
