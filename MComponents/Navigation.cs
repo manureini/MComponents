@@ -37,17 +37,12 @@ namespace MComponents
 
         public void NavigateTo(string url, bool forceLoad = false, bool replace = false)
         {
-#if NET6_0_OR_GREATER
-
             if (replace)
             {
                 mSkipAddingHistory++;
             }
 
             mNavigationManager.NavigateTo(url, forceLoad, replace);
-#else
-            mNavigationManager.NavigateTo(url, forceLoad);
-#endif
         }
 
         public void NavigateTo<T>(bool pForceLoad = false, bool pReplace = false)
